@@ -2,4 +2,4 @@ _assetic:
     resource: .
     type: assetic
 _app:
-    resource: /var/www/dianFormat1/app/config/routing_dev.yml
+    resource: /var/www/PuertoUDES/app/config/routing_dev.yml

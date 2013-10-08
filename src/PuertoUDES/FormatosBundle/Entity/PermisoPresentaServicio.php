@@ -1,0 +1,57 @@
+<?php
+namespace PuertoUDES\FormatosBundle\Entity;
+use Doctrine\ORM\Mapping AS ORM;
+
+/** 
+ * @ORM\Entity
+ * @ORM\Table(name="permiso_presenta_servicio")
+ * @ORM\Entity(repositoryClass="PuertoUDES\FormatosBundle\Repository\PermisoPresentaServicioRepository")
+ */
+class PermisoPresentaServicio extends \PuertoUDES\CommonBundle\Entity\Objeto
+{
+    /** 
+     * @ORM\ManyToMany(targetEntity="PuertoUDES\UsuariosBundle\Entity\Entidad", mappedBy="permisosPresentaServicios")
+     */
+    private $entidades;
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->entidades = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Add entidades
+     *
+     * @param \PuertoUDES\UsuariosBundle\Entity\Entidad $entidades
+     * @return PermisoPresentaServicio
+     */
+    public function addEntidade(\PuertoUDES\UsuariosBundle\Entity\Entidad $entidades)
+    {
+        $this->entidades[] = $entidades;
+    
+        return $this;
+    }
+
+    /**
+     * Remove entidades
+     *
+     * @param \PuertoUDES\UsuariosBundle\Entity\Entidad $entidades
+     */
+    public function removeEntidade(\PuertoUDES\UsuariosBundle\Entity\Entidad $entidades)
+    {
+        $this->entidades->removeElement($entidades);
+    }
+
+    /**
+     * Get entidades
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getEntidades()
+    {
+        return $this->entidades;
+    }
+}

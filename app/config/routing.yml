@@ -1,0 +1,15 @@
+puerto_udes_formatos:
+    resource: "@PuertoUDESFormatosBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+puerto_udes_usuarios:
+    resource: "@PuertoUDESUsuariosBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+puerto_udes_common:
+    resource: "@PuertoUDESCommonBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
