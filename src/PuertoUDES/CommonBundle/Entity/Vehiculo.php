@@ -27,6 +27,7 @@ class Vehiculo extends \PuertoUDES\CommonBundle\Entity\ObjetoB
      */
     public function __construct()
     {
+        parent::__construct();
         $this->formatos = new \Doctrine\Common\Collections\ArrayCollection();
     }
     

@@ -28,6 +28,7 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function __construct()
     {
+        parent::__construct();
         $this->aduanas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->cargas = new \Doctrine\Common\Collections\ArrayCollection();
     }

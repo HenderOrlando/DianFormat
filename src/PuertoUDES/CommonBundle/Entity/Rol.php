@@ -17,6 +17,7 @@ class Rol extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function __construct()
     {
+        parent::__construct();
         $this->usuariosFormatos = new \Doctrine\Common\Collections\ArrayCollection();
     }
     

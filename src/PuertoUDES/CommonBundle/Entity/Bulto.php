@@ -27,6 +27,7 @@ class Bulto extends \PuertoUDES\CommonBundle\Entity\ObjetoC
      */
     public function __construct()
     {
+        parent::__construct();
         $this->contenedorMercanciaFormatos = new \Doctrine\Common\Collections\ArrayCollection();
     }
     

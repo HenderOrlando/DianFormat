@@ -46,6 +46,7 @@ class Contenedor
      */
     public function __construct()
     {
+        parent::__construct();
         $this->mercanciasFormatos = new \Doctrine\Common\Collections\ArrayCollection();
     }
     

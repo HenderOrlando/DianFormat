@@ -37,6 +37,7 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function __construct()
     {
+        parent::__construct();
         $this->formatos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->fomatoAduanas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->cargas = new \Doctrine\Common\Collections\ArrayCollection();

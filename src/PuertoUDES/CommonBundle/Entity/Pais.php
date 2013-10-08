@@ -32,6 +32,7 @@ class Pais extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function __construct()
     {
+        parent::__construct();
         $this->lugares = new \Doctrine\Common\Collections\ArrayCollection();
         $this->objetos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->conductores = new \Doctrine\Common\Collections\ArrayCollection();

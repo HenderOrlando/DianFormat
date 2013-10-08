@@ -12,6 +12,13 @@ class Moneda extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\Column(type="string", length=5, nullable=false, name="abreviacion")
      */
     private $abreviacion;
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * Set abreviacion

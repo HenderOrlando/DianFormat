@@ -18,6 +18,13 @@ class Documento extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\JoinColumn(name="formato", referencedColumnName="id", nullable=false)
      */
     private $formato;
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * Set url

@@ -22,6 +22,7 @@ class UnidadCarga extends \PuertoUDES\CommonBundle\Entity\ObjetoB
      */
     public function __construct()
     {
+        parent::__construct();
         $this->cargas = new \Doctrine\Common\Collections\ArrayCollection();
     }
     

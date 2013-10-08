@@ -23,6 +23,7 @@ class Aduana extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function __construct()
     {
+        parent::__construct();
         $this->fomatos = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
