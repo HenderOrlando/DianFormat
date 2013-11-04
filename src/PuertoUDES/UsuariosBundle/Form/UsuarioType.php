@@ -16,9 +16,7 @@ class UsuarioType extends AbstractType
     {
         $builder
             ->add('nombre')
-            ->add('canonical')
             ->add('descripcion')
-            ->add('fechaCreado')
             ->add('direccion')
             ->add('telefono')
             ->add('docId')

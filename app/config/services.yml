@@ -1,0 +1,9 @@
+services:
+  puertoudes.util:
+    class:      "PuertoUDES\CommonBundle\Controller\IndexController"
+    arguments:  [@doctrine.orm.entity_manager, @form.factory, @router]
+    calls:
+          - [setRequest, ['@?request=']]
+          - [setResponse, ['@?response=']]
+    tags: 
+          - { name: knp_paginator.injectable, paginator: knp_paginator }

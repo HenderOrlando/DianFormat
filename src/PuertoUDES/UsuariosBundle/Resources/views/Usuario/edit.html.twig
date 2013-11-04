@@ -1,16 +1,14 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Usuario edit</h1>
 
-    {{ form(edit_form) }}
+{% include 'PuertoUDESUsuariosBundle:Usuario:_edit.html.twig' %}
 
-        <ul class="record_actions">
+<ul class="record_actions">
     <li>
         <a href="{{ path('usuario_') }}">
             Back to the list
         </a>
     </li>
-    <li>{{ form(delete_form) }}</li>
 </ul>
 {% endblock %}

@@ -13,7 +13,7 @@ use PuertoUDES\UsuariosBundle\Form\ConductorType;
 /**
  * Conductor controller.
  *
- * @Route("/Conductor_")
+ * @Route("/Conductor/")
  */
 class ConductorController extends Controller
 {
@@ -21,7 +21,7 @@ class ConductorController extends Controller
     /**
      * Lists all Conductor entities.
      *
-     * @Route("/", name="Conductor_")
+     * @Route("/", name="conductor_")
      * @Method("GET")
      * @Template()
      */
@@ -38,7 +38,7 @@ class ConductorController extends Controller
     /**
      * Creates a new Conductor entity.
      *
-     * @Route("/", name="Conductor__create")
+     * @Route("/", name="conductor__create")
      * @Method("POST")
      * @Template("PuertoUDESUsuariosBundle:Conductor:new.html.twig")
      */
@@ -84,7 +84,7 @@ class ConductorController extends Controller
     /**
      * Displays a form to create a new Conductor entity.
      *
-     * @Route("/new", name="Conductor__new")
+     * @Route("/new", name="conductor__new")
      * @Method("GET")
      * @Template()
      */
@@ -102,7 +102,7 @@ class ConductorController extends Controller
     /**
      * Finds and displays a Conductor entity.
      *
-     * @Route("/{id}", name="Conductor__show")
+     * @Route("/{id}", name="conductor__show")
      * @Method("GET")
      * @Template()
      */
@@ -127,7 +127,7 @@ class ConductorController extends Controller
     /**
      * Displays a form to edit an existing Conductor entity.
      *
-     * @Route("/{id}/edit", name="Conductor__edit")
+     * @Route("/{id}/edit", name="conductor__edit")
      * @Method("GET")
      * @Template()
      */
@@ -172,7 +172,7 @@ class ConductorController extends Controller
     /**
      * Edits an existing Conductor entity.
      *
-     * @Route("/{id}", name="Conductor__update")
+     * @Route("/{id}", name="conductor__update")
      * @Method("PUT")
      * @Template("PuertoUDESUsuariosBundle:Conductor:edit.html.twig")
      */
@@ -205,7 +205,7 @@ class ConductorController extends Controller
     /**
      * Deletes a Conductor entity.
      *
-     * @Route("/{id}", name="Conductor__delete")
+     * @Route("/{id}", name="conductor__delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)

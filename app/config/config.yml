@@ -1,5 +1,6 @@
 imports:
     - { resource: parameters.yml }
+    - { resource: services.yml }
     - { resource: security.yml }
 
 framework:
@@ -65,3 +66,11 @@ swiftmailer:
     username:  %mailer_user%
     password:  %mailer_password%
     spool:     { type: memory }
+
+# FOSUser
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: PuertoUDES\FosUsuarioBundle\Entity\FosUser
+    group:
+        group_class: PuertoUDES\FosUsuarioBundle\Entity\FosGrupo

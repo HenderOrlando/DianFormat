@@ -13,7 +13,7 @@ use PuertoUDES\CommonBundle\Form\ContenedorType;
 /**
  * Contenedor controller.
  *
- * @Route("/contenedor_")
+ * @Route("/Contenedor/")
  */
 class ContenedorController extends Controller
 {

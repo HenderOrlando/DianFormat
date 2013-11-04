@@ -13,7 +13,7 @@ use PuertoUDES\FormatosBundle\Form\GastoType;
 /**
  * Gasto controller.
  *
- * @Route("/gasto_")
+ * @Route("/Gasto/")
  */
 class GastoController extends Controller
 {

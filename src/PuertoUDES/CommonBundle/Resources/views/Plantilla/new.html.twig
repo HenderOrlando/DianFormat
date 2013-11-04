@@ -1,0 +1,19 @@
+{#
+    String  bundle  Nombre del Bundle
+    String  bundle  Nombre ruta para volver
+
+#}
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    
+{% include 'PuertoUDESCommonBundle:Plantilla:_new.html.twig' %}
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path(volver) }}" class="btn btn-default">
+            Volver
+        </a>
+    </li>
+</ul>
+{% endblock %}

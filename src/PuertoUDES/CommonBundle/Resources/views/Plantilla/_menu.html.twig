@@ -1,0 +1,89 @@
+{#
+    String      title       Titulo de la tabla
+    String      class       Clase de estilos de la tabla
+    String      url_tabla   Ruta que apunta a otra plantilla para renderizar el contenido
+    Collection  botones     Botones para el action
+    Collection  head        Cabeza de la tabla
+    Collection  body        Cuerpo o contenido de la tabla
+    Collection  foot        Pie de la tabla
+    Paginator   paginas     Paginator para renderizar como contenido de la tabla
+    Entities    objetos     Objetos para renderizar como contenido de la tabla
+#}
+{% extends 'PuertoUDESCommonBundle:Plantilla:_menuSuperior.html.twig' %}
+
+{% block menu_action %}
+    {% if botones is not defined %}
+        {% set botones = botones is defined?botones: [] %}
+    {% endif %}
+    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+        'buttonset': 'horizontal',
+        'sizing': 'grande',
+        'botones'  : botones,
+    } %}
+{% endblock %}
+
+{% block menu_search %}
+    {% if form_filtro is defined %}
+        <div class="btn-group form-buscar">
+            {{ form_start(form_filtro) }}
+                {% if form_filtro.filtro is defined %}
+                <div class="input-group input-group-lg">
+                    {{ form_widget(form_filtro.filtro) }}
+                    {{ form_widget(form_filtro.Buscar) }}
+                </div>
+                {{ form_rest(form_filtro) }}
+                {% else %}
+                <table>
+                    <tfoot>
+                        <tr><td>{{ form_widget(form_filtro.Buscar) }}</td></tr>
+                    </tfoot>
+                    <tbody>
+                        <tr><td>{{ form_rest(form_filtro) }}</td></tr>
+                    </tbody>
+                </table>
+                {% endif %}
+            {{ form_end(form_filtro) }}
+        </div>
+    {% endif %}
+{% endblock %}
+{% block menu_title %}
+    <h3>{{ title is defined?title: '' }}</h3>
+{% endblock %}
+{% block menu_content %}
+    <div>   
+        {% if class is not defined %}
+            {% set class = 'table-hover table-striped table-bordered' %}
+        {% endif %}
+            
+        {% if url_tabla is not defined %}
+            {% set url_tabla = 'PuertoUDESCommonBundle:Plantilla:_tabla.html.twig' %}
+        {% endif %}
+            
+        {% if paginas is defined %}
+            {% include url_tabla with {
+                tabla: {
+                    class:      class,
+                    paginas:    paginas,
+                    head:       head is defined and head is not empty?head:[],
+                }
+            } %}
+        {% elseif objetos is defined %}
+            {% include url_tabla with {
+                tabla: {
+                    class:      class,
+                    objetos:    objetos,
+                    head:       head is defined and head is not empty?head:[],
+                }
+            } %}
+        {% else %}
+            {% include url_tabla with {
+                tabla: {
+                    class:      class,
+                    body:       body is defined?body:[],
+                    foot:       foot is defined?foot:[],
+                    head:       head,
+                }
+            } %}
+        {% endif %}
+    </div>
+{% endblock %}

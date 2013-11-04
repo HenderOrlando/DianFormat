@@ -7,8 +7,20 @@ use Doctrine\ORM\Mapping AS ORM;
  * @ORM\Table(name="entidad")
  * @ORM\Entity(repositoryClass="PuertoUDES\UsuariosBundle\Repository\EntidadRepository")
  */
-class Entidad extends Usuario
+class Entidad
 {
+    /** 
+     * @ORM\Id
+     * @ORM\Column(type="bigint")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+    /**
+     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario", inversedBy="entidad")
+     * @ORM\JoinColumn(name="usuario_id", referencedColumnName="id")
+     */
+    private $usuario;
+    
     /** 
      * @ORM\Column(type="string", length=50, nullable=false, name="certificado_idoneidad")
      */
@@ -23,13 +35,48 @@ class Entidad extends Usuario
      * )
      */
     private $permisosPresentaServicios;
+    
+    
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct();
         $this->permisosPresentaServicios = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->certificadoIdoneidad = null;
+    }
+    
+    /**
+     * Get id
+     *
+     * @return string 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    /**
+     * Set usuario
+     *
+     * @param string $usuario
+     * @return Conductor
+     */
+    public function setUsuario(PuertoUDES\UsuariosBundle\Entity\Usuario $usuario)
+    {
+        $this->usuario = $usuario;
+    
+        return $this;
+    }
+
+    /**
+     * Get usuario
+     *
+     * @return \PuertoUDES\UsuariosBundle\Entity\Usuario 
+     */
+    public function getUsuario()
+    {
+        return $this->usuario;
     }
     
     /**

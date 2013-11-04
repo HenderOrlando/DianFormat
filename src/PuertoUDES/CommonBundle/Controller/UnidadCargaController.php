@@ -13,7 +13,7 @@ use PuertoUDES\CommonBundle\Form\UnidadCargaType;
 /**
  * UnidadCarga controller.
  *
- * @Route("/unidadCarga_")
+ * @Route("/UnidadCarga/")
  */
 class UnidadCargaController extends Controller
 {

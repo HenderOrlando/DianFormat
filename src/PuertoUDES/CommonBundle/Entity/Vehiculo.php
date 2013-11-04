@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping AS ORM;
 /** 
  * @ORM\Entity
  * @ORM\Table(name="vehiculo")
+ * @ORM\Entity(repositoryClass="PuertoUDES\CommonBundle\Repository\VehiculoRepository")
  */
 class Vehiculo extends \PuertoUDES\CommonBundle\Entity\ObjetoB
 {

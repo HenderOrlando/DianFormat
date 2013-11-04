@@ -13,7 +13,7 @@ use PuertoUDES\CommonBundle\Form\MercanciaType;
 /**
  * Mercancia controller.
  *
- * @Route("/mercancia_")
+ * @Route("/Mercancia/")
  */
 class MercanciaController extends Controller
 {

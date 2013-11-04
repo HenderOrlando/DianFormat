@@ -13,7 +13,7 @@ use PuertoUDES\CommonBundle\Form\VehiculoType;
 /**
  * Vehiculo controller.
  *
- * @Route("/vehiculo_")
+ * @Route("/Vehiculo/")
  */
 class VehiculoController extends Controller
 {

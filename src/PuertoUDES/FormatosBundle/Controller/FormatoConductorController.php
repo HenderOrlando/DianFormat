@@ -13,7 +13,7 @@ use PuertoUDES\FormatosBundle\Form\FormatoConductorType;
 /**
  * FormatoConductor controller.
  *
- * @Route("/formatoConductor_")
+ * @Route("/FormatoConductor/")
  */
 class FormatoConductorController extends Controller
 {

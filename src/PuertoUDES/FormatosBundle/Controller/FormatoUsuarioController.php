@@ -13,7 +13,7 @@ use PuertoUDES\FormatosBundle\Form\FormatoUsuarioType;
 /**
  * FormatoUsuario controller.
  *
- * @Route("/formatoUsuario_")
+ * @Route("/FormatoUsuario/")
  */
 class FormatoUsuarioController extends Controller
 {

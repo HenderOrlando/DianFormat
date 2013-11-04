@@ -1,0 +1,9 @@
+<h1>
+{% if title is not defined%}
+    Datos de Usuario
+{% else %}
+    {{ title }}
+{% endif %}
+</h1>
+
+{{ form(form) }}

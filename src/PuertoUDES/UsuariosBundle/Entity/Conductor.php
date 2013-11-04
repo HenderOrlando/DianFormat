@@ -7,8 +7,20 @@ use Doctrine\ORM\Mapping AS ORM;
  * @ORM\Table(name="conductor")
  * @ORM\Entity(repositoryClass="PuertoUDES\UsuariosBundle\Repository\ConductorRepository")
  */
-class Conductor extends Usuario
+class Conductor
 {
+    /** 
+     * @ORM\Id
+     * @ORM\Column(type="bigint")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+    /**
+     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario", inversedBy="conductor")
+     * @ORM\JoinColumn(name="usuario_id", referencedColumnName="id")
+     */
+    private $usuario;
+    
     /** 
      * @ORM\Column(type="string", length=11, nullable=false, name="numero_licencia")
      */
@@ -40,8 +52,17 @@ class Conductor extends Usuario
      */
     public function __construct()
     {
-        parent::__construct();
         $this->formatosConductor = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
     }
     
     /**
@@ -65,6 +86,29 @@ class Conductor extends Usuario
     public function getNumLicencia()
     {
         return $this->numLicencia;
+    }
+    
+    /**
+     * Set usuario
+     *
+     * @param string $usuario
+     * @return Conductor
+     */
+    public function setUsuario(PuertoUDES\UsuariosBundle\Entity\Usuario $usuario)
+    {
+        $this->usuario = $usuario;
+    
+        return $this;
+    }
+
+    /**
+     * Get usuario
+     *
+     * @return \PuertoUDES\UsuariosBundle\Entity\Usuario 
+     */
+    public function getUsuario()
+    {
+        return $this->usuario;
     }
 
     /**

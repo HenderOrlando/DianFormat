@@ -1,0 +1,15 @@
+
+<h1>
+{% if title is not defined%}
+    Editar
+{% else %}
+    {{ title }}
+{% endif %}
+</h1>
+
+<div>
+    {{ form(edit_form) }}
+</div>
+<div>
+    {{ form(delete_form) }}
+</div>

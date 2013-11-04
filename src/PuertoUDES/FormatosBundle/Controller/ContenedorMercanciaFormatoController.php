@@ -13,7 +13,7 @@ use PuertoUDES\FormatosBundle\Form\ContenedorMercanciaFormatoType;
 /**
  * ContenedorMercanciaFormato controller.
  *
- * @Route("/contenedorMercanciaFormato_")
+ * @Route("/ContenedorMercanciaFormato/")
  */
 class ContenedorMercanciaFormatoController extends Controller
 {

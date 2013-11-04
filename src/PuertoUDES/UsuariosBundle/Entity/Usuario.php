@@ -5,13 +5,7 @@ use Doctrine\ORM\Mapping AS ORM;
 /** 
  * @ORM\Entity
  * @ORM\Table(name="usuario")
- * @ORM\InheritanceType("JOINED")
- * @ORM\DiscriminatorColumn(name="_aplicable_a", fieldName="_aplicableA")
- * @ORM\DiscriminatorMap({
- *      "Usuario"="PuertoUDES\UsuariosBundle\Entity\Usuario",
- *      "Conductor"="PuertoUDES\UsuariosBundle\Entity\Conductor",
- *      "Entidad"="PuertoUDES\UsuariosBundle\Entity\Entidad"
- * })
+ * 
  * @ORM\Entity(repositoryClass="PuertoUDES\UsuariosBundle\Repository\UsuarioRepository")
  *
  */
@@ -33,6 +27,12 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $docId;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Tipo")
+     * @ORM\JoinColumn(name="tipo_doc_id", referencedColumnName="id")
+     */
+    private $tipoDocId;
+
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="usuario")
      */
@@ -42,6 +42,17 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Gasto", mappedBy="usuario")
      */
     private $gastos;
+
+    /**
+     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Entidad", mappedBy="usuario")
+     */
+    private $entidad;
+
+    /**
+     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Conductor", mappedBy="usuario")
+     */
+    private $conductor;
+    
     /**
      * Constructor
      */
@@ -50,6 +61,8 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
         parent::__construct();
         $this->formatos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->entidad = new \PuertoUDES\UsuariosBundle\Form\Entidad();
+        $this->conductor = new \PuertoUDES\UsuariosBundle\Form\Conductor();
     }
     
     /**
@@ -122,6 +135,29 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
 
     /**
+     * Set docId
+     *
+     * @param integer $tipoDocId
+     * @return Usuario
+     */
+    public function setTipoDocId($tipoDocId)
+    {
+        $this->tipoDocId = $tipoDocId;
+    
+        return $this;
+    }
+
+    /**
+     * Get docId
+     *
+     * @return integer 
+     */
+    public function getTipoDocId()
+    {
+        return $this->tipoDocId;
+    }
+
+    /**
      * Add formatos
      *
      * @param \PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos
@@ -185,5 +221,209 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getGastos()
     {
         return $this->gastos;
+    }
+
+    /**
+     * Get conductor
+     *
+     * @return \PuertoUDES\UsuariosBundle\Entity\Conductor
+     */
+    public function getConductor()
+    {
+        return $this->conductor;
+    }
+
+    /**
+     * Get entidad
+     *
+     * @return \PuertoUDES\UsuariosBundle\Entity\Entidad
+     */
+    public function getEntidad()
+    {
+        return $this->entidad;
+    }
+    
+    
+    
+    /*CONDUCTOR*/
+    /**
+     * Set numLicencia
+     *
+     * @param string $numLicencia
+     * @return Conductor
+     */
+    public function setNumLicencia($numLicencia)
+    {
+        $this->conductor->setNumLicencia($numLicencia);
+    
+        return $this;
+    }
+
+    /**
+     * Get numLicencia
+     *
+     * @return string 
+     */
+    public function getNumLicencia()
+    {
+        return $this->conductor->getNumLicencia();
+    }
+
+    /**
+     * Set numLibretaTripulante
+     *
+     * @param string $numLibretaTripulante
+     * @return Conductor
+     */
+    public function setNumLibretaTripulante($numLibretaTripulante)
+    {
+        $this->conductor->setNumLibretaTripulante($numLibretaTripulante);
+    
+        return $this;
+    }
+
+    /**
+     * Get numLibretaTripulante
+     *
+     * @return string 
+     */
+    public function getNumLibretaTripulante()
+    {
+        return $this->conductor->getNumLibretaTripulante();
+    }
+
+    /**
+     * Add formatosConductor
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\FormatoConductor $formatosConductor
+     * @return Conductor
+     */
+    public function addFormatosConductor(\PuertoUDES\FormatosBundle\Entity\FormatoConductor $formatosConductor)
+    {
+        $this->conductor->addFormatosConductor($formatosConductor);
+    
+        return $this;
+    }
+
+    /**
+     * Remove formatosConductor
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\FormatoConductor $formatosConductor
+     */
+    public function removeFormatosConductor(\PuertoUDES\FormatosBundle\Entity\FormatoConductor $formatosConductor)
+    {
+        $this->conductor->removeFormatosConductor($formatosConductor);
+    }
+
+    /**
+     * Get formatosConductor
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getFormatosConductor()
+    {
+        return $this->conductor->getFormatosConductor();
+    }
+
+    /**
+     * Set claseLicencia
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Tipo $claseLicencia
+     * @return Conductor
+     */
+    public function setClaseLicencia(\PuertoUDES\CommonBundle\Entity\Tipo $claseLicencia)
+    {
+        $this->conductor->setClaseLicencia($claseLicencia);
+    
+        return $this;
+    }
+
+    /**
+     * Get claseLicencia
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Tipo 
+     */
+    public function getClaseLicencia()
+    {
+        return $this->conductor->getClaseLicencia();
+    }
+
+    /**
+     * Set pais
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Pais $pais
+     * @return Conductor
+     */
+    public function setPais(\PuertoUDES\CommonBundle\Entity\Pais $pais)
+    {
+        $this->conductor->setPais($pais);
+    
+        return $this;
+    }
+
+    /**
+     * Get pais
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Pais 
+     */
+    public function getPais()
+    {
+        return $this->conductor->getPais();
+    }
+    /*ENTIDAD*/
+    /**
+     * Set certificadoIdoneidad
+     *
+     * @param string $certificadoIdoneidad
+     * @return Entidad
+     */
+    public function setCertificadoIdoneidad($certificadoIdoneidad)
+    {
+        $this->entidad->setCertificadoIdoneidad($certificadoIdoneidad);
+    
+        return $this;
+    }
+
+    /**
+     * Get certificadoIdoneidad
+     *
+     * @return string 
+     */
+    public function getCertificadoIdoneidad()
+    {
+        return $this->entidad->getCertificadoIdoneidad();
+    }
+
+    /**
+     * Add permisosPresentaServicios
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\PermisoPresentaServicio $permisosPresentaServicios
+     * @return Entidad
+     */
+    public function addPermisosPresentaServicio(\PuertoUDES\FormatosBundle\Entity\PermisoPresentaServicio $permisosPresentaServicios)
+    {
+        $this->entidad->addPermisosPresentaServicio($permisosPresentaServicios);
+    
+        return $this;
+    }
+
+    /**
+     * Remove permisosPresentaServicios
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\PermisoPresentaServicio $permisosPresentaServicios
+     */
+    public function removePermisosPresentaServicio(\PuertoUDES\FormatosBundle\Entity\PermisoPresentaServicio $permisosPresentaServicios)
+    {
+        $this->entidad->removePermisosPresentaServicio($permisosPresentaServicios);
+    }
+
+    /**
+     * Get permisosPresentaServicios
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPermisosPresentaServicios()
+    {
+        return $this->entidad->getPermisosPresentaServicios();
     }
 }

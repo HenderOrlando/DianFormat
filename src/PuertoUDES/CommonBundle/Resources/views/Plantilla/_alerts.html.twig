@@ -1,0 +1,23 @@
+{# 
+    ejemplo:
+
+    [
+        {
+            tipo:       Tipo de Alert
+            mensaje:    Mensaje del Alert
+        }
+    ]
+    
+    String  mensajes    Colección de Mensajes.
+ #}
+
+{% if mensajes is defined and mensajes is not empty %}
+    <div class="mensajes">
+        {% for msg in mensajes %}
+            {% include 'PuertoUDESCommonBundle:Plantilla:_alert.html.twig' with {
+                tipo:   msg.tipo is defined and msg.tipo is not empty?msg.tipo:'info',
+                mensaje:   msg.mensaje is defined and msg.mensaje is not empty?msg.mensaje:'',
+            } %}
+        {% endfor %}
+    </div>
+{% endif %}

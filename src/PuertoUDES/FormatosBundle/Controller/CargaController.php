@@ -13,7 +13,7 @@ use PuertoUDES\FormatosBundle\Form\CargaType;
 /**
  * Carga controller.
  *
- * @Route("/carga_")
+ * @Route("/Carga/")
  */
 class CargaController extends Controller
 {

@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping AS ORM;
 /** 
  * @ORM\Entity
  * @ORM\Table(name="lugar")
+ * @ORM\Entity(repositoryClass="PuertoUDES\CommonBundle\Repository\LugarRepository")
  */
 class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
 {

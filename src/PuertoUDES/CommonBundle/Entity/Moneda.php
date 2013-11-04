@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping AS ORM;
 /** 
  * @ORM\Entity
  * @ORM\Table(name="moneda")
+ * @ORM\Entity(repositoryClass="PuertoUDES\CommonBundle\Repository\MonedaRepository")
  */
 class Moneda extends \PuertoUDES\CommonBundle\Entity\Objeto
 {
@@ -12,6 +13,12 @@ class Moneda extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\Column(type="string", length=5, nullable=false, name="abreviacion")
      */
     private $abreviacion;
+    
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Gasto", mappedBy="formato")
+     */
+    private $gastos;
+    
     /**
      * Constructor
      */
@@ -41,5 +48,39 @@ class Moneda extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getAbreviacion()
     {
         return $this->abreviacion;
+    }
+    
+    
+    /**
+     * Add gastos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Gasto $gastos
+     * @return Formato
+     */
+    public function addGasto(\PuertoUDES\FormatosBundle\Entity\Gasto $gastos)
+    {
+        $this->gastos[] = $gastos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove gastos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Gasto $gastos
+     */
+    public function removeGasto(\PuertoUDES\FormatosBundle\Entity\Gasto $gastos)
+    {
+        $this->gastos->removeElement($gastos);
+    }
+
+    /**
+     * Get gastos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastos()
+    {
+        return $this->gastos;
     }
 }

@@ -13,7 +13,7 @@ use PuertoUDES\UsuariosBundle\Form\UsuarioType;
 /**
  * Usuario controller.
  *
- * @Route("/usuario_")
+ * @Route("/Usuario")
  */
 class UsuarioController extends Controller
 {
@@ -38,11 +38,11 @@ class UsuarioController extends Controller
     /**
      * Creates a new Usuario entity.
      *
-     * @Route("/", name="usuario__create")
+     * @Route("/{id}/", name="usuario__create")
      * @Method("POST")
      * @Template("PuertoUDESUsuariosBundle:Usuario:new.html.twig")
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, $id)
     {
         $entity = new Usuario();
         $form = $this->createCreateForm($entity);
@@ -50,8 +50,15 @@ class UsuarioController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
+            $user = $em->getRepository('PuertoUDESFosUsuarioBundle:FosUser')->find($id);
+            if($user){
+                $em->persist($entity);
+                $em->flush();
+                $user->setUsuario($entity);
+                $em->persist($user);
+                $em->flush();
+            }
+            
 
             return $this->redirect($this->generateUrl('usuario__show', array('id' => $entity->getId())));
         }
@@ -69,10 +76,10 @@ class UsuarioController extends Controller
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createCreateForm(Usuario $entity)
+    private function createCreateForm(Usuario $entity, $id = -1)
     {
         $form = $this->createForm(new UsuarioType(), $entity, array(
-            'action' => $this->generateUrl('usuario__create'),
+            'action' => $this->generateUrl('usuario__create',array('id' => $id)),
             'method' => 'POST',
         ));
 
@@ -84,17 +91,24 @@ class UsuarioController extends Controller
     /**
      * Displays a form to create a new Usuario entity.
      *
-     * @Route("/new", name="usuario__new")
+     * @Route("/new/{id}/", name="usuario__new", defaults={"id":"-1"})
      * @Method("GET")
      * @Template()
      */
-    public function newAction()
+    public function newAction($id)
     {
         $entity = new Usuario();
-        $form   = $this->createCreateForm($entity);
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('PuertoUDESFosUsuarioBundle:FosUser')->find($id);
+        if($user){
+            $form   = $this->createCreateForm($entity, $id);
+        }else{
+            return $this->redirect($this->generateUrl('fos_user_registration_register'));
+        }
 
         return array(
             'entity' => $entity,
+            'id' => $id,
             'form'   => $form->createView(),
         );
     }
@@ -138,7 +152,10 @@ class UsuarioController extends Controller
         $entity = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Usuario entity.');
+            return $this->redirect($this->generateUrl('usuario__new', array(
+                'id'    =>  $this->getRequest()->get('id',-1)
+            )));
+            //throw $this->createNotFoundException('Unable to find Usuario entity.');
         }
 
         $editForm = $this->createEditForm($entity);
@@ -243,5 +260,14 @@ class UsuarioController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+    
+    /**
+     * get Utils
+     * 
+     * @return \FormatEasy\CommonBundle\Controller\IndexController Utilidades de FormatEasy
+     */
+    public function getUtils() {
+        return $this->get('formateasy.util');
     }
 }

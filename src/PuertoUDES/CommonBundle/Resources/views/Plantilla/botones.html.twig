@@ -1,0 +1,110 @@
+{#
+Ejemplo:
+    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+        'buttonset': 'horizontal',
+        'botones'  : [
+            {
+                'url'   : '',
+                'label' : 'Index 1'
+            },
+            {
+                'url'   : '',
+                'label' : 'Index 2'
+            },
+            {
+                'url'   : '',
+                'label' : 'Index 3'
+            },
+            {
+                'url'   : 'usuario_',
+                'label' : 'Index Usuario',
+                'type'  : 'Info',
+                'list'  : [
+                    {
+                        'url'   : 'usuario_',
+                        'label' : 'Index 1',
+                    },
+                    {
+                        'url'   : 'usuario_',
+                        'label' : 'Index 2',
+                    },
+                    {
+                        'url'   : 'usuario_',
+                        'label' : 'Index 3',
+                    }
+                ],
+                'sizing': '',
+                'view'  : ''
+            },
+        ],
+        'sizing': 'pequeño',
+    } %}
+
+
+
+    Type        Nombre Va   Desripción
+
+    String      buttonset   Si los botones se organizan Vertical, Horizontal, Independiente, Toolbar,
+    Collection  botones     Colección de botones a renderizar. Cada botón debe tener:
+                            {
+                                String  url         Url del boton.
+                                String  data_url    Datos auxiliares necesarios para la url
+                                String  label       Label del boton.
+                                String  class       Class del boton.
+                                String  list        Lista de botones.
+                                String  type        Tipo del boton. Primary, Success, Info, Warning, Danger, Default
+                                String  sizing      Tamaño del botón. Grande ; Normal ; Mediano ; Pequeño
+                                String  view        Cómo se verá el botón. Block, Disabled
+                            }
+    String      sizing      Tamaño de los botones. Grande ; Normal ; Mediano ; Pequeño
+    Boolean     justify     Justifica los botones. True - Si ; False - No
+    String      class       Clases de estilos de la colección de botones
+#}
+{% set group_button = 'btn-group' %}
+{% set size_button = '' %}
+{% set justify_button = justify is defined?group_button ~ '-justified':'' %}
+{% set class_button = class is defined? class:'' %}
+
+{#TAMAÑO DE BOTONES#}
+    {% if sizing is defined %}
+        {% if 'grande' in sizing|lower %}
+            {% set size_button = group_button ~ '-lg' %}
+        {% elseif 'mediano' in sizing|lower %}
+            {% set size_button = group_button ~ '-sm' %}
+        {% elseif 'mediano' in sizing|lower %}
+            {% set size_button = group_button ~ '-xs' %}
+        {% endif %}
+    {% endif %}
+{#TAMAÑO DE BOTONES#}
+
+{#GRUPOS DE BOTONES#}
+    {% if buttonset is defined and 'independiente' not in buttonset %}
+        {% if 'vertical' in buttonset|lower %}
+            {% set group_button = group_button ~ '-vertical' %}
+        {% endif %}
+        {% if 'toolbar' in buttonset|lower %}
+            {% set group_button = 'btn-toolbar' %}
+        {% endif %}
+    {% elseif buttonset is not defined or (buttonset is defined and 'independiente' in buttonset|lower) %}
+        {% set group_button = '' %}
+    {% endif %}
+{#GRUPOS DE BOTONES#}
+
+<div class="{{ group_button ~ ' ' ~ justify_button ~ ' ' ~ size_button ~ ' ' ~ class_button }}">
+{% if botones is defined and botones is not empty %}
+    {% for boton in botones %}
+        {% include 'PuertoUDESCommonBundle:Plantilla:boton.html.twig' with {
+            'url'           : boton.url is defined?boton.url:'',
+            'label'         : boton.label is defined?boton.label:'',
+            'class'         : boton.class is defined?boton.class:'',
+            'type'          : boton.type is defined?boton.type:'',
+            'list'          : boton.list is defined?boton.list:[],
+            'sizing'        : boton.sizing is defined?boton.sizing:'',
+            'view'          : boton.view is defined?boton.view:'',
+            'data_url'      : boton.data_url is defined?boton.data_url:{},
+            'procesar_url'  : procesar_url is defined?procesar_url:'',
+            'objeto_btn'    : objeto is defined?objeto:null,
+        } %}
+    {% endfor %}
+{% endif %}
+</div>

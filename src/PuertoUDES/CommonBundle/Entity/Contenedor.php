@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping AS ORM;
 /** 
  * @ORM\Entity
  * @ORM\Table(name="contenedor")
+ * @ORM\Entity(repositoryClass="PuertoUDES\CommonBundle\Repository\ContenedorRepository")
  */
 class Contenedor
 {

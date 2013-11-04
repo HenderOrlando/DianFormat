@@ -12,4 +12,32 @@ class TipoRepository extends EntityRepository
             )
             ->getResult();
     }
+    public function getAll($query = false, $querybuilder = false)
+    {
+        $q = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('a')
+            ->from('PuertoUDESCommonBundle:Rol', 'a');
+        if(is_bool($querybuilder) && $querybuilder)
+            $rta = $q;
+        elseif(is_bool($query) && $query)
+            $rta = $q->getQuery();
+        else
+            $rta = $q->getQuery()->execute(null, \Doctrine\ORM\Query::HYDRATE_SIMPLEOBJECT);
+        return $rta;
+    }
+    public function getClasesLicencias($query = false, $querybuilder = false)
+    {
+        $q = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('a')
+            ->from('PuertoUDESCommonBundle:Rol', 'a');
+        if(is_bool($querybuilder) && $querybuilder)
+            $rta = $q;
+        elseif(is_bool($query) && $query)
+            $rta = $q->getQuery();
+        else
+            $rta = $q->getQuery()->execute(null, \Doctrine\ORM\Query::HYDRATE_SIMPLEOBJECT);
+        return $rta;
+    }
 }

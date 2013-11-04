@@ -1,0 +1,9 @@
+<h1>
+{% if title is not defined%}
+    Agregar
+{% else %}
+    {{ title }}
+{% endif %}
+</h1>
+
+{{ form(form) }}
