@@ -13,7 +13,7 @@ use PuertoUDES\CommonBundle\Form\TipoType;
 /**
  * Tipo controller.
  *
- * @Route("/Tipo/")
+ * @Route("/Tipo")
  */
 class TipoController extends Controller
 {
@@ -61,7 +61,7 @@ class TipoController extends Controller
 //        $paginacion['form_filter'] = $form;
         $botones = array(
             array(
-                'url'   => $this->generateUrl('entidad__new'),
+                'url'   => $this->generateUrl('tipo__new'),
                 'type'  => 'primary',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
             ),
@@ -80,18 +80,69 @@ class TipoController extends Controller
     /**
      * Creates a new Tipo entity.
      *
-     * @Route("/", name="tipo__licenciasConduccion")
+     * @Route("/licencias-de-conductores/", name="tipo__licenciasConductor")
      * @Method({"GET", "POST"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
-    public function licenciasConduccionAction(Request $request){
+    public function licenciasConductorAction(Request $request){
         return $this->indexAction($request, array(
             'title'     =>  'Clases de Licencias de Conducción',
             'entity'    =>  'Tipo',
             'bundle'    =>  'Common',
-            'route'     =>  'tipo__licenciasConduccion',
+            'route'     =>  'tipo__licenciasConductor',
             'limit'     =>  5,
-            'qb'        =>  $this->getRepositorio()->getClasesLicencias(null, false, true),
+            'qb'        =>  $this->getRepositorio()->getClasesLicenciasConductor(null, false, true),
+        ));
+    }
+    /**
+     * Creates a new Tipo entity.
+     *
+     * @Route("/formatos/", name="tipo__tiposFormatos")
+     * @Method({"GET", "POST"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function tiposFormatosAction(Request $request){
+        return $this->indexAction($request, array(
+            'title'     =>  'Tipos de Formatos',
+            'entity'    =>  'Tipo',
+            'bundle'    =>  'Common',
+            'route'     =>  'tipo__tiposFormatos',
+            'limit'     =>  5,
+            'qb'        =>  $this->getRepositorio()->getTiposFormato(null, false, true),
+        ));
+    }
+    /**
+     * Creates a new Tipo entity.
+     *
+     * @Route("/naturalezas-de-carga/", name="tipo__naturalezasCarga")
+     * @Method({"GET", "POST"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function naturalezasCargaAction(Request $request){
+        return $this->indexAction($request, array(
+            'title'     =>  'Naturalezas de la Carga',
+            'entity'    =>  'Tipo',
+            'bundle'    =>  'Common',
+            'route'     =>  'tipo__naturalezasCarga',
+            'limit'     =>  5,
+            'qb'        =>  $this->getRepositorio()->getNaturalezaCarga(null, false, true),
+        ));
+    }
+    /**
+     * Creates a new Tipo entity.
+     *
+     * @Route("/niveles-aduanas/", name="tipo__nivelesAduana")
+     * @Method({"GET", "POST"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function nivelesAduanaAction(Request $request){
+        return $this->indexAction($request, array(
+            'title'     =>  'Niveles de Aduanas',
+            'entity'    =>  'Tipo',
+            'bundle'    =>  'Common',
+            'route'     =>  'tipo__nivelesAduana',
+            'limit'     =>  5,
+            'qb'        =>  $this->getRepositorio()->getNivelesAduana(null, false, true),
         ));
     }
     /**
@@ -317,7 +368,7 @@ class TipoController extends Controller
     /**
      * get Repositorio
      * 
-     * @return EntidadRepository  EntidadRepository de PuertoUDES
+     * @return TipoRepository  TipoRepository de PuertoUDES
      */
     public function getRepositorio() {
         return $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Tipo');
@@ -340,13 +391,13 @@ class TipoController extends Controller
                         'class' =>  'text-center',
                         'acciones'=>    array(
                             array(
-                                'url'   => 'rol__edit',
+                                'url'   => 'tipo__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
-                                'url'   => 'rol__delete',
+                                'url'   => 'tipo__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
                                 'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',

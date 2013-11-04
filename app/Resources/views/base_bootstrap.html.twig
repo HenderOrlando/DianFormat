@@ -125,9 +125,10 @@
                                                 <a href="{{ path('moneda_',{'id':app.user.id}) }}">Monedas</a>
                                                 <a href="{{ path('aduana_',{'id':app.user.id}) }}">Aduanas</a>
                                                 <a href="{{ path('permisoPresentaServicio_',{'id':app.user.id}) }}">Permisos Presentación Servicio</a>
-                                                <a href="{{ path('permisoPresentaServicio_',{'id':app.user.id}) }}">Estados para Formatos</a>
-                                                <a href="{{ path('tipo_',{'id':app.user.id}) }}">Tipos para Formatos</a>
-                                                <a href="{{ path('tipo_licenciasConduccion',{'id':app.user.id}) }}">Clases de Licencias de Conducción</a>
+                                                <a href="{{ path('tipo__tiposFormatos',{'id':app.user.id}) }}">Tipos de Formatos</a>
+                                                <a href="{{ path('tipo__licenciasConductor',{'id':app.user.id}) }}">Clases de Licencias de Conducción</a>
+                                                <a href="{{ path('tipo__naturalezasCarga',{'id':app.user.id}) }}">Naturalezas de la Carga</a>
+                                                <a href="{{ path('tipo__nivelesAduana',{'id':app.user.id}) }}">Niveles de Aduanas</a>
                                             </li>
                                         </ul>
                                     </li>

@@ -12,7 +12,7 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
     /** 
      * @ORM\Column(type="string", nullable=false, name="_aplicable_a")
      */
-    private $_aplicableA;
+    private $aplicableA;
 
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", mappedBy="tipo")
@@ -46,26 +46,26 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
     
     /**
-     * Set _aplicableA
+     * Set aplicableA
      *
      * @param string $aplicableA
      * @return Tipo
      */
     public function setAplicableA($aplicableA)
     {
-        $this->_aplicableA = $aplicableA;
+        $this->aplicableA = $aplicableA;
     
         return $this;
     }
 
     /**
-     * Get _aplicableA
+     * Get aplicableA
      *
      * @return string 
      */
     public function getAplicableA()
     {
-        return $this->_aplicableA;
+        return $this->aplicableA;
     }
 
     /**

@@ -13,7 +13,7 @@ use PuertoUDES\CommonBundle\Form\AduanaType;
 /**
  * Aduana controller.
  *
- * @Route("/Aduana/")
+ * @Route("/Aduana")
  */
 class AduanaController extends Controller
 {
@@ -61,7 +61,7 @@ class AduanaController extends Controller
 //        $paginacion['form_filter'] = $form;
         $botones = array(
             array(
-                'url'   => $this->generateUrl('entidad__new'),
+                'url'   => $this->generateUrl('aduana__new'),
                 'type'  => 'primary',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
             ),
@@ -326,13 +326,13 @@ class AduanaController extends Controller
                         'class' =>  'text-center',
                         'acciones'=>    array(
                             array(
-                                'url'   => 'rol__edit',
+                                'url'   => 'moneda__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
-                                'url'   => 'rol__delete',
+                                'url'   => 'moneda__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
                                 'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',

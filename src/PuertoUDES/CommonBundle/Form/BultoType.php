@@ -18,7 +18,6 @@ class BultoType extends AbstractType
             ->add('pesoBruto')
             ->add('pesoNeto')
             ->add('volumen')
-            ->add('fechaCreado')
             ->add('marca')
             ->add('clase')
         ;

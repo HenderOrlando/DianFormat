@@ -62,7 +62,7 @@ class RolController extends Controller
 //        $paginacion['form_filter'] = $form;
         $botones = array(
             array(
-                'url'   => $this->generateUrl('entidad__new'),
+                'url'   => $this->generateUrl('rol__new'),
                 'type'  => 'primary',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
             ),

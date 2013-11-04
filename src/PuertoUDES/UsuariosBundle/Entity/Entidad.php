@@ -134,4 +134,10 @@ class Entidad
     {
         return $this->permisosPresentaServicios;
     }
+    /**
+     * {inheritance}
+     */
+    public function __toString() {
+        return 'Certificado "'.$this->getCertificadoIdoneidad().'" de "'.$this->getUsuario()->getNombre().'"';
+    }
 }

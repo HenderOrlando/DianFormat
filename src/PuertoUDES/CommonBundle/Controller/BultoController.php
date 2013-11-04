@@ -61,7 +61,7 @@ class BultoController extends Controller
 //        $paginacion['form_filter'] = $form;
         $botones = array(
             array(
-                'url'   => $this->generateUrl('entidad__new'),
+                'url'   => $this->generateUrl('bulto__new'),
                 'type'  => 'primary',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
             ),
@@ -334,13 +334,13 @@ class BultoController extends Controller
                         'class' =>  'text-center',
                         'acciones'=>    array(
                             array(
-                                'url'   => 'rol__edit',
+                                'url'   => 'bulto__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
-                                'url'   => 'rol__delete',
+                                'url'   => 'bulto__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
                                 'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',

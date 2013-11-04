@@ -10,6 +10,10 @@ use Doctrine\ORM\Mapping AS ORM;
 class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
 {
     /** 
+     * @ORM\Column(type="boolean", nullable=false, name="completo")
+     */
+    private $completo;
+    /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\CommonBundle\Entity\Documento", mappedBy="formato")
      */
     private $documentos;
@@ -55,6 +59,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function __construct()
     {
         parent::__construct();
+        $this->completo = false;
         $this->documentos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->conductores = new \Doctrine\Common\Collections\ArrayCollection();
         $this->aduanas = new \Doctrine\Common\Collections\ArrayCollection();
@@ -64,6 +69,27 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->gastos = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
+    /**
+     * Get completo
+     *
+     * @return boolean
+     */
+    public function getCompleto()
+    {
+        return $this->completo;
+    }
+    
+    /**
+     * Set completo
+     *
+     * @param boolean $completo
+     * @return Formato
+     */
+    public function setCompleto($completo)
+    {
+        $this->completo = $completo;
+        return $this;
+    }
     /**
      * Add documentos
      *

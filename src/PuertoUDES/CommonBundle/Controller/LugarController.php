@@ -61,7 +61,7 @@ class LugarController extends Controller
 //        $paginacion['form_filter'] = $form;
         $botones = array(
             array(
-                'url'   => $this->generateUrl('entidad__new'),
+                'url'   => $this->generateUrl('lugar__new'),
                 'type'  => 'primary',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
             ),
@@ -315,11 +315,11 @@ class LugarController extends Controller
                         'class' =>  'text-center',
                     ),
                     array(
-                        'dato'    =>   'Pais',
+                        'dato'    =>   'Descripcion',
                         'class' =>  'text-center',
                     ),
                     array(
-                        'dato'    =>   'Descripcion',
+                        'dato'    =>   'Pais',
                         'class' =>  'text-center',
                     ),
                     array(
@@ -327,13 +327,13 @@ class LugarController extends Controller
                         'class' =>  'text-center',
                         'acciones'=>    array(
                             array(
-                                'url'   => 'rol__edit',
+                                'url'   => 'lugar__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
-                                'url'   => 'rol__delete',
+                                'url'   => 'lugar__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
                                 'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',

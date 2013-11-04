@@ -13,7 +13,7 @@ use PuertoUDES\FormatosBundle\Form\PermisoPresentaServicioType;
 /**
  * PermisoPresentaServicio controller.
  *
- * @Route("/PermisoPresentaServicio/")
+ * @Route("/PermisoPresentaServicio")
  */
 class PermisoPresentaServicioController extends Controller
 {
@@ -61,7 +61,7 @@ class PermisoPresentaServicioController extends Controller
 //        $paginacion['form_filter'] = $form;
         $botones = array(
             array(
-                'url'   => $this->generateUrl('entidad__new'),
+                'url'   => $this->generateUrl('permisoPresentaServicio__new'),
                 'type'  => 'primary',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
             ),
