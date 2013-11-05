@@ -104,3 +104,6 @@ form.in,
 .input-group.input-group-lg button{
     width: 30%;
 }
+table.table tbody tr td{
+    vertical-align: middle;
+}

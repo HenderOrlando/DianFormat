@@ -19,7 +19,7 @@
         }
 #}
 
-{# TFOOT #}
+{# Filtros por columna #}
 {% if filtros is defined and filtros is not empty %}
 {{ form_start(filtros) }}
         <tr {{ (head|first).class is defined and (head|first).class is not empty?'class=' ~ (head|first).class ~ '':'' }}>
@@ -28,13 +28,24 @@
                     {% if 'accion' in col.dato|lower %}
                         {{ form_widget(filtros['Buscar']) }}
                     {% else %}
-                        {{ form_label(filtros[col.dato|replace({' ': '', '-':''})]) }}
-                        {{ form_widget(filtros[col.dato|replace({' ': '', '-':''})]) }}
+                        {% set name = col.dato|replace({' ': '', '-':''}) %}
+                        {% if filtros[name] is not defined and col.label is defined and col.label is not empty %}
+                            {% set name = col.label|replace({' ': '', '-':''}) %}
+                        {% endif %}
+                        {{ form_label(filtros[name]) }}
+                        {% if datos_form is defined and datos_form[name] is defined %}
+                            {{ form_widget(filtros[name],{value: datos_form[name]}) }}
+                        {% else %}
+                            {{ form_widget(filtros[name]) }}
+                        {% endif %}
                     {% endif %}
                 </td>
             {% endfor %}
         </tr>
 {{ form_end(filtros) }}
+{# Filtros por columna #}
+        
+{# TFOOT #}
 {% elseif nav is defined and nav is not empty and head is defined and head is not empty and foot is defined %}
     <tr>
         <th class="navegacion text-center" colspan="{{ (head|first).col|length }}">
@@ -42,6 +53,7 @@
         </th>
     </tr>
 {# TFOOT #}
+    
 {# THEAD #}
 {% elseif nav is defined and nav is not empty and head is defined and head is not empty %}
     {% for fila in head %}
@@ -61,9 +73,9 @@
             {% if 'accion' in col.dato|lower %}
                 {{ col.dato }}
             {% else %}
-                {{ knp_pagination_sortable(nav, col.dato, 'a.' ~ (col.dato|lower|replace({' ':'_'}))) }}
+                {{ knp_pagination_sortable(nav, col.label is defined and col.label is not empty?col.label:col.dato, 'a.' ~ (col.dato|lower|replace({' ':'_'}))) }}
                 {% if nav.isSorted('a.' ~ attr) %}
-                    {% if 'asc' in app.request.query.get('direction') %}
+                    {% if 'asc' in app.request.query.get('direccion') %}
                         <span class="glyphicon glyphicon-arrow-down"></span>
                     {% else %}
                         <span class="glyphicon glyphicon-arrow-up"></span>
@@ -75,13 +87,14 @@
         </tr>
     {% endfor %}
 {# THEAD #}
+        
 {# OBJETOS #}
 {% elseif objetos is defined and objetos is not empty and head is defined and head is not empty %}
     {% for obj in objetos %}
         {% for fila in head %}
             <tr {{ fila.class is defined and fila.class is not empty?'class=' ~ fila.class ~ '':'' }}>
                 {% for col in fila.col %}
-                    <td {{ col.class is defined and col.class is not empty?'class=' ~ col.class:'' }} {{ col.rows is defined and col.rows is not empty?'rowspan=' ~ col.rows:''}} {{ col.cols is defined and col.cols is not empty?'colspan=' ~ col.cols:''}}>
+                    <td {{ col.acciones is defined?'class="text-center"':''}}>
                         {% if col.acciones is defined %}
                             {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                                 'buttonset'     :   'vertical',
@@ -91,15 +104,10 @@
                                 'objeto'        :   obj,
                             } %}
                         {% else %}
-                            {% set attr_ = col.dato|lower|split(' ') %}
-                            {% set attr = '' %}
-                            {% for attr__ in attr_ %}
-                                {% if not loop.first %}
-                                    {% set attr = attr ~ attr__|title %}
-                                {% else %}
-                                    {% set attr = attr ~ attr__ %}
-                                {% endif %}
-                            {% endfor %}
+                            {% set attr_ = (col.join is defined and col.join is not empty?col.join:col.dato)|title %}
+                            
+                            {% set attr = (attr_|first|lower) ~ (attr_[1:]) %}
+                            
                             {% if 'fecha' in col.dato|lower %}
                                 {{ attribute(obj,attr)|date("Y-m-d H:i:s") }}
                             {% else %}
@@ -112,13 +120,14 @@
         {% endfor %}
     {% endfor %}
 {# OBJETOS #}
+            
 {# FILAS #}
 {% elseif filas is defined %}
     {% for fila in filas %}
         <tr {{ fila.class is defined and fila.class is not empty?'class=' ~ fila.class ~ '':'' }}>
         {% for col in fila.col %}    
             <th {{ col.class is defined and col.class is not empty?'class=' ~ col.class:'' }} {{ col.rows is defined and col.rows is not empty?'rowspan=' ~ col.rows:''}} {{ col.cols is defined and col.cols is not empty?'colspan=' ~ col.cols:''}}>
-                {{ col.dato }}
+                {{ col.label is defined and col.label is not empty?col.label:col.dato }}
             </th>
         {% endfor %}
         </tr>

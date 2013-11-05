@@ -22,7 +22,7 @@ class PermisoPresentaServicioController extends Controller
      * Lists all PermisoPresentaServicio entities.
      *
      * @Route("/", name="permisoPresentaServicio_")
-     * @Method({"GET", "POST"})
+     * @Method({"GET"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexAction(Request $request, $config = null)
@@ -51,7 +51,7 @@ class PermisoPresentaServicioController extends Controller
         $data = array();
         if ($form->isValid()) {
            $data = $form->getData();
-            $str_query = $this->getQueryFilter($data, $head['fil'][0]['col']);
+            $str_query = $utils->getQueryFilter($data, $head['fil'][0]['col'], $qb);
             if(!empty($str_query))
                 $qb->andWhere($str_query);
         }
@@ -71,9 +71,10 @@ class PermisoPresentaServicioController extends Controller
             'title'         =>  $title,
             'head'          =>  $head,
             'botones'       =>  $botones,
+            'datos_form'       =>  $data,
         );
         if($request->isXmlHttpRequest() || $request->get('ajax',false)){
-            return $this->render('FormatEasyCommonBundle:Index:_menu.html.twig', $datos);
+            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
         }
         return $datos;
     }
@@ -300,14 +301,14 @@ class PermisoPresentaServicioController extends Controller
     /**
      * get Repositorio
      * 
-     * @return EntidadRepository  EntidadRepository de PuertoUDES
+     * @return FormatoRepository  FormatoRepository de PuertoUDES
      */
     public function getRepositorio() {
         return $this->getDoctrine()->getManager()->getRepository('PuertoUDESFormatosBundle:PermisoPresentaServicio');
     }
     
     public function getHeadFiltro($form, $route){
-        $head['fil'] = array(
+        $filas = array(
             array(
                 'col'=>array(
                     array(
@@ -339,73 +340,6 @@ class PermisoPresentaServicioController extends Controller
                 )
             ),
         );
-        foreach($head['fil'][0]['col'] as $col){
-            if(!isset($col['acciones'])){
-                $form->add(str_replace(' ', '', $col['dato']), 'text', 
-                    array(
-                        'required' => false, 
-                        'label' =>false,
-                        'attr' => array('class' => 'form-control'),
-                    )
-                );
-            }
-        }
-        $form->add('Buscar', 'submit',
-            array(
-                    'label'=> ' Buscar',
-                    'attr' => array('class' => 'btn btn-success btn-lg glyphicon glyphicon-search')
-                )
-            )
-            ->setAction($this->generateUrl($route));
-        $form = $form->getForm();
-        $head['filtros'] = $form;
-        return $head;
-    }
-
-    public function getQueryFilter($data, array $columnas = array()) {
-        $l = count($columnas)-1;
-        $i = 0;
-        $str_query = '';
-        foreach($columnas as $col){
-            $col_name = str_replace(array(' ','-'), '', $col['dato']);
-            if (array_key_exists($col_name, $data)){
-                $data_bd = strtolower(substr($col['dato'], 0, 1)).substr($col['dato'], 1);
-                $data_bd = str_replace(' ','',$data_bd);
-                $data_bd = str_replace('-','',$data_bd);
-                $data[$col_name] = trim($data[$col_name]);
-                if (strlen($data[$col_name])>0){
-                    $letra = 'a.';
-                    if($i > 0 && $i < $l)
-                        $str_query .= ' AND ';
-                    $col_datos = explode(',', $data[$col_name]);
-                    $count = count($col_datos)-1;
-                    if($count >= 1){
-//                        $str_query .= '(';
-                        foreach($col_datos as $j => $cd){
-                            $str_operacion = "LIKE";
-                            if($j > 0 && $j <= $count)
-                                $str_query .= ' AND ';
-                            $query = $letra.$data_bd." ?operacion? '%".$cd."%'";
-//                            if(is_numeric($data[$col_name])){
-//                                $str_operacion = '=';
-//                                $str_query = str_replace(array("'","%"),'',$str_query);
-//                            }
-                            $str_query .= str_replace('?operacion?', $str_operacion, $query);
-                        }
-//                        $str_query .= ')';
-                    }else{
-                        $str_operacion = "LIKE";
-                        $query = $letra.$data_bd." ?operacion? '%".$data[$col_name]."%'";
-//                        if(is_numeric($data[$col_name])){
-//                            $str_operacion = '=';
-//                            $str_query = str_replace(array("'","%"),'',$str_query);
-//                        }
-                        $str_query .= str_replace('?operacion?', $str_operacion, $query);
-                    }
-                    $i++;
-                }
-            }
-        }
-        return $str_query;
+        return $this->getUtils()->getHeadFiltro($filas, $form, $route);
     }
 }

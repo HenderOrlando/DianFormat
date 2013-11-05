@@ -13,6 +13,11 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\Column(type="string", nullable=false, name="_aplicable_a")
      */
     private $aplicableA;
+    
+    /** 
+     * @ORM\Column(type="string", nullable=true, name="abreviacion")
+     */
+    private $abreviacion;
 
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", mappedBy="tipo")
@@ -43,6 +48,57 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->fomatoAduanas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->cargas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->conductores = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->abreviacion = '';
+    }
+    
+    /**
+     * Set abreviacion
+     *
+     * @param string $abreviacion
+     * @return Tipo
+     */
+    public function setAbreviacion($abreviacion)
+    {
+        $this->abreviacion = $abreviacion;
+    
+        return $this;
+    }
+    
+    /**
+     * Get Abreviacion
+     *
+     * @return string 
+     */
+    public function getAbreviacion()
+    {
+        return $this->abreviacion;
+    }
+    
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     * @return Tipo
+     */
+    public function setNombre($nombre)
+    {
+        parent::setNombre($nombre);
+        if(empty($this->abreviacion)){
+            $canonical = $this->getCanonical();
+            $a = explode('-', $canonical);
+            $c = count($a);
+            $str = '';
+            if($c > 1)
+                foreach($a as $w){
+                    if(strlen($w) > 3)
+                        $str .= $canonical[0];
+                }
+            else
+                $str = substr ($canonical, 0,4);
+            $this->setAbreviacion(strtolower($str));
+        }
+        
+        return $this;
     }
     
     /**

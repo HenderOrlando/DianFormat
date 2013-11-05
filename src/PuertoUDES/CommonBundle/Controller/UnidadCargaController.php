@@ -13,7 +13,7 @@ use PuertoUDES\CommonBundle\Form\UnidadCargaType;
 /**
  * UnidadCarga controller.
  *
- * @Route("/UnidadCarga/")
+ * @Route("/UnidadCarga")
  */
 class UnidadCargaController extends Controller
 {
@@ -22,18 +22,61 @@ class UnidadCargaController extends Controller
      * Lists all UnidadCarga entities.
      *
      * @Route("/", name="unidadCarga_")
-     * @Method("GET")
-     * @Template()
+     * @Method({"GET"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
-    public function indexAction()
+    public function indexAction(Request $request, $config = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('PuertoUDESCommonBundle:UnidadCarga')->findAll();
-
-        return array(
-            'entities' => $entities,
+        $title = 'Unidades de Carga';
+        $entity = 'UnidadCarga';
+        $bundle = 'Common';
+        $route = 'unidadCarga_';
+        $limit = 5;
+        $utils = $this->getUtils();
+        if(is_null($config)){
+            $qb = $this->getRepositorio()->getAll(false, true);
+        }else{
+            $title = $config['title'];
+            $entity = $config['entity'];
+            $bundle = $config['bundle'];
+            $route = $config['route'];
+            $limit = $config['limit'];
+            $qb = $config['qb'];
+        }
+        
+        $head = $this->getHeadFiltro($utils->getFormFilter(array(), $route, true), $route);
+        $form = $head['filtros'];
+        $head['filtros'] = $form->createView();
+        $form->handleRequest($request);
+        $data = array();
+        if ($form->isValid()) {
+           $data = $form->getData();
+            $str_query = $utils->getQueryFilter($data, $head['fil'][0]['col'], $qb);
+            if(!empty($str_query))
+                $qb->andWhere($str_query);
+        }
+        
+//        $qb = $qb->getQuery();
+        $paginacion = $utils->getPaginacion($entity, $bundle, $limit, $route, $qb);
+//        $paginacion['form_filter'] = $form;
+        $botones = array(
+            array(
+                'url'   => $this->generateUrl('unidadCarga__new'),
+                'type'  => 'primary',
+                'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
+            ),
         );
+        $datos = array(
+            'paginas'       =>  $paginacion['pag'],
+            'title'         =>  $title,
+            'head'          =>  $head,
+            'botones'       =>  $botones,
+            'datos_form'       =>  $data,
+        );
+        if($request->isXmlHttpRequest() || $request->get('ajax',false)){
+            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+        }
+        return $datos;
     }
     /**
      * Creates a new UnidadCarga entity.
@@ -243,5 +286,65 @@ class UnidadCargaController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+    
+    
+    /**
+     * get Utils
+     * 
+     * @return IndexController Utilidades de PuertoUDES
+     */
+    public function getUtils() {
+        return $this->get('puertoudes.util');
+    }
+    
+    /**
+     * get Repositorio
+     * 
+     * @return UnidadCargaRepository  UnidadCargaRepository de PuertoUDES
+     */
+    public function getRepositorio() {
+        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:UnidadCarga');
+    }
+    
+    public function getHeadFiltro($form, $route){
+        $filas = array(
+            array(
+                'col'=>array(
+                    array(
+                        'dato'    =>   'Placa',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Marca',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Anio Fabrica',
+                        'label'    =>   'Año de Fabrica',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Acciones',
+                        'class' =>  'text-center',
+                        'acciones'=>    array(
+                            array(
+                                'url'   => 'unidadCarga__edit',
+                                'data_url'=> array('id'),
+                                'type'  => 'default',
+                                'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
+                            ),
+                            array(
+                                'url'   => 'unidadCarga__delete',
+                                'data_url'=> array('id'),
+                                'type'  => 'danger',
+                                'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
+                            ),
+                        )
+                    ),
+                )
+            ),
+        );
+        return $this->getUtils()->getHeadFiltro($filas, $form, $route);
     }
 }

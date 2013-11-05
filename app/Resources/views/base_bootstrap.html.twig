@@ -79,9 +79,9 @@
                                         </a>
                                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                             <li>
-                                                <a href="{{ path('usuario__edit',{'id':app.user.id}) }}">Editar Perfil</a>
-                                                <a href="{{ path('fos_user_profile_edit',{'id':app.user.id}) }}">Editar Cuenta</a>
-                                                <a href="{{ path('fos_user_change_password',{'id':app.user.id}) }}">Cambiar Clave</a>
+                                                <a href="{{ path('formato_',{'id':app.user.id}) }}">Formatos</a>
+                                                <a href="{{ path('formato__mci',{'id':app.user.id}) }}">Manifiesto de Carga Internacional</a>
+                                                <a href="{{ path('formato__cpic',{'id':app.user.id}) }}">Carta de Porte Internacional por Carretera</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -92,9 +92,13 @@
                                         </a>
                                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                             <li>
-                                                <a href="{{ path('usuario__edit',{'id':app.user.id}) }}">Editar Perfil</a>
-                                                <a href="{{ path('fos_user_profile_edit',{'id':app.user.id}) }}">Editar Cuenta</a>
-                                                <a href="{{ path('fos_user_change_password',{'id':app.user.id}) }}">Cambiar Clave</a>
+                                                <a href="{{ path('mercancia_',{'id':app.user.id}) }}">Mercancias</a>
+                                                <a href="{{ path('vehiculo_',{'id':app.user.id}) }}">Vehiculos</a>
+                                                <a href="{{ path('conductor_',{'id':app.user.id}) }}">Conductores</a>
+                                                <a href="{{ path('contenedor_',{'id':app.user.id}) }}">Contenedor</a>
+                                                <a href="{{ path('unidadCarga_',{'id':app.user.id}) }}">Unidad de Carga</a>
+                                                <a href="{{ path('carga_',{'id':app.user.id}) }}">Cargas</a>
+                                                <a href="{{ path('tipo__naturalezasCarga',{'id':app.user.id}) }}">Naturalezas de la Carga</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -105,9 +109,9 @@
                                         </a>
                                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                             <li>
-                                                <a href="{{ path('usuario__edit',{'id':app.user.id}) }}">Editar Perfil</a>
-                                                <a href="{{ path('fos_user_profile_edit',{'id':app.user.id}) }}">Editar Cuenta</a>
-                                                <a href="{{ path('fos_user_change_password',{'id':app.user.id}) }}">Cambiar Clave</a>
+                                                <a href="{{ path('usuario_',{'id':app.user.id}) }}">Usuarios</a>
+                                                <a href="{{ path('usuario__docentes',{'id':app.user.id}) }}">Docentes</a>
+                                                <a href="{{ path('usuario__estudiantes',{'id':app.user.id}) }}">Estudiantes</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -127,7 +131,6 @@
                                                 <a href="{{ path('permisoPresentaServicio_',{'id':app.user.id}) }}">Permisos Presentación Servicio</a>
                                                 <a href="{{ path('tipo__tiposFormatos',{'id':app.user.id}) }}">Tipos de Formatos</a>
                                                 <a href="{{ path('tipo__licenciasConductor',{'id':app.user.id}) }}">Clases de Licencias de Conducción</a>
-                                                <a href="{{ path('tipo__naturalezasCarga',{'id':app.user.id}) }}">Naturalezas de la Carga</a>
                                                 <a href="{{ path('tipo__nivelesAduana',{'id':app.user.id}) }}">Niveles de Aduanas</a>
                                             </li>
                                         </ul>

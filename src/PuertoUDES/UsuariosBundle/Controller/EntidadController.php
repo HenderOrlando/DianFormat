@@ -25,7 +25,7 @@ class EntidadController extends Controller
      * Lists all Entidad entities.
      *
      * @Route("/", name="entidad_")
-     * @Method({"GET", "POST"})
+     * @Method({"GET"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexAction(Request $request, $config = null)
@@ -37,7 +37,7 @@ class EntidadController extends Controller
         $limit = 10;
         $utils = $this->getUtils();
         if(is_null($config)){
-            $qb = $this->getRepositorio()->getAll();
+            $qb = $this->getRepositorio()->getAll(false, true);
         }else{
             $title = $config['title'];
             $entity = $config['entity'];
@@ -54,7 +54,7 @@ class EntidadController extends Controller
         $data = array();
         if ($form->isValid()) {
            $data = $form->getData();
-            $str_query = $this->getQueryFilter($data, $head['fil'][0]['col']);
+            $str_query = $utils->getQueryFilter($data, $head['fil'][0]['col'], $qb);
             if(!empty($str_query))
                 $qb->andWhere($str_query);
         }
@@ -75,7 +75,7 @@ class EntidadController extends Controller
             'botones'       =>  $botones,
         );
         if($request->isXmlHttpRequest() || $request->get('ajax',false)){
-            return $this->render('FormatEasyCommonBundle:Index:_menu.html.twig', $datos);
+            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
         }
         return $datos;
     }
@@ -101,7 +101,7 @@ class EntidadController extends Controller
      * Lists all Entidad Remitente entities.
      *
      * @Route("/Destinatarios/", name="entidad__destinatarios")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexDestinatariosAction(Request $request)
@@ -119,7 +119,7 @@ class EntidadController extends Controller
      * Lists all Entidad Remitente entities.
      *
      * @Route("/Notificados/", name="entidad__notificados")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexNotificadosAction(Request $request)
@@ -137,7 +137,7 @@ class EntidadController extends Controller
      * Lists all Entidad Remitente entities.
      *
      * @Route("/Consignatarios/", name="entidad__consignatarios")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexConsignatariosAction(Request $request)
@@ -155,7 +155,7 @@ class EntidadController extends Controller
      * Lists all Entidad Remitente entities.
      *
      * @Route("/Transportistas/", name="entidad__transportistas")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexTransportistasAction(Request $request)
@@ -398,11 +398,12 @@ class EntidadController extends Controller
     }
     
     public function getHeadFiltro(FormBuilder $form, $route){
-        $head['fil'] = array(
+        $filas = array(
             array(
                 'col'=>array(
                     array(
-                        'dato'    =>   'Doc Id',
+                        'dato'      =>  'Doc Id',
+                        'label'     =>  'Documento de Identidad',
                         'class' =>  'text-center',
                     ),
                     array(
@@ -411,22 +412,29 @@ class EntidadController extends Controller
                     ),
                     array(
                         'dato'    =>   'Descripcion',
+                        'label'     =>  'Descripción',
                         'class' =>  'text-center',
                     ),
                     array(
                         'dato'    =>   'Direccion',
+                        'label'     =>  'Dirección',
                         'class' =>  'text-center',
                     ),
                     array(
                         'dato'    =>   'Telefono',
+                        'label'     =>  'Teléfono',
                         'class' =>  'text-center',
                     ),
                     array(
                         'dato'    =>   'Certificado Idoneidad',
+                        'label'     =>  'Certificado Idoneidad',
+                        'join'     =>  'entidad',
                         'class' =>  'text-center',
                     ),
                     array(
-                        'dato'    =>   'Tipo Doc Id',
+                        'dato'    =>   'canonical',
+                        'label'     =>  'Tipo de Documento de dentidad',
+                        'join'     =>  'tipoDocId',
                         'class' =>  'text-center',
                     ),
                     array(
@@ -450,76 +458,6 @@ class EntidadController extends Controller
                 )
             ),
         );
-        foreach($head['fil'][0]['col'] as $col){
-            if(!isset($col['acciones'])){
-                $form->add(str_replace(' ', '', $col['dato']), 'text', 
-                    array(
-                        'required' => false, 
-                        'label' =>false,
-                        'attr' => array('class' => 'form-control'),
-                    )
-                );
-            }
-        }
-        $form->add('Buscar', 'submit',
-            array(
-                    'label'=> ' Buscar',
-                    'attr' => array('class' => 'btn btn-success btn-lg glyphicon glyphicon-search')
-                )
-            )
-            ->setAction($this->generateUrl($route));
-        $form = $form->getForm();
-        $head['filtros'] = $form;
-        return $head;
-    }
-    
-    public function getQueryFilter($data, array $columnas = array()) {
-        $l = count($columnas)-1;
-        $i = 0;
-        $str_query = '';
-        foreach($columnas as $col){
-            $col_name = str_replace(array(' ','-'), '', $col['dato']);
-            if (array_key_exists($col_name, $data)){
-                $data_bd = strtolower(substr($col['dato'], 0, 1)).substr($col['dato'], 1);
-                $data_bd = str_replace(' ','',$data_bd);
-                $data_bd = str_replace('-','',$data_bd);
-                $data[$col_name] = trim($data[$col_name]);
-                if (strlen($data[$col_name])>0){
-                    $letra = 'a.';
-                    if($data_bd === 'certificadoIdoneidad'){
-                        $letra = "e.";
-                    }
-                    if($i > 0 && $i < $l)
-                        $str_query .= ' AND ';
-                    $col_datos = explode(',', $data[$col_name]);
-                    $count = count($col_datos)-1;
-                    if($count >= 1){
-//                        $str_query .= '(';
-                        foreach($col_datos as $j => $cd){
-                            $str_operacion = "LIKE";
-                            if($j > 0 && $j <= $count)
-                                $str_query .= ' AND ';
-                            $query = $letra.$data_bd." ?operacion? '%".$cd."%'";
-//                            if(is_numeric($data[$col_name])){
-//                                $str_operacion = '=';
-//                                $str_query = str_replace(array("'","%"),'',$str_query);
-//                            }
-                            $str_query .= str_replace('?operacion?', $str_operacion, $query);
-                        }
-//                        $str_query .= ')';
-                    }else{
-                        $str_operacion = "LIKE";
-                        $query = $letra.$data_bd." ?operacion? '%".$data[$col_name]."%'";
-//                        if(is_numeric($data[$col_name])){
-//                            $str_operacion = '=';
-//                            $str_query = str_replace(array("'","%"),'',$str_query);
-//                        }
-                        $str_query .= str_replace('?operacion?', $str_operacion, $query);
-                    }
-                    $i++;
-                }
-            }
-        }
-        return $str_query;
+        return $this->getUtils()->getHeadFiltro($filas, $form, $route);
     }
 }

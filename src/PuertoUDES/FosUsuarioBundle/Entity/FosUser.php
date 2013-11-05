@@ -24,15 +24,16 @@ class FosUser extends BaseUser
     /**
      * @ORM\ManyToMany(targetEntity="PuertoUDES\FosUsuarioBundle\Entity\FosGrupo", inversedBy="usuarios")
      * @ORM\JoinTable(name="fos_user_group",
-     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id")}
+     *      joinColumns={@ORM\JoinColumn(name="usuario_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="grupo_id", referencedColumnName="id")}
      * )
      */
-    protected $grupos;
+    protected $groups;
 
     public function __construct()
     {
         parent::__construct();
+        $this->groups = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     public function setUsuario(\PuertoUDES\UsuariosBundle\Entity\Usuario $usuario){

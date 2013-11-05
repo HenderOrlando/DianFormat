@@ -172,4 +172,8 @@ class ObjetoB
     {
         return $this->pais;
     }
+    
+    public function __toString() {
+        return $this->getPlaca().' '.$this->getMarca().' '.$this->getAnioFabrica();
+    }
 }

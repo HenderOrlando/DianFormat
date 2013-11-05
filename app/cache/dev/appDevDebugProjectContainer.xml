@@ -532,7 +532,7 @@
     <parameter key="knp_paginator.class">Knp\Component\Pager\Paginator</parameter>
     <parameter key="knp_paginator.templating.helper.pagination.class">Knp\Bundle\PaginatorBundle\Templating\PaginationHelper</parameter>
     <parameter key="knp_paginator.helper.processor.class">Knp\Bundle\PaginatorBundle\Helper\Processor</parameter>
-    <parameter key="knp_paginator.template.pagination">KnpPaginatorBundle:Pagination:sliding.html.twig</parameter>
+    <parameter key="knp_paginator.template.pagination">PuertoUDESCommonBundle:Plantilla:twitter_sliding.html.twig</parameter>
     <parameter key="knp_paginator.template.filtration">KnpPaginatorBundle:Pagination:filtration.html.twig</parameter>
     <parameter key="knp_paginator.template.sortable">KnpPaginatorBundle:Pagination:sortable_link.html.twig</parameter>
     <parameter key="knp_paginator.page_range">5</parameter>
@@ -604,6 +604,12 @@
         <argument type="service" id="knp_paginator"/>
       </call>
     </service>
+    <service id="puestoudes.listener.login" class="PuertoUDES\FosUsuarioBundle\EventListener\SecurityListener">
+      <tag name="kernel.event_listener" event="security.interactive_login" method="onSecurityInteractiveLogin"/>
+      <argument type="service" id="security.context"/>
+      <argument type="service" id="session"/>
+      <argument type="service" id="doctrine.orm.default_entity_manager"/>
+    </service>
     <service id="controller_name_converter" class="Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser" public="false">
       <tag name="monolog.logger" channel="request"/>
       <argument type="service" id="kernel"/>
@@ -664,6 +670,14 @@
           <argument>pagination</argument>
         </argument>
         <argument>1</argument>
+      </call>
+      <call method="addListenerService">
+        <argument>security.interactive_login</argument>
+        <argument type="collection">
+          <argument>puestoudes.listener.login</argument>
+          <argument>onSecurityInteractiveLogin</argument>
+        </argument>
+        <argument>0</argument>
       </call>
       <call method="addListenerService">
         <argument>kernel.controller</argument>
@@ -3199,7 +3213,7 @@
         </argument>
         <argument type="service">
           <service class="Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider" public="false">
-            <argument>5276c739eb64d</argument>
+            <argument>527831d9cee5e</argument>
           </service>
         </argument>
       </argument>
@@ -3487,7 +3501,7 @@
         <argument type="service">
           <service class="Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener" public="false">
             <argument type="service" id="security.context"/>
-            <argument>5276c739eb64d</argument>
+            <argument>527831d9cee5e</argument>
             <argument type="service" id="monolog.logger.security" on-invalid="null"/>
           </service>
         </argument>
@@ -4245,9 +4259,9 @@
       <argument type="service" id="event_dispatcher"/>
       <call method="setDefaultPaginatorOptions">
         <argument type="collection">
-          <argument key="pageParameterName">page</argument>
-          <argument key="sortFieldParameterName">sort</argument>
-          <argument key="sortDirectionParameterName">direction</argument>
+          <argument key="pageParameterName">pagina</argument>
+          <argument key="sortFieldParameterName">orden</argument>
+          <argument key="sortDirectionParameterName">direccion</argument>
           <argument key="filterFieldParameterName">filterField</argument>
           <argument key="filterValueParameterName">filterValue</argument>
           <argument key="distinct">true</argument>
@@ -4267,7 +4281,7 @@
       <tag name="knp_paginator.subscriber"/>
       <tag name="kernel.event_listener" event="kernel.request" method="onKernelRequest"/>
       <argument type="collection">
-        <argument key="defaultPaginationTemplate">KnpPaginatorBundle:Pagination:sliding.html.twig</argument>
+        <argument key="defaultPaginationTemplate">PuertoUDESCommonBundle:Plantilla:twitter_sliding.html.twig</argument>
         <argument key="defaultSortableTemplate">KnpPaginatorBundle:Pagination:sortable_link.html.twig</argument>
         <argument key="defaultFiltrationTemplate">KnpPaginatorBundle:Pagination:filtration.html.twig</argument>
         <argument key="defaultPageRange">5</argument>

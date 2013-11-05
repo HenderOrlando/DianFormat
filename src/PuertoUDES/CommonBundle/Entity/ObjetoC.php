@@ -143,4 +143,8 @@ class ObjetoC
     {
         return $this->fechaCreado;
     }
+    
+    public function __toString() {
+        return $this->getPesoBruto().' '.$this->getPesoNeto();
+    }
 }

@@ -74,3 +74,14 @@ fos_user:
     user_class: PuertoUDES\FosUsuarioBundle\Entity\FosUser
     group:
         group_class: PuertoUDES\FosUsuarioBundle\Entity\FosGrupo
+        
+knp_paginator:
+    page_range: 5
+    default_options:
+        page_name: pagina
+        sort_field_name: orden
+        sort_direction_name: direccion
+        distinct: true
+    template:
+        pagination: PuertoUDESCommonBundle:Plantilla:twitter_sliding.html.twig
+        sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig

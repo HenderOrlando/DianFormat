@@ -153,4 +153,8 @@ class Objeto
         $cadena = strtolower($cadena);
         return str_replace(' ', '-', utf8_encode($cadena));
     }
+    
+    public function __toString() {
+        return $this->getNombre();
+    }
 }

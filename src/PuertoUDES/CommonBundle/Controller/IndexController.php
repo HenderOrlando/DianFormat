@@ -178,8 +178,13 @@ class IndexController extends Controller implements PaginatorAwareInterface
         $form = $this->createFormBuilder(
                 $defaultData,
                 $opts
+            )->add('Pagina', 'hidden',
+                array(
+                    'label'=> false,
+                    'data'  =>  $request->query->get('pagina', 1),
+                )
             )
-            ->setMethod('POST');
+            ->setMethod('GET');
         
         if(is_bool($formBuilder) && !$formBuilder){
             $form
@@ -422,6 +427,128 @@ class IndexController extends Controller implements PaginatorAwareInterface
         }
         if (is_bool($die) && $die)
             die;
+    }
+    /**
+     * get Query Filter
+     * 
+     * Arma la consulta del Filtro con base en las columnas, para la vista cuando cada columna tiene un campo para filtrar.
+     * Soporta búsqueda por varios campos y varias búsquedas e el mismo campo.
+     * 
+     * @param   array           $data
+     * @param   array           $columnas
+     * @param   QueryBuilder    $qb
+     * 
+     * @return string $str_query
+     */
+    public function getQueryFilter($data, array $columnas = array(), $qb = null) {
+        $l = count($columnas)-1;
+        $i = 0;
+        $str_query = '';
+        foreach($columnas as $col){
+            $col_name = str_replace(array(' ','-'), '', $col['dato']);
+            if(!isset($data[$col_name]) && isset($col['label']))
+                $col_name = str_replace(array(' ','-'), '', $col['label']);
+            if (array_key_exists($col_name, $data)){
+                $data_bd = strtolower(substr($col['dato'], 0, 1)).substr($col['dato'], 1);
+                $data_bd = str_replace(' ','',$data_bd);
+                $data_bd = str_replace('-','',$data_bd);
+                $data[$col_name] = trim($data[$col_name]);
+                if (strlen($data[$col_name])>0){
+                    $letra = 'a';
+                    if(isset($col['join']) && !empty($col['join'])){
+                        $join = $col['join'];
+                        if(is_string($join) && strlen($join) < 2)
+                            $letra = $join;
+                        elseif(!is_null($qb) && !empty ($qb) && is_string($join)){
+                            $letra = strtolower(substr($join, 0,4));
+                            $qb->innerJoin('a.'.$join, $letra);
+                        }
+                    }
+                    $letra .= '.';
+                    if($i > 0 && $i < $l)
+                        $str_query .= ' AND ';
+                    $col_datos = explode(',', $data[$col_name]);
+                    $count = count($col_datos)-1;
+                    if($count >= 1){
+//                        $str_query .= '(';
+                        foreach($col_datos as $j => $cd){
+                            $str_operacion = "LIKE";
+                            if($j > 0 && $j <= $count)
+                                $str_query .= ' AND ';
+                            $query = $letra.$data_bd." ?operacion? '%".$cd."%'";
+//                            if(is_numeric($data[$col_name])){
+//                                $str_operacion = '=';
+//                                $str_query = str_replace(array("'","%"),'',$str_query);
+//                            }
+                            $str_query .= str_replace('?operacion?', $str_operacion, $query);
+                        }
+//                        $str_query .= ')';
+                    }else{
+                        $str_operacion = "LIKE";
+                        $query = $letra.$data_bd." ?operacion? '%".$data[$col_name]."%'";
+//                        if(is_numeric($data[$col_name])){
+//                            $str_operacion = '=';
+//                            $str_query = str_replace(array("'","%"),'',$str_query);
+//                        }
+                        $str_query .= str_replace('?operacion?', $str_operacion, $query);
+                    }
+                    $i++;
+                }
+            }
+        }
+        return $str_query;
+    }
+    
+    /**
+     * get Head Filtro
+     * 
+     * Construye el head de la tabla con filtros, uno por cada columna de la tabla.\n
+     * Las clumnas pueden contener datos para saber que dicha columna necesita un JOIN. 
+     * El dato que consulta lo busca en $fils[n]['col'][m]['join']; donde n y m son numeros enteros que referencian la n fila y m columna.
+     * 
+     * @param   FormBuilder     $form
+     * @param   String          $route
+     * @param   QueryBuilder    $qb
+     * @param   array           $fils
+     * 
+     * @return array Head con formulario de campos y ['filtros']
+     */
+    public function getHeadFiltro($fils,  \Symfony\Component\Form\FormBuilder $form, $route){
+        $head['fil'] = $fils;
+        foreach($head['fil'][0]['col'] as $col){
+            if(!isset($col['acciones'])){
+                $n = $col['dato'];
+//                if($form->has($n) && isset($col['label']))
+//                    $n = $col['label'];
+                $form->add(str_replace(' ', '', $n), 'text', 
+                    array(
+                        'required' => false, 
+                        'label' =>false,
+                        'attr' => array('class' => 'form-control'),
+                    )
+                );
+            }
+        }
+        $form->add('Buscar', 'submit',
+            array(
+                    'label'=> ' Buscar',
+                    'attr' => array('class' => 'btn btn-success btn-lg glyphicon glyphicon-search')
+                )
+            )
+            ->setAction($this->generateUrl($route));
+        $form = $form->getForm();
+        $head['filtros'] = $form;
+        return $head;
+    }
+    
+    /**/
+    public function normaliza ($cadena){
+        $originales = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿŔŕ';
+        $modificadas = 'aaaaaaaceeeeiiiidnoooooouuuuybsaaaaaaaceeeeiiiidnoooooouuuyybyRr';
+        $cadena = utf8_decode($cadena);
+        $cadena = strtr($cadena, utf8_decode($originales), $modificadas);
+        $cadena = strtolower($cadena);
+        return str_replace(' ', '-', utf8_encode($cadena));
     }
 }
 

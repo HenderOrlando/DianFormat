@@ -21,5 +21,12 @@ class FosGrupo extends BaseGroup
      /**
      * @ORM\ManyToMany(targetEntity="PuertoUDES\FosUsuarioBundle\Entity\FosUser", mappedBy="grupos")
      */
-    protected $usuarios;
+    protected $users;
+    
+    public function __construct()
+    {
+        parent::__construct();
+        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->roles = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 }

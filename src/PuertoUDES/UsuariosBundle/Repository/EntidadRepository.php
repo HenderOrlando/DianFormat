@@ -17,10 +17,8 @@ class EntidadRepository extends EntityRepository
     {
         $q = $this->getEntityManager()
             ->createQueryBuilder()
-            ->select('a,e')
-            ->from('PuertoUDESUsuariosBundle:Usuario', 'a')
-            ->innerJoin('a.formatos', 'f')
-            ->innerJoin('a.entidad', 'e');
+            ->select('a')
+            ->from('PuertoUDESUsuariosBundle:Usuario', 'a');
         if(is_bool($querybuilder) && $querybuilder)
             $rta = $q;
         elseif(is_bool($query) && $query)
@@ -51,13 +49,14 @@ class EntidadRepository extends EntityRepository
         if(is_string($rol)){
             $r = $this->getEntityManager()
                     ->createQueryBuilder()
-                    ->select('r')
+                    ->select('r.id')
                     ->from('PuertoUDESCommonBundle:Rol', 'r')
                     ->setMaxResults(1)
-                    ->andWhere("r.canonical LIKE '%".$rol."%'");
+                    ->andWhere("r.canonical LIKE '%".$rol."%'")
+                    ->andWhere("r.aplicableA LIKE '%formatousuario%'");
             $rol = $r->getQuery()->getOneOrNullResult();
-            if(is_object($rol) && method_exists($rol, 'getId'))
-                $rol = $rol->getId();
+            if(isset($rol['id']))
+                $rol = $rol['id'];
             else
                 $rol = false;
         }elseif(is_object($rol) && method_exists($rol, 'getId')){
@@ -65,7 +64,8 @@ class EntidadRepository extends EntityRepository
         }elseif(!is_numeric($rol)){
             $rol = false;
         }
-        $q =  $this->getAll(false, true);
+        $q =  $this->getAll(false, true)
+            ->innerJoin('a.formatos', 'f');
         if($rol !== false){
             if(!is_null($formato) && !empty($formato)){
                 $id = false;

@@ -53,16 +53,27 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $conductor;
     
+    /** 
+     * @ORM\ManyToMany(targetEntity="PuertoUDES\CommonBundle\Entity\Rol", inversedBy="usuarios")
+     * @ORM\JoinTable(
+     *     name="rol_usuario", 
+     *     joinColumns={@ORM\JoinColumn(name="usuario_id", referencedColumnName="id", nullable=false)}, 
+     *     inverseJoinColumns={@ORM\JoinColumn(name="rol_id", referencedColumnName="id", nullable=false)}
+     * )
+     */
+    private $roles;
+    
     /**
      * Constructor
      */
     public function __construct()
     {
         parent::__construct();
+        $this->roles = new \Doctrine\Common\Collections\ArrayCollection();
         $this->formatos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastos = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->entidad = new \PuertoUDES\UsuariosBundle\Form\Entidad();
-        $this->conductor = new \PuertoUDES\UsuariosBundle\Form\Conductor();
+        $this->entidad = new \PuertoUDES\UsuariosBundle\Entity\Entidad();
+        $this->conductor = new \PuertoUDES\UsuariosBundle\Entity\Conductor();
     }
     
     /**
@@ -188,6 +199,39 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getFormatos()
     {
         return $this->formatos;
+    }
+
+    /**
+     * Add roles
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Rol $roles
+     * @return Usuario
+     */
+    public function addRol(\PuertoUDES\CommonBundle\Entity\Rol $roles)
+    {
+        $this->roles[] = $roles;
+    
+        return $this;
+    }
+
+    /**
+     * Remove roles
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Rol $roles
+     */
+    public function removeRol(\PuertoUDES\CommonBundle\Entity\Rol $roles)
+    {
+        $this->roles->removeElement($roles);
+    }
+
+    /**
+     * Get roles
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getRoles()
+    {
+        return $this->roles;
     }
 
     /**
