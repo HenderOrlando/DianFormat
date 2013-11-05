@@ -13,6 +13,7 @@ form{
     opacity: 0;
     display: none;
 }
+.editable-container form,
 .animate{
     -webkit-transition-delay: 0s;
     -webkit-transition-duration: 500ms;
@@ -76,6 +77,7 @@ form{
 #mensajes.in{
     top: 70px;
 }
+.editable-container form,
 form.in,
 #mensajes.in,
 #mensajes .alert.in{
@@ -106,4 +108,9 @@ form.in,
 }
 table.table tbody tr td{
     vertical-align: middle;
+}
+
+/******************** FORMATOS-MCI ********************/
+.editable-container form{
+    
 }

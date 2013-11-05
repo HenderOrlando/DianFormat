@@ -6,6 +6,7 @@
         {% stylesheets 
             'bundles/puertoudescommon/css/bootstrap.min.css'
             'bundles/puertoudescommon/css/bootstrap-theme.min.css'
+            'bundles/puertoudescommon/xeditable/bootstrap-editable/css/bootstrap-editable.css'
             'bundles/puertoudescommon/css/index.css'
         filter='cssrewrite' %}
             <link rel="stylesheet" href="{{ asset_url }}" />
@@ -179,12 +180,13 @@
                     '@PuertoUDESCommonBundle/Resources/public/js/modernizr.custom.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/jquery-1.10.2.min.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/bootstrap.min.js'
+                    '@PuertoUDESCommonBundle/Resources/public/xeditable/bootstrap-editable/js/bootstrap-editable.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/js_functions.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/index.js'
                  %}
                     <script type="text/javascript" src="{{ asset_url }}"></script>
                 {% endjavascripts %}
-                {% block javascripts %}{% endblock %}
+                {% block javascript %}{% endblock %}
             </div>
         </section>
     </body>

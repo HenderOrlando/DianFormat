@@ -36,6 +36,13 @@ class FormatoRepository extends EntityRepository
         return $this->getByAbreviacion('cpic', $completo, $query, $querybuilder);
     }
     
+    public function countFormatos($campo = 'id'){
+        return $this->createQueryBuilder('f')
+                ->select('COUNT(f.'.$campo.')')
+                ->getQuery()
+                ->getSingleScalarResult();
+    }
+    
     public function getByAbreviacion($abreviacion = null, $completo = null, $query = false, $querybuilder = false){
         $rta = null;
         if(is_string($abreviacion)){

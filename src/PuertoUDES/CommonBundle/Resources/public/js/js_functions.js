@@ -53,7 +53,7 @@
     }
     
     /*
-     * Arregla Placeholder
+     * Arregla Ajax
      */
     function arreglaAjax(){
         if(Modernizr.fontface){
@@ -147,8 +147,90 @@
         };
     }
     
-    /*
-     * Popover
+    /* addXEditable
+     * 
+     * @param jquery|string este Objeto JQuery o Nombre del objeto dónde aplicar el xeditable
+     * @returns {undefined}
+     */
+    function addXEditable(este){
+        /*Mostrar siguiente editable*/
+////automatically show next editable
+//$(este).on('save.newuser', function(){
+//    var that = this;
+//    setTimeout(function() {
+//        $(that).closest('tr').next().find('.myeditable').editable('show');
+//    }, 200);
+//});
+        /*Mostrar siguiente editable*/
+
+        /*Username required*/
+//make username required
+//$('#new_username').editable('option', 'validate', function(v) {
+//    if(!v) return 'Required field!';
+//});
+        /*Username required*/
+        /*RESET BUTTON*/
+//$('#reset-btn').click(function() {
+//    $('.myeditable').editable('setValue', null)  //clear values
+//        .editable('option', 'pk', null)          //clear pk
+//        .removeClass('editable-unsaved');        //remove bold css
+//                   
+//    $('#save-btn').show();
+//    $('#msg').hide();                
+//});
+        /*RESET BUTTON*/
+        $(este).editable({
+            mode:   'popup',
+            onblur:   'cancel',
+//            source: '/groups',
+//            params: function(params){ /**params contiene pk, name, value*/ params.a = 1; return params;},
+            ajaxOptions: {
+                type: 'put',
+                dataType: 'json'
+            },
+            params: function(params) {
+                if(typeof este.attr('data-entity-name') !== 'undefined')
+                    params.entity = este.attr('data-entity-name');
+                return params;
+            },
+            success: function(response, val) {
+                if(response.status == 'error') 
+                    return response.msg; //msg will be shown in editable form
+                console.log(val);
+            }
+            /*SUCCESS Y ERROR*/
+//success: function(data, config) {
+//    if(data && data.id) {  //record created, response like {"id": 2}
+//        //set pk
+//        $(this).editable('option', 'pk', data.id);
+//        //remove unsaved class
+//        $(this).removeClass('editable-unsaved');
+//        //show messages
+//        var msg = 'New user created! Now editables submit individually.';
+//        $('#msg').addClass('alert-success').removeClass('alert-error').html(msg).show();
+//        $('#save-btn').hide(); 
+//        $(this).off('save.newuser');                     
+//    } else if(data && data.errors){ 
+//        //server-side validation error, response like {"errors": {"username": "username already exist"} }
+//        config.error.call(this, data.errors);
+//    }               
+//},
+//error: function(errors) {
+//    var msg = '';
+//    if(errors && errors.responseText) { //ajax error, errors = xhr object
+//        msg = errors.responseText;
+//    } else { //validation error (client-side or server-side)
+//        $.each(errors, function(k, v) { msg += k+": "+v+"<br>"; });
+//    } 
+//    $('#msg').removeClass('alert-success').addClass('alert-error').html(msg).show();
+//}
+            /*SUCCESS Y ERROR*/
+        });
+    }
+    
+    /*Popover
+     * 
+     * @param string popoverClass Nombre de la Clase para hacer popover
      */
     function popover(popoverClass){
         if(!popoverClass)
@@ -184,10 +266,11 @@
     
     /*
      * Get Total Width
-     * obj      Objeto Jquery   Objeto a calcular el width
-     * width    Boolean         Si suma el ancho
-     * pading   Boolean         Si suma el padding
-     * margin   Boolean         Si suma el margin
+     * 
+     * @param obj      Objeto Jquery   Objeto a calcular el width
+     * @param width    Boolean         Si suma el ancho
+     * @param pading   Boolean         Si suma el padding
+     * @param margin   Boolean         Si suma el margin
      */
     function getTotalWidth(obj, width, padding, margin){
         var w = 0;
@@ -202,17 +285,9 @@
         }
         return w;
     }
-    /*
-     * Get Total Width
-     */
-    /*
-     * Imagen Isometrica
-     */
+    
     function imgIsometrico(){
         var w = $('.img-isometrico').parent().width();
         $('.img-isometrico img').width(w);
         $('.img-isometrico img').height(w*0.75);
     }
-    /*
-     * Imagen Isometrica
-     */

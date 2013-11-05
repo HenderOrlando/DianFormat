@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\FormatosBundle\Entity\Formato;
 use PuertoUDES\FormatosBundle\Form\FormatoType;
 
@@ -171,6 +173,20 @@ class FormatoController extends Controller
     /**
      * Displays a form to create a new Formato entity.
      *
+     * @Route("/Editar-Campo/", name="formato_edit_campo")
+     * @Method("PUT")
+     * @Template()
+     */
+    public function editCamposAction(Request $request){
+        return JsonResponse::create(array(
+         'name'   =>    $request->get('name'),
+         'value'   =>    $request->get('value'),
+         'pk'   =>    $request->get('pk'),
+        ));
+    }
+    /**
+     * Displays a form to create a new Formato entity.
+     *
      * @Route("/nuevo/{abrevia}", name="formato__new_")
      * @Route("/nuevo/", name="formato__new")
      * @Method("GET")
@@ -179,15 +195,25 @@ class FormatoController extends Controller
     public function newAction($abrevia = null)
     {
         $entity = new Formato();
-        $form   = $this->createCreateForm($entity);
-        if(!is_null($abrevia)){
-            return $this->render('PuertoUDESFormatosBundle:Formato:'.$abrevia.'.html.twig', array());
+        $em = $this->getDoctrine()->getManager();
+        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $abrevia));
+        $numero = $this->getRepositorio()->countFormatos();
+        $entity->setNumero($numero);
+        if($tipo){
+            $entity->setTipo($tipo);
+            $datos = array(
+                'entity' => $entity,
+            );
+            $entity->setNombre($tipo->getNombre().' '.$numero);
         }
+//        else{
+//            throw $this->createNotFoundException('No encontrado el Tipo de Formato.');
+//        }
+        $form   = $this->createCreateForm($entity);
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
+        $datos['form'] = $form->createView();
+
+        return $datos;
     }
 
     /**

@@ -13,6 +13,11 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\Column(type="boolean", nullable=false, name="completo")
      */
     private $completo;
+
+    /** 
+     * @ORM\Column(type="integer", nullable=false, name="numero")
+     */
+    private $numero;
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\CommonBundle\Entity\Documento", mappedBy="formato")
      */
@@ -88,6 +93,28 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function setCompleto($completo)
     {
         $this->completo = $completo;
+        return $this;
+    }
+    
+    /**
+     * Get numero
+     *
+     * @return integer
+     */
+    public function getNumero()
+    {
+        return $this->numero;
+    }
+    
+    /**
+     * Set numero
+     *
+     * @param integer $numero
+     * @return Formato
+     */
+    public function setNumero($numero)
+    {
+        $this->numero = $numero;
         return $this;
     }
     /**
