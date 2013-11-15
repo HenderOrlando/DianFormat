@@ -1510,6 +1510,12 @@
       </call>
       <call method="addResource">
         <argument>xlf</argument>
+        <argument>/var/www/PuertoUDES/vendor/symfony/symfony/src/Symfony/Component/Security/Core/Exception/../../Resources/translations/security.ja.xlf</argument>
+        <argument>ja</argument>
+        <argument>security</argument>
+      </call>
+      <call method="addResource">
+        <argument>xlf</argument>
         <argument>/var/www/PuertoUDES/vendor/symfony/symfony/src/Symfony/Component/Security/Core/Exception/../../Resources/translations/security.no.xlf</argument>
         <argument>no</argument>
         <argument>security</argument>
@@ -3213,7 +3219,7 @@
         </argument>
         <argument type="service">
           <service class="Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider" public="false">
-            <argument>527831d9cee5e</argument>
+            <argument>52867eaad83fd</argument>
           </service>
         </argument>
       </argument>
@@ -3501,7 +3507,7 @@
         <argument type="service">
           <service class="Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener" public="false">
             <argument type="service" id="security.context"/>
-            <argument>527831d9cee5e</argument>
+            <argument>52867eaad83fd</argument>
             <argument type="service" id="monolog.logger.security" on-invalid="null"/>
           </service>
         </argument>

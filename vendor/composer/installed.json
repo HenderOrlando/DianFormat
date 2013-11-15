@@ -754,70 +754,6 @@
         ]
     },
     {
-        "name": "monolog/monolog",
-        "version": "1.6.0",
-        "version_normalized": "1.6.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/Seldaek/monolog.git",
-            "reference": "f72392d0e6eb855118f5a84e89ac2d257c704abd"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/Seldaek/monolog/zipball/f72392d0e6eb855118f5a84e89ac2d257c704abd",
-            "reference": "f72392d0e6eb855118f5a84e89ac2d257c704abd",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0",
-            "psr/log": "~1.0"
-        },
-        "require-dev": {
-            "doctrine/couchdb": "dev-master",
-            "mlehner/gelf-php": "1.0.*",
-            "raven/raven": "0.5.*"
-        },
-        "suggest": {
-            "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
-            "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
-            "ext-mongo": "Allow sending log messages to a MongoDB server",
-            "mlehner/gelf-php": "Allow sending log messages to a GrayLog2 server",
-            "raven/raven": "Allow sending log messages to a Sentry server"
-        },
-        "time": "2013-07-28 22:38:30",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.6.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Monolog": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Jordi Boggiano",
-                "email": "j.boggiano@seld.be",
-                "homepage": "http://seld.be",
-                "role": "Developer"
-            }
-        ],
-        "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
-        "homepage": "http://github.com/Seldaek/monolog",
-        "keywords": [
-            "log",
-            "logging",
-            "psr-3"
-        ]
-    },
-    {
         "name": "symfony/monolog-bundle",
         "version": "v2.3.0",
         "version_normalized": "2.3.0.0",
@@ -1264,12 +1200,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-            "reference": "0cb03029c7c1c833a11c7bebf30125276f0aa5b9"
+            "reference": "e543600e49216765315610b6281349ee86dfe87e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/0cb03029c7c1c833a11c7bebf30125276f0aa5b9",
-            "reference": "0cb03029c7c1c833a11c7bebf30125276f0aa5b9",
+            "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/e543600e49216765315610b6281349ee86dfe87e",
+            "reference": "e543600e49216765315610b6281349ee86dfe87e",
             "shasum": ""
         },
         "require": {
@@ -1289,7 +1225,7 @@
         "suggest": {
             "willdurand/propel-typehintable-behavior": "Needed when using the propel implementation"
         },
-        "time": "2013-10-28 10:50:07",
+        "time": "2013-11-07 03:54:10",
         "type": "symfony-bundle",
         "extra": {
             "branch-alias": {
@@ -1579,18 +1515,67 @@
         ]
     },
     {
-        "name": "symfony/symfony",
-        "version": "v2.3.6",
-        "version_normalized": "2.3.6.0",
+        "name": "twig/extensions",
+        "version": "v1.0.1",
+        "version_normalized": "1.0.1.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/symfony/symfony.git",
-            "reference": "d0597156c4c03ceca039f6b7770a47397ba295f0"
+            "url": "https://github.com/fabpot/Twig-extensions.git",
+            "reference": "f91a82ec225e5bb108e01a0f93c9be04f84dcfa0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/symfony/zipball/d0597156c4c03ceca039f6b7770a47397ba295f0",
-            "reference": "d0597156c4c03ceca039f6b7770a47397ba295f0",
+            "url": "https://api.github.com/repos/fabpot/Twig-extensions/zipball/f91a82ec225e5bb108e01a0f93c9be04f84dcfa0",
+            "reference": "f91a82ec225e5bb108e01a0f93c9be04f84dcfa0",
+            "shasum": ""
+        },
+        "require": {
+            "twig/twig": "~1.0"
+        },
+        "time": "2013-10-18 19:37:15",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Twig_Extensions_": "lib/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Common additional features for Twig that do not directly belong in core",
+        "homepage": "https://github.com/fabpot/Twig-extensions",
+        "keywords": [
+            "debug",
+            "i18n",
+            "text"
+        ]
+    },
+    {
+        "name": "symfony/symfony",
+        "version": "v2.3.7",
+        "version_normalized": "2.3.7.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/symfony.git",
+            "reference": "2829b471871c2564228fe9f0832a0f928a8ffaa1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/symfony/zipball/2829b471871c2564228fe9f0832a0f928a8ffaa1",
+            "reference": "2829b471871c2564228fe9f0832a0f928a8ffaa1",
             "shasum": ""
         },
         "require": {
@@ -1648,7 +1633,7 @@
             "ocramius/proxy-manager": ">=0.3.1,<0.4-dev",
             "propel/propel1": "1.6.*"
         },
-        "time": "2013-10-10 13:24:22",
+        "time": "2013-11-14 07:58:51",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1689,34 +1674,52 @@
         ]
     },
     {
-        "name": "twig/extensions",
-        "version": "v1.0.1",
-        "version_normalized": "1.0.1.0",
+        "name": "monolog/monolog",
+        "version": "1.7.0",
+        "version_normalized": "1.7.0.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/fabpot/Twig-extensions.git",
-            "reference": "f91a82ec225e5bb108e01a0f93c9be04f84dcfa0"
+            "url": "https://github.com/Seldaek/monolog.git",
+            "reference": "6225b22de9dcf36546be3a0b2fa8e3d986153f57"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/fabpot/Twig-extensions/zipball/f91a82ec225e5bb108e01a0f93c9be04f84dcfa0",
-            "reference": "f91a82ec225e5bb108e01a0f93c9be04f84dcfa0",
+            "url": "https://api.github.com/repos/Seldaek/monolog/zipball/6225b22de9dcf36546be3a0b2fa8e3d986153f57",
+            "reference": "6225b22de9dcf36546be3a0b2fa8e3d986153f57",
             "shasum": ""
         },
         "require": {
-            "twig/twig": "~1.0"
+            "php": ">=5.3.0",
+            "psr/log": "~1.0"
         },
-        "time": "2013-10-18 19:37:15",
+        "require-dev": {
+            "aws/aws-sdk-php": "~2.4.8",
+            "doctrine/couchdb": "dev-master",
+            "mlehner/gelf-php": "1.0.*",
+            "phpunit/phpunit": "~3.7.0",
+            "raven/raven": "0.5.*",
+            "ruflin/elastica": "0.90.*"
+        },
+        "suggest": {
+            "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
+            "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
+            "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
+            "ext-mongo": "Allow sending log messages to a MongoDB server",
+            "mlehner/gelf-php": "Allow sending log messages to a GrayLog2 server",
+            "raven/raven": "Allow sending log messages to a Sentry server",
+            "ruflin/elastica": "Allow sending log messages to an Elastic Search server"
+        },
+        "time": "2013-11-14 19:48:31",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.0.x-dev"
+                "dev-master": "1.7.x-dev"
             }
         },
         "installation-source": "dist",
         "autoload": {
             "psr-0": {
-                "Twig_Extensions_": "lib/"
+                "Monolog": "src/"
             }
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -1725,16 +1728,18 @@
         ],
         "authors": [
             {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
+                "name": "Jordi Boggiano",
+                "email": "j.boggiano@seld.be",
+                "homepage": "http://seld.be",
+                "role": "Developer"
             }
         ],
-        "description": "Common additional features for Twig that do not directly belong in core",
-        "homepage": "https://github.com/fabpot/Twig-extensions",
+        "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
+        "homepage": "http://github.com/Seldaek/monolog",
         "keywords": [
-            "debug",
-            "i18n",
-            "text"
+            "log",
+            "logging",
+            "psr-3"
         ]
     }
 ]
