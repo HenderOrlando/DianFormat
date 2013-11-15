@@ -12,11 +12,12 @@ class Carga
     /** 
      * @ORM\Id
      * @ORM\Column(type="bigint")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /** 
-     * @ORM\Column(type="integer", length=11, nullable=false, name="num_precintos")
+     * @ORM\Column(type="integer", length=11, nullable=true, name="num_precintos")
      */
     private $numPrecintos;
 
@@ -27,7 +28,7 @@ class Carga
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Tipo", inversedBy="cargas")
-     * @ORM\JoinColumn(name="naturaleza", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="naturaleza", referencedColumnName="id", nullable=true)
      */
     private $naturalezaCarga;
 
@@ -39,9 +40,15 @@ class Carga
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Lugar", inversedBy="cargas")
-     * @ORM\JoinColumn(name="lugar", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="lugar_carga", referencedColumnName="id", nullable=true)
      */
-    private $lugar;
+    private $lugarCarga;
+    
+    /** 
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Lugar", inversedBy="descargas")
+     * @ORM\JoinColumn(name="lugar_descarga", referencedColumnName="id", nullable=true)
+     */
+    private $lugarDescarga;
 
     /** 
      * @ORM\ManyToMany(targetEntity="PuertoUDES\CommonBundle\Entity\UnidadCarga", mappedBy="cargas")
@@ -172,26 +179,49 @@ class Carga
     }
 
     /**
-     * Set lugar
+     * Set lugarCarga
      *
      * @param \PuertoUDES\CommonBundle\Entity\Lugar $lugar
      * @return Carga
      */
-    public function setLugar(\PuertoUDES\CommonBundle\Entity\Lugar $lugar)
+    public function setLugarCarga(\PuertoUDES\CommonBundle\Entity\Lugar $lugar)
     {
-        $this->lugar = $lugar;
+        $this->lugarCarga = $lugar;
     
         return $this;
     }
 
     /**
-     * Get lugar
+     * Get lugarCarga
      *
      * @return \PuertoUDES\CommonBundle\Entity\Lugar 
      */
-    public function getLugar()
+    public function getLugarCarga()
     {
-        return $this->lugar;
+        return $this->lugarCarga;
+    }
+
+    /**
+     * Set lugarDescarga
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Lugar $lugar
+     * @return Carga
+     */
+    public function setLugarDescarga(\PuertoUDES\CommonBundle\Entity\Lugar $lugar)
+    {
+        $this->lugarDescarga = $lugar;
+    
+        return $this;
+    }
+
+    /**
+     * Get lugarDescarga
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Lugar 
+     */
+    public function getLugarDescarga()
+    {
+        return $this->lugarDescarga;
     }
 
     /**
@@ -225,5 +255,54 @@ class Carga
     public function getUnidadCargas()
     {
         return $this->unidadCargas;
+    }
+    
+    /**
+     * Json unidadesCargas
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function jsonUnidadesCargas($json = true)
+    {
+        $a = array();
+        foreach ($this->getUnidadCargas() as $pps) {
+            $a[$pps->getId()] = $pps->json($json);
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+    
+    public function json($json = true, $unidadesCarga = false){
+        $a = array(
+            'id'                =>  $this->getId(),
+            'canonical'         =>  $this->getLugar()->json(false),
+            'fecha_creado'      =>  $this->getNaturalezaCarga(),
+            'numero_precintos'  =>  $this->getNumPrecintos(),
+        );
+        if(is_bool($$unidadesCarga) && $unidadesCarga){
+            $a = array_merge($a, array(
+                'unidades_carga'    => $this->jsonUnidadesCarga(false),
+            ));
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+
+    /**
+     * Has unidadCargas
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\UnidadCarga $unidadCarga
+     * @return boolean
+     */
+    public function hasUnidadCargas($unidadCarga) {
+        return $this->getUnidadCargas()->exists(function($key,\PuertoUDES\CommonBundle\Entity\UnidadCarga $element) use ($unidadCarga) {
+            if($unidadCarga->getId() === $element->getId())
+                return true;
+            return false;
+        });
     }
 }

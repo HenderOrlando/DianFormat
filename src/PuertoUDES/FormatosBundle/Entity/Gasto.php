@@ -41,6 +41,12 @@ class Gasto
      * @ORM\JoinColumn(name="formato", referencedColumnName="id", nullable=false)
      */
     private $formato;
+    
+    /** 
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Moneda", inversedBy="gastos")
+     * @ORM\JoinColumn(name="moneda", referencedColumnName="id", nullable=false)
+     */
+    private $moneda;
     /**
      * Constructor
      */
@@ -185,5 +191,28 @@ class Gasto
     public function getFormato()
     {
         return $this->formato;
+    }
+
+    /**
+     * Set moneda
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Moneda $moneda
+     * @return Gasto
+     */
+    public function setMoneda(\PuertoUDES\CommonBundle\Entity\Moneda $moneda)
+    {
+        $this->moneda = $moneda;
+    
+        return $this;
+    }
+
+    /**
+     * Get moneda
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Moneda 
+     */
+    public function getMoneda()
+    {
+        return $this->moneda;
     }
 }

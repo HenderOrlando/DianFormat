@@ -19,7 +19,6 @@ class ContenedorType extends AbstractType
             ->add('numero')
             ->add('capacidad')
             ->add('sigla')
-            ->add('fechaCreado')
         ;
     }
     

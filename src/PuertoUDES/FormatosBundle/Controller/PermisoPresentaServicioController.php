@@ -7,33 +7,134 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\FormatosBundle\Entity\PermisoPresentaServicio;
 use PuertoUDES\FormatosBundle\Form\PermisoPresentaServicioType;
 
 /**
  * PermisoPresentaServicio controller.
  *
- * @Route("/permisoPresentaServicio_")
+ * @Route("/PermisoPresentaServicio")
  */
 class PermisoPresentaServicioController extends Controller
 {
+    
+    /**
+     * Displays a form to create a new Entidad entity.
+     *
+     * @Route("/Transportista/Guardar/{tipo}/{numero}/", name="permisos_save_transportista_ajax")
+     * @Method({"POST","PUT"})
+     * @Template()
+     */
+    public function savePermisosTransportistaAjaxAction(Request $request){
+        $nombre = $request->get('name',NULL);
+        $valor = $request->get('value',NULL);
+        $llave = $request->get('pk',NULL);
+        $permisos = preg_split('/\s?,\s?/', str_replace(' ', '', $valor));
+        $em = $em = $this->getDoctrine()->getManager();
+        $tipo = $request->get('tipo',NULL);
+        $numero = $request->get('numero',NULL);
+        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('numero' => $numero));
+        $entidad = $em->getRepository('PuertoUDESUsuariosBundle:Entidad')->find($llave);
+        $datos = array(
+            'errors' => array(),
+        );
+//        $this->getUtils()->dump($permisos);
+        if($formato && $entidad){
+            $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($tipo)));
+            if($tipo->getId() === $formato->getTipo()->getId()){
+                $mod = false;
+                $entidad->getPermisosPresentaServicios()->clear();
+                foreach($permisos as $permiso){
+                    if(empty($permiso))
+                        continue;
+                    $p = $this->getRepositorio()->like(array('nombre' => $permiso));
+                    if(!$p){
+                        $p = new PermisoPresentaServicio();
+                        $p->setNombre($permiso);
+                    }
+                    if(!$entidad->hasPermisosPresentaServicio($p)){
+                        $p->addEntidad($entidad);
+                        $em->persist($p);
+                        $entidad->addPermisosPresentaServicio($p);
+                        $mod = true;
+                    }
+                }
+                if($mod){
+                    $em->persist($entidad);
+                }
+                $em->flush();
+                $datos['id'] = $entidad->getId();
+                $datos['value'] = $entidad->getStringPermisosPresentaServicio();
+                $datos['msgs'][] = array('msg' => 'Entidad: Los permisos fueron actualizados.', 'tipo' => 'success');
+            }else{
+                $datos['errors']['Entidad'] = 'Formato o Entidad no válidas.';
+            }
+        }else{
+            $datos['errors']['Entidad'] = 'Formato o Entidad no válidas.';
+        }
+        return \Symfony\Component\HttpFoundation\JsonResponse::create($datos);
+    }
 
     /**
      * Lists all PermisoPresentaServicio entities.
      *
      * @Route("/", name="permisoPresentaServicio_")
-     * @Method("GET")
-     * @Template()
+     * @Method({"GET"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
-    public function indexAction()
+    public function indexAction(Request $request, $config = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('PuertoUDESFormatosBundle:PermisoPresentaServicio')->findAll();
-
-        return array(
-            'entities' => $entities,
+        $title = 'Permisos para Presentar Servicio';
+        $entity = 'PermisoPresentaServicio';
+        $bundle = 'PermisoPresentaServicio';
+        $route = 'permisoPresentaServicio_';
+        $limit = 5;
+        $utils = $this->getUtils();
+        if(is_null($config)){
+            $qb = $this->getRepositorio()->getAll(false, true);
+        }else{
+            $title = $config['title'];
+            $entity = $config['entity'];
+            $bundle = $config['bundle'];
+            $route = $config['route'];
+            $limit = $config['limit'];
+            $qb = $config['qb'];
+        }
+        
+        $head = $this->getHeadFiltro($utils->getFormFilter(array(), $route, true), $route);
+        $form = $head['filtros'];
+        $head['filtros'] = $form->createView();
+        $form->handleRequest($request);
+        $data = array();
+        if ($form->isValid()) {
+           $data = $form->getData();
+            $str_query = $utils->getQueryFilter($data, $head['fil'][0]['col'], $qb);
+            if(!empty($str_query))
+                $qb->andWhere($str_query);
+        }
+        
+//        $qb = $qb->getQuery();
+        $paginacion = $utils->getPaginacion($entity, $bundle, $limit, $route, $qb);
+//        $paginacion['form_filter'] = $form;
+        $botones = array(
+            array(
+                'url'   => $this->generateUrl('permisoPresentaServicio__new'),
+                'type'  => 'primary',
+                'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
+            ),
         );
+        $datos = array(
+            'paginas'       =>  $paginacion['pag'],
+            'title'         =>  $title,
+            'head'          =>  $head,
+            'botones'       =>  $botones,
+            'datos_form'       =>  $data,
+        );
+        if($request->isXmlHttpRequest() || $request->get('ajax',false)){
+            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+        }
+        return $datos;
     }
     /**
      * Creates a new PermisoPresentaServicio entity.
@@ -243,5 +344,60 @@ class PermisoPresentaServicioController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+    
+    
+    /**
+     * get Utils
+     * 
+     * @return IndexController Utilidades de PuertoUDES
+     */
+    public function getUtils() {
+        return $this->get('puertoudes.util');
+    }
+    
+    /**
+     * get Repositorio
+     * 
+     * @return PermisoPresentaServicioRepository  PermisoPresentaServicioRepository de PuertoUDES
+     */
+    public function getRepositorio() {
+        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESFormatosBundle:PermisoPresentaServicio');
+    }
+    
+    public function getHeadFiltro($form, $route){
+        $filas = array(
+            array(
+                'col'=>array(
+                    array(
+                        'dato'    =>   'Nombre',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Descripcion',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Acciones',
+                        'class' =>  'text-center',
+                        'acciones'=>    array(
+                            array(
+                                'url'   => 'permisoPresentaServicio__edit',
+                                'data_url'=> array('id'),
+                                'type'  => 'default',
+                                'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
+                            ),
+                            array(
+                                'url'   => 'permisoPresentaServicio__delete',
+                                'data_url'=> array('id'),
+                                'type'  => 'danger',
+                                'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
+                            ),
+                        )
+                    ),
+                )
+            ),
+        );
+        return $this->getUtils()->getHeadFiltro($filas, $form, $route);
     }
 }

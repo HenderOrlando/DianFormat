@@ -1,16 +1,32 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Formato edit</h1>
+    {% if only_form is defined %}
+        {{ form(edit_form) }}
+    {% elseif entity.tipo is defined and entity.tipo.abreviacion is defined %}
+        {% include 'PuertoUDESFormatosBundle:Formato:_' ~ entity.tipo.abreviacion ~ '.html.twig' with {
+                formato: entity
+            } %}
+        {% if 'mci' in entity.tipo.abreviacion %}
 
-    {{ form(edit_form) }}
+        {% elseif 'cpic' in entity.tipo.abreviacion %}
+        
+        {% endif %}
+            
+    {% else %}
+        <h1>Formato edit</h1>
+        
+        {{ form(edit_form) }}
 
         <ul class="record_actions">
-    <li>
-        <a href="{{ path('formato_') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+            <li>
+                <a href="{{ path('formato_') }}">
+                    Back to the list
+                </a>
+            </li>
+            <li>{{ form(delete_form) }}</li>
+        </ul>
+    
+    {% endif %}
+
 {% endblock %}

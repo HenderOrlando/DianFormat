@@ -1,0 +1,1275 @@
+
+<div class="hoja_carta_formato print">
+    <div class="margen">
+        {% set col_w = formato.id is not defined or formato.id is empty?10:12 %}
+        {% if formato.id is not defined or formato.id is empty %}
+            <div class="pull-right">
+                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                    buttonset: 'horizontal',
+                    class: 'animate in',
+                    botones  : [
+                        {
+                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                            'type'  :   'primary',
+                            'class' :   'guardar formato-crear animate',
+                            'url'   :   url('formato_save_ajax',{tipo: formato.tipo.abreviacion|upper}),
+                        },
+                        {
+                            'class' :   'reset formato-crear animate',
+                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                        },
+                    ],
+                    sizing: 'mediano',
+                } %}
+            </div>
+        {% endif %}
+        <div class="text-center">
+            <h4>
+                <a href="#" id="formato_nombre" class="xeditable formato-crear" 
+                   data-placement="bottom" 
+                   data-name="nombre" 
+                   data-type="text" 
+                   data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" 
+                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                   data-original-title="Nombre del Formato" 
+                   data-entity-name="formato" 
+                   data-entity-bundle="formatos" 
+                   data-emptytext="Nombre del Formato {{- formato.tipo.abreviacion|upper -}}" 
+                   data-placeholder="Nombre del Formato {{- formato.tipo.abreviacion|upper -}}"
+                   data-required="NoVacio,NumerosLetras">
+                    {{- formato.nombre | trim-}}
+                </a>
+            </h4>
+        </div>
+        <div class="text-justify">
+            <p>
+                <a href="#" id="formato_descripcion" class="xeditable formato-crear" 
+                   data-placement="bottom" 
+                   data-name="descripcion" 
+                   data-type="textarea" 
+                   data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" 
+                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                   data-original-title="Descripcion del Formato" 
+                   data-entity-name="formato" 
+                   data-entity-bundle="formatos" 
+                   data-placeholder="Descripción del Formato" 
+                   data-emptytext="Descripción del Formato"
+                   data-required="Vacio,NumerosLetrasConectores">
+                    {{- formato.descripcion -}}
+                </a>
+            </p>
+        </div>
+        <table class="table table-bordered table-striped">
+            <tbody>
+                <tr class="">
+                        <td rowspan="2" colspan="6" class="logo text-center">
+                            <img src="{{- asset("bundles/puertoudescommon/images/comunidad_andina.jpeg")-}}" alt="Comunidad Andina">
+                        </td>
+                        <td colspan="6" class="text-center title">
+                            {{- formato.tipo.nombre|title ~ ' (' ~ formato.tipo.abreviacion|upper ~ ')' -}}
+                        </td>
+                </tr>
+                <tr>
+                        <td colspan="6" class="text-center">
+                            N° <a href="#" id="numero_formato" class="xeditable formato-crear" 
+                                  data-placement="top" 
+                                  data-name="numero" 
+                                  data-type="text" 
+                                  data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" 
+                                  data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                  data-original-title="Digite Número" 
+                                  data-entity-name="formato" 
+                                  data-entity-bundle="formatos" 
+                                  data-emptytext="Número de {{-formato.tipo.abreviacion|upper-}}" 
+                                  data-placeholder="Número {{-formato.tipo.abreviacion|upper-}}" 
+                                  data-required="NoVacio,Numeros">
+                                {{- formato.numero -}}
+                            </a>
+                        </td>
+                </tr>
+                <tr>
+                    <td colspan="12" class="text-center title">
+                        {% if formato.transportista is not defined or formato.transportista.id is not defined %}
+                            <div class="text-right pull-right">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                    'buttonset': 'horizontal',
+                                    'class': 'animate in',
+                                    'botones'  : [
+                                        {
+                                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                            'type'  :   'primary',
+                                            'class' :   'entidad-crear animate guardar',
+                                            'url'   :   url('entidad_save_transportista_ajax',{
+                                                            tipo: formato.tipo.abreviacion|upper,
+                                                            numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                        }),
+                                        },
+                                        {
+                                            'class' :   'reset entidad-crear animate',
+                                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                        },
+                                    ],
+                                    'sizing': 'pequeño',
+                                } %}
+                            </div>
+                        {% endif %}
+                        IDENTIFICACIÓN DEL TRANSPORTISTA AUTORIZADO
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2" colspan="8">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                1- Denominación o razón social del transportista autorizado
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <a href="#" id="entidad_razon_social" class="xeditable entidad-crear" 
+                                   data-placement="top" 
+                                   data-name="nombre" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.usuario.id is defined and formato.transportista.usuario.id is not empty?formato.transportista.usuario.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Nombre o Razón Social" 
+                                   data-entity-name="usuario"
+                                   data-entity-bundle="usuarios" 
+                                   data-emptytext="Razón Social" 
+                                   data-placeholder="Razón Social" 
+                                   data-required="Vacio,LetrasConectores">
+                                    {{- formato.transportista.nombre is defined?formato.transportista.nombre:'' -}}
+                                </a>
+                            </div>
+                            <div class="col-lg-12">
+                                <a href="#" id="entidad_nit" class="xeditable entidad-crear" 
+                                   data-placement="top" 
+                                   data-name="doc_id" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.usuario.id is defined and formato.transportista.usuario.id is not empty?formato.transportista.usuario.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="NIT" 
+                                   data-entity-name="usuario"
+                                   data-entity-bundle="usuarios" 
+                                   data-placeholder="NIT" 
+                                   data-emptytext="NIT" 
+                                   data-required="NoVacio,NumerosConectores">
+                                    {{- formato.transportista.docId is defined?formato.transportista.docId:'' -}}
+                                </a>
+                            </div>
+                            <div class="col-lg-12">
+                                <a href="#" id="entidad_direccion" class="xeditable entidad-crear" 
+                                   data-placement="top" 
+                                   data-name="direccion" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.usuario.id is defined and formato.transportista.usuario.id is not empty?formato.transportista.usuario.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Dirección" 
+                                   data-entity-name="usuario"
+                                   data-entity-bundle="usuarios" 
+                                   data-placeholder="Dirección" 
+                                   data-emptytext="Dirección" 
+                                   data-required="Vacio,NumerosLetrasConectores">
+                                    {{ formato.transportista.direccion is defined?formato.transportista.direccion:'' -}}
+                                </a> - Telfs. 
+                                <a href="#" id="entidad_telefono" class="xeditable entidad-crear" 
+                                   data-placement="top" 
+                                   data-name="telefono" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.usuario.id is defined and formato.transportista.usuario.id is not empty?formato.transportista.usuario.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Teléfono" 
+                                   data-entity-name="usuario"
+                                   data-entity-bundle="usuarios" 
+                                   data-placeholder="Teléfono" 
+                                   data-emptytext="Teléfono" 
+                                   data-required="Vacio,NumerosConectores">
+                                    {{- formato.transportista.telefono is defined?formato.transportista.telefono:'' -}}
+                                </a> - 
+                                <a href="#" id="entidad_lugar" class="xeditable entidad-crear" 
+                                   data-placement="top" 
+                                   data-name="lugar" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Lugar" 
+                                   data-entity-name="entidad"
+                                   data-entity-bundle="usuarios" 
+                                   data-placeholder="Lugar" 
+                                   data-emptytext="Lugar" 
+                                   data-required="Vacio,LetrasConectores">
+                                    {{ formato.transportista.lugar is defined?formato.transportista.lugar:'' -}}
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                    <td colspan="4">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                2- Certificado de idoneidad N°
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <a href="#" id="entidad_certificado_idoneidad" class="xeditable entidad-crear" 
+                                   data-placement="top" 
+                                   data-name="certificadoIdoneidad" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Certificado de Idoneidad" 
+                                   data-entity-name="entidad"
+                                   data-entity-bundle="usuarios" 
+                                   data-emptytext="Certificado de Idoneidad" 
+                                   data-placeholder="Certificado de Idoneidad" 
+                                   data-required="NoVacio,NumerosLetrasConectores">
+                                    {{- formato.transportista.certificadoIdoneidad is defined?formato.transportista.certificadoIdoneidad:'' -}}
+                                </a>
+                            </div>
+                        </div>
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                3- Permiso de presentación de Servicios N°
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                {% set permisos = '' %}
+                                {% for pps in formato.transportista.permisosPresentaServicios %}
+                                    {% set permisos = permisos ~ (not loop.first?', ':'') ~ pps.nombre %}
+                                {% endfor %}
+                                    <a href="#" id="entidad_permiso_presentacion_servicios" class="xeditable premiso-presenta-servicio-crear" 
+                                       data-placement="top" 
+                                       data-name="permisosPresentaServicios" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       data-url="{{- url('permisos_save_transportista_ajax',{
+                                                            tipo: formato.tipo.abreviacion|upper,
+                                                            numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                        }) -}}" 
+                                       data-original-title="Certificado de Idoneidad" 
+                                       data-entity-name="entidad"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="Permiso de Presentación de Servicio N°" 
+                                       data-placeholder="Permiso de Presentación de Servicio N°" 
+                                       data-required="NoVacio,NumerosLetrasConectores">
+                                        {{- permisos -}}
+                                    </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="12" class="text-center title">
+                        {% if formato.conductores is empty %}
+                            <div class="text-right pull-right">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                    'buttonset': 'horizontal',
+                                    'class': 'animate in',
+                                    'botones'  : [
+                                        {
+                                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                            'type'  :   'primary',
+                                            'class' :   'vehiculo-crear animate guardar',
+                                            'url'   :   url('vehiculo_save_ajax',{
+                                                            tipo: formato.tipo.abreviacion|upper,
+                                                            numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                        }),
+                                        },
+                                        {
+                                            'class' :   'reset vehiculo-crear animate',
+                                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                        },
+                                    ],
+                                    'sizing': 'pequeño',
+                                } %}
+                            </div>
+                        {% endif %}
+                        IDENTIFICACIÓN DEL VEHICULO HABILITADO (CAMIÓN O TRACTO CAMIÓN)
+                        {% set vh = formato.conductores is not empty?(formato.conductores|first).vehiculo:formato.conductores %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                4- Marca
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <a href="#" id="vehiculo_marca" class="xeditable vehiculo-crear" 
+                                   data-placement="top" 
+                                   data-name="marca" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.conductores is defined and formato.conductores is not empty and vh is defined and vh.id is defined?vh.id:' ' -}}"
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Marca del Vehiculo" 
+                                   data-entity-name="vehiculo"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="Marca del Vehiculo" 
+                                   data-placeholder="Marca del Vehiculo" 
+                                   data-required="NoVacio,NumerosLetras">
+                                    {{- vh is not empty and vh.marca is defined?vh.marca:'' -}}
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                5- Año de Fabricación
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <a href="#" id="vehiculo_anio_fabricacion" class="xeditable vehiculo-crear" 
+                                   data-placement="top" 
+                                   data-name="anioFabrica" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.conductores is defined and formato.conductores is not empty and vh is defined and vh.id is defined?vh.id:' ' -}}"
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Año de Fabricación del Vehiculo" 
+                                   data-entity-name="vehiculo"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="Año de Fabricación del Vehiculo" 
+                                   data-placeholder="Año de Fabricación del Vehiculo" 
+                                   data-required="NoVacio,Numeros">
+                                    {{- vh is not empty and vh.anioFabrica is defined?vh.anioFabrica:'' -}}
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                6- Placa y País
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <a href="#" id="vehiculo_placa" class="xeditable vehiculo-crear" 
+                                   data-placement="top" 
+                                   data-name="placa" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.conductores is defined and formato.conductores is not empty and vh is defined and vh.id is defined?vh.id:' ' -}}"
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Placa del Vehiculo" 
+                                   data-entity-name="vehiculo"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="Placa del Vehiculo" 
+                                   data-placeholder="Placa del Vehiculo" 
+                                   data-required="NoVacio,NumerosLetras">
+                                    {{- vh is not empty and vh.placa is defined?vh.placa:'' -}}
+                                </a> - 
+                                <a href="#" id="vehiculo_pais" class="xeditable vehiculo-crear" 
+                                   data-placement="top" 
+                                   data-name="pais" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.conductores is defined and formato.conductores is not empty and vh is defined and vh.id is defined?vh.id:' ' -}}"
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="País del Vehiculo" 
+                                   data-entity-name="vehiculo"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="País del Vehiculo" 
+                                   data-placeholder="País del Vehiculo" 
+                                   data-required="NoVacio,Letras">
+                                    {{- vh is not empty and vh.pais is defined?vh.pais:'' -}}
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                7- Número o Serie del Chasis
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <a href="#" id="vehiculo_num_serie_chasis" class="xeditable vehiculo-crear" 
+                                   data-placement="top" 
+                                   data-name="numSerieChasis" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.conductores is defined and formato.conductores is not empty and vh is defined and vh.id is defined?vh.id:' ' -}}"
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Número o Serie del Chasis del Vehiculo" 
+                                   data-entity-name="vehiculo"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="Número o Serie del Chasis del Vehiculo" 
+                                   data-placeholder="Número o Serie del Chasis del Vehiculo" 
+                                   data-required="NoVacio,NumerosLetras">
+                                    {{- vh is not empty and vh.numeroSerieChasis is defined?vh.numeroSerieChasis:'' -}}
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="12">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                8- Certificado de Habilitación N°
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <a href="#" id="vehiculo_certifica_habilitacion" class="xeditable vehiculo-crear" 
+                                   data-placement="top" 
+                                   data-name="certificadoHabilitacion" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.conductores is defined and formato.conductores is not empty and vh is defined and vh.id is defined?vh.id:' ' -}}"
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Certificado de Habilitación N° del Vehiculo" 
+                                   data-entity-name="vehiculo"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="Certificado de Habilitación N° del Vehiculo" 
+                                   data-placeholder="Certificado de Habilitación N° del Vehiculo" 
+                                   data-required="NoVacio,NumerosLetras">
+                                    {{- vh is not empty and vh.certificadoHabilitacion is defined?vh.certificadoHabilitacion:'' -}}
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="12" class="text-center title">
+                        {% if formato.cargas is empty %}
+                            <div class="text-right pull-right">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                    'buttonset': 'horizontal',
+                                    'class': 'animate in',
+                                    'botones'  : [
+                                        {
+                                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                            'type'  :   'primary',
+                                            'class' :   'unidad-carga-crear animate guardar',
+                                            'url'   :   url('unidad_carga_save_ajax',{
+                                                            tipo: formato.tipo.abreviacion|upper,
+                                                            numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                        }),
+                                        },
+                                        {
+                                            'class' :   'reset unidad-carga-crear animate',
+                                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                        },
+                                    ],
+                                    'sizing': 'pequeño',
+                                } %}
+                            </div>
+                        {% endif %}
+                        IDENTIFICACIÓN DE LA UNIDAD DE CARGA (REMOLQUE O SEMIREMOLQUE)
+                        {% set unidadCarga = formato.cargas is not empty?(formato.cargas|first).unidadCargas is not empty?(formato.cargas|first).unidadCargas|first:(formato.cargas|first).unidadCargas %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                9- Marca
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <a href="#" id="unidadCarga_marca" class="xeditable unidad-carga-crear" 
+                                   data-placement="top" 
+                                   data-name="marca" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Marca de la unidad de Carga" 
+                                   data-entity-name="unidadCarga"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="Marca" 
+                                   data-placeholder="Marca de la unidad de Carga" 
+                                   data-required="NoVacio,Letras">
+                                    {{ unidadCarga is not empty and unidadCarga.marca is defined? unidadCarga.marca:'' }}
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                10- Año de Fabricación
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <a href="#" id="unidadCarga_anio_fabricacion" class="xeditable unidad-carga-crear" 
+                                   data-placement="top" 
+                                   data-name="anioFabrica" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Año de Fabricación de la Unidad de Carga" 
+                                   data-entity-name="unidadCarga"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="Año de Fabricación" 
+                                   data-placeholder="Año de Fabricación de la Unidad de Carga" 
+                                   data-required="NoVacio,Numeros">
+                                    {{ unidadCarga is not empty and unidadCarga.anioFabrica is defined? unidadCarga.anioFabrica:'' }}
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                11- Placa y País
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <a href="#" id="unidadCarga_placa" class="xeditable unidad-carga-crear" 
+                                   data-placement="top" 
+                                   data-name="placa" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Placa de la Unidad de Carga" 
+                                   data-entity-name="unidadCarga"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="Placa" 
+                                   data-placeholder="Placa de la Unidad de Carga" 
+                                   data-required="NoVacio,NumerosLetras">
+                                    {{ unidadCarga is not empty and unidadCarga.placa is defined? unidadCarga.placa:'' }}
+                                </a> - 
+                                <a href="#" id="unidadCarga_pais" class="xeditable unidad-carga-crear" 
+                                   data-placement="top" 
+                                   data-name="pais" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="País de la Unidad de Carga" 
+                                   data-entity-name="unidadCarga"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="País" 
+                                   data-placeholder="País de la Unidad de Carga" 
+                                   data-required="NoVacio,Letras">
+                                    {{ unidadCarga is not empty and unidadCarga.pais is defined? unidadCarga.pais:'' }}
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                {% if formato.cargas | length < 2 %}
+                                    <div class="text-right pull-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                                    'type'  :   'primary',
+                                                    'class' :   'unidad-carga-crear animate guardar',
+                                                    'url'   :   url('unidad_carga_save_ajax',{
+                                                                    tipo: formato.tipo.abreviacion|upper,
+                                                                    numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                                }),
+                                                },
+                                                {
+                                                    'class' :   'reset unidad-carga-crear animate',
+                                                    'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                {% endif %}
+                                12- Otro
+                                {% set otraUnidadCarga = formato.cargas is not empty?(formato.cargas|first).unidadCargas is not empty?(formato.cargas|first).unidadCargas|last:(formato.cargas|first).unidadCargas %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <a href="#" id="otraUnidadCarga_marca" class="xeditable otra-unidad-carga-crear" 
+                                   data-placement="top" 
+                                   data-name="marca" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Marca de la Otra unidad de Carga" 
+                                   data-entity-name="unidadCarga"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="Marca" 
+                                   data-placeholder="Marca de la Otra unidad de Carga" 
+                                   data-required="NoVacio,Letras">
+                                    
+                                </a> - 
+                                <a href="#" id="otraUnidadCarga_anio_fabricacion" class="xeditable otra-unidad-carga-crear" 
+                                   data-placement="top" 
+                                   data-name="anioFabrica" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Año de Fabricación de la Otra Unidad de Carga" 
+                                   data-entity-name="unidadCarga"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="Año de Fabricación" 
+                                   data-placeholder="Año de Fabricación de la Otra Unidad de Carga" 
+                                   data-required="NoVacio,Numeros">
+                                    
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <a href="#" id="otraUnidadCarga_placa" class="xeditable otra-unidad-carga-crear" 
+                                   data-placement="top" 
+                                   data-name="placa" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="Placa de la Otra Unidad de Carga" 
+                                   data-entity-name="unidadCarga"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="Placa" 
+                                   data-placeholder="Placa de la Otra Unidad de Carga" 
+                                   data-required="NoVacio,NumerosLetras">
+                                    
+                                </a> - 
+                                <a href="#" id="otraUnidadCarga_pais" class="xeditable otra-unidad-carga-crear" 
+                                   data-placement="top" 
+                                   data-name="pais" 
+                                   data-type="text" 
+                                   data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                   {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                   data-original-title="País de la Otra Unidad de Carga" 
+                                   data-entity-name="unidadCarga"
+                                   data-entity-bundle="common" 
+                                   data-emptytext="País" 
+                                   data-placeholder="País de la Otra Unidad de Carga" 
+                                   data-required="NoVacio,Letras">
+                                    
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="12" class="text-center title">
+                        IDENTIFICACIÓN DE LA TRIPULACIÓN
+                    </td>
+                </tr>
+                    <tr>
+                        <td colspan="6">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    13- CONDUCTOR PRINCIPAL: Nombre y Apellido
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="conductor_principal_nombre" class="xeditable conductor-principal-crear" 
+                                       data-placement="top" 
+                                       data-name="nombre" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-original-title="Nombre del Conductor Principal" 
+                                       data-entity-name="conductor"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="Nombre Conductor Principal" 
+                                       data-placeholder="Nombre Conductor Principal" 
+                                       data-required="NoVacio,Letras">
+
+                                    </a> 
+                                    <a href="#" id="conductor_principal_apellido" class="xeditable conductor-principal-crear" 
+                                       data-placement="top" 
+                                       data-name="apellido" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-original-title="Apellido del Conductor Principal" 
+                                       data-entity-name="conductor"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="Apellido Conductor Principal" 
+                                       data-placeholder="Apellido Conductor Principal" 
+                                       data-required="NoVacio,Letras">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="6">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    18- CONDUCTOR AUXILIAR: Nombre y Apellido
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="conductor_auxiliar_nombre" class="xeditable conductor-auxiliar-crear" 
+                                       data-placement="top" 
+                                       data-name="nombre" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-original-title="Nombre del Conductor Principal" 
+                                       data-entity-name="conductor"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="Nombre Conductor Principal" 
+                                       data-placeholder="Nombre Conductor Principal" 
+                                       data-required="NoVacio,Letras">
+
+                                    </a> 
+                                    <a href="#" id="conductor_auxiliar_apellido" class="xeditable conductor-auxiliar-crear" 
+                                       data-placement="top" 
+                                       data-name="apellido" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-original-title="Apellido del Conductor Principal" 
+                                       data-entity-name="conductor"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="Apellido Conductor Principal" 
+                                       data-placeholder="Apellido Conductor Principal" 
+                                       data-required="NoVacio,Letras">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    14- Documento de identidad
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="conductor_principal_doc_id" class="xeditable conductor-principal-crear" 
+                                       data-placement="top" 
+                                       data-name="docId" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-original-title="Documento de Identidad del Conductor Principal" 
+                                       data-entity-name="conductor"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="Documento de Identidad del Conductor Principal" 
+                                       data-placeholder="Documento de Identidad del Conductor Principal" 
+                                       data-required="NoVacio,Letras">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="3">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    15- Nacionalidad
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="conductor_principal_nacionalidad" class="xeditable conductor-principal-crear" 
+                                       data-placement="top" 
+                                       data-name="nacionalidad" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-original-title="Nacionalidad del Conductor Principal" 
+                                       data-entity-name="conductor"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="Nacionalidad del Conductor Principal" 
+                                       data-placeholder="Nacionalidad del Conductor Principal" 
+                                       data-required="NoVacio,Letras">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="3">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    19- Documento de identidad
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="conductor_auxiliar_doc_id" class="xeditable conductor-auxiliar-crear" 
+                                       data-placement="top" 
+                                       data-name="docId" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-original-title="Documento de Identidad del Conductor Auxiliar" 
+                                       data-entity-name="conductor"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="Documento de Identidad del Conductor Auxiliar" 
+                                       data-placeholder="Documento de Identidad del Conductor Auxiliar" 
+                                       data-required="NoVacio,NumerosLetras">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="3">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    20- Nacionalidad
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="conductor_auxiliar_nacionalidad" class="xeditable conductor-auxiliar-crear" 
+                                       data-placement="top" 
+                                       data-name="nacionalidad" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-original-title="Nacionalidad del Conductor Auxiliar" 
+                                       data-entity-name="conductor"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="Nacionalidad del Conductor Auxiliar" 
+                                       data-placeholder="Nacionalidad del Conductor Auxiliar" 
+                                       data-required="NoVacio,Letras">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    16- Licencia de conducir N°
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="conductor_principal_numLicencia" class="xeditable conductor-principal-crear" 
+                                       data-placement="top" 
+                                       data-name="numLicencia" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-original-title="N° de la Licencia de Conducción del Conductor Principal" 
+                                       data-entity-name="conductor"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="N° de la Licencia de Conducción del Conductor Principal" 
+                                       data-placeholder="N° de la Licencia de Conducción del Conductor Principal" 
+                                       data-required="NoVacio,Numeros">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="3">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    17- Libreta de tripulante terrestre N°
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="conductor_principal_numLibretaTripulante" class="xeditable conductor-principal-crear" 
+                                       data-placement="top" 
+                                       data-name="numLibretaTripulante" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-original-title="N° de la Libreta de Tripulante del Conductor Principal" 
+                                       data-entity-name="conductor"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="N° de la Libreta de Tripulante del Conductor Principal" 
+                                       data-placeholder="N° de la Libreta de Tripulante del Conductor Principal" 
+                                       data-required="NoVacio,Letras">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="3">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    21- Licencia de Conducir N°
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="conductor_auxiliar_numLicencia" class="xeditable conductor-auxiliar-crear" 
+                                       data-placement="top" 
+                                       data-name="numLicencia" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-original-title="N° de la Licencia de Conducción del Conductor Auxiliar" 
+                                       data-entity-name="conductor"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="N° de la Licencia de Conducción del Conductor Auxiliar" 
+                                       data-placeholder="N° de la Licencia de Conducción del Conductor Auxiliar" 
+                                       data-required="NoVacio,Numeros">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="3">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    22- Libreta de tripulante terrestre N°
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="conductor_auxiliar_numLibretaTripulante" class="xeditable conductor-auxiliar-crear" 
+                                       data-placement="top" 
+                                       data-name="numLibretaTripulante" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-original-title="N° de la Libreta de Tripulante del Conductor Auxiliar" 
+                                       data-entity-name="conductor"
+                                       data-entity-bundle="usuarios" 
+                                       data-emptytext="N° de la Libreta de Tripulante del Conductor Auxiliar" 
+                                       data-placeholder="N° de la Libreta de Tripulante del Conductor Auxiliar" 
+                                       data-required="NoVacio,Letras">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="12" class="text-center title">
+                            DATOS SOBRE LA CARGA
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    23- Lugar y País de la Carga
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="carga_lugar_carga" class="xeditable carga-crear" 
+                                       data-placement="top" 
+                                       data-name="lugar" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-entity-name="carga"
+                                       data-entity-bundle="formatos" 
+                                       data-emptytext="Lugar de la Carga" 
+                                       data-placeholder="Lugar de la Carga" 
+                                       data-original-title="Lugar de la Carga" 
+                                       data-required="NoVacio,Numeros">
+
+                                    </a>
+                                    <a href="#" id="carga_pais_carga" class="xeditable carga-crear" 
+                                       data-placement="top" 
+                                       data-name="pais" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-entity-name="carga"
+                                       data-entity-bundle="formatos" 
+                                       data-emptytext="País de la Carga" 
+                                       data-placeholder="País de la Carga" 
+                                       data-original-title="País de la Carga" 
+                                       data-required="NoVacio,Numeros">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="6">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    24- Lugar y País de Descarga
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="carga_lugar_descarga" class="xeditable carga-crear" 
+                                       data-placement="top" 
+                                       data-name="lugar" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-entity-name="carga"
+                                       data-entity-bundle="formatos" 
+                                       data-emptytext="Lugar de la Carga" 
+                                       data-placeholder="Lugar de la Carga" 
+                                       data-original-title="Lugar de la Carga" 
+                                       data-required="NoVacio,Numeros">
+
+                                    </a>
+                                    <a href="#" id="carga_pais_descarga" class="xeditable carga-crear" 
+                                       data-placement="top" 
+                                       data-name="pais" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-entity-name="carga"
+                                       data-entity-bundle="formatos" 
+                                       data-emptytext="País de la Carga" 
+                                       data-placeholder="País de la Carga" 
+                                       data-original-title="País de la Carga" 
+                                       data-required="NoVacio,Numeros">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="12">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    25- Naturaleza de la Carga
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="carga_naturaleza" class="xeditable carga-crear" 
+                                       data-placement="top" 
+                                       data-name="naturaleza" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-entity-name="carga"
+                                       data-entity-bundle="formatos" 
+                                       data-emptytext="Naturaleza de la Carga" 
+                                       data-placeholder="Naturaleza de la Carga" 
+                                       data-original-title="Naturaleza de la Carga" 
+                                       data-required="NoVacio,Numeros">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    26- Número de Identificación de los contenedores y su capacidad (Indicar si son 20 o 40 pies u otra)
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="carga_numContenedores" class="xeditable carga-crear" 
+                                       data-placement="top" 
+                                       data-name="numContenedores" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-entity-name="carga"
+                                       data-entity-bundle="formatos" 
+                                       data-emptytext="Número de Identificación de los Contenedores de la Carga" 
+                                       data-placeholder="Número de Identificación de los Contenedores de la Carga" 
+                                       data-original-title="Número de Identificación de los Contenedores de la Carga" 
+                                       data-required="NoVacio,Numeros">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="6">
+                            <div class="row">
+                                <div class="enunciado col-lg-12 col-md-12">
+                                    27- Número(s) de los precintos aduaneros
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <a href="#" id="carga_numPrecintos" class="xeditable carga-crear" 
+                                       data-placement="top" 
+                                       data-name="numPrecintos" 
+                                       data-type="text" 
+                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
+                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                                       data-entity-name="carga"
+                                       data-entity-bundle="formatos" 
+                                       data-emptytext="Número de Precintos de la Carga" 
+                                       data-placeholder="Número de Precintos de la Carga" 
+                                       data-original-title="Número de Precintos de la Carga" 
+                                       data-required="NoVacio,Numeros">
+
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="12">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">
+                                            <div class="row">
+                                                <div class="enunciado col-lg-12 col-md-12">
+                                                    28- Carta de Porte N°
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th colspan="6" rowspan="2">
+                                            <div class="row">
+                                                <div class="enunciado col-lg-12 col-md-12">
+                                                    29- Descripción de las mercancías
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th rowspan="2">
+                                            <div class="row">
+                                                <div class="enunciado col-lg-12 col-md-12">
+                                                    30- Catidad de los bultos
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th rowspan="2">
+                                            <div class="row">
+                                                <div class="enunciado col-lg-12 col-md-12">
+                                                    31- Clase y marca de los bultos
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th colspan="2">
+                                            <div class="row">
+                                                <div class="enunciado col-lg-12 col-md-12">
+                                                    32- Peso en Kilogramos
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th rowspan="2">
+                                            <div class="row">
+                                                <div class="enunciado col-lg-12 col-md-12">
+                                                    33- Volumen en m3 u otra unidad de medida
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                                Bruto
+                                        </th>
+                                        <th>
+                                                Neto
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="8">
+                                                <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
+                                                        34- Precio de las mercancías (INCOTERMS 2010) y tipo de monedas
+                                                </a>
+                                        </td>
+                                        <td style="border-left: none;">
+                                                TOTAL
+                                        </td>
+                                        <td>
+                                                <span id="cpic_total_peso_bruto"></span>
+                                        </td>
+                                        <td>
+                                                <span id="cpic_total_peso_neto"></span>
+                                        </td>
+                                        <td>
+
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr colspan="12">
+                        <td colspan="12">
+                            <table class="table table-bordered table-striped">
+                                <tbody>
+
+                                    <tr>
+                                            <td colspan="6" rowspan="2" style="width: 35%;">
+                                                    <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
+                                                            35- Observaciones de la Aduana de Partida
+                                                    </a>
+                                            </td>
+                                            <td colspan="3">
+                                                    <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
+                                                            37- Aduana(s) de Cruce de Frontera
+                                                    </a>
+                                            </td>
+                                            <td colspan="3">
+                                                    <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
+                                                            38- Aduana de Destino 
+                                                    </a>
+                                            </td>
+                                    </tr>
+                                    <tr>
+                                            <td colspan="6" rowspan="3">
+                                                    <p class="text-justify">
+                                                            El suscrito al hacerse cargo de las mercancías, se obliga a cumplir con las disposiciones de las normas que conforman el ordenamiento jurídico de la Comunidad Andina, en particular con la decisión 399 y su reglamento En las presentes observaciones de transporte internacional por carretera
+                                                    </p>
+                                                    <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
+                                                            39- Nombre, firma y sello del transportista autorizado o su representante
+                                                    </a>
+                                            </td>
+                                    </tr>
+                                    <tr>
+                                            <td colspan="6">
+                                                    36- Firma y sello de la autoridad que interviene en la Aduana de Partida
+                                            </td>
+                                    </tr>
+                                    <tr>
+                                            <td colspan="6">
+                                                    <span class="block title">Fecha de Emisión</span>
+                                            </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>    
+    </div>
+</div>

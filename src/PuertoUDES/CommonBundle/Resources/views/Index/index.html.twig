@@ -1,0 +1,14 @@
+{% extends '::base_bootstrap.html.twig' %}
+
+{% block body -%}
+{{ parent() }}
+{% if app.user and is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <h3>Manifiestos de Carga Internacional</h3>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <h3>Carta de Porte Internacional por Carretera</h3>
+    </div>
+{% endif %}
+    
+{% endblock %}

@@ -22,6 +22,11 @@ class FormatoConductor
     private $fechaCreado;
 
     /** 
+     * @ORM\Column(type="boolean", nullable=false, name="auxiliar")
+     */
+    private $esAuxiliar;
+
+    /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", inversedBy="conductores")
      * @ORM\JoinColumn(name="formato", referencedColumnName="id", nullable=false)
      */
@@ -29,7 +34,7 @@ class FormatoConductor
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Conductor", inversedBy="formatos")
-     * @ORM\JoinColumn(name="conductor", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="conductor", referencedColumnName="id", nullable=true)
      */
     private $conductor;
 
@@ -44,6 +49,7 @@ class FormatoConductor
     public function __construct()
     {
         $this->fechaCreado = new \DateTime();
+        $this->esAuxiliar = false;
     }
     
     /**
@@ -77,6 +83,28 @@ class FormatoConductor
     public function getFechaCreado()
     {
         return $this->fechaCreado;
+    }
+    /**
+     * Set esAuxiliar
+     *
+     * @param \boolean $esAuxiliar
+     * @return FormatoConductor
+     */
+    public function setEsAuxiliar($esAuxiliar)
+    {
+        $this->esAuxiliar = $esAuxiliar;
+    
+        return $this;
+    }
+
+    /**
+     * Get esAuxiliar
+     *
+     * @return \boolean 
+     */
+    public function getEsAuxiliar()
+    {
+        return $this->esAuxiliar;
     }
 
     /**

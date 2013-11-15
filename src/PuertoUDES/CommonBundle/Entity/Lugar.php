@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping AS ORM;
 /** 
  * @ORM\Entity
  * @ORM\Table(name="lugar")
+ * @ORM\Entity(repositoryClass="PuertoUDES\CommonBundle\Repository\LugarRepository")
  */
 class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
 {
@@ -14,13 +15,23 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $aduanas;
 
     /** 
-     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Carga", mappedBy="lugar")
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Carga", mappedBy="lugarCarga")
      */
     private $cargas;
+    
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Carga", mappedBy="lugarDescarga")
+     */
+    private $descargas;
+    
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\UsuariosBundle\Entity\Entidad", mappedBy="lugar")
+     */
+    private $entidades;
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Pais", inversedBy="lugares")
-     * @ORM\JoinColumn(name="pais", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="pais", referencedColumnName="id", nullable=true)
      */
     private $pais;
     /**
@@ -31,17 +42,18 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
         parent::__construct();
         $this->aduanas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->cargas = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->descargas = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
      * Add aduanas
      *
-     * @param \PuertoUDES\CommonBundle\Entity\Aduana $aduanas
+     * @param \PuertoUDES\CommonBundle\Entity\Aduana $aduana
      * @return Lugar
      */
-    public function addAduana(\PuertoUDES\CommonBundle\Entity\Aduana $aduanas)
+    public function addAduana(\PuertoUDES\CommonBundle\Entity\Aduana $aduana)
     {
-        $this->aduanas[] = $aduanas;
+        $this->aduanas[] = $aduana;
     
         return $this;
     }
@@ -49,11 +61,11 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
     /**
      * Remove aduanas
      *
-     * @param \PuertoUDES\CommonBundle\Entity\Aduana $aduanas
+     * @param \PuertoUDES\CommonBundle\Entity\Aduana $aduana
      */
-    public function removeAduana(\PuertoUDES\CommonBundle\Entity\Aduana $aduanas)
+    public function removeAduana(\PuertoUDES\CommonBundle\Entity\Aduana $aduana)
     {
-        $this->aduanas->removeElement($aduanas);
+        $this->aduanas->removeElement($aduana);
     }
 
     /**
@@ -65,28 +77,60 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->aduanas;
     }
+    
+    /**
+     * Add entidades
+     *
+     * @param \PuertoUDES\UsuariosBundle\Entity\Entidad $entidad
+     * @return Lugar
+     */
+    public function addEntidad(\PuertoUDES\UsuariosBundle\Entity\Entidad $entidad)
+    {
+        $this->entidades[] = $entidad;
+    
+        return $this;
+    }
+
+    /**
+     * Remove entidades
+     *
+     * @param \PuertoUDES\UsuariosBundle\Entity\Entidad $entidad
+     */
+    public function removeEntidad(\PuertoUDES\UsuariosBundle\Entity\Entidad $entidad)
+    {
+        $this->entidades->removeElement($entidad);
+    }
+
+    /**
+     * Get entidades
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getEntidades()
+    {
+        return $this->entidades;
+    }
 
     /**
      * Add cargas
      *
-     * @param \PuertoUDES\FormatosBundle\Entity\Carga $cargas
+     * @param \PuertoUDES\FormatosBundle\Entity\Carga $carga
      * @return Lugar
      */
-    public function addCarga(\PuertoUDES\FormatosBundle\Entity\Carga $cargas)
+    public function addCarga(\PuertoUDES\FormatosBundle\Entity\Carga $carga)
     {
-        $this->cargas[] = $cargas;
-    
+        $this->cargas[] = $carga;
         return $this;
     }
 
     /**
      * Remove cargas
      *
-     * @param \PuertoUDES\FormatosBundle\Entity\Carga $cargas
+     * @param \PuertoUDES\FormatosBundle\Entity\Carga $carga
      */
-    public function removeCarga(\PuertoUDES\FormatosBundle\Entity\Carga $cargas)
+    public function removeCarga(\PuertoUDES\FormatosBundle\Entity\Carga $carga)
     {
-        $this->cargas->removeElement($cargas);
+        $this->cargas->removeElement($carga);
     }
 
     /**
@@ -97,6 +141,37 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getCargas()
     {
         return $this->cargas;
+    }
+    /**
+     * Add descargas
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Carga $carga
+     * @return Lugar
+     */
+    public function addDescarga(\PuertoUDES\FormatosBundle\Entity\Carga $carga)
+    {
+        $this->descargas[] = $carga;
+        return $this;
+    }
+
+    /**
+     * Remove descargas
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Carga $carga
+     */
+    public function removeDescarga(\PuertoUDES\FormatosBundle\Entity\Carga $carga)
+    {
+        $this->descargas->removeElement($carga);
+    }
+
+    /**
+     * Get descargas
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDescargas()
+    {
+        return $this->descargas;
     }
 
     /**
@@ -120,5 +195,85 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getPais()
     {
         return $this->pais;
+    }
+    
+    public function __toString() {
+        return $this->getNombre().', '.$this->getPais();
+    }
+    
+    /**
+     * Json aduanas
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function jsonAduanas($json = true)
+    {
+        $a = array();
+        foreach ($this->getAduanas() as $pps) {
+            $a[$pps->getId()] = $pps->json($json);
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+    
+    /**
+     * Json cargas
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function jsonCargas($json = true)
+    {
+        $a = array();
+        foreach ($this->getCargas() as $pps) {
+            $a[$pps->getId()] = $pps->json($json);
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+    
+    /**
+     * Json entidades
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function jsonEntidades($json = true)
+    {
+        $a = array();
+        foreach ($this->getEntidades() as $pps) {
+            $a[$pps->getId()] = $pps->json($json);
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+    
+    public function json($json = true, $aduanas = false, $cargas = false, $entidades = false){
+        $a = array_merge(parent::json(false), array(
+            'pais'      =>  $this->getPais()->json(false),
+        ));
+        if(is_bool($aduanas) && $aduanas){
+            $a = array_merge($a, array(
+                'aduanas'   =>  $this->jsonAduanas(false),
+            ));
+        }
+        if(is_bool($cargas) && $cargas){
+            $a = array_merge($a, array(
+                'cargas'    =>  $this->jsonCargas(false),
+            ));
+        }
+        if(is_bool($entidades) && $entidades){
+            $a = array_merge($a, array(
+                'entidades' =>  $this->jsonEntidades(false),
+            ));
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
     }
 }

@@ -1,0 +1,8 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    {% include 'PuertoUDESFormatosBundle:Formato:_cpic.html.twig' with {
+            formato: entity
+        } %}
+{% endblock %}
+

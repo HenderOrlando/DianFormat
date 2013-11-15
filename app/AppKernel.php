@@ -19,6 +19,9 @@ class AppKernel extends Kernel
             new PuertoUDES\CommonBundle\PuertoUDESCommonBundle(),
             new PuertoUDES\UsuariosBundle\PuertoUDESUsuariosBundle(),
             new PuertoUDES\FormatosBundle\PuertoUDESFormatosBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
+            new PuertoUDES\FosUsuarioBundle\PuertoUDESFosUsuarioBundle(),
+            new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

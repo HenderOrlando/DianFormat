@@ -7,33 +7,177 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use PuertoUDES\CommonBundle\Controller\IndexController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use PuertoUDES\CommonBundle\Entity\Vehiculo;
 use PuertoUDES\CommonBundle\Form\VehiculoType;
 
 /**
  * Vehiculo controller.
  *
- * @Route("/vehiculo_")
+ * @Route("/Vehiculo")
  */
 class VehiculoController extends Controller
 {
+    
+    /**
+     * Displays a form to create a new Entidad entity.
+     *
+     * @Route("/Guardar/{tipo}/{numero}/", name="vehiculo_save_ajax")
+     * @Method({"POST","PUT"})
+     * @Template()
+     */
+    public function saveAjaxAction(Request $request){
+        $marca = $request->get('marca',NULL);
+        $aniof = $request->get('anioFabrica',NULL);
+        $placa = $request->get('placa',NULL);
+        $p  = $request->get('pais',NULL);
+        $numsc = strtoupper($request->get('numSerieChasis',''));
+        $certh = strtoupper($request->get('certificadoHabilitacion',''));
+        $tipo = $request->get('tipo',NULL);
+        $numero = $request->get('numero',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('numero' => $numero));
+        $datos = array(
+            'errors' => array(),
+        );
+        if($formato && is_string($aniof) && strlen($aniof) == 4){
+            $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($tipo)));
+            if($tipo->getId() === $formato->getTipo()->getId()){
+                $vehiculo = $this->getRepositorio()->findOneBy(array('placa' => $placa));
+                if(!$vehiculo){
+                    $vehiculo = new Vehiculo();
+                    $vehiculo
+                            ->setCertificadoHabilitacion($certh)
+                            ->setNumeroSerieChasis($numsc)
+                            ->setAnioFabrica($aniof)
+                            ->setMarca($marca)
+                            ->setPlaca($placa);
+                    $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
+                            ->createQueryBuilder('p')
+                            ->andWhere('p.canonical LIKE \'%'.$p.'%\' OR p.nombre LIKE \'%'.$p.'%\'')
+                            ->getQuery()->getOneOrNullResult();
+                    if(!$pais){
+                        $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
+                        $pais->setNombre($p)
+                            ->setNacionalidad($p);
+                        $em->persist($pais);
+                    }
+                    $vehiculo->setPais($pais);
+                    $em->persist($vehiculo);
+                }
+                $fc = $em->getRepository('PuertoUDESFormatosBundle:FormatoConductor')
+                        ->createQueryBuilder('fc')
+                        ->innerJoin('fc.vehiculo','v')
+                        ->andWhere('fc.formato = '.$formato->getId())
+                        ->andWhere('v.placa LIKE \'%'.$placa.'%\'')
+                        ->getQuery()->execute();
+                if(!$fc){
+                    $fc = new \PuertoUDES\FormatosBundle\Entity\FormatoConductor();
+                    $fc->setFormato($formato);
+                    $fc->setVehiculo($vehiculo);
+                    $em->persist($fc);
+                    $formato->addConductor($fc);
+                    $vehiculo->addFormato($fc);
+                    $em->persist($formato);
+                    $em->persist($vehiculo);
+                }elseif($fc[0]->getVehiculo()->getId() != $vehiculo->getId()){
+                    $vh = $fc[0]->getVehiculo();
+                    foreach($fc as $f){
+                        $vh->removeFormato($f);
+                        $em->persist($vh);
+                        $fc->setVehiculo($vehiculo);
+                        $vehiculo->addFormato($fc);
+                        $em->persist($fc);
+                    }
+                    $em->persist($vehiculo);
+                }else{
+                    if($vehiculo->getCertificadoHabilitacion() != $certh){
+                        $vehiculo->setCertificadoHabilitacion($certh);
+                    }
+                    if($vehiculo->getNumeroSerieChasis() != $numsc){
+                        $vehiculo->setNumeroSerieChasis($numsc);
+                    }
+                    $em->persist($vehiculo);
+                }
+                $em->flush();
+                $datos['id'] = $vehiculo->getId();
+                $datos['valores'] = $vehiculo->json(false);
+                $datos['success']['msgs']['Vehiculo'] = array(
+                    'msg' => 'Vehiculo de placa <strong>"'.$vehiculo->getPlaca().'"</strong> fué agregado',
+                    'tipo' => 'success'
+                );
+            }else{
+                $datos['errors']['Vehiculo'] = 'Datos inválidos.';
+            }
+        }else{
+            if(!is_string($aniof) || strlen($aniof) != 4){
+                $datos['errors']['Vehiculo'] = 'El año de fabricación del vehiculo debe ser de 4 dígitos.';
+            }else
+                $datos['errors']['Vehiculo'] = 'El Formato "'.$tipo.'" no existe.';
+        }
+        return JsonResponse::create($datos);
+    }
 
     /**
      * Lists all Vehiculo entities.
      *
      * @Route("/", name="vehiculo_")
-     * @Method("GET")
-     * @Template()
+     * @Method({"GET"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
-    public function indexAction()
+    public function indexAction(Request $request, $config = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('PuertoUDESCommonBundle:Vehiculo')->findAll();
-
-        return array(
-            'entities' => $entities,
+        $title = 'Vehiculos';
+        $entity = 'Vehiculo';
+        $bundle = 'Common';
+        $route = 'vehiculo_';
+        $limit = 5;
+        $utils = $this->getUtils();
+        if(is_null($config)){
+            $qb = $this->getRepositorio()->getAll(false, true);
+        }else{
+            $title = $config['title'];
+            $entity = $config['entity'];
+            $bundle = $config['bundle'];
+            $route = $config['route'];
+            $limit = $config['limit'];
+            $qb = $config['qb'];
+        }
+        
+        $head = $this->getHeadFiltro($utils->getFormFilter(array(), $route, true), $route);
+        $form = $head['filtros'];
+        $head['filtros'] = $form->createView();
+        $form->handleRequest($request);
+        $data = array();
+        if ($form->isValid()) {
+           $data = $form->getData();
+            $str_query = $utils->getQueryFilter($data, $head['fil'][0]['col'], $qb);
+            if(!empty($str_query))
+                $qb->andWhere($str_query);
+        }
+        
+//        $qb = $qb->getQuery();
+        $paginacion = $utils->getPaginacion($entity, $bundle, $limit, $route, $qb);
+//        $paginacion['form_filter'] = $form;
+        $botones = array(
+            array(
+                'url'   => $this->generateUrl('vehiculo__new'),
+                'type'  => 'primary',
+                'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
+            ),
         );
+        $datos = array(
+            'paginas'       =>  $paginacion['pag'],
+            'title'         =>  $title,
+            'head'          =>  $head,
+            'botones'       =>  $botones,
+            'datos_form'       =>  $data,
+        );
+        if($request->isXmlHttpRequest() || $request->get('ajax',false)){
+            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+        }
+        return $datos;
     }
     /**
      * Creates a new Vehiculo entity.
@@ -243,5 +387,81 @@ class VehiculoController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+    
+    
+    /**
+     * get Utils
+     * 
+     * @return IndexController Utilidades de PuertoUDES
+     */
+    public function getUtils() {
+        return $this->get('puertoudes.util');
+    }
+    
+    /**
+     * get Repositorio
+     * 
+     * @return VehiculoRepository  VehiculoRepository de PuertoUDES
+     */
+    public function getRepositorio() {
+        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Vehiculo');
+    }
+    
+    public function getHeadFiltro($form, $route){
+        $filas = array(
+            array(
+                'col'=>array(
+                    array(
+                        'dato'    =>   'Placa',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Marca',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Anio Fabrica',
+                        'label'    =>   'Año de Fábrica',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Num Serie Chasis',
+                        'label'    =>   'Numero de Serie del Chasis',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Certifica Habilita',
+                        'label'    =>   'Certificado de Habilitación',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'canonical',
+                        'label'    =>   'País',
+                        'join'    =>   'pais',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Acciones',
+                        'class' =>  'text-center',
+                        'acciones'=>    array(
+                            array(
+                                'url'   => 'vehiculo__edit',
+                                'data_url'=> array('id'),
+                                'type'  => 'default',
+                                'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
+                            ),
+                            array(
+                                'url'   => 'vehiculo__delete',
+                                'data_url'=> array('id'),
+                                'type'  => 'danger',
+                                'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
+                            ),
+                        )
+                    ),
+                )
+            ),
+        );
+        return $this->getUtils()->getHeadFiltro($filas, $form, $route);
     }
 }

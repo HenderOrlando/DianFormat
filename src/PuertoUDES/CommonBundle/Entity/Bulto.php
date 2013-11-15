@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping AS ORM;
 /** 
  * @ORM\Entity
  * @ORM\Table(name="bulto")
+ * @ORM\Entity(repositoryClass="PuertoUDES\CommonBundle\Repository\BultoRepository")
  */
 class Bulto extends \PuertoUDES\CommonBundle\Entity\ObjetoC
 {

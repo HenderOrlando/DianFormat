@@ -28,7 +28,7 @@ class PermisoPresentaServicio extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @param \PuertoUDES\UsuariosBundle\Entity\Entidad $entidades
      * @return PermisoPresentaServicio
      */
-    public function addEntidade(\PuertoUDES\UsuariosBundle\Entity\Entidad $entidades)
+    public function addEntidad(\PuertoUDES\UsuariosBundle\Entity\Entidad $entidades)
     {
         $this->entidades[] = $entidades;
     
@@ -40,7 +40,7 @@ class PermisoPresentaServicio extends \PuertoUDES\CommonBundle\Entity\Objeto
      *
      * @param \PuertoUDES\UsuariosBundle\Entity\Entidad $entidades
      */
-    public function removeEntidade(\PuertoUDES\UsuariosBundle\Entity\Entidad $entidades)
+    public function removeEntidad(\PuertoUDES\UsuariosBundle\Entity\Entidad $entidades)
     {
         $this->entidades->removeElement($entidades);
     }
@@ -53,5 +53,34 @@ class PermisoPresentaServicio extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getEntidades()
     {
         return $this->entidades;
+    }
+    
+    /**
+     * Json entidades
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function jsonEntidades($json = true)
+    {
+        $a = array();
+        foreach($this->getEntidades() as $e)
+            $a[$e->getId()] = $e->json($json);
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+    
+    public function json($json = true, $entidades = false){
+        $a = parent::json(false);
+        if(is_bool($entidades) && $entidades){
+            $a = array_merge($a, array(
+                'entidades'     =>  $this->jsonEntidades(false),
+            ));
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
     }
 }

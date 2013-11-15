@@ -15,10 +15,9 @@ class FormatoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('numero')
             ->add('nombre')
-            ->add('canonical')
             ->add('descripcion')
-            ->add('fechaCreado')
             ->add('tipo')
         ;
     }

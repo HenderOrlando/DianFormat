@@ -16,10 +16,16 @@ class TipoType extends AbstractType
     {
         $builder
             ->add('nombre')
-            ->add('canonical')
             ->add('descripcion')
-            ->add('fechaCreado')
-            ->add('_aplicableA')
+            ->add('aplicableA','choice',array(
+                'choices'   =>  array(
+                    'Aduana'    => 'Aduana',
+                    'Carga'     => 'Carga',
+                    'Conductor' => 'Conductor',
+                    'Formato'   => 'Formato',
+                    'Usuario'   => 'Usuario',
+                ),
+            ))
         ;
     }
     

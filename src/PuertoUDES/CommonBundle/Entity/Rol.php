@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping AS ORM;
 /** 
  * @ORM\Entity
  * @ORM\Table(name="rol")
+ * @ORM\Entity(repositoryClass="PuertoUDES\CommonBundle\Repository\RolRepository")
  */
 class Rol extends \PuertoUDES\CommonBundle\Entity\Objeto
 {
@@ -12,13 +13,48 @@ class Rol extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="rol")
      */
     private $usuariosFormatos;
+    
+    /** 
+     * @ORM\ManyToMany(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario", mappedBy="roles")
+     */
+    private $usuarios;
+    
+    /** 
+     * @ORM\Column(type="string", nullable=false, name="_aplicable_a")
+     */
+    private $aplicableA;
+    
     /**
      * Constructor
      */
     public function __construct()
     {
         parent::__construct();
+        $this->usuarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->usuariosFormatos = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Set aplicableA
+     *
+     * @param string $aplicableA
+     * @return Tipo
+     */
+    public function setAplicableA($aplicableA)
+    {
+        $this->aplicableA = $aplicableA;
+    
+        return $this;
+    }
+
+    /**
+     * Get aplicableA
+     *
+     * @return string 
+     */
+    public function getAplicableA()
+    {
+        return $this->aplicableA;
     }
     
     /**
@@ -52,5 +88,37 @@ class Rol extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getUsuariosFormatos()
     {
         return $this->usuariosFormatos;
+    }
+    /**
+     * Add usuario
+     *
+     * @param \PuertoUDES\UsuariosBundle\Entity\Usuario $usuario
+     * @return Rol
+     */
+    public function addUsuario(\PuertoUDES\UsuariosBundle\Entity\Usuario $usuario)
+    {
+        $this->usuarios[] = $usuario;
+    
+        return $this;
+    }
+
+    /**
+     * Remove usuario
+     *
+     * @param \PuertoUDES\UsuariosBundle\Entity\Usuario $usuario
+     */
+    public function removeUsuario(\PuertoUDES\UsuariosBundle\Entity\Usuario $usuario)
+    {
+        $this->usuarios->removeElement($usuario);
+    }
+
+    /**
+     * Get usuario
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getUsuario()
+    {
+        return $this->usuarios;
     }
 }

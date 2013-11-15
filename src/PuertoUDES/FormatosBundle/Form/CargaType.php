@@ -17,7 +17,6 @@ class CargaType extends AbstractType
         $builder
             ->add('id')
             ->add('numPrecintos')
-            ->add('fechaCreado')
             ->add('naturalezaCarga')
             ->add('formato')
             ->add('lugar')

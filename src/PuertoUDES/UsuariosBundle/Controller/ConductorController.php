@@ -7,13 +7,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\UsuariosBundle\Entity\Conductor;
 use PuertoUDES\UsuariosBundle\Form\ConductorType;
 
 /**
  * Conductor controller.
  *
- * @Route("/Conductor_")
+ * @Route("/Conductor")
  */
 class ConductorController extends Controller
 {
@@ -21,24 +22,67 @@ class ConductorController extends Controller
     /**
      * Lists all Conductor entities.
      *
-     * @Route("/", name="Conductor_")
-     * @Method("GET")
-     * @Template()
+     * @Route("/", name="conductor_")
+     * @Method({"GET"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
-    public function indexAction()
+    public function indexAction(Request $request, $config = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('PuertoUDESUsuariosBundle:Conductor')->findAll();
-
-        return array(
-            'entities' => $entities,
+        $title = 'Conductores de Formatos';
+        $entity = 'Conductor';
+        $bundle = 'Usuarios';
+        $route = 'conductor_';
+        $limit = 5;
+        $utils = $this->getUtils();
+        if(is_null($config)){
+            $qb = $this->getRepositorio()->getAll(false, true);
+        }else{
+            $title = $config['title'];
+            $entity = $config['entity'];
+            $bundle = $config['bundle'];
+            $route = $config['route'];
+            $limit = $config['limit'];
+            $qb = $config['qb'];
+        }
+        
+        $head = $this->getHeadFiltro($utils->getFormFilter(array(), $route, true), $route);
+        $form = $head['filtros'];
+        $head['filtros'] = $form->createView();
+        $form->handleRequest($request);
+        $data = array();
+        if ($form->isValid()) {
+           $data = $form->getData();
+            $str_query = $utils->getQueryFilter($data, $head['fil'][0]['col'], $qb);
+            if(!empty($str_query))
+                $qb->andWhere($str_query);
+        }
+        
+//        $qb = $qb->getQuery();
+        $paginacion = $utils->getPaginacion($entity, $bundle, $limit, $route, $qb);
+//        $paginacion['form_filter'] = $form;
+        $botones = array(
+            array(
+                'url'   => $this->generateUrl('conductor__new'),
+                'type'  => 'primary',
+                'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
+            ),
         );
+        $datos = array(
+            'paginas'       =>  $paginacion['pag'],
+            'title'         =>  $title,
+            'head'          =>  $head,
+            'botones'       =>  $botones,
+            'datos_form'       =>  $data,
+        );
+        if($request->isXmlHttpRequest() || $request->get('ajax',false)){
+            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+        }
+        return $datos;
     }
     /**
      * Creates a new Conductor entity.
      *
-     * @Route("/", name="Conductor__create")
+     * @Route("/", name="conductor__create")
      * @Method("POST")
      * @Template("PuertoUDESUsuariosBundle:Conductor:new.html.twig")
      */
@@ -84,7 +128,7 @@ class ConductorController extends Controller
     /**
      * Displays a form to create a new Conductor entity.
      *
-     * @Route("/new", name="Conductor__new")
+     * @Route("/new", name="conductor__new")
      * @Method("GET")
      * @Template()
      */
@@ -102,7 +146,7 @@ class ConductorController extends Controller
     /**
      * Finds and displays a Conductor entity.
      *
-     * @Route("/{id}", name="Conductor__show")
+     * @Route("/{id}", name="conductor__show")
      * @Method("GET")
      * @Template()
      */
@@ -127,7 +171,7 @@ class ConductorController extends Controller
     /**
      * Displays a form to edit an existing Conductor entity.
      *
-     * @Route("/{id}/edit", name="Conductor__edit")
+     * @Route("/{id}/edit", name="conductor__edit")
      * @Method("GET")
      * @Template()
      */
@@ -172,7 +216,7 @@ class ConductorController extends Controller
     /**
      * Edits an existing Conductor entity.
      *
-     * @Route("/{id}", name="Conductor__update")
+     * @Route("/{id}", name="conductor__update")
      * @Method("PUT")
      * @Template("PuertoUDESUsuariosBundle:Conductor:edit.html.twig")
      */
@@ -205,7 +249,7 @@ class ConductorController extends Controller
     /**
      * Deletes a Conductor entity.
      *
-     * @Route("/{id}", name="Conductor__delete")
+     * @Route("/{id}", name="conductor__delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -243,5 +287,101 @@ class ConductorController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+    
+    
+    /**
+     * get Utils
+     * 
+     * @return IndexController Utilidades de PuertoUDES
+     */
+    public function getUtils() {
+        return $this->get('puertoudes.util');
+    }
+    
+    /**
+     * get Repositorio
+     * 
+     * @return ConductorRepository  ConductorRepository de PuertoUDES
+     */
+    public function getRepositorio() {
+        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESUsuariosBundle:Conductor');
+    }
+    
+    public function getHeadFiltro($form, $route){
+        $filas = array(
+            array(
+                'col'=>array(
+                    array(
+                        'dato'    =>   'Doc Id',
+                        'label'    =>   'Documento de Identidad',
+                        'join'    =>   'usuario',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Nombre',
+                        'join'    =>   'usuario',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Descripcion',
+                        'label'    =>   'Descripción',
+                        'join'    =>   'usuario',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Direccion',
+                        'label'    =>   'Dirección',
+                        'join'    =>   'usuario',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Telefono',
+                        'label'    =>   'Teléfono',
+                        'join'    =>   'usuario',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Pais',
+                        'label'    =>   'Nacionalidad',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Clase Licencia',
+                        'label'    =>   'Clase de Licencia de Conducción',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Num Licencia',
+                        'label'    =>   'Número de Licencia',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Num Libreta Tripulante',
+                        'label'    =>   'Número de Libreta de Tripulante',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Acciones',
+                        'class' =>  'text-center',
+                        'acciones'=>    array(
+                            array(
+                                'url'   => 'conductor__edit',
+                                'data_url'=> array('id'),
+                                'type'  => 'default',
+                                'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
+                            ),
+                            array(
+                                'url'   => 'conductor__delete',
+                                'data_url'=> array('id'),
+                                'type'  => 'danger',
+                                'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
+                            ),
+                        )
+                    ),
+                )
+            ),
+        );
+        return $this->getUtils()->getHeadFiltro($filas, $form, $route);
     }
 }

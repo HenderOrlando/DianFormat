@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping AS ORM;
 /** 
  * @ORM\Entity
  * @ORM\Table(name="pais")
+ * @ORM\Entity(repositoryClass="PuertoUDES\CommonBundle\Repository\PaisRepository")
  */
 class Pais extends \PuertoUDES\CommonBundle\Entity\Objeto
 {
@@ -159,4 +160,5 @@ class Pais extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->conductores;
     }
+    
 }

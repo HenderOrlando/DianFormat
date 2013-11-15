@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Puerto UDES {% block title %}{% endblock %}</title>
+        {% stylesheets 
+            'bundles/puertoudescommon/css/bootstrap.min.css'
+            'bundles/puertoudescommon/css/bootstrap-theme.min.css'
+            'bundles/puertoudescommon/xeditable/bootstrap-editable/css/bootstrap-editable.css'
+            'bundles/puertoudescommon/css/index.css'
+        filter='cssrewrite' %}
+            <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+            
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                {% block navbar -%}
+                <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+                  <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                          <span class="sr-only">Toggle navigation</span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">Puerto UDES</a>
+                    </div>
+
+                  <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse navbar-ex1-collapse">
+                        <ul class="nav navbar-nav">
+                        {% if app.user and is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                            <li><a href="#">Ayuda</a></li>
+                        {% else %}
+                            <li><a href="#">Que es?</a></li>
+                            <li><a href="#">Características</a></li>
+                            <li><a href="#">Para que sirve?</a></li>
+                            <li><a href="#">Cómo usarlo</a></li>
+                            <li><a href="#">Acerca de</a></li>
+                        {% endif %}
+                        </ul>
+                        {#<ul class="nav navbar-nav navbar-right">
+                            <li><a href="#">Link</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Action</a></li>
+                                    <li><a href="#">Another action</a></li>
+                                    <li><a href="#">Something else here</a></li>
+                                    <li><a href="#">Separated link</a></li>
+                                </ul>
+                            </li>
+                        </ul> #}
+                            {% if app.user and is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li>
+                                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            Entidades
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                            <li>
+                                                <a href="{{ path('entidad__remitentes',{'id':app.user.id}) }}">Remitentes</a>
+                                                <a href="{{ path('entidad__destinatarios',{'id':app.user.id}) }}">Destinatarios</a>
+                                                <a href="{{ path('entidad__transportistas',{'id':app.user.id}) }}">Transportista</a>
+                                                <a href="{{ path('entidad__consignatarios',{'id':app.user.id}) }}">Consignatarios</a>
+                                                <a href="{{ path('entidad__notificados',{'id':app.user.id}) }}">Notificados</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            Formatos
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                            <li>
+                                                <a href="{{ path('formato_',{'id':app.user.id}) }}">Formatos</a>
+                                                <a href="{{ path('formato__mci',{'id':app.user.id}) }}">Manifiesto de Carga Internacional</a>
+                                                <a href="{{ path('formato__cpic',{'id':app.user.id}) }}">Carta de Porte Internacional por Carretera</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            Carga
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                            <li>
+                                                <a href="{{ path('mercancia_',{'id':app.user.id}) }}">Mercancias</a>
+                                                <a href="{{ path('vehiculo_',{'id':app.user.id}) }}">Vehiculos</a>
+                                                <a href="{{ path('conductor_',{'id':app.user.id}) }}">Conductores</a>
+                                                <a href="{{ path('contenedor_',{'id':app.user.id}) }}">Contenedor</a>
+                                                <a href="{{ path('unidadCarga_',{'id':app.user.id}) }}">Unidad de Carga</a>
+                                                <a href="{{ path('carga_',{'id':app.user.id}) }}">Cargas</a>
+                                                <a href="{{ path('tipo__naturalezasCarga',{'id':app.user.id}) }}">Naturalezas de la Carga</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            Usuarios
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                            <li>
+                                                <a href="{{ path('usuario_',{'id':app.user.id}) }}">Usuarios</a>
+                                                <a href="{{ path('usuario__docentes',{'id':app.user.id}) }}">Docentes</a>
+                                                <a href="{{ path('usuario__estudiantes',{'id':app.user.id}) }}">Estudiantes</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            Otros
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                            <li>
+                                                <a href="{{ path('rol_',{'id':app.user.id}) }}">Roles de Usuarios</a>
+                                                <a href="{{ path('pais_',{'id':app.user.id}) }}">Paises</a>
+                                                <a href="{{ path('lugar_',{'id':app.user.id}) }}">Lugares</a>
+                                                <a href="{{ path('bulto_',{'id':app.user.id}) }}">Bulto</a>
+                                                <a href="{{ path('moneda_',{'id':app.user.id}) }}">Monedas</a>
+                                                <a href="{{ path('aduana_',{'id':app.user.id}) }}">Aduanas</a>
+                                                <a href="{{ path('permisoPresentaServicio_',{'id':app.user.id}) }}">Permisos Presentación Servicio</a>
+                                                <a href="{{ path('tipo__tiposFormatos',{'id':app.user.id}) }}">Tipos de Formatos</a>
+                                                <a href="{{ path('tipo__licenciasConductor',{'id':app.user.id}) }}">Clases de Licencias de Conducción</a>
+                                                <a href="{{ path('tipo__nivelesAduana',{'id':app.user.id}) }}">Niveles de Aduanas</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            {{ app.user.username }}
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                            <li>
+                                                <a href="{{ path('usuario__edit',{'id':app.user.id}) }}">Editar Perfil</a>
+                                                <a href="{{ path('fos_user_profile_edit',{'id':app.user.id}) }}">Editar Cuenta</a>
+                                                <a href="{{ path('fos_user_change_password',{'id':app.user.id}) }}">Cambiar Clave</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                      <a href="{{ path('fos_user_security_logout') }}">
+                                          Salir
+                                      </a>
+                                    </li>
+                                </ul>
+                            {% else %}
+                            <div class="navbar-form navbar-right">
+                                {% render controller("FOSUserBundle:Security:login") %}
+                            </div>
+                            {% endif %}
+                    </div><!-- /.navbar-collapse -->
+                </nav>
+                {% endblock %}
+            </header>
+            <section id="body">
+            {% block body -%}
+            {% endblock %}
+            </section>
+            <footer>
+            {% block footer -%}
+            {% endblock %}
+            </footer>
+        </div>
+        <section id="componentes">
+            <div id="mensajes"></div>
+            <div id="javascripts">
+                {% javascripts 
+                    '@PuertoUDESCommonBundle/Resources/public/js/modernizr.custom.js'
+                    '@PuertoUDESCommonBundle/Resources/public/js/jquery-1.10.2.min.js'
+                    '@PuertoUDESCommonBundle/Resources/public/js/bootstrap.min.js'
+                    '@PuertoUDESCommonBundle/Resources/public/xeditable/bootstrap-editable/js/bootstrap-editable.js'
+                    '@PuertoUDESCommonBundle/Resources/public/js/js_functions.js'
+                    '@PuertoUDESCommonBundle/Resources/public/js/index.js'
+                 %}
+                    <script type="text/javascript" src="{{ asset_url }}"></script>
+                {% endjavascripts %}
+                {% block javascript %}{% endblock %}
+            </div>
+        </section>
+    </body>
+</html>

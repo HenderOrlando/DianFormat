@@ -1,3 +1,7 @@
+puerto_udes_fos_usuario:
+    resource: "@PuertoUDESFosUsuarioBundle/Resources/config/routing.yml"
+    prefix:   /
+
 puerto_udes_formatos:
     resource: "@PuertoUDESFormatosBundle/Controller/"
     type:     annotation
@@ -13,3 +17,26 @@ puerto_udes_common:
     type:     annotation
     prefix:   /
 
+
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+
+fos_user_profile:
+    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
+    prefix: /profile
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /register
+
+fos_user_resetting:
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+    prefix: /resetting
+
+fos_user_change_password:
+    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
+    prefix: /profile
+    
+fos_user_group:
+    resource: "@FOSUserBundle/Resources/config/routing/group.xml"
+    prefix: /group

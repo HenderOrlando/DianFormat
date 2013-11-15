@@ -1,0 +1,197 @@
+{#
+Ejemplo:
+    tabla: {
+        class: 'table-hover table-striped table-bordered',
+        head: {
+            fil:[
+                {
+                    col:[
+                        {
+                            'dato'    :   'CH1',
+                            'class'   :   'No Class',
+                        },
+                        {
+                            'dato'    :   'CH2',
+                            'cols'   :   2,
+                        },
+                    ]
+                },
+            ]
+        },
+        body: {
+            fil:[
+                {
+                    col:[
+                        {
+                            'dato'    :   'CB11',
+                            'class'   :   'No Class',
+                            'rows'    :   3,
+                        },
+                    ]
+                },
+                {
+                    col:[
+                        {
+                            'dato'    :   'CB1',
+                            'class'   :   'No Class',
+                        },
+                        {
+                            'dato'    :   'CB2',
+                            'class'   :   'No Class 1',
+                        },
+                    ]
+                },
+                {
+                    col:[
+                        {
+                            'dato'    :   'CB21',
+                            'class'   :   'No Class',
+                        },
+                        {
+                            'dato'    :   'CB22',
+                            'class'   :   'No Class 21',
+                        },
+                    ]
+                },
+            ]
+        },
+        foot: {
+            fil:[
+                {
+                    col:[
+                        {
+                            'dato'    :   'CF1',
+                            'class'   :   'No Class',
+                            'cols'    :   3,
+                        },
+                    ]
+                },
+            ]
+        },
+    }
+
+
+
+
+    Collection  tabla   Tabla a renderizar. Contiene los sguientes datos:
+        {
+            String      class   Clase de estilos
+            Collection  objetos Lista de objetos
+            Collection  paginas Lista de objetos de KnpPaginator
+            head: {
+                filtros: Formulario para filtrar por columna. 1 campo por cada celda del head
+                fil:[
+                    {
+                        col:[
+                            {
+                                String  dato    Dato a mostrar
+                                String  class   Clase de Estilo de la celda
+                                Integer cols    Columnas a ocupar
+                                Integer rows    Filas a ocupar
+                            }
+                        ]
+                    },
+                ]
+            },
+            body: {
+                fil:[
+                    {
+                        col:[
+                            {
+                                String  dato    Dato a mostrar
+                                String  class   Clase de Estilo de la celda
+                                Integer cols    Columnas a ocupar
+                                Integer rows    Filas a ocupar
+                            }
+                        ]
+                    },
+                ]
+            },
+            foot: {
+                filtros: Formulario para filtrar por columna. 1 campo por cada celda del head
+                fil:[
+                    {
+                        col:[
+                            {
+                                String  dato    Dato a mostrar
+                                String  class   Clase de Estilo de la celda
+                                Integer cols    Columnas a ocupar
+                                Integer rows    Filas a ocupar
+                            }
+                        ]
+                    },
+                ]
+            },
+        }
+#}
+<div class="table-responsive">
+    <table class="table {{ tabla.class is defined?tabla.class:'' }}">
+        {% if tabla.head is defined and tabla.head is not empty %}
+        <thead>
+            {% if tabla.paginas is defined and tabla.paginas is not empty and tabla.head is defined and tabla.head is not empty %}
+                {% include 'PuertoUDESCommonBundle:Plantilla:_fila.html.twig' with {
+                        head: tabla.head.fil,
+                        nav : tabla.paginas,
+                    }
+                %}
+            {% else %}
+                {% include 'PuertoUDESCommonBundle:Plantilla:_fila.html.twig' with {
+                        filas: tabla.head.fil,
+                    }
+                %}
+            {% endif %}
+            {% if tabla.head.filtros is defined and tabla.head.filtros is not empty %}
+                {% include 'PuertoUDESCommonBundle:Plantilla:_fila.html.twig' with {
+                        head: tabla.head.fil,
+                        filtros: tabla.head.filtros,
+                    }
+                %}
+            {% endif %}
+        </thead>
+        {% endif %}
+        <tbody>
+            {% if tabla.body is defined and tabla.body is not empty %}
+                {% include 'PuertoUDESCommonBundle:Plantilla:_fila.html.twig' with {
+                        filas: tabla.body.fil,
+                    }
+                %}
+            {% elseif tabla.objetos is defined and tabla.objetos is not empty and tabla.head is defined and tabla.head is not empty %}
+                {% include 'PuertoUDESCommonBundle:Plantilla:_fila.html.twig' with {
+                        objetos: tabla.objetos,
+                        head : tabla.head.fil,
+                    }
+                %}
+            {% elseif tabla.paginas is defined and tabla.paginas is not empty and tabla.head is defined and tabla.head is not empty %}
+                {% include 'PuertoUDESCommonBundle:Plantilla:_fila.html.twig' with {
+                        objetos: tabla.paginas,
+                        head : tabla.head.fil,
+                    }
+                %}
+            {% endif %}
+        </tbody>
+        {% if (tabla.foot is defined and tabla.foot is not empty) or (tabla.paginas is defined and tabla.paginas is not empty) %}
+        <tfoot>
+            {% if tabla.foot.filtros is defined and tabla.foot.filtros is not empty %}
+                {% include 'PuertoUDESCommonBundle:Plantilla:_fila.html.twig' with {
+                        head: tabla.head.fil,
+                        filtros: tabla.foot.filtros,
+                    }
+                %}
+            {% endif %}
+            {% if tabla.paginas is defined %}
+                {% include 'PuertoUDESCommonBundle:Plantilla:_fila.html.twig' with {
+                        'head': tabla.head.fil,
+                        'nav' : tabla.paginas,
+                        'foot': '',
+                    }
+                %}                
+            {% elseif tabla.foot is defined %}
+                {% include 'PuertoUDESCommonBundle:Plantilla:_fila.html.twig' with {
+                        filas: tabla.foot.fil,
+                    }
+                %}
+            {% endif %}
+        </tfoot>
+        {% endif %}
+    </table>
+</div>

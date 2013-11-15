@@ -13,7 +13,7 @@ use PuertoUDES\FormatosBundle\Form\FormatoAduanaType;
 /**
  * FormatoAduana controller.
  *
- * @Route("/formatoAduana_")
+ * @Route("/FormatoAduana/")
  */
 class FormatoAduanaController extends Controller
 {

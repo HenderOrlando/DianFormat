@@ -38,7 +38,7 @@ class Objeto
      */
     public function __construct()
     {
-        $this->fechaCreado = new \DateTime();
+        $this->fechaCreado = new \DateTime("now");
     }
 
     /**
@@ -60,6 +60,7 @@ class Objeto
     public function setNombre($nombre)
     {
         $this->nombre = $nombre;
+        $this->setCanonical($this->normaliza($nombre));
     
         return $this;
     }
@@ -141,5 +142,33 @@ class Objeto
     public function getFechaCreado()
     {
         return $this->fechaCreado;
+    }
+    
+    /**/
+    protected function normaliza ($cadena){
+        $originales = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿŔŕ';
+        $modificadas = 'aaaaaaaceeeeiiiidnoooooouuuuybsaaaaaaaceeeeiiiidnoooooouuuyybyRr';
+        $cadena = utf8_decode($cadena);
+        $cadena = strtr($cadena, utf8_decode($originales), $modificadas);
+        $cadena = strtolower($cadena);
+        return str_replace(' ', '-', utf8_encode($cadena));
+    }
+    
+    public function __toString() {
+        return $this->getNombre();
+    }
+    
+    public function json($json = true){
+        $a = array(
+            'id'            =>  $this->getId(),
+            'nombre'        =>  $this->getNombre(),
+            'canonical'     =>  $this->getCanonical(),
+            'fecha_creado'  =>  $this->getFechaCreado(),
+            'descripcion'   =>  $this->getDescripcion(),
+        );
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
     }
 }

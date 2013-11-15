@@ -1,0 +1,22 @@
+{# empty Twig template #}
+<div class="row show-grid">
+    <div class="col-xs-4 col-sm-4 col-md-3">
+        {% block menu_title %}
+        {% endblock %}
+    </div>
+    <div class="col-xs-2 col-sm-2 col-md-3">
+        {% block menu_search %}
+        {% endblock %}
+    </div>
+    <div class="col-xs-6 col-sm-6 col-md-6 text-right">
+        {% block menu_action %}
+        {% endblock %}
+    </div>
+    <div class="clear clear-fix clearfix"></div>
+    {# Optional: clear the XS cols if their content doesn't match in height #}
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        {% block menu_content %}
+            
+        {% endblock %}
+    </div>
+</div>

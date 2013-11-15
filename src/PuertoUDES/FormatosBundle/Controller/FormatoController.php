@@ -7,13 +7,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\FormatosBundle\Entity\Formato;
 use PuertoUDES\FormatosBundle\Form\FormatoType;
 
 /**
  * Formato controller.
  *
- * @Route("/formato_")
+ * @Route("/Formato")
  */
 class FormatoController extends Controller
 {
@@ -22,22 +24,109 @@ class FormatoController extends Controller
      * Lists all Formato entities.
      *
      * @Route("/", name="formato_")
-     * @Method("GET")
-     * @Template()
+     * @Method({"GET"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
-    public function indexAction()
+    public function indexAction(Request $request, $config = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findAll();
-
-        return array(
-            'entities' => $entities,
+        $title = 'Formatos';
+        $entity = 'Formato';
+        $bundle = 'Formato';
+        $route = 'formato_';
+        $limit = 5;
+        $utils = $this->getUtils();
+        if(is_null($config)){
+            $qb = $this->getRepositorio()->getAll(false, true);
+        }else{
+            $title = $config['title'];
+            $entity = $config['entity'];
+            $bundle = $config['bundle'];
+            $route = $config['route'];
+            $limit = $config['limit'];
+            $qb = $config['qb'];
+        }
+        
+        $head = $this->getHeadFiltro($utils->getFormFilter(array(), $route, true), $route, is_null($config));
+        $form = $head['filtros'];
+        $head['filtros'] = $form->createView();
+        $form->handleRequest($request);
+        $data = array();
+        if ($form->isValid()) {
+           $data = $form->getData();
+            $str_query = $utils->getQueryFilter($data, $head['fil'][0]['col'], $qb);
+            if(!empty($str_query))
+                $qb->andWhere($str_query);
+        }
+        
+//        $qb = $qb->getQuery();
+        $paginacion = $utils->getPaginacion($entity, $bundle, $limit, $route, $qb);
+//        $paginacion['form_filter'] = $form;
+        if(!is_null($config) && isset($config['abrevia']))
+            $url_ = $this->generateUrl('formato__new_', array('abrevia' => $config['abrevia']));
+        else
+            $url_ = $this->generateUrl('formato__new');
+        $botones = array(
+            array(
+                'url'   => $url_,
+                'type'  => 'primary',
+                'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
+            ),
         );
+        $datos = array(
+            'paginas'       =>  $paginacion['pag'],
+            'title'         =>  $title,
+            'head'          =>  $head,
+            'botones'       =>  $botones,
+            'datos_form'       =>  $data,
+        );
+        if($request->isXmlHttpRequest() || $request->get('ajax',false)){
+            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+        }
+        return $datos;
     }
+    /**
+     * Lists all Formato entities.
+     *
+     * @Route("/CPIC/", name="formato__cpic")
+     * @Method("GET")
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function cpicAction(Request $request)
+    {
+        return $this->indexAction($request, array(
+            'title'     =>  'Carta de Porte Internacional por Carretera',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'cpic',
+            'route'     =>  'formato__cpic',
+            'limit'     =>  5,
+            'qb'        =>  $this->getRepositorio()->getCpic(null, false, true),
+        ));
+    }
+    /**
+     * Lists all Formato entities.
+     *
+     * @Route("/MCI/", name="formato__mci")
+     * @Method("GET")
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function mciAction(Request $request)
+    {
+        return $this->indexAction($request, array(
+            'title'     =>  'Manifiesto de Carga Internacional',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'mci',
+            'route'     =>  'formato__mci',
+            'limit'     =>  5,
+            'qb'        =>  $this->getRepositorio()->getMci(null, false, true),
+        ));
+    }
+    
     /**
      * Creates a new Formato entity.
      *
+     * @Route("/{abrevia}", name="formato__create_")
      * @Route("/", name="formato__create")
      * @Method("POST")
      * @Template("PuertoUDESFormatosBundle:Formato:new.html.twig")
@@ -84,19 +173,133 @@ class FormatoController extends Controller
     /**
      * Displays a form to create a new Formato entity.
      *
-     * @Route("/new", name="formato__new")
+     * @Route("/Editar-Campo/{tipo}/", name="formato_edit_campo")
+     * @Method("PUT")
+     * @Template()
+     */
+    public function editCampoAction(Request $request){
+        $nombre = $request->get('name',NULL);
+        $valor = $request->get('value',NULL);
+        $llave = $request->get('pk',NULL);
+        $save = $request->get('save',NULL);
+        $entity = $request->get('entity',NULL);
+        $bundle = $request->get('bundle',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $valores = array();
+        if(!$llave){
+            $obj = $em->getRepository('PuertoUDES'.ucfirst($bundle).'Bundle:'.ucfirst($entity))->findBy(array($nombre => $valor));
+            if($obj){
+                $valores['msgs'][] = array('msg' => 'El '.$entity.' ya existe.', 'tipo' => 'success');
+                $valores['datos'] = $obj->json();
+            }else{
+                $valores['msgs'][] = array('msg' => 'El '.$entity.' no existe.', 'tipo' => 'info');
+            }
+        }else{
+            $obj = $this->getDoctrine()->getManager()->getRepository('PuertoUDES'.ucfirst($bundle).'Bundle:'.ucfirst($entity))->find($llave);
+            $set = 'set'.  ucfirst($nombre);
+            $get = 'get'.  ucfirst($nombre);
+            if($obj){
+                if($obj->$get() != $valor){
+                    $obj->$set($valor);
+                    $em->persist($obj);
+                    $em->flush();
+                    $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' fué actualizado.', 'tipo' => 'success');
+                    $valores['datos'] = $obj->json();
+                }else{
+                    $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' ya tenía éste valor.', 'tipo' => 'info');
+                }
+            }else{
+                $valores['msgs'][] = array('msg' => $entity.': Llena los demás datos y pulsa el botón guardar.', 'tipo' => 'warning');
+            }
+        }
+        
+        return JsonResponse::create(array(
+            'name'   =>    $nombre,
+            'value'  =>    $valor,
+            'pk'     =>    $llave,
+            'save'   =>    $save,
+            'entity' =>    $entity,
+            'bundle' =>    $bundle,
+            'values' =>    $valores,
+        ));
+    }
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Guardar/{tipo}/", name="formato_save_ajax")
+     * @Method({"POST","PUT"})
+     * @Template()
+     */
+    public function saveAjaxAction(Request $request){
+        $tipo = $request->get('tipo',NULL);
+        $nombre = $request->get('nombre',NULL);
+        $descripcion = $request->get('descripcion',NULL);
+        $numero = $request->get('numero',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $datos = array(
+            'errors' => array(),
+        );
+        if(is_numeric($numero)){
+            $formato = $this->getRepositorio()->findOneBy(array('numero' => $numero));
+            if(!$formato){
+                $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $tipo));
+                if($tipo){
+                    $formato = new Formato();
+                    $formato->setNombre($nombre);
+                    $formato->setDescripcion($descripcion);
+                    $formato->setNumero($numero);
+                    $formato->setTipo($tipo);
+                    $em->persist($formato);
+                    $em->flush();
+                    $datos['success']['msgs']['Formato'] = array(
+                        'msg' => 'Formato de número <strong>"'.$formato->getNumero().'"</strong> con nombre <strong>"'.$formato->getNombre().'"</strong> fué creado',
+                        'tipo' => 'success'
+                    );
+                    $datos['id'] = $formato->getId();
+                }
+                else{
+                    $datos['errors']['Formato'] = 'Tipo de formato no encontrado.';
+                }
+            }
+            else{
+                $datos['errors']['Formato'] = 'El formato ya existe';
+            }
+        }
+        else{
+            $datos['errors']['Número de '.$tipo] = 'El Número de Formato ya existe';
+        }
+        return JsonResponse::create($datos);
+    }
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/nuevo/{abrevia}", name="formato__new_")
+     * @Route("/nuevo/", name="formato__new")
      * @Method("GET")
      * @Template()
      */
-    public function newAction()
+    public function newAction($abrevia = null)
     {
         $entity = new Formato();
-        $form   = $this->createCreateForm($entity);
+        $em = $this->getDoctrine()->getManager();
+        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($abrevia?$abrevia:'mci')));
+        $numero = $this->getRepositorio()->countFormatos()+1;
+//        $entity->setNumero($numero);
+        if($tipo){
+            $entity->setTipo($tipo);
+            $datos = array(
+                'entity' => $entity,
+            );
+            $entity->setNombre($tipo->getNombre().' '.$numero);
+        }
+//        else{
+//            throw $this->createNotFoundException('No encontrado el Tipo de Formato.');
+//        }
+//        $form   = $this->createCreateForm($entity);
+//
+//        $datos['form'] = $form->createView();
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
+        return $datos;
     }
 
     /**
@@ -140,7 +343,7 @@ class FormatoController extends Controller
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Formato entity.');
         }
-
+        
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
@@ -243,5 +446,67 @@ class FormatoController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+    
+    /**
+     * get Utils
+     * 
+     * @return IndexController Utilidades de PuertoUDES
+     */
+    public function getUtils() {
+        return $this->get('puertoudes.util');
+    }
+    
+    /**
+     * get Repositorio
+     * 
+     * @return FormatoRepository  FormatoRepository de PuertoUDES
+     */
+    public function getRepositorio() {
+        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESFormatosBundle:Formato');
+    }
+    
+    public function getHeadFiltro($form, $route, $tipo = true){
+        $filas = array(
+            array(
+                'col'=>array(
+                    array(
+                        'dato'    =>   'Nombre',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Descripcion',
+                        'class' =>  'text-center',
+                    ),
+                )
+            ),
+        );
+        if(is_bool($tipo) && $tipo){
+            $filas[0]['col'][] = array(
+                'dato'    =>   'canonical',
+                'label'    =>   'Tipo de Formato',
+                'join'    =>   'tipo',
+                'class' =>  'text-center',
+            );
+        }
+        $filas[0]['col'][] = array(
+            'dato'    =>   'Acciones',
+            'class' =>  'text-center',
+            'acciones'=>    array(
+                array(
+                    'url'   => 'formato__edit',
+                    'data_url'=> array('id'),
+                    'type'  => 'default',
+                    'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
+                ),
+                array(
+                    'url'   => 'formato__delete',
+                    'data_url'=> array('id'),
+                    'type'  => 'danger',
+                    'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
+                ),
+            )
+        );
+        return $this->getUtils()->getHeadFiltro($filas, $form, $route);
     }
 }

@@ -7,13 +7,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\CommonBundle\Entity\Tipo;
 use PuertoUDES\CommonBundle\Form\TipoType;
 
 /**
  * Tipo controller.
  *
- * @Route("/tipo_")
+ * @Route("/Tipo")
  */
 class TipoController extends Controller
 {
@@ -22,18 +23,129 @@ class TipoController extends Controller
      * Lists all Tipo entities.
      *
      * @Route("/", name="tipo_")
-     * @Method("GET")
-     * @Template()
+     * @Method({"GET"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
-    public function indexAction()
+    public function indexAction(Request $request, $config = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findAll();
-
-        return array(
-            'entities' => $entities,
+        $title = 'Tipos de Formatos';
+        $entity = 'Tipo';
+        $bundle = 'Common';
+        $route = 'tipo_';
+        $limit = 5;
+        $utils = $this->getUtils();
+        if(is_null($config)){
+            $qb = $this->getRepositorio()->getAll(false, true);
+        }else{
+            $title = $config['title'];
+            $entity = $config['entity'];
+            $bundle = $config['bundle'];
+            $route = $config['route'];
+            $limit = $config['limit'];
+            $qb = $config['qb'];
+        }
+        
+        $head = $this->getHeadFiltro($utils->getFormFilter(array(), $route, true), $route);
+        $form = $head['filtros'];
+        $head['filtros'] = $form->createView();
+        $form->handleRequest($request);
+        $data = array();
+        if ($form->isValid()) {
+           $data = $form->getData();
+            $str_query = $utils->getQueryFilter($data, $head['fil'][0]['col'], $qb);
+            if(!empty($str_query))
+                $qb->andWhere($str_query);
+        }
+        
+//        $qb = $qb->getQuery();
+        $paginacion = $utils->getPaginacion($entity, $bundle, $limit, $route, $qb);
+//        $paginacion['form_filter'] = $form;
+        $botones = array(
+            array(
+                'url'   => $this->generateUrl('tipo__new'),
+                'type'  => 'primary',
+                'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
+            ),
         );
+        $datos = array(
+            'paginas'       =>  $paginacion['pag'],
+            'title'         =>  $title,
+            'head'          =>  $head,
+            'botones'       =>  $botones,
+            'datos_form'       =>  $data,
+        );
+        if($request->isXmlHttpRequest() || $request->get('ajax',false)){
+            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+        }
+        return $datos;
+    }
+    /**
+     * Creates a new Tipo entity.
+     *
+     * @Route("/licencias-de-conductores/", name="tipo__licenciasConductor")
+     * @Method({"GET"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function licenciasConductorAction(Request $request){
+        return $this->indexAction($request, array(
+            'title'     =>  'Clases de Licencias de Conducción',
+            'entity'    =>  'Tipo',
+            'bundle'    =>  'Common',
+            'route'     =>  'tipo__licenciasConductor',
+            'limit'     =>  5,
+            'qb'        =>  $this->getRepositorio()->getClasesLicenciasConductor(null, false, true),
+        ));
+    }
+    /**
+     * Creates a new Tipo entity.
+     *
+     * @Route("/formatos/", name="tipo__tiposFormatos")
+     * @Method({"GET"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function tiposFormatosAction(Request $request){
+        return $this->indexAction($request, array(
+            'title'     =>  'Tipos de Formatos',
+            'entity'    =>  'Tipo',
+            'bundle'    =>  'Common',
+            'route'     =>  'tipo__tiposFormatos',
+            'limit'     =>  5,
+            'qb'        =>  $this->getRepositorio()->getTiposFormato(null, false, true),
+        ));
+    }
+    /**
+     * Creates a new Tipo entity.
+     *
+     * @Route("/naturalezas-de-carga/", name="tipo__naturalezasCarga")
+     * @Method({"GET"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function naturalezasCargaAction(Request $request){
+        return $this->indexAction($request, array(
+            'title'     =>  'Naturalezas de la Carga',
+            'entity'    =>  'Tipo',
+            'bundle'    =>  'Common',
+            'route'     =>  'tipo__naturalezasCarga',
+            'limit'     =>  5,
+            'qb'        =>  $this->getRepositorio()->getNaturalezaCarga(null, false, true),
+        ));
+    }
+    /**
+     * Creates a new Tipo entity.
+     *
+     * @Route("/niveles-aduanas/", name="tipo__nivelesAduana")
+     * @Method({"GET"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function nivelesAduanaAction(Request $request){
+        return $this->indexAction($request, array(
+            'title'     =>  'Niveles de Aduanas',
+            'entity'    =>  'Tipo',
+            'bundle'    =>  'Common',
+            'route'     =>  'tipo__nivelesAduana',
+            'limit'     =>  5,
+            'qb'        =>  $this->getRepositorio()->getNivelesAduana(null, false, true),
+        ));
     }
     /**
      * Creates a new Tipo entity.
@@ -243,5 +355,60 @@ class TipoController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+    
+    
+    /**
+     * get Utils
+     * 
+     * @return IndexController Utilidades de PuertoUDES
+     */
+    public function getUtils() {
+        return $this->get('puertoudes.util');
+    }
+    
+    /**
+     * get Repositorio
+     * 
+     * @return TipoRepository  TipoRepository de PuertoUDES
+     */
+    public function getRepositorio() {
+        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Tipo');
+    }
+    
+    public function getHeadFiltro($form, $route){
+        $filas = array(
+            array(
+                'col'=>array(
+                    array(
+                        'dato'    =>   'Nombre',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Descripcion',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Acciones',
+                        'class' =>  'text-center',
+                        'acciones'=>    array(
+                            array(
+                                'url'   => 'tipo__edit',
+                                'data_url'=> array('id'),
+                                'type'  => 'default',
+                                'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
+                            ),
+                            array(
+                                'url'   => 'tipo__delete',
+                                'data_url'=> array('id'),
+                                'type'  => 'danger',
+                                'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
+                            ),
+                        )
+                    ),
+                )
+            ),
+        );
+        return $this->getUtils()->getHeadFiltro($filas, $form, $route);
     }
 }

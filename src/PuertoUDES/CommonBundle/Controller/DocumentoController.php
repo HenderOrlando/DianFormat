@@ -13,7 +13,7 @@ use PuertoUDES\CommonBundle\Form\DocumentoType;
 /**
  * Documento controller.
  *
- * @Route("/documento_")
+ * @Route("/Documento/")
  */
 class DocumentoController extends Controller
 {
