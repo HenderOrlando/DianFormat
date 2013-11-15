@@ -173,16 +173,102 @@ class FormatoController extends Controller
     /**
      * Displays a form to create a new Formato entity.
      *
-     * @Route("/Editar-Campo/", name="formato_edit_campo")
+     * @Route("/Editar-Campo/{tipo}/", name="formato_edit_campo")
      * @Method("PUT")
      * @Template()
      */
-    public function editCamposAction(Request $request){
+    public function editCampoAction(Request $request){
+        $nombre = $request->get('name',NULL);
+        $valor = $request->get('value',NULL);
+        $llave = $request->get('pk',NULL);
+        $save = $request->get('save',NULL);
+        $entity = $request->get('entity',NULL);
+        $bundle = $request->get('bundle',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $valores = array();
+        if(!$llave){
+            $obj = $em->getRepository('PuertoUDES'.ucfirst($bundle).'Bundle:'.ucfirst($entity))->findBy(array($nombre => $valor));
+            if($obj){
+                $valores['msgs'][] = array('msg' => 'El '.$entity.' ya existe.', 'tipo' => 'success');
+                $valores['datos'] = $obj->json();
+            }else{
+                $valores['msgs'][] = array('msg' => 'El '.$entity.' no existe.', 'tipo' => 'info');
+            }
+        }else{
+            $obj = $this->getDoctrine()->getManager()->getRepository('PuertoUDES'.ucfirst($bundle).'Bundle:'.ucfirst($entity))->find($llave);
+            $set = 'set'.  ucfirst($nombre);
+            $get = 'get'.  ucfirst($nombre);
+            if($obj){
+                if($obj->$get() != $valor){
+                    $obj->$set($valor);
+                    $em->persist($obj);
+                    $em->flush();
+                    $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' fué actualizado.', 'tipo' => 'success');
+                    $valores['datos'] = $obj->json();
+                }else{
+                    $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' ya tenía éste valor.', 'tipo' => 'info');
+                }
+            }else{
+                $valores['msgs'][] = array('msg' => $entity.': Llena los demás datos y pulsa el botón guardar.', 'tipo' => 'warning');
+            }
+        }
+        
         return JsonResponse::create(array(
-         'name'   =>    $request->get('name'),
-         'value'   =>    $request->get('value'),
-         'pk'   =>    $request->get('pk'),
+            'name'   =>    $nombre,
+            'value'  =>    $valor,
+            'pk'     =>    $llave,
+            'save'   =>    $save,
+            'entity' =>    $entity,
+            'bundle' =>    $bundle,
+            'values' =>    $valores,
         ));
+    }
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Guardar/{tipo}/", name="formato_save_ajax")
+     * @Method({"POST","PUT"})
+     * @Template()
+     */
+    public function saveAjaxAction(Request $request){
+        $tipo = $request->get('tipo',NULL);
+        $nombre = $request->get('nombre',NULL);
+        $descripcion = $request->get('descripcion',NULL);
+        $numero = $request->get('numero',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $datos = array(
+            'errors' => array(),
+        );
+        if(is_numeric($numero)){
+            $formato = $this->getRepositorio()->findOneBy(array('numero' => $numero));
+            if(!$formato){
+                $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $tipo));
+                if($tipo){
+                    $formato = new Formato();
+                    $formato->setNombre($nombre);
+                    $formato->setDescripcion($descripcion);
+                    $formato->setNumero($numero);
+                    $formato->setTipo($tipo);
+                    $em->persist($formato);
+                    $em->flush();
+                    $datos['success']['msgs']['Formato'] = array(
+                        'msg' => 'Formato de número <strong>"'.$formato->getNumero().'"</strong> con nombre <strong>"'.$formato->getNombre().'"</strong> fué creado',
+                        'tipo' => 'success'
+                    );
+                    $datos['id'] = $formato->getId();
+                }
+                else{
+                    $datos['errors']['Formato'] = 'Tipo de formato no encontrado.';
+                }
+            }
+            else{
+                $datos['errors']['Formato'] = 'El formato ya existe';
+            }
+        }
+        else{
+            $datos['errors']['Número de '.$tipo] = 'El Número de Formato ya existe';
+        }
+        return JsonResponse::create($datos);
     }
     /**
      * Displays a form to create a new Formato entity.
@@ -196,9 +282,9 @@ class FormatoController extends Controller
     {
         $entity = new Formato();
         $em = $this->getDoctrine()->getManager();
-        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $abrevia));
-        $numero = $this->getRepositorio()->countFormatos();
-        $entity->setNumero($numero);
+        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($abrevia?$abrevia:'mci')));
+        $numero = $this->getRepositorio()->countFormatos()+1;
+//        $entity->setNumero($numero);
         if($tipo){
             $entity->setTipo($tipo);
             $datos = array(
@@ -209,9 +295,9 @@ class FormatoController extends Controller
 //        else{
 //            throw $this->createNotFoundException('No encontrado el Tipo de Formato.');
 //        }
-        $form   = $this->createCreateForm($entity);
-
-        $datos['form'] = $form->createView();
+//        $form   = $this->createCreateForm($entity);
+//
+//        $datos['form'] = $form->createView();
 
         return $datos;
     }
@@ -257,7 +343,7 @@ class FormatoController extends Controller
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Formato entity.');
         }
-
+        
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 

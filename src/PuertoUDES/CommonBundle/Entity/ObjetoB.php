@@ -21,7 +21,7 @@ class ObjetoB
     private $marca;
 
     /** 
-     * @ORM\Column(type="date", nullable=false, name="anio_fabrica")
+     * @ORM\Column(type="string", length=4, nullable=false, name="anio_fabrica")
      */
     private $anioFabrica;
 
@@ -45,7 +45,7 @@ class ObjetoB
      */
     public function __construct()
     {
-        $this->fechaCreado = new \DateTime();
+        $this->fechaCreado = new \DateTime("now");
     }
     
     /**
@@ -84,7 +84,7 @@ class ObjetoB
     /**
      * Set anioFabrica
      *
-     * @param \DateTime $anioFabrica
+     * @param string $anioFabrica
      * @return ObjetoB
      */
     public function setAnioFabrica($anioFabrica)
@@ -97,7 +97,7 @@ class ObjetoB
     /**
      * Get anioFabrica
      *
-     * @return \DateTime 
+     * @return string 
      */
     public function getAnioFabrica()
     {
@@ -175,5 +175,20 @@ class ObjetoB
     
     public function __toString() {
         return $this->getPlaca().' '.$this->getMarca().' '.$this->getAnioFabrica();
+    }
+    
+    public function json($json = true){
+        $a = array(
+            'id'            =>  $this->getId(),
+            'placa'         =>  $this->getPlaca(),
+            'marca'         =>  $this->getMarca(),
+            'año_fabrica'   =>  $this->getAnioFabrica(),
+            'fecha_creado'  =>  $this->getFechaCreado(),
+            'pais'          =>  $this->getPais()->json(false),
+        );
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
     }
 }

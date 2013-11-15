@@ -18,12 +18,12 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $direccion;
 
     /** 
-     * @ORM\Column(type="integer", length=11, nullable=true, name="telefono")
+     * @ORM\Column(type="string", length=100, nullable=true, name="telefono")
      */
     private $telefono;
 
     /** 
-     * @ORM\Column(type="integer", length=11, nullable=false, name="doc_id")
+     * @ORM\Column(type="string", length=15, nullable=false, name="doc_id")
      */
     private $docId;
 
@@ -34,22 +34,17 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $tipoDocId;
 
     /** 
-     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="usuario")
-     */
-    private $formatos;
-
-    /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Gasto", mappedBy="usuario")
      */
     private $gastos;
 
     /**
-     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Entidad", mappedBy="usuario")
+     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Entidad", mappedBy="usuario", cascade={"persist", "remove"})
      */
     private $entidad;
 
     /**
-     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Conductor", mappedBy="usuario")
+     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Conductor", mappedBy="usuario", cascade={"persist", "remove"})
      */
     private $conductor;
     
@@ -70,10 +65,9 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         parent::__construct();
         $this->roles = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->formatos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastos = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->entidad = new \PuertoUDES\UsuariosBundle\Entity\Entidad();
-        $this->conductor = new \PuertoUDES\UsuariosBundle\Entity\Conductor();
+        $this->entidad = null;
+        $this->conductor = null;
     }
     
     /**
@@ -161,7 +155,7 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     /**
      * Get docId
      *
-     * @return integer 
+     * @return \PuertoUDES\CommonBundle\Entity\Tipo
      */
     public function getTipoDocId()
     {
@@ -176,7 +170,7 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function addFormato(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos)
     {
-        $this->formatos[] = $formatos;
+        $this->entidad->addFormato($formatos);
     
         return $this;
     }
@@ -188,7 +182,7 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function removeFormato(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos)
     {
-        $this->formatos->removeElement($formatos);
+        $this->entidad->removeFormato($formatos);
     }
 
     /**
@@ -198,7 +192,7 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function getFormatos()
     {
-        return $this->formatos;
+        return $this->entidad->getFormatos();
     }
 
     /**
@@ -276,6 +270,19 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->conductor;
     }
+    
+    /**
+     * Set conductor
+     *
+     * @param integer $conductor
+     * @return Usuario
+     */
+    public function setConductor(\PuertoUDES\UsuariosBundle\Entity\Conductor $conductor)
+    {
+        $this->conductor = $conductor;
+    
+        return $this;
+    }
 
     /**
      * Get entidad
@@ -287,6 +294,18 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
         return $this->entidad;
     }
     
+    /**
+     * Set entidad
+     *
+     * @param integer $entidad
+     * @return Usuario
+     */
+    public function setEntidad(\PuertoUDES\UsuariosBundle\Entity\Entidad $entidad)
+    {
+        $this->entidad = $entidad;
+    
+        return $this;
+    }
     
     
     /*CONDUCTOR*/
@@ -470,4 +489,19 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->entidad->getPermisosPresentaServicios();
     }
+    
+    public function json($json = true){
+        $a = array_merge(parent::json(false), array(
+            'direccion'     =>  $this->getDireccion(),
+            'telefono'      =>  $this->getTelefono(),
+            'tipo_doc_id'   =>  $this->getTipoDocId(),
+            'doc_id'        =>  $this->getDocId(),
+        ));
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+
+    
 }

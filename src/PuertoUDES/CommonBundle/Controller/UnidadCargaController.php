@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\CommonBundle\Entity\UnidadCarga;
 use PuertoUDES\CommonBundle\Form\UnidadCargaType;
 
@@ -18,6 +20,92 @@ use PuertoUDES\CommonBundle\Form\UnidadCargaType;
 class UnidadCargaController extends Controller
 {
 
+    /**
+     * Displays a form to create a new Entidad entity.
+     *
+     * @Route("/Guardar/{tipo}/{numero}/", name="unidad_carga_save_ajax")
+     * @Method({"POST","PUT"})
+     * @Template()
+     */
+    public function saveAjaxAction(Request $request){
+        $marca = $request->get('marca',NULL);
+        $aniof = $request->get('anioFabrica',NULL);
+        $placa = $request->get('placa',NULL);
+        $p  = $request->get('pais',NULL);
+        $tipo = $request->get('tipo',NULL);
+        $numero = $request->get('numero',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('numero' => $numero));
+        $datos = array(
+            'errors' => array(),
+        );
+        if($formato && is_string($aniof) && strlen($aniof) == 4){
+            $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($tipo)));
+            if($tipo->getId() === $formato->getTipo()->getId()){
+                $unidadCarga = $this->getRepositorio()->findOneBy(array('placa' => $placa));
+                if(!$unidadCarga){
+                    $unidadCarga = new UnidadCarga();
+                    $unidadCarga
+                            ->setAnioFabrica($aniof)
+                            ->setMarca($marca)
+                            ->setPlaca($placa);
+                    $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
+                            ->createQueryBuilder('p')
+                            ->andWhere('p.canonical LIKE \'%'.$p.'%\' OR p.nombre LIKE \'%'.$p.'%\'')
+                            ->getQuery()->getOneOrNullResult();
+                    if(!$pais){
+                        $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
+                        $pais->setNombre($p)
+                            ->setNacionalidad($p);
+                        $em->persist($pais);
+                    }
+                    $unidadCarga->setPais($pais);
+                    $em->persist($unidadCarga);
+                }
+                $carga = $em->getRepository('PuertoUDESFormatosBundle:Carga')
+                        ->createQueryBuilder('c')
+//                        ->innerJoin('c.unidadCargas','uc')
+                        ->andWhere('c.formato = '.$formato->getId())
+//                        ->andWhere('uc.placa LIKE \'%'.$placa.'%\'')
+                        ->getQuery()->execute();
+                if(!$carga){
+                    $carga = new \PuertoUDES\FormatosBundle\Entity\Carga();
+                    $carga->setFormato($formato);
+                    $carga->addUnidadCarga($unidadCarga);
+                    $em->persist($carga);
+                    $unidadCarga->addCarga($carga);
+                    $em->persist($unidadCarga);
+                    $formato->addCarga($carga);
+                    $em->persist($formato);
+                }elseif(!$carga[0]->hasUnidadCargas($unidadCarga)){
+                    $first_uc = $carga[0]->getUnidadCarga()->first();
+                    $first_uc->removeCarga($carga[0]);
+                    $carga[0]->removeUnidadCarga($first_uc);
+                    $carga[0]->addUnidadCarga ($unidadCarga);
+                    $unidadCarga->addCarga($carga[0]);
+                    $em->persist($first_uc);
+                    $em->persist($carga[0]);
+                    $em->persist($unidadCarga);
+                }
+                $em->flush();
+                $datos['id'] = $unidadCarga->getId();
+                $datos['valores'] = $unidadCarga->json(false);
+                $datos['success']['msgs']['Unidad de Carga'] = array(
+                    'msg' => 'Unidad de Carga de placa <strong>"'.$unidadCarga->getPlaca().'"</strong> fué agregado',
+                    'tipo' => 'success'
+                );
+            }else{
+                $datos['errors']['Unidad de Carga'] = 'Datos inválidos.';
+            }
+        }else{
+            if(!is_string($aniof) || strlen($aniof) != 4){
+                $datos['errors']['Unidad de Carga'] = 'El año de fabricación de la Unidad de Carga debe ser de 4 dígitos.';
+            }else
+                $datos['errors']['Unidad de Carga'] = 'El Formato "'.$tipo.'" no existe.';
+        }
+        return JsonResponse::create($datos);
+    }
+    
     /**
      * Lists all UnidadCarga entities.
      *

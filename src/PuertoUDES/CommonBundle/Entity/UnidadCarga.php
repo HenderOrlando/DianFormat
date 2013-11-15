@@ -59,4 +59,5 @@ class UnidadCarga extends \PuertoUDES\CommonBundle\Entity\ObjetoB
     {
         return $this->cargas;
     }
+    
 }

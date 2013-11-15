@@ -38,7 +38,7 @@ class Objeto
      */
     public function __construct()
     {
-        $this->fechaCreado = new \DateTime();
+        $this->fechaCreado = new \DateTime("now");
     }
 
     /**
@@ -156,5 +156,19 @@ class Objeto
     
     public function __toString() {
         return $this->getNombre();
+    }
+    
+    public function json($json = true){
+        $a = array(
+            'id'            =>  $this->getId(),
+            'nombre'        =>  $this->getNombre(),
+            'canonical'     =>  $this->getCanonical(),
+            'fecha_creado'  =>  $this->getFechaCreado(),
+            'descripcion'   =>  $this->getDescripcion(),
+        );
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
     }
 }

@@ -67,15 +67,15 @@ form{
     right: 20px;
     opacity: 0;
     top: 0px;
-    max-height: 60%;
     overflow: auto;
 }
 #mensajes .alert{
     opacity: 0;
-    max-height: 52px;
 }
 #mensajes.in{
     top: 70px;
+    max-width: 200px;
+    z-index: 9999999999999999;
 }
 .editable-container form,
 form.in,
@@ -89,6 +89,7 @@ form.in,
     -o-transition-delay: 500ms;
     transition-delay: 500ms;
 }
+.btn-group.animate.out,
 #mensajes .alert.out{
     max-height: 0;
     overflow: hidden;
@@ -111,6 +112,62 @@ table.table tbody tr td{
 }
 
 /******************** FORMATOS-MCI ********************/
-.editable-container form{
-    
+.hoja_carta_formato{
+    height: 27.9cm;
+    width: 21.6cm;
+    margin: 0 auto;
+    box-shadow: 0 0 15px -4px;
+    font-size: 9px;
+}
+
+.hoja_carta_formato > .margen {
+    padding: 0.5cm 1cm;
+}
+
+.hoja_carta_formato table tr td:not(.title):not(.text-center) {
+    padding: 0px 0px 0px 0px;
+    vertical-align: top;
+    text-align: left;
+}
+.logo img{
+    height: 45px;
+}
+.title{
+    padding: 5px;
+    font-size: 12px;
+    font-weight: bolder;
+}
+td .row div:not(.enunciado){
+    text-align: center;
+}
+.text-justify{
+    text-align: justify;
+}
+p .editable-container.editable-inline{
+    width: 88%;
+}
+p .editable-container.editable-inline .control-group.form-group,
+p .editable-container.editable-inline .control-group.form-group .editable-input,
+p .editable-container.editable-inline .control-group.form-group .editable-input textarea{
+    width: 100%;
+}
+.close{
+    position: relative;
+    right: -13px;
+    top: -17px;
+}
+.row .pull-right .btn-group{
+    margin-right: 15px;
+    z-index: 999;
+}
+.table .table,
+.table .table-bordered{
+    border-color: #FFF;
+    margin-bottom: -1px;
+}
+.table .table thead:last-child tr:last-child th{
+    border-right: 0px;
+}
+.table .table thead:first-child tr:first-child th{
+    border-left: 0px;
 }

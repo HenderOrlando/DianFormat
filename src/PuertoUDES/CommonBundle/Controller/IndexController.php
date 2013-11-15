@@ -416,11 +416,11 @@ class IndexController extends Controller implements PaginatorAwareInterface
         if(is_bool($pre) && $pre){
             echo '<pre>';
         }
-        if (is_array($var))
-            foreach($var as $v){
-                var_dump($v);
-            }
-        else
+//        if (is_array($var))
+//            foreach($var as $v){
+//                var_dump($v);
+//            }
+//        else
             var_dump($var);
         if(is_bool($pre) && $pre){
             echo '</pre>';

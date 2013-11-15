@@ -10,12 +10,12 @@ use Doctrine\ORM\Mapping AS ORM;
 class Vehiculo extends \PuertoUDES\CommonBundle\Entity\ObjetoB
 {
     /** 
-     * @ORM\Column(type="integer", length=18, nullable=false, name="num_serie_chasis")
+     * @ORM\Column(type="string", length=18, nullable=false, name="num_serie_chasis")
      */
     private $numeroSerieChasis;
 
     /** 
-     * @ORM\Column(type="smallint", length=9, nullable=false, name="certifica_habilita")
+     * @ORM\Column(type="string", length=11, nullable=false, name="certifica_habilita")
      */
     private $certificadoHabilitacion;
 

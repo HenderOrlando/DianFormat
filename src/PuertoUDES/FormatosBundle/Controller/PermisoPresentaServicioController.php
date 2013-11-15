@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\FormatosBundle\Entity\PermisoPresentaServicio;
 use PuertoUDES\FormatosBundle\Form\PermisoPresentaServicioType;
 
@@ -17,6 +18,63 @@ use PuertoUDES\FormatosBundle\Form\PermisoPresentaServicioType;
  */
 class PermisoPresentaServicioController extends Controller
 {
+    
+    /**
+     * Displays a form to create a new Entidad entity.
+     *
+     * @Route("/Transportista/Guardar/{tipo}/{numero}/", name="permisos_save_transportista_ajax")
+     * @Method({"POST","PUT"})
+     * @Template()
+     */
+    public function savePermisosTransportistaAjaxAction(Request $request){
+        $nombre = $request->get('name',NULL);
+        $valor = $request->get('value',NULL);
+        $llave = $request->get('pk',NULL);
+        $permisos = preg_split('/\s?,\s?/', str_replace(' ', '', $valor));
+        $em = $em = $this->getDoctrine()->getManager();
+        $tipo = $request->get('tipo',NULL);
+        $numero = $request->get('numero',NULL);
+        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('numero' => $numero));
+        $entidad = $em->getRepository('PuertoUDESUsuariosBundle:Entidad')->find($llave);
+        $datos = array(
+            'errors' => array(),
+        );
+//        $this->getUtils()->dump($permisos);
+        if($formato && $entidad){
+            $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($tipo)));
+            if($tipo->getId() === $formato->getTipo()->getId()){
+                $mod = false;
+                $entidad->getPermisosPresentaServicios()->clear();
+                foreach($permisos as $permiso){
+                    if(empty($permiso))
+                        continue;
+                    $p = $this->getRepositorio()->like(array('nombre' => $permiso));
+                    if(!$p){
+                        $p = new PermisoPresentaServicio();
+                        $p->setNombre($permiso);
+                    }
+                    if(!$entidad->hasPermisosPresentaServicio($p)){
+                        $p->addEntidad($entidad);
+                        $em->persist($p);
+                        $entidad->addPermisosPresentaServicio($p);
+                        $mod = true;
+                    }
+                }
+                if($mod){
+                    $em->persist($entidad);
+                }
+                $em->flush();
+                $datos['id'] = $entidad->getId();
+                $datos['value'] = $entidad->getStringPermisosPresentaServicio();
+                $datos['msgs'][] = array('msg' => 'Entidad: Los permisos fueron actualizados.', 'tipo' => 'success');
+            }else{
+                $datos['errors']['Entidad'] = 'Formato o Entidad no válidas.';
+            }
+        }else{
+            $datos['errors']['Entidad'] = 'Formato o Entidad no válidas.';
+        }
+        return \Symfony\Component\HttpFoundation\JsonResponse::create($datos);
+    }
 
     /**
      * Lists all PermisoPresentaServicio entities.
@@ -301,7 +359,7 @@ class PermisoPresentaServicioController extends Controller
     /**
      * get Repositorio
      * 
-     * @return FormatoRepository  FormatoRepository de PuertoUDES
+     * @return PermisoPresentaServicioRepository  PermisoPresentaServicioRepository de PuertoUDES
      */
     public function getRepositorio() {
         return $this->getDoctrine()->getManager()->getRepository('PuertoUDESFormatosBundle:PermisoPresentaServicio');

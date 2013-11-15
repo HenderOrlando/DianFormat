@@ -83,4 +83,32 @@ class Aduana extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->lugar;
     }
+    
+    
+    /**
+     * Json formatos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function jsonFormatos($json = true)
+    {
+        $a = array();
+        foreach ($this->getFormatos() as $pps) {
+            $a[$pps->getId()] = $pps->json($json);
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+    
+    public function json($json = true){
+        $a = array_merge(parent::json(false), array(
+            'lugar'      =>  $this->getLugar()->json(false),
+        ));
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
 }

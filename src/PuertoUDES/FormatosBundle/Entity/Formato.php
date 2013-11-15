@@ -34,9 +34,10 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $aduanas;
 
     /** 
-     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="formato")
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Entidad", inversedBy="formatos")
+     * @ORM\JoinColumn(name="id_transportista", referencedColumnName="id", nullable=true)
      */
-    private $usuarios;
+    private $transportista;
 
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Carga", mappedBy="formato")
@@ -54,10 +55,23 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $gastos;
 
     /** 
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", inversedBy="hijos")
+     * @ORM\JoinColumn(name="padre", referencedColumnName="id", nullable=true)
+     */
+    private $padre;
+
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", mappedBy="padre")
+     */
+    private $hijos;
+
+    /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Tipo", inversedBy="formatos")
      * @ORM\JoinColumn(name="tipo", referencedColumnName="id", nullable=false)
      */
     private $tipo;
+    
+    private $unidadCarga;//Carga
     /**
      * Constructor
      */
@@ -68,9 +82,9 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->documentos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->conductores = new \Doctrine\Common\Collections\ArrayCollection();
         $this->aduanas = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->usuarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->cargas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->contenedoresMercancias = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->hijos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastos = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
@@ -117,6 +131,28 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->numero = $numero;
         return $this;
     }
+    
+    /**
+     * Get padre
+     *
+     * @return Formato
+     */
+    public function getPadre()
+    {
+        return $this->padre;
+    }
+    
+    /**
+     * Set padre
+     *
+     * @param integer $padre
+     * @return Formato
+     */
+    public function setPadre($padre)
+    {
+        $this->padre = $padre;
+        return $this;
+    }
     /**
      * Add documentos
      *
@@ -156,7 +192,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @param \PuertoUDES\FormatosBundle\Entity\FormatoConductor $conductores
      * @return Formato
      */
-    public function addConductore(\PuertoUDES\FormatosBundle\Entity\FormatoConductor $conductores)
+    public function addConductor(\PuertoUDES\FormatosBundle\Entity\FormatoConductor $conductores)
     {
         $this->conductores[] = $conductores;
     
@@ -168,7 +204,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      *
      * @param \PuertoUDES\FormatosBundle\Entity\FormatoConductor $conductores
      */
-    public function removeConductore(\PuertoUDES\FormatosBundle\Entity\FormatoConductor $conductores)
+    public function removeConductor(\PuertoUDES\FormatosBundle\Entity\FormatoConductor $conductores)
     {
         $this->conductores->removeElement($conductores);
     }
@@ -181,6 +217,38 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getConductores()
     {
         return $this->conductores;
+    }
+    /**
+     * Add hijos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $hijos
+     * @return Formato
+     */
+    public function addHijo(\PuertoUDES\FormatosBundle\Entity\Formato $hijos)
+    {
+        $this->hijos[] = $hijos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove hijos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $hijos
+     */
+    public function removeHijo(\PuertoUDES\FormatosBundle\Entity\Formato $hijos)
+    {
+        $this->hijos->removeElement($hijos);
+    }
+
+    /**
+     * Get hijos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getHijos()
+    {
+        return $this->hijos;
     }
 
     /**
@@ -217,36 +285,26 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
 
     /**
-     * Add usuarios
+     * Get usuarios
      *
-     * @param \PuertoUDES\FormatosBundle\Entity\FormatoUsuario $usuarios
-     * @return Formato
+     * @return \PuertoUDES\UsuariosBundle\Entity\Entidad
      */
-    public function addUsuario(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $usuarios)
+    public function getTransportista()
     {
-        $this->usuarios[] = $usuarios;
-    
-        return $this;
-    }
-
-    /**
-     * Remove usuarios
-     *
-     * @param \PuertoUDES\FormatosBundle\Entity\FormatoUsuario $usuarios
-     */
-    public function removeUsuario(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $usuarios)
-    {
-        $this->usuarios->removeElement($usuarios);
+        return $this->transportista;
     }
 
     /**
      * Get usuarios
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @param \PuertoUDES\UsuariosBundle\Entity\Entidad $transportista
+     * @return Formato
      */
-    public function getUsuarios()
+    public function setTransportista($transportista)
     {
-        return $this->usuarios;
+        $this->transportista = $transportista;
+        
+        return $this;
     }
 
     /**
@@ -369,5 +427,73 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getTipo()
     {
         return $this->tipo;
+    }
+    
+    public function json($json = true, 
+            $padre = false, 
+            $gastos = false, 
+            $cargas = false, 
+            $aduanas = false, 
+            $documentos = false, 
+            $conductores = false, 
+            $contenedoresMercancias = false, 
+            $hijos = false){
+        $a = array_merge(parent::json(false),
+            array(
+                'transportista' => method_exists($this->getTransportista(), 'json')?$this->getTransportista()->json(false):null,
+                'tipo'          =>  $this->getTipo()->json(false),
+                'numero'        =>  $this->getNumero(),
+                'completo'      =>  $this->getCompleto(),
+            )
+        );
+        if(is_bool($padre) && $padre){
+            $a = array_merge($a, array(
+                'padre' => $this->getPadre()->json(false)
+            ));
+        }
+        if(is_bool($aduanas) && $aduanas){
+            $a = array_merge($a, array(
+                'aduanas' => $this->getAduanas()->json(false)
+            ));
+        }
+        if(is_bool($cargas) && $cargas){
+            $a = array_merge($a, array(
+                'cargas' => $this->getCargas()->json(false)
+            ));
+        }
+        if(is_bool($conductores) && $conductores){
+            $a = array_merge($a, array(
+                'conductores' => $this->getConductores()->json(false)
+            ));
+        }
+        if(is_bool($contenedoresMercancias) && $contenedoresMercancias){
+            $a = array_merge($a, array(
+                'contenedores_mercancias' => $this->getContenedoresMercancias()->json(false)
+            ));
+        }
+        if(is_bool($documentos) && $documentos){
+            $a = array_merge($a, array(
+                'documentos' => $this->getDocumentos()->json(false)
+            ));
+        }
+        if(is_bool($gastos) && $gastos){
+            $a = array_merge($a, array(
+                'gastos' => $this->getGastos()->json(false)
+            ));
+        }
+        if(is_bool($hijos) && $hijos){
+            $a = array_merge($a, array( 
+                'hijos' =>$this->getHijos()->json(false)
+            ));
+        }
+        if(is_bool($hijos) && $hijos){
+            $a = array_merge($a, array( 
+                'hijos' =>$this->getHijos()->json(false)
+            ));
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
     }
 }

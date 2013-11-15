@@ -7,7 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use PuertoUDES\UsuariosBundle\Entity\Entidad;
+use PuertoUDES\UsuariosBundle\Entity\Usuario;
 use Symfony\Component\Form\FormBuilder;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\UsuariosBundle\Repository\EntidadRepository;
@@ -168,6 +170,123 @@ class EntidadController extends Controller
             'limit'     =>  10,
             'qb'        =>  $this->getRepositorio()->getTransportistas(null, false, true),
         ));
+    }
+    /**
+     * Displays a form to create a new Entidad entity.
+     *
+     * @Route("/Transportista/Guardar/{tipo}/{numero}/", name="entidad_save_transportista_ajax")
+     * @Method({"POST","PUT"})
+     * @Template()
+     */
+    public function saveTransportistaAjaxAction(Request $request){
+        $tipo = $request->get('tipo',NULL);
+        $numero = $request->get('numero',NULL);
+        $nombre = $request->get('nombre',NULL);
+        $doc_id = $request->get('doc_id',NULL);
+        $direccion = $request->get('direccion','');
+        $telefono = $request->get('telefono','');
+        $lugar = $request->get('lugar',NULL);
+        $certificado = $request->get('certificadoIdoneidad',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $datos = array(
+            'errors' => array(),
+        );
+        
+        if($numero){
+            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('numero' => $numero));
+            if($formato){
+                $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($tipo)));
+                if($tipo->getId() === $formato->getTipo()->getId()){
+                    if($doc_id && $nombre){
+                        $entidad = $this->getRepositorio()->createQueryBuilder('e')
+                            ->leftJoin('e.usuario', 'u')
+                            ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
+                            ->andWhere("u.docId= '".$doc_id."'")
+                            ->getQuery()->getOneOrNullResult();
+                        if(!$entidad){
+                            $u = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->createQueryBuilder('u')
+                                ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
+                                ->andWhere("u.docId= '".$doc_id."'")
+                                ->getQuery()->getOneOrNullResult();
+                            if(!$u){
+                                $u = new Usuario();
+                                $u->setNombre($nombre);
+                                $u->setDocId($doc_id);
+                                $u->setDireccion($direccion);
+                                $u->setTelefono($telefono);
+                                $em->persist($u);
+                            }
+                            $entidad = new Entidad();
+                            $entidad->setCertificadoIdoneidad($certificado)
+                                    ->setUsuario($u->setEntidad($entidad));
+                            $lugar_pais = preg_split('/\s?,\s?/', $lugar);
+                            if(count($lugar_pais) <= 2 && count($lugar_pais) > 1){
+                                $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
+                                        ->createQueryBuilder('p')
+                                        ->andWhere('p.canonical LIKE \'%'.$lugar_pais[1].'%\' OR p.nombre LIKE \'%'.$lugar_pais[1].'%\'')
+                                        ->getQuery()->getOneOrNullResult();
+                                $l= $em->getRepository('PuertoUDESCommonBundle:Lugar')
+                                        ->createQueryBuilder('p')
+                                        ->andWhere('p.canonical = \''.$lugar_pais[0].'\' OR p.nombre = \''.$lugar_pais[0].'\'')
+                                        ->getQuery()->getOneOrNullResult();
+                                if((!$l || ($l && strtolower($l->getPais()->getNombre()) != strtolower($lugar_pais[1])) || ($l && $pais && $l->getPais()->getId() != $pais->getId())) && isset($lugar_pais[0]) && isset($lugar_pais[1])){
+                                    $l = new \PuertoUDES\CommonBundle\Entity\Lugar();
+                                    $l->setNombre($lugar_pais[0]);
+                                    if(!$pais && isset($lugar_pais[1])){
+                                        $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
+                                        $pais->setNombre($lugar_pais[1])
+                                            ->setNacionalidad($lugar_pais[1]);
+                                        $em->persist($pais);
+                                        $l->setPais($pais);
+                                    }
+                                    $em->persist($l);
+                                }
+                                $entidad->setLugar($l);
+                            }
+                            $em->persist($entidad);
+                        }
+                        $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->findOneBy(array('canonical' => 'transportista', 'aplicableA' => 'FormatoUsuario'));
+                        $fu = $em->getRepository('PuertoUDESFormatosBundle:FormatoUsuario')->findOneBy(array('usuario' => $u->getId(), 'formato' => $formato->getId(), 'rol' => $rol->getId()));
+                        if(!$fu){
+                            $fu = new \PuertoUDES\FormatosBundle\Entity\FormatoUsuario();
+                            $fu->setRol($rol)
+                                ->setFormato($formato)
+                                ->setUsuario($entidad->getUsuario());
+                            $em->persist($fu);
+                        }
+                        $formato->setTransportista($entidad);
+                        $em->persist($formato);
+                        $em->flush();
+                        $datos['success']['msgs']['Entidad'] = array(
+                            'msg' => 'Entidad <strong>"'.$entidad->getNombre().'"</strong> fué creada',
+                            'tipo' => 'success'
+                        );
+                        $datos['id'] = $entidad->getId();
+                    }else{
+                        $datos['errors']['Entidad'] = 'Datos incompletos. Son necesarios El NIT y la Razón Social';
+                        $datos['errors'] = array(
+                            'tipo' => $request->get('tipo',NULL),
+                            'numero' => $request->get('numero',NULL),
+                            'nombre' => $request->get('nombre',NULL),
+                            'doc_id' => $request->get('doc_id',NULL),
+                            'direccion' => $request->get('direccion',NULL),
+                            'telefono' => $request->get('telefono',NULL),
+                            'lugar' => $request->get('lugar',NULL),
+                            'certificado' => $request->get('certificadoIdoneidad',NULL),
+                        );
+                    }
+                }else{
+                    $datos['errors']['Formato'] = 'No Concuerda';
+                }
+            }
+            else{
+                $datos['errors']['Formato'] = 'No encontrado';
+            }
+        }
+        else{
+            $datos['errors']['Número de '.$tipo] = 'El Número de Entidad ya existe';
+        }
+        return JsonResponse::create($datos);
     }
     /**
      * Creates a new Entidad entity.

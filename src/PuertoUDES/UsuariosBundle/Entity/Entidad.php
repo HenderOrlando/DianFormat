@@ -15,8 +15,9 @@ class Entidad
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+    
     /**
-     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario", inversedBy="entidad")
+     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario", inversedBy="entidad", cascade={"persist","remove"})
      * @ORM\JoinColumn(name="usuario_id", referencedColumnName="id")
      */
     private $usuario;
@@ -25,6 +26,11 @@ class Entidad
      * @ORM\Column(type="string", length=50, nullable=false, name="certificado_idoneidad")
      */
     private $certificadoIdoneidad;
+    
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", mappedBy="transportista")
+     */
+    private $formatos;
 
     /** 
      * @ORM\ManyToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\PermisoPresentaServicio", inversedBy="entidades")
@@ -35,6 +41,12 @@ class Entidad
      * )
      */
     private $permisosPresentaServicios;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Lugar")
+     * @ORM\JoinColumn(name="lugar_id", referencedColumnName="id", nullable=true)
+     */
+    private $lugar;
     
     
     /**
@@ -62,7 +74,7 @@ class Entidad
      * @param string $usuario
      * @return Conductor
      */
-    public function setUsuario(PuertoUDES\UsuariosBundle\Entity\Usuario $usuario)
+    public function setUsuario(\PuertoUDES\UsuariosBundle\Entity\Usuario $usuario)
     {
         $this->usuario = $usuario;
     
@@ -77,6 +89,29 @@ class Entidad
     public function getUsuario()
     {
         return $this->usuario;
+    }
+    
+    /**
+     * Set lugar
+     *
+     * @param string $lugar
+     * @return Conductor
+     */
+    public function setLugar(\PuertoUDES\CommonBundle\Entity\Lugar $lugar)
+    {
+        $this->lugar = $lugar;
+    
+        return $this;
+    }
+
+    /**
+     * Get lugar
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Lugar 
+     */
+    public function getLugar()
+    {
+        return $this->lugar;
     }
     
     /**
@@ -116,6 +151,37 @@ class Entidad
     }
 
     /**
+     * Has permisosPresentaServicios
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\PermisoPresentaServicio $permisosPresentaServicios
+     * @return boolean
+     */
+    public function hasPermisosPresentaServicio(\PuertoUDES\FormatosBundle\Entity\PermisoPresentaServicio $permisosPresentaServicios)
+    {
+        return $this->getPermisosPresentaServicios()->exists(function($key,\PuertoUDES\FormatosBundle\Entity\PermisoPresentaServicio $element) use ($permisosPresentaServicios) {
+            if($permisosPresentaServicios->getId() === $element->getId())
+                return true;
+            return false;
+        });
+    }
+    
+    /**
+     * get String permisosPresentaServicios
+     *
+     * @return string
+     */
+    public function getStringPermisosPresentaServicio()
+    {
+        $str = '';
+        foreach ($this->getPermisosPresentaServicios() as $key => $element) {
+            if(!empty($str))
+                $str .= ', ';
+            $str .= $element->getNombre();
+        }
+        return $str;
+    }
+
+    /**
      * Remove permisosPresentaServicios
      *
      * @param \PuertoUDES\FormatosBundle\Entity\PermisoPresentaServicio $permisosPresentaServicios
@@ -134,11 +200,12 @@ class Entidad
     {
         return $this->permisosPresentaServicios;
     }
+    
     /**
      * {inheritance}
      */
     public function __toString() {
-        return 'Certificado "'.$this->getCertificadoIdoneidad().'" de "'.$this->getUsuario()->getNombre().'"';
+        return 'Certificado "'.$this->getCertificadoIdoneidad().'" '.($this->getUsuario()?'de "'.$this->getUsuario()->getNombre().'"':'');
     }
     
     /*USUARIO*/
@@ -213,6 +280,52 @@ class Entidad
     }
 
     /**
+     * Set canonical
+     *
+     * @param integer $canonical
+     * @return Usuario
+     */
+    public function setCanonical($canonical)
+    {
+        $this->getUsuario()->setCanonical($canonical);
+    
+        return $this;
+    }
+
+    /**
+     * Get canonical
+     *
+     * @return integer 
+     */
+    public function getCanonical()
+    {
+        return $this->getUsuario()->getCanonical();
+    }
+
+    /**
+     * Set nombre
+     *
+     * @param integer $nombre
+     * @return Usuario
+     */
+    public function setNombre($nombre)
+    {
+        $this->getUsuario()->setNombre($nombre);
+    
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return integer 
+     */
+    public function getNombre()
+    {
+        return $this->getUsuario()->getNombre();
+    }
+
+    /**
      * Set docId
      *
      * @param integer $tipoDocId
@@ -243,7 +356,7 @@ class Entidad
      */
     public function addFormato(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos)
     {
-        $this->getUsuario()->addFormato($formatos);
+        $this->formatos[] = $formatos;
     
         return $this;
     }
@@ -255,7 +368,7 @@ class Entidad
      */
     public function removeFormato(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos)
     {
-        $this->getUsuario()->removeFormato($formatos);
+        $this->formatos->removeElement($formatos);
     }
 
     /**
@@ -265,7 +378,7 @@ class Entidad
      */
     public function getFormatos()
     {
-        return $this->getUsuario()->getFormatos();
+        return $this->formatos;
     }
 
     /**
@@ -332,5 +445,39 @@ class Entidad
     public function getGastos()
     {
         return $this->getUsuario()->getGastos();
+    }
+ 
+    /**
+     * Json permisosPresentaServicios
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function jsonPermisosPresentaServicios($json = true)
+    {
+        $a = array();
+        foreach ($this->getPermisosPresentaServicios() as $pps) {
+            $a[$pps->getId()] = $pps->json($json);
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+    
+    public function json($json = true, $permisos = false){
+        $a = array(
+            'lugar'                 => $this->getLugar()?$this->getLugar()->json(FALSE):null,
+            'usuario'               => $this->getUsuario()->json(false),
+            'certificado_idoneidad' => $this->getCertificadoIdoneidad(),
+        );
+        if(is_bool($permisos) && $permisos){
+            $a = array_merge($a, array(
+                'permisos' => $this->jsonPermisosPresentaServicios(false),
+            ));
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
     }
 }

@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use PuertoUDES\CommonBundle\Controller\IndexController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use PuertoUDES\CommonBundle\Entity\Vehiculo;
 use PuertoUDES\CommonBundle\Form\VehiculoType;
 
@@ -18,6 +19,105 @@ use PuertoUDES\CommonBundle\Form\VehiculoType;
  */
 class VehiculoController extends Controller
 {
+    
+    /**
+     * Displays a form to create a new Entidad entity.
+     *
+     * @Route("/Guardar/{tipo}/{numero}/", name="vehiculo_save_ajax")
+     * @Method({"POST","PUT"})
+     * @Template()
+     */
+    public function saveAjaxAction(Request $request){
+        $marca = $request->get('marca',NULL);
+        $aniof = $request->get('anioFabrica',NULL);
+        $placa = $request->get('placa',NULL);
+        $p  = $request->get('pais',NULL);
+        $numsc = strtoupper($request->get('numSerieChasis',''));
+        $certh = strtoupper($request->get('certificadoHabilitacion',''));
+        $tipo = $request->get('tipo',NULL);
+        $numero = $request->get('numero',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('numero' => $numero));
+        $datos = array(
+            'errors' => array(),
+        );
+        if($formato && is_string($aniof) && strlen($aniof) == 4){
+            $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($tipo)));
+            if($tipo->getId() === $formato->getTipo()->getId()){
+                $vehiculo = $this->getRepositorio()->findOneBy(array('placa' => $placa));
+                if(!$vehiculo){
+                    $vehiculo = new Vehiculo();
+                    $vehiculo
+                            ->setCertificadoHabilitacion($certh)
+                            ->setNumeroSerieChasis($numsc)
+                            ->setAnioFabrica($aniof)
+                            ->setMarca($marca)
+                            ->setPlaca($placa);
+                    $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
+                            ->createQueryBuilder('p')
+                            ->andWhere('p.canonical LIKE \'%'.$p.'%\' OR p.nombre LIKE \'%'.$p.'%\'')
+                            ->getQuery()->getOneOrNullResult();
+                    if(!$pais){
+                        $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
+                        $pais->setNombre($p)
+                            ->setNacionalidad($p);
+                        $em->persist($pais);
+                    }
+                    $vehiculo->setPais($pais);
+                    $em->persist($vehiculo);
+                }
+                $fc = $em->getRepository('PuertoUDESFormatosBundle:FormatoConductor')
+                        ->createQueryBuilder('fc')
+                        ->innerJoin('fc.vehiculo','v')
+                        ->andWhere('fc.formato = '.$formato->getId())
+                        ->andWhere('v.placa LIKE \'%'.$placa.'%\'')
+                        ->getQuery()->execute();
+                if(!$fc){
+                    $fc = new \PuertoUDES\FormatosBundle\Entity\FormatoConductor();
+                    $fc->setFormato($formato);
+                    $fc->setVehiculo($vehiculo);
+                    $em->persist($fc);
+                    $formato->addConductor($fc);
+                    $vehiculo->addFormato($fc);
+                    $em->persist($formato);
+                    $em->persist($vehiculo);
+                }elseif($fc[0]->getVehiculo()->getId() != $vehiculo->getId()){
+                    $vh = $fc[0]->getVehiculo();
+                    foreach($fc as $f){
+                        $vh->removeFormato($f);
+                        $em->persist($vh);
+                        $fc->setVehiculo($vehiculo);
+                        $vehiculo->addFormato($fc);
+                        $em->persist($fc);
+                    }
+                    $em->persist($vehiculo);
+                }else{
+                    if($vehiculo->getCertificadoHabilitacion() != $certh){
+                        $vehiculo->setCertificadoHabilitacion($certh);
+                    }
+                    if($vehiculo->getNumeroSerieChasis() != $numsc){
+                        $vehiculo->setNumeroSerieChasis($numsc);
+                    }
+                    $em->persist($vehiculo);
+                }
+                $em->flush();
+                $datos['id'] = $vehiculo->getId();
+                $datos['valores'] = $vehiculo->json(false);
+                $datos['success']['msgs']['Vehiculo'] = array(
+                    'msg' => 'Vehiculo de placa <strong>"'.$vehiculo->getPlaca().'"</strong> fué agregado',
+                    'tipo' => 'success'
+                );
+            }else{
+                $datos['errors']['Vehiculo'] = 'Datos inválidos.';
+            }
+        }else{
+            if(!is_string($aniof) || strlen($aniof) != 4){
+                $datos['errors']['Vehiculo'] = 'El año de fabricación del vehiculo debe ser de 4 dígitos.';
+            }else
+                $datos['errors']['Vehiculo'] = 'El Formato "'.$tipo.'" no existe.';
+        }
+        return JsonResponse::create($datos);
+    }
 
     /**
      * Lists all Vehiculo entities.
