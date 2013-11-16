@@ -63,8 +63,10 @@ form{
     opacity: 0;
 }
 #mensajes{
-    position: absolute;
-    right: 20px;
+    position: fixed;
+    max-height: 85%;
+    padding-right: 15px;
+    right: -15px;
     opacity: 0;
     top: 0px;
     overflow: auto;
@@ -74,7 +76,7 @@ form{
 }
 #mensajes.in{
     top: 70px;
-    max-width: 200px;
+    max-width: 215px;
     z-index: 9999999999999999;
 }
 .editable-container form,
@@ -124,7 +126,7 @@ table.table tbody tr td{
     padding: 0.5cm 1cm;
 }
 
-.hoja_carta_formato table tr td:not(.title):not(.text-center) {
+.hoja_carta_formato table tr td:not(.title):not(.text-center):not(.valor-cpic) {
     padding: 0px 0px 0px 0px;
     vertical-align: top;
     text-align: left;
@@ -170,4 +172,29 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
 }
 .table .table thead:first-child tr:first-child th{
     border-left: 0px;
+}
+.hoja_carta_formato table tr td.valor-cpic{
+    height: 40px;
+    vertical-align: middle;
+    text-align: center;
+}
+#cpics .opciones-filas-cpic{
+    position: absolute;
+    margin-top: -8px;
+    margin-left: -110px;
+}
+#cpics .opciones-filas-cpic.mas{
+    margin-left: -145px;
+}
+.btn-group>.btn.pull-right:first-child:not(:last-child):not(.dropdown-toggle) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.btn-group>.btn.pull-right:first-child:not(:last-child):not(.dropdown-toggle) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.btn-group>.btn.pull-right:last-child:not(:first-child){
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
 }

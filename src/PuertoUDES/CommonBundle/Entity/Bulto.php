@@ -7,15 +7,32 @@ use Doctrine\ORM\Mapping AS ORM;
  * @ORM\Table(name="bulto")
  * @ORM\Entity(repositoryClass="PuertoUDES\CommonBundle\Repository\BultoRepository")
  */
-class Bulto extends \PuertoUDES\CommonBundle\Entity\ObjetoC
+class Bulto
 {
     /** 
-     * @ORM\Column(type="string", length=50, nullable=false, name="marca")
+     * @ORM\Id
+     * @ORM\Column(type="bigint")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+    
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=false, name="nombre")
+     */
+    private $nombre;
+
+    /** 
+     * @ORM\Column(type="datetime", nullable=false)
+     */
+    private $fechaCreado;
+    
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true, name="marca")
      */
     private $marca;
 
     /** 
-     * @ORM\Column(type="string", length=50, nullable=false, name="clase")
+     * @ORM\Column(type="string", length=50, nullable=true, name="clase")
      */
     private $clase;
 
@@ -28,8 +45,71 @@ class Bulto extends \PuertoUDES\CommonBundle\Entity\ObjetoC
      */
     public function __construct()
     {
-        parent::__construct();
+        $this->fechaCreado = new \DateTime();
+        $this->nombre = '';
         $this->contenedorMercanciaFormatos = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    /**
+     * Set fechaCreado
+     *
+     * @param \DateTime $fechaCreado
+     * @return ObjetoC
+     */
+    public function setFechaCreado($fechaCreado)
+    {
+        $this->fechaCreado = $fechaCreado;
+    
+        return $this;
+    }
+
+    /**
+     * Get fechaCreado
+     *
+     * @return \DateTime 
+     */
+    public function getFechaCreado()
+    {
+        return $this->fechaCreado;
+    }
+    
+    
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     * @return Objeto
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+        $this->setCanonical($this->normaliza($nombre));
+    
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string 
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+    
+    public function __toString() {
+        return $this->getNombre() != ''?$this->getMarca().' '.$this->getClase():$this->getNombre();
     }
     
     /**

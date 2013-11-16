@@ -145,7 +145,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     /**
      * Set padre
      *
-     * @param integer $padre
+     * @param Formato $padre
      * @return Formato
      */
     public function setPadre($padre)

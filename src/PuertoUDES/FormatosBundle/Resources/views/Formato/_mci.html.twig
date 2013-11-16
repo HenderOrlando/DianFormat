@@ -16,6 +16,7 @@
                         },
                         {
                             'class' :   'reset formato-crear animate',
+                            'type'  :   'warning',
                             'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
                         },
                     ],
@@ -106,6 +107,7 @@
                                         },
                                         {
                                             'class' :   'reset entidad-crear animate',
+                                            'type'  :   'warning',
                                             'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
                                         },
                                     ],
@@ -288,6 +290,7 @@
                                         },
                                         {
                                             'class' :   'reset vehiculo-crear animate',
+                                            'type'  :   'warning',
                                             'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
                                         },
                                     ],
@@ -461,6 +464,7 @@
                                         },
                                         {
                                             'class' :   'reset unidad-carga-crear animate',
+                                            'type'  :   'warning',
                                             'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
                                         },
                                     ],
@@ -586,6 +590,7 @@
                                                 },
                                                 {
                                                     'class' :   'reset otra-unidad-carga-crear animate',
+                                                    'type'  :   'warning',
                                                     'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
                                                 },
                                             ],
@@ -694,6 +699,7 @@
                                                     },
                                                     {
                                                         'class' :   'reset conductor-principal-crear animate',
+                                                        'type'  :   'warning',
                                                         'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
                                                     },
                                                 ],
@@ -761,6 +767,7 @@
                                                     },
                                                     {
                                                         'class' :   'reset conductor-auxiliar-crear animate',
+                                                        'type'  :   'warning',
                                                         'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
                                                     },
                                                 ],
@@ -1023,30 +1030,31 @@
                     <tr>
                         <td colspan="12" class="text-center title">
                             {% if formato.cargas is empty %}
-                            <div class="text-right pull-right">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                                    'buttonset': 'horizontal',
-                                    'class': 'animate in',
-                                    'botones'  : [
-                                        {
-                                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
-                                            'type'  :   'primary',
-                                            'class' :   'unidad-carga-crear animate guardar',
-                                            'url'   :   url('unidad_carga_save_ajax',{
-                                                            tipo: formato.tipo.abreviacion|upper,
-                                                            numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
-                                                        }),
-                                        },
-                                        {
-                                            'class' :   'reset unidad-carga-crear animate',
-                                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                                        },
-                                    ],
-                                    'sizing': 'pequeño',
-                                } %}
-                            </div>
-                        {% endif %}
-                        {% set carga = formato.cargas is not empty?formato.cargas|first:formato.cargas %}
+                                <div class="text-right pull-right">
+                                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                        'buttonset': 'horizontal',
+                                        'class': 'animate in',
+                                        'botones'  : [
+                                            {
+                                                'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                                'type'  :   'primary',
+                                                'class' :   'unidad-carga-crear animate guardar',
+                                                'url'   :   url('unidad_carga_save_ajax',{
+                                                                tipo: formato.tipo.abreviacion|upper,
+                                                                numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                            }),
+                                            },
+                                            {
+                                                'class' :   'reset unidad-carga-crear animate',
+                                                'type'  :   'warning',
+                                                'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                            },
+                                        ],
+                                        'sizing': 'pequeño',
+                                    } %}
+                                </div>
+                            {% endif %}
+                            {% set carga = formato.cargas is not empty?formato.cargas|first:formato.cargas %}
                             DATOS SOBRE LA CARGA
                         </td>
                     </tr>
@@ -1188,12 +1196,29 @@
                     </tr>
                     <tr>
                         <td colspan="12">
-                            <table class="table table-bordered table-striped">
+                            <table class="table table-bordered table-striped" id="cpics">
                                 <thead>
                                     <tr>
                                         <th rowspan="2">
                                             <div class="row">
                                                 <div class="enunciado col-lg-12 col-md-12">
+                                                    <div class="text-right pull-left">
+                                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                                            'buttonset': 'horizontal',
+                                                            'class': 'animate in',
+                                                            'botones'  : [
+                                                                {
+                                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                                    'type'  :   'success',
+                                                                    'class' :   'animate agregar-cpic',
+                                                                    'url'   :   url('formato_add_cpic_ajax',{
+                                                                                    numero_mci: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                                                }),
+                                                                },
+                                                            ],
+                                                            'sizing': 'pequeño',
+                                                        } %}
+                                                    </div>
                                                     28- Carta de Porte N°
                                                 </div>
                                             </div>
@@ -1244,7 +1269,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
+                                    {% for fh in formato.hijos %}
+                                        {{ include('PuertoUDESFormatosBundle:Formato:_addCpicAjax.html.twig',{
+                                                fila:       loop.index0,
+                                                formato:    fh,
+                                                numero:     formato.numero
+                                            }) 
+                                        }}
+                                    {% endfor %}
                                 </tbody>
                                 <tfoot>
                                     <tr>

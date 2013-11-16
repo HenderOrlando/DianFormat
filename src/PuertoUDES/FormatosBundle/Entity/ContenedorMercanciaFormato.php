@@ -22,13 +22,13 @@ class ContenedorMercanciaFormato extends \PuertoUDES\CommonBundle\Entity\ObjetoC
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Mercancia", inversedBy="contenedoresFormatos")
-     * @ORM\JoinColumn(name="mercancia", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="mercancia", referencedColumnName="id", nullable=true)
      */
     private $mercancia;
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Contenedor", inversedBy="mercanciasFormatos")
-     * @ORM\JoinColumn(name="contenedor", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="contenedor", referencedColumnName="id", nullable=true)
      */
     private $contenedor;
 

@@ -285,6 +285,103 @@ class FormatoController extends Controller
     /**
      * Displays a form to create a new Formato entity.
      *
+     * @Route("/Agregar/CPIC/a/MCI/{numero_mci}/", name="formato_add_cpic_ajax")
+     * @Method({"POST","PUT"})
+     * @Template("PuertoUDESFormatosBundle:Formato:_addCpicAjax.html.twig")
+     */
+    public function addCpicAjaxAction(Request $request){
+        $filas = $request->get('filas', 0);
+        $numero = $request->get('numero', -1);
+        $numero_mci = $request->get('numero_mci', null);
+        $em = $this->getDoctrine()->getManager();
+        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'mci'));
+        if($tipo_mci){
+            $formato_mci = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_mci->getId(), 'numero' => $numero_mci));
+            if($formato_mci){
+                $formato = new Formato();
+                $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic'));
+                $formato->setTipo($tipo);
+                $formato->setPadre($formato_mci);
+                $formato->setNombre($tipo->getNombre().' de '. $formato_mci->getNombre());
+                if($numero > 0){
+                    $formato->setNumero($numero);
+                    $em->persist($formato);
+                    $formato_mci->addHijo($formato);
+                    $em->persist($formato_mci);
+                    
+                    $numBultos = $request->get('numBultos', null);
+                    $pesoBruto = $request->get('pesoBruto', null);
+                    $pesoNeto = $request->get('pesoNeto', null);
+                    $volumen = $request->get('volumen', null);
+                    $clase = $request->get('clase', null);
+                    $marca = $request->get('marca', null);
+                    $descripcion = $request->get('descripcion', null);
+                    
+                    $mercancia = $em->getRepository('PuertoUDESCommonBundle:Mercancia')
+                            ->createQueryBuilder('m')
+                            ->orWhere("m.descripcion LIKE '%".$descripcion."%'")
+                            ->getQuery()->getOneOrNullResult();
+                    if(!$mercancia){
+                        $mercancia = new \PuertoUDES\CommonBundle\Entity\Mercancia();
+                        $mercancia->setDescripcion($descripcion);
+                        $em->persist($mercancia);
+                    }
+                    
+                    $bulto = $em->getRepository('PuertoUDESCommonBundle:Bulto')
+                            ->createQueryBuilder('b')
+                            ->orWhere("b.clase LIKE '%".$clase."%'")
+                            ->orWhere("b.marca LIKE '%".$marca."%'")
+                            ->getQuery()->getOneOrNullResult();
+                    if(!$bulto){
+                        $bulto = new \PuertoUDES\CommonBundle\Entity\Bulto();
+                        $bulto->setClase($clase)
+                              ->setMarca($marca);
+                        $em->persist($bulto);
+                    }
+                    $em->flush();
+                    
+                    $cmf = $em->getRepository('PuertoUDESFormatosBundle:ContenedorMercanciaFormato')
+                            ->createQueryBuilder('cmf')
+                            ->andWhere("cmf.mercancia = ".$mercancia->getId())
+                            ->andWhere("cmf.formato = ".$formato->getId())
+                            ->andWhere("cmf.bulto = ".$bulto->getId())
+                            ->getQuery()->getOneOrNullResult();
+                    if(!$cmf){
+                        $cmf = new \PuertoUDES\FormatosBundle\Entity\ContenedorMercanciaFormato();
+                        $cmf->setFormato($formato)
+                            ->setMercancia($mercancia)
+                            ->setBulto($bulto)
+                            ->setPesoBruto($pesoBruto)
+                            ->setPesoNeto($pesoNeto)
+                            ->setVolumen($volumen)
+                            ->setNumBultos($numBultos);
+                        $em->persist($cmf);
+                    }
+                    $mercancia->addContenedoresFormato($cmf);
+                    $bulto->addContenedorMercanciaFormato($cmf);
+                    $em->persist($mercancia);
+                    $em->persist($bulto);
+                    $em->flush();
+                    $datos['success']['msgs']['Formato'] = array(
+                        'msg' => 'Formato de número <strong>"'.$formato->getNumero().'"</strong> con nombre <strong>"'.$formato->getNombre().'"</strong> fué creado',
+                        'tipo' => 'success'
+                    );
+                    $datos['id'] = $formato->getId();
+                    return JsonResponse::create($datos);
+                }else{
+
+                }
+            }
+        }
+        return array(
+            'fila' => $filas,
+            'numero' => $numero_mci,
+            'formato' => $formato,
+        );
+    }
+    /**
+     * Displays a form to create a new Formato entity.
+     *
      * @Route("/Guardar/{tipo}/", name="formato_save_ajax")
      * @Method({"POST","PUT"})
      * @Template()
