@@ -219,6 +219,24 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         return $this->conductores;
     }
     /**
+     * Get conductor
+     *
+     * @return \PuertoUDES\UsuariosBundle\Entity\Conductor
+     */
+    public function getConductor($auxiliar = false)
+    {
+        if(is_string($auxiliar)){
+            if(strtolower($auxiliar) == 'auxiliar')
+                $auxiliar = true;
+            else
+                $auxiliar = false;
+        }
+        foreach($this->conductores as $c)
+            if(($c->getEsAuxiliar() && $auxiliar) || (!$c->getEsAuxiliar() && !$auxiliar))
+                return $c->getConductor();
+        return null;
+    }
+    /**
      * Add hijos
      *
      * @param \PuertoUDES\FormatosBundle\Entity\Formato $hijos

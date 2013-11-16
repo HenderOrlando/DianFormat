@@ -468,8 +468,8 @@
                                 } %}
                             </div>
                         {% endif %}
-                        IDENTIFICACIÓN DE LA UNIDAD DE CARGA (REMOLQUE O SEMIREMOLQUE)
                         {% set unidadCarga = formato.cargas is not empty?(formato.cargas|first).unidadCargas is not empty?(formato.cargas|first).unidadCargas|first:(formato.cargas|first).unidadCargas %}
+                        IDENTIFICACIÓN DE LA UNIDAD DE CARGA (REMOLQUE O SEMIREMOLQUE)
                     </td>
                 </tr>
                 <tr>
@@ -578,14 +578,14 @@
                                                 {
                                                     'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
                                                     'type'  :   'primary',
-                                                    'class' :   'unidad-carga-crear animate guardar',
+                                                    'class' :   'otra-unidad-carga-crear animate guardar',
                                                     'url'   :   url('unidad_carga_save_ajax',{
                                                                     tipo: formato.tipo.abreviacion|upper,
                                                                     numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
                                                                 }),
                                                 },
                                                 {
-                                                    'class' :   'reset unidad-carga-crear animate',
+                                                    'class' :   'reset otra-unidad-carga-crear animate',
                                                     'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
                                                 },
                                             ],
@@ -673,10 +673,36 @@
                     </td>
                 </tr>
                     <tr>
-                        <td colspan="6">
+                        <td colspan="6" style="width: 50%;">
                             <div class="row">
                                 <div class="enunciado col-lg-12 col-md-12">
+                                    {% if formato.conductores is empty or (formato.conductores|first).conductor is empty %}
+                                        <div class="pull-right">
+                                            {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                                buttonset: 'horizontal',
+                                                class: 'animate in',
+                                                botones  : [
+                                                    {
+                                                        'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                                        'type'  :   'primary',
+                                                        'class' :   'guardar conductor-principal-crear animate',
+                                                        'url'   :   url('conductor_save_ajax',{
+                                                                        tipo_conductor: 'Principal',
+                                                                        tipo: formato.tipo.abreviacion|upper,
+                                                                        numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                                    }),
+                                                    },
+                                                    {
+                                                        'class' :   'reset conductor-principal-crear animate',
+                                                        'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                                    },
+                                                ],
+                                                sizing: 'pequeño',
+                                            } %}
+                                        </div>
+                                    {% endif %}
                                     13- CONDUCTOR PRINCIPAL: Nombre y Apellido
+                                    {% set c1 = formato.conductores is not empty?formato.getConductor('principal'):formato.conductores %}
                                 </div>
                             </div>
                             <div class="row">
@@ -688,13 +714,13 @@
                                        data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
                                        {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
                                        data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
-                                       data-original-title="Nombre del Conductor Principal" 
+                                       data-original-title="Nombres del Conductor Principal" 
                                        data-entity-name="conductor"
                                        data-entity-bundle="usuarios" 
-                                       data-emptytext="Nombre Conductor Principal" 
-                                       data-placeholder="Nombre Conductor Principal" 
+                                       data-emptytext="Nombres" 
+                                       data-placeholder="Nombres Conductor Principal" 
                                        data-required="NoVacio,Letras">
-
+                                        {{ c1 is not empty and c1.nombre is defined?c1.nombre:'' }}
                                     </a> 
                                     <a href="#" id="conductor_principal_apellido" class="xeditable conductor-principal-crear" 
                                        data-placement="top" 
@@ -703,13 +729,13 @@
                                        data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
                                        {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
                                        data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
-                                       data-original-title="Apellido del Conductor Principal" 
+                                       data-original-title="Apellidos del Conductor Principal" 
                                        data-entity-name="conductor"
                                        data-entity-bundle="usuarios" 
-                                       data-emptytext="Apellido Conductor Principal" 
-                                       data-placeholder="Apellido Conductor Principal" 
+                                       data-emptytext="Apellidos" 
+                                       data-placeholder="Apellidos Conductor Principal" 
                                        data-required="NoVacio,Letras">
-
+                                        {{ c1 is not empty and c1.apellido is defined?c1.apellido:'' }}
                                     </a>
                                 </div>
                             </div>
@@ -717,7 +743,33 @@
                         <td colspan="6">
                             <div class="row">
                                 <div class="enunciado col-lg-12 col-md-12">
+                                    {% if formato.conductores|length < 2  %}
+                                        <div class="pull-right">
+                                            {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                                buttonset: 'horizontal',
+                                                class: 'animate in',
+                                                botones  : [
+                                                    {
+                                                        'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                                        'type'  :   'primary',
+                                                        'class' :   'guardar conductor-auxiliar-crear animate',
+                                                        'url'   :   url('conductor_save_ajax',{
+                                                                        tipo_conductor: 'Auxiliar',
+                                                                        tipo: formato.tipo.abreviacion|upper,
+                                                                        numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                                    }),
+                                                    },
+                                                    {
+                                                        'class' :   'reset conductor-auxiliar-crear animate',
+                                                        'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                                    },
+                                                ],
+                                                sizing: 'pequeño',
+                                            } %}
+                                        </div>
+                                    {% endif %}
                                     18- CONDUCTOR AUXILIAR: Nombre y Apellido
+                                    {% set c2 = formato.conductores is not empty?formato.getConductor('auxiliar'):formato.conductores %}
                                 </div>
                             </div>
                             <div class="row">
@@ -729,13 +781,13 @@
                                        data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
                                        {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
                                        data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
-                                       data-original-title="Nombre del Conductor Principal" 
+                                       data-original-title="Nombres del Conductor Auxiliar" 
                                        data-entity-name="conductor"
                                        data-entity-bundle="usuarios" 
-                                       data-emptytext="Nombre Conductor Principal" 
-                                       data-placeholder="Nombre Conductor Principal" 
+                                       data-emptytext="Nombres" 
+                                       data-placeholder="Nombres Conductor Auxiliar" 
                                        data-required="NoVacio,Letras">
-
+                                        {{- c2 is not empty and c2.nombre is defined?c1.nombre:'' -}}
                                     </a> 
                                     <a href="#" id="conductor_auxiliar_apellido" class="xeditable conductor-auxiliar-crear" 
                                        data-placement="top" 
@@ -744,13 +796,13 @@
                                        data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
                                        {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
                                        data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
-                                       data-original-title="Apellido del Conductor Principal" 
+                                       data-original-title="Apellidos del Conductor Auxiliar" 
                                        data-entity-name="conductor"
                                        data-entity-bundle="usuarios" 
-                                       data-emptytext="Apellido Conductor Principal" 
-                                       data-placeholder="Apellido Conductor Principal" 
+                                       data-emptytext="Apellidos" 
+                                       data-placeholder="Apellidos Conductor Auxiliar" 
                                        data-required="NoVacio,Letras">
-
+                                        {{- c2 is not empty and c2.nombre is defined?c2.nombre:'' -}}
                                     </a>
                                 </div>
                             </div>
@@ -775,10 +827,10 @@
                                        data-original-title="Documento de Identidad del Conductor Principal" 
                                        data-entity-name="conductor"
                                        data-entity-bundle="usuarios" 
-                                       data-emptytext="Documento de Identidad del Conductor Principal" 
+                                       data-emptytext="Documento de Identidad" 
                                        data-placeholder="Documento de Identidad del Conductor Principal" 
-                                       data-required="NoVacio,Letras">
-
+                                       data-required="NoVacio,NumerosConectores">
+                                        {{- c1 is not empty and c1.docId is defined?c1.docId:'' -}}
                                     </a>
                                 </div>
                             </div>
@@ -801,10 +853,10 @@
                                        data-original-title="Nacionalidad del Conductor Principal" 
                                        data-entity-name="conductor"
                                        data-entity-bundle="usuarios" 
-                                       data-emptytext="Nacionalidad del Conductor Principal" 
+                                       data-emptytext="Nacionalidad" 
                                        data-placeholder="Nacionalidad del Conductor Principal" 
                                        data-required="NoVacio,Letras">
-
+                                        {{- c1 is not empty and c1.nacionalidad is defined?c1.nacionalidad:'' -}}
                                     </a>
                                 </div>
                             </div>
@@ -827,10 +879,10 @@
                                        data-original-title="Documento de Identidad del Conductor Auxiliar" 
                                        data-entity-name="conductor"
                                        data-entity-bundle="usuarios" 
-                                       data-emptytext="Documento de Identidad del Conductor Auxiliar" 
+                                       data-emptytext="Documento de Identidad" 
                                        data-placeholder="Documento de Identidad del Conductor Auxiliar" 
-                                       data-required="NoVacio,NumerosLetras">
-
+                                       data-required="NoVacio,NumerosConectores">
+                                        {{- c2 is not empty and c2.docId is defined?c2.docId:'' -}}
                                     </a>
                                 </div>
                             </div>
@@ -853,10 +905,10 @@
                                        data-original-title="Nacionalidad del Conductor Auxiliar" 
                                        data-entity-name="conductor"
                                        data-entity-bundle="usuarios" 
-                                       data-emptytext="Nacionalidad del Conductor Auxiliar" 
+                                       data-emptytext="Nacionalidad" 
                                        data-placeholder="Nacionalidad del Conductor Auxiliar" 
                                        data-required="NoVacio,Letras">
-
+                                        {{- c2 is not empty and c2.nacionalidad is defined?c2.nacionalidad:'' -}}
                                     </a>
                                 </div>
                             </div>
@@ -881,10 +933,10 @@
                                        data-original-title="N° de la Licencia de Conducción del Conductor Principal" 
                                        data-entity-name="conductor"
                                        data-entity-bundle="usuarios" 
-                                       data-emptytext="N° de la Licencia de Conducción del Conductor Principal" 
+                                       data-emptytext="N° de la Licencia de Conducción" 
                                        data-placeholder="N° de la Licencia de Conducción del Conductor Principal" 
-                                       data-required="NoVacio,Numeros">
-
+                                       data-required="NoVacio,NumerosConectores">
+                                        {{- c1 is not empty and c1.numLicencia is defined?c1.numLicencia:'' -}}
                                     </a>
                                 </div>
                             </div>
@@ -907,10 +959,10 @@
                                        data-original-title="N° de la Libreta de Tripulante del Conductor Principal" 
                                        data-entity-name="conductor"
                                        data-entity-bundle="usuarios" 
-                                       data-emptytext="N° de la Libreta de Tripulante del Conductor Principal" 
+                                       data-emptytext="N° de la Libreta de Tripulante" 
                                        data-placeholder="N° de la Libreta de Tripulante del Conductor Principal" 
-                                       data-required="NoVacio,Letras">
-
+                                       data-required="Vacio,NumerosConectores">
+                                        {{- c1 is not empty and c1.numLibretaTripulante is defined?c1.numLibretaTripulante:'' -}}
                                     </a>
                                 </div>
                             </div>
@@ -933,10 +985,10 @@
                                        data-original-title="N° de la Licencia de Conducción del Conductor Auxiliar" 
                                        data-entity-name="conductor"
                                        data-entity-bundle="usuarios" 
-                                       data-emptytext="N° de la Licencia de Conducción del Conductor Auxiliar" 
+                                       data-emptytext="N° de la Licencia de Conducción " 
                                        data-placeholder="N° de la Licencia de Conducción del Conductor Auxiliar" 
-                                       data-required="NoVacio,Numeros">
-
+                                       data-required="NoVacio,NumerosConectores">
+                                        {{- c2 is not empty and c2.numLicencia is defined?c2.numLicencia:'' -}}
                                     </a>
                                 </div>
                             </div>
@@ -959,10 +1011,10 @@
                                        data-original-title="N° de la Libreta de Tripulante del Conductor Auxiliar" 
                                        data-entity-name="conductor"
                                        data-entity-bundle="usuarios" 
-                                       data-emptytext="N° de la Libreta de Tripulante del Conductor Auxiliar" 
+                                       data-emptytext="N° de la Libreta de Tripulante" 
                                        data-placeholder="N° de la Libreta de Tripulante del Conductor Auxiliar" 
-                                       data-required="NoVacio,Letras">
-
+                                       data-required="Vacio,NumerosConectores">
+                                        {{- c2 is not empty and c2.numLibretaTripulante is defined?c2.numLibretaTripulante:'' -}}
                                     </a>
                                 </div>
                             </div>
@@ -970,6 +1022,31 @@
                     </tr>
                     <tr>
                         <td colspan="12" class="text-center title">
+                            {% if formato.cargas is empty %}
+                            <div class="text-right pull-right">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                    'buttonset': 'horizontal',
+                                    'class': 'animate in',
+                                    'botones'  : [
+                                        {
+                                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                            'type'  :   'primary',
+                                            'class' :   'unidad-carga-crear animate guardar',
+                                            'url'   :   url('unidad_carga_save_ajax',{
+                                                            tipo: formato.tipo.abreviacion|upper,
+                                                            numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                        }),
+                                        },
+                                        {
+                                            'class' :   'reset unidad-carga-crear animate',
+                                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                        },
+                                    ],
+                                    'sizing': 'pequeño',
+                                } %}
+                            </div>
+                        {% endif %}
+                        {% set carga = formato.cargas is not empty?formato.cargas|first:formato.cargas %}
                             DATOS SOBRE LA CARGA
                         </td>
                     </tr>
@@ -984,9 +1061,9 @@
                                 <div class="col-lg-12 col-md-12">
                                     <a href="#" id="carga_lugar_carga" class="xeditable carga-crear" 
                                        data-placement="top" 
-                                       data-name="lugar" 
+                                       data-name="lugarCarga" 
                                        data-type="text" 
-                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       data-pk="{{- carga is not empty?carga.id:' ' -}}"
                                        {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
                                        data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
                                        data-entity-name="carga"
@@ -994,23 +1071,8 @@
                                        data-emptytext="Lugar de la Carga" 
                                        data-placeholder="Lugar de la Carga" 
                                        data-original-title="Lugar de la Carga" 
-                                       data-required="NoVacio,Numeros">
-
-                                    </a>
-                                    <a href="#" id="carga_pais_carga" class="xeditable carga-crear" 
-                                       data-placement="top" 
-                                       data-name="pais" 
-                                       data-type="text" 
-                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
-                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
-                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
-                                       data-entity-name="carga"
-                                       data-entity-bundle="formatos" 
-                                       data-emptytext="País de la Carga" 
-                                       data-placeholder="País de la Carga" 
-                                       data-original-title="País de la Carga" 
-                                       data-required="NoVacio,Numeros">
-
+                                       data-required="NoVacio,LetrasConectores">
+                                        {{ carga.lugarCarga is defined?carga.lugarCarga:'' }}
                                     </a>
                                 </div>
                             </div>
@@ -1025,33 +1087,18 @@
                                 <div class="col-lg-12 col-md-12">
                                     <a href="#" id="carga_lugar_descarga" class="xeditable carga-crear" 
                                        data-placement="top" 
-                                       data-name="lugar" 
+                                       data-name="lugarDescarga" 
                                        data-type="text" 
-                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       data-pk="{{- carga is not empty?carga.id:' ' -}}"
                                        {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
                                        data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
                                        data-entity-name="carga"
                                        data-entity-bundle="formatos" 
-                                       data-emptytext="Lugar de la Carga" 
-                                       data-placeholder="Lugar de la Carga" 
-                                       data-original-title="Lugar de la Carga" 
-                                       data-required="NoVacio,Numeros">
-
-                                    </a>
-                                    <a href="#" id="carga_pais_descarga" class="xeditable carga-crear" 
-                                       data-placement="top" 
-                                       data-name="pais" 
-                                       data-type="text" 
-                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
-                                       {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
-                                       data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
-                                       data-entity-name="carga"
-                                       data-entity-bundle="formatos" 
-                                       data-emptytext="País de la Carga" 
-                                       data-placeholder="País de la Carga" 
-                                       data-original-title="País de la Carga" 
-                                       data-required="NoVacio,Numeros">
-
+                                       data-emptytext="Lugar de la Descarga" 
+                                       data-placeholder="Lugar de la Descarga" 
+                                       data-original-title="Lugar de la Descarga" 
+                                       data-required="NoVacio,LetrasConectores">
+                                        {{ carga.lugarDescarga is defined?carga.lugarDescarga:'' }}
                                     </a>
                                 </div>
                             </div>
@@ -1068,9 +1115,9 @@
                                 <div class="col-lg-12 col-md-12">
                                     <a href="#" id="carga_naturaleza" class="xeditable carga-crear" 
                                        data-placement="top" 
-                                       data-name="naturaleza" 
+                                       data-name="naturalezaCarga" 
                                        data-type="text" 
-                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       data-pk="{{- carga is not empty?carga.id:' ' -}}"
                                        {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
                                        data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
                                        data-entity-name="carga"
@@ -1078,8 +1125,8 @@
                                        data-emptytext="Naturaleza de la Carga" 
                                        data-placeholder="Naturaleza de la Carga" 
                                        data-original-title="Naturaleza de la Carga" 
-                                       data-required="NoVacio,Numeros">
-
+                                       data-required="NoVacio,LetrasConectores">
+                                        {{ carga.naturalezaCarga is defined?carga.naturalezaCarga:'' }}
                                     </a>
                                 </div>
                             </div>
@@ -1098,7 +1145,7 @@
                                        data-placement="top" 
                                        data-name="numContenedores" 
                                        data-type="text" 
-                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       data-pk="{{- carga is not empty?carga.id:' ' -}}"
                                        {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
                                        data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
                                        data-entity-name="carga"
@@ -1106,8 +1153,8 @@
                                        data-emptytext="Número de Identificación de los Contenedores de la Carga" 
                                        data-placeholder="Número de Identificación de los Contenedores de la Carga" 
                                        data-original-title="Número de Identificación de los Contenedores de la Carga" 
-                                       data-required="NoVacio,Numeros">
-
+                                       data-required="Vacio,NumerosLetrasConectores">
+                                        {{ carga.numContenedores is defined?carga.numContenedores:'' }}
                                     </a>
                                 </div>
                             </div>
@@ -1124,7 +1171,7 @@
                                        data-placement="top" 
                                        data-name="numPrecintos" 
                                        data-type="text" 
-                                       data-pk="{{- formato.transportista is defined and formato.transportista.id is defined and formato.transportista.id is not empty?formato.transportista.id:' ' -}}"
+                                       data-pk="{{- carga is not empty?carga.id:' ' -}}"
                                        {#data-pk="{{- formato.id is defined and formato.id is not empty?formato.id:' ' -}}" #}
                                        data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
                                        data-entity-name="carga"
@@ -1132,8 +1179,8 @@
                                        data-emptytext="Número de Precintos de la Carga" 
                                        data-placeholder="Número de Precintos de la Carga" 
                                        data-original-title="Número de Precintos de la Carga" 
-                                       data-required="NoVacio,Numeros">
-
+                                       data-required="Vacio,Numeros">
+                                        {{ carga.numPrecintos is defined?carga.numPrecintos:'' }}
                                     </a>
                                 </div>
                             </div>

@@ -38,7 +38,7 @@ class Conductor
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Tipo", inversedBy="conductores")
-     * @ORM\JoinColumn(name="claseLicencia", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="claseLicencia", referencedColumnName="id", nullable=true)
      */
     private $claseLicencia;
 
@@ -91,10 +91,10 @@ class Conductor
     /**
      * Set usuario
      *
-     * @param string $usuario
+     * @param \PuertoUDES\UsuariosBundle\Entity\Usuario $usuario
      * @return Conductor
      */
-    public function setUsuario(PuertoUDES\UsuariosBundle\Entity\Usuario $usuario)
+    public function setUsuario(\PuertoUDES\UsuariosBundle\Entity\Usuario $usuario)
     {
         $this->usuario = $usuario;
     
@@ -248,6 +248,53 @@ class Conductor
         return $this->getUsuario()->getDireccion();
     }
 
+    /**
+     * Set apellido
+     *
+     * @param string $apellido
+     * @return Usuario
+     */
+    public function setApellido($apellido)
+    {
+        $this->getUsuario()->setApellido($apellido);
+    
+        return $this;
+    }
+
+    /**
+     * Get apellido
+     *
+     * @return string 
+     */
+    public function getApellido()
+    {
+        return $this->getUsuario()->getApellido();
+    }
+    
+
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     * @return Usuario
+     */
+    public function setNombre($nombre)
+    {
+        $this->getUsuario()->setNombre($nombre);
+    
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string 
+     */
+    public function getNombre()
+    {
+        return $this->getUsuario()->getNombre();
+    }
+    
     /**
      * Set telefono
      *

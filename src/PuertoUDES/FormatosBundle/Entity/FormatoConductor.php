@@ -40,7 +40,7 @@ class FormatoConductor
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Vehiculo", inversedBy="formatos")
-     * @ORM\JoinColumn(name="vehiculo", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="vehiculo", referencedColumnName="id", nullable=true)
      */
     private $vehiculo;
     /**

@@ -196,17 +196,76 @@ class FormatoController extends Controller
             }
         }else{
             $obj = $this->getDoctrine()->getManager()->getRepository('PuertoUDES'.ucfirst($bundle).'Bundle:'.ucfirst($entity))->find($llave);
-            $set = 'set'.  ucfirst($nombre);
-            $get = 'get'.  ucfirst($nombre);
+            $addName = 'add'. ucfirst($entity);
+            $set = 'set'. ucfirst($nombre);
+            $get = 'get'. ucfirst($nombre);
             if($obj){
-                if($obj->$get() != $valor){
-                    $obj->$set($valor);
+                if(strpos($nombre, 'lugar') !== false){
+                    $lugar_pais = preg_split('/\s?,\s?/', ucwords($valor));
+                    if(count($lugar_pais) <= 2 && count($lugar_pais) > 1){
+                        $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
+                                ->createQueryBuilder('p')
+                                ->andWhere('p.canonical LIKE \'%'.$lugar_pais[1].'%\' OR p.nombre LIKE \'%'.$lugar_pais[1].'%\'')
+                                ->getQuery()->getOneOrNullResult();
+                        $l= $em->getRepository('PuertoUDESCommonBundle:Lugar')
+                                ->createQueryBuilder('p')
+                                ->andWhere('p.canonical = \''.$lugar_pais[0].'\' OR p.nombre = \''.$lugar_pais[0].'\'')
+                                ->getQuery()->getOneOrNullResult();
+                        if(!$l){
+                            $l = new \PuertoUDES\CommonBundle\Entity\Lugar();
+                            $l->setNombre($lugar_pais[0]);
+                            $em->persist($l);
+                        }
+                        if(!$pais && isset($lugar_pais[1])){
+                            $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
+                            $pais->setNombre($lugar_pais[1])
+                                ->setNacionalidad($lugar_pais[1]);
+                            $em->persist($pais);
+                        }
+                        if(!$pais->hasLugar($l)){
+                            $pais->addLugar($l);
+                            $em->persist($pais);
+                        }
+                        if(!$l->getPais() || $l->getPais()->getId() != $pais->getId()){
+                            $l->setPais($pais);
+                            $em->persist($l);
+                        }
+                        $obj->$set($l);
+                        $em->persist($obj);
+                        $l->$addName($obj);
+                        $em->persist($l);
+                        $em->flush();
+                        $valores['datos'] = $obj->json(false);
+                    }else{
+                        
+                    }
+                }elseif(strpos($nombre, 'naturaleza') !== false){
+                    $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')
+                        ->createQueryBuilder('t')
+                        ->andWhere('t.canonical LIKE \'%'.$valor.'%\' OR t.nombre LIKE \'%'.$valor.'%\'')
+                        ->getQuery()->getOneOrNullResult();
+                    if(!$tipo){
+                        $tipo = new \PuertoUDES\CommonBundle\Entity\Tipo();
+                        $tipo->setNombre($valor)
+                            ->setAplicableA(ucfirst($entity));
+                        $em->persist($tipo);
+                    }
+                    $obj->$set($tipo);
                     $em->persist($obj);
+                    $tipo->$addName($obj);
+                    $em->persist($tipo);
                     $em->flush();
-                    $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' fué actualizado.', 'tipo' => 'success');
-                    $valores['datos'] = $obj->json();
+                    $valores['datos'] = $obj->json(false);
                 }else{
-                    $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' ya tenía éste valor.', 'tipo' => 'info');
+                    if($obj->$get() != $valor){
+                        $obj->$set($valor);
+                        $em->persist($obj);
+                        $em->flush();
+                        $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' fué actualizado.', 'tipo' => 'success');
+                        $valores['datos'] = $obj->json();
+                    }else{
+                        $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' ya tenía éste valor.', 'tipo' => 'info');
+                    }
                 }
             }else{
                 $valores['msgs'][] = array('msg' => $entity.': Llena los demás datos y pulsa el botón guardar.', 'tipo' => 'warning');

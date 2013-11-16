@@ -7,8 +7,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\UsuariosBundle\Entity\Conductor;
+use PuertoUDES\UsuariosBundle\Entity\Usuario;
 use PuertoUDES\UsuariosBundle\Form\ConductorType;
 
 /**
@@ -79,6 +81,134 @@ class ConductorController extends Controller
         }
         return $datos;
     }
+    
+    /**
+     * Displays a form to create a new Entidad entity.
+     *
+     * @Route("/{tipo_conductor}/Guardar/{tipo}/{numero}/", name="conductor_save_ajax")
+     * @Method({"POST","PUT"})
+     * @Template()
+     */
+    public function saveTransportistaAjaxAction(Request $request){
+        $tipo = $request->get('tipo',NULL);
+        $numero = $request->get('numero',NULL);
+        $tipoConductor = $request->get('tipo_conductor',NULL);
+        $nombre = $request->get('nombre',NULL);
+        $apellido = $request->get('apellido',NULL);
+        $doc_id = $request->get('docId',NULL);
+        $nacionalidad = $request->get('nacionalidad',null);
+        $numLicencia = $request->get('numLicencia',null);
+        $numLibreta = $request->get('numLibretaTripulante',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $datos = array(
+            'errors' => array(),
+        );
+        $datos['valores'] = array(
+            'tipo Formato' => $tipo,
+            'numero Formato' => $numero,
+            'tipoConductor' => $tipoConductor,
+            'nombre' => $nombre,
+            'apellido' => $apellido,
+            'doc Id' => $doc_id,
+            'nacionalidad' => $nacionalidad,
+            'licencia' => $numLicencia,
+            'libreta' => $numLibreta,
+        );
+        if($numero){
+            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('numero' => $numero));
+            if($formato){
+                $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($tipo)));
+                if($tipo->getId() === $formato->getTipo()->getId()){
+                    if($doc_id && $nombre && $numLicencia){
+                        $conductor = $this->getRepositorio()->createQueryBuilder('e')
+                            ->leftJoin('e.usuario', 'u')
+                            ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
+                            ->andWhere("u.docId= '".$doc_id."'")
+                            ->getQuery()->getOneOrNullResult();
+                        if(!$conductor){
+                            $u = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->createQueryBuilder('u')
+                                ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
+                                ->andWhere("u.docId= '".$doc_id."'")
+                                ->getQuery()->getOneOrNullResult();
+                            if(!$u){
+                                $u = new Usuario();
+                                $u->setNombre($nombre)
+                                  ->setApellido($apellido)
+                                  ->setDocId($doc_id);
+                                $em->persist($u);
+                            }
+                            $conductor = new Conductor();
+                            $conductor->setNumLibretaTripulante($numLibreta)
+                                    ->setNumLicencia($numLicencia)
+                                    ->setUsuario($u->setConductor($conductor));
+                            
+                            $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
+                                    ->createQueryBuilder('p')
+                                    ->andWhere("p.canonical LIKE '%".$nacionalidad."%' OR p.nombre LIKE '%".$nacionalidad."%' OR p.nacionalidad LIKE '%".$nacionalidad."%'")
+                                    ->getQuery()->getOneOrNullResult();
+                            if(!$pais){
+                                $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
+                                $pais->setNombre($nacionalidad)
+                                    ->setNacionalidad($nacionalidad);
+                                $em->persist($pais);
+                            }
+                            $conductor->setPais($pais);
+                            $em->persist($conductor);
+                        }
+                        $fc = $em->getRepository('PuertoUDESFormatosBundle:FormatoConductor')
+                            ->createQueryBuilder('fc')
+                            ->innerJoin('fc.conductor','c')
+                            ->andWhere('fc.formato = '.$formato->getId())
+                            ->andWhere('c.numLicencia LIKE \'%'.$numLicencia.'%\'')
+                            ->andWhere('c.numLibretaTripulante LIKE \'%'.$numLibreta.'%\'')
+                            ->getQuery()->execute();
+                        if(!$fc){
+                            $fc = $em->getRepository('PuertoUDESFormatosBundle:FormatoConductor')
+                                ->createQueryBuilder('fc')
+                                ->andWhere('fc.formato = '.$formato->getId())
+                                ->andWhere('fc.conductor IS NULL')
+                                ->andWhere('fc.vehiculo IS NOT NULL')
+                                ->getQuery()->getOneOrNullResult();
+                            if(!$fc){
+                                $fc = new \PuertoUDES\FormatosBundle\Entity\FormatoConductor();
+                                $fc->setFormato($formato);
+                            }
+                            $fc->setEsAuxiliar($tipoConductor == 'Auxiliar')
+                                ->setConductor($conductor);
+                            $em->persist($fc);
+                            
+                            $formato->addConductor($fc);
+                            $em->persist($formato);
+                            $em->flush();
+                            $datos['success']['msgs']['Conductor'] = array(
+                                'msg' => 'Conductor <strong>"'.$conductor->getNombre().'"</strong> fué creada',
+                                'tipo' => 'success'
+                            );
+                        }else{
+                            $datos['success']['msgs']['Conductor'] = array(
+                                'msg' => 'El Conductor <strong>"'.$conductor->getNombre().'"</strong> ya existe en éste formulario.',
+                                'tipo' => 'success'
+                            );
+                            //actualiza campos
+                        }
+                        $datos['id'] = $conductor->getId();
+                    }else{
+                        $datos['errors']['Conductor'] = 'Datos incompletos. Son necesarios <br/><ul><li>El Nombre</li><li>El Documento de Identidad</li><li>La Licencia de Conducción</li><li>La Nacionalidad</li></ul>';
+                    }
+                }else{
+                    $datos['errors']['Formato'] = 'No Concuerda';
+                }
+            }
+            else{
+                $datos['errors']['Formato'] = 'No encontrado';
+            }
+        }
+        else{
+            $datos['errors']['Número de '.$tipo] = 'El Formato no existe';
+        }
+        return JsonResponse::create($datos);
+    }
+    
     /**
      * Creates a new Conductor entity.
      *

@@ -232,7 +232,30 @@ class Entidad
     {
         return $this->getUsuario()->getDireccion();
     }
+    
+    /**
+     * Set apellido
+     *
+     * @param string $apellido
+     * @return Usuario
+     */
+    public function setApellido($apellido)
+    {
+        $this->getUsuario()->setApellido($apellido);
+    
+        return $this;
+    }
 
+    /**
+     * Get apellido
+     *
+     * @return string 
+     */
+    public function getApellido()
+    {
+        return $this->getUsuario()->getApellido();
+    }
+    
     /**
      * Set telefono
      *

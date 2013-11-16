@@ -29,7 +29,7 @@ $(document).on('ready',function(){
                     if(i > 0)
                         msg += '\n';
                     switch(req[i]){
-                        case 'Vacio':// No puede ser vacio
+                        case 'Vacio':// Puede ser vacio
                             valido = !validateNoVacio(v);
                             if(valido)
                                 return;
@@ -143,7 +143,7 @@ $(document).on('ready',function(){
         e.preventDefault();
         e.stopPropagation();
         var este = $(this), 
-        clase = 'a.'+este.attr('class').replace(/( {0,}btn|-primary {0,})|guardar {0,}|animate|in|out/g, '');
+        clase = 'a.'+este.attr('class').replace(/( {0,}btn|-primary {0,})|guardar {0,}|animate|\s+in\s+|\s+out\s+/g, '');
         $(clase).not('.btn').editable('submit', {
             url: este.attr('href'), 
             ajaxOptions: {
@@ -159,7 +159,6 @@ $(document).on('ready',function(){
                     hideMsg($("#mensajes .alert:contains('"+f+str.substr(1)+"')"));
                 });
                 if(data && data.id) {
-                    $(this).editable('option', 'pk', data.id);
                     $(this).removeClass('editable-unsaved');
                     var success = data.success;
                     if(success && typeof success.msg !== 'undefined') {
@@ -171,6 +170,12 @@ $(document).on('ready',function(){
                         });
                     }
                     $(clase+'.guardar').parent().removeClass('in').addClass('out');
+                    if(clase.search('carga') > 0 && clase.search('otra') < 0 ){
+                        clase = clase+', a.carga-crear';
+                        $('a.carga-crear.guardar').parent().removeClass('in').addClass('out');
+                    }
+                    $(clase).not('.btn')
+                            .editable('option', 'pk', data.id);
                     $(this).off('save.formato');
                     este.parent().removeClass('in').addClass('out');
                 } else if(data && data.errors){

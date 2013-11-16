@@ -277,11 +277,12 @@ class Carga
     public function json($json = true, $unidadesCarga = false){
         $a = array(
             'id'                =>  $this->getId(),
-            'canonical'         =>  $this->getLugar()->json(false),
-            'fecha_creado'      =>  $this->getNaturalezaCarga(),
+            'carga'             =>  $this->getLugarCarga()?$this->getLugarCarga()->json(false):'',
+            'descarga'          =>  $this->getLugarDescarga()?$this->getLugarDescarga()->json(false):'',
+            'naturaleza'        =>  $this->getNaturalezaCarga()?$this->getNaturalezaCarga()->json(false):'',
             'numero_precintos'  =>  $this->getNumPrecintos(),
         );
-        if(is_bool($$unidadesCarga) && $unidadesCarga){
+        if(is_bool($unidadesCarga) && $unidadesCarga){
             $a = array_merge($a, array(
                 'unidades_carga'    => $this->jsonUnidadesCarga(false),
             ));

@@ -11,6 +11,10 @@ use Doctrine\ORM\Mapping AS ORM;
  */
 class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
 {
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true, name="apellido")
+     */
+    private $apellido;
     
     /** 
      * @ORM\Column(type="text", nullable=true, name="direccion")
@@ -91,6 +95,29 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getDireccion()
     {
         return $this->direccion;
+    }
+    
+    /**
+     * Set apellido
+     *
+     * @param string $apellido
+     * @return Usuario
+     */
+    public function setApellido($apellido)
+    {
+        $this->apellido = $apellido;
+    
+        return $this;
+    }
+
+    /**
+     * Get apellido
+     *
+     * @return string 
+     */
+    public function getApellido()
+    {
+        return $this->apellido;
     }
 
     /**

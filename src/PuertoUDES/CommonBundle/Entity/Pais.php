@@ -68,7 +68,7 @@ class Pais extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @param \PuertoUDES\CommonBundle\Entity\Lugar $lugares
      * @return Pais
      */
-    public function addLugare(\PuertoUDES\CommonBundle\Entity\Lugar $lugares)
+    public function addLugar(\PuertoUDES\CommonBundle\Entity\Lugar $lugares)
     {
         $this->lugares[] = $lugares;
     
@@ -80,7 +80,7 @@ class Pais extends \PuertoUDES\CommonBundle\Entity\Objeto
      *
      * @param \PuertoUDES\CommonBundle\Entity\Lugar $lugares
      */
-    public function removeLugare(\PuertoUDES\CommonBundle\Entity\Lugar $lugares)
+    public function removeLugar(\PuertoUDES\CommonBundle\Entity\Lugar $lugares)
     {
         $this->lugares->removeElement($lugares);
     }
@@ -159,6 +159,20 @@ class Pais extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getConductores()
     {
         return $this->conductores;
+    }
+
+    /**
+     * Has lugar
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Lugar $lugar
+     * @return boolean
+     */
+    public function hasLugar($lugar) {
+        return $this->getLugares()->exists(function($key,\PuertoUDES\CommonBundle\Entity\Lugar $element) use ($lugar) {
+            if($lugar->getId() === $element->getId())
+                return true;
+            return false;
+        });
     }
     
 }

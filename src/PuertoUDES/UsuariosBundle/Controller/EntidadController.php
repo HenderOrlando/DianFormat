@@ -284,7 +284,7 @@ class EntidadController extends Controller
             }
         }
         else{
-            $datos['errors']['Número de '.$tipo] = 'El Número de Entidad ya existe';
+            $datos['errors']['Número de '.$tipo] = 'El Número no existe';
         }
         return JsonResponse::create($datos);
     }
