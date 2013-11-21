@@ -1,337 +1,610 @@
 
-<table class="table table-bordered">
-    <tbody>
-        <tr class="">
-                <td rowspan="2" colspan="6">
-                    <div class="logo">
-                        <img src="{{ asset("bundles/puertoudescommon/images/comunidad_andina.jpeg")}}" alt="Comunidad Andina">
-                    </div>
-                </td>
-                <td colspan="6">
-                    <h3>
-                        Carta de Porte Internacional por Carretera (MCI)
-                    </h3>
-                </td>
-        </tr>
-        <tr>
-                <td colspan="6">
-                                                                                                                        <span class="block title">
-                        N° <a href="#" id="num_mci" class="x-edit editable editable-click" data-type="text" data-pk="0" data-url="http://localhost/dianFormat/web/app_dev.php/Manifiesto-de-Carga-Internacional/Ajax/Edit/formato/2" data-original-title="Dgite Número">0</a>
-                    </span>
-                </td>
-        </tr>
-        <tr>
-                <td colspan="12">
-                        <span class="block title">IDENTIFICACIÓN DEL TRANSPORTISTA AUTORIZADO</span>
-                </td>
-        </tr>
-        <tr>
-            <td rowspan="2" colspan="10">
-                <a href="http://localhost/dianFormat/web/app_dev.php/entidad/add" class="modal-open block" modal-title="Agregar Transportista">
-                        1- Denominación o razón social del transportista autorizado
-                </a>
-                <span id="entidad_razon_social" class="block" title="Razón Social"></span>
-                <span id="entidad_nit" class="block" title="Nit"></span>
-                <span id="entidad_direccion" class="block" title="Dirección"></span>
-                <span id="entidad_telefono" class="block" title="Teléfono"></span>
-                <span id="entidad_lugar" class="block" title="Lugar"></span>
-            </td>
-            <td colspan="2">
-                <a class="modal-open block" href="http://localhost/dianFormat/web/app_dev.php/entidad/add" modal-title="Agregar Transportista">
-                        2- Certificado de idoneidad N°
-                </a>
-                <span id="entidad_certificado_idoneidad"></span>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="6">
-                <a href="http://localhost/dianFormat/web/app_dev.php/permisopresentaservicio/add" class="modal-open block" modal-title="Agregar Permiso de Presentación">
-                        3- Permiso de presentación de Servicios N°
-                </a>
-                <span id="entidad_permiso_presentacion_servicios"></span>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="12">
-                    <span class="block title">IDENTIFICACIÓN DEL VEHICULO HABILITADO (CAMIÓN O TRACTO CAMIÓN)</span>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                <a href="http://localhost/dianFormat/web/app_dev.php/vehiculo/add" class="modal-open block" modal-title=" Transportista">
-                        4- Marca
-                </a>
-                <span id="vehiculo_marca" class="block" title="Marca"></span>
-            </td>
-            <td colspan="3">
-                <a href="http://localhost/dianFormat/web/app_dev.php/vehiculo/add" class="modal-open block" modal-title=" Transportista">
-                        5- Año de Fabricación
-                </a>
-                <span id="vehiculo_anio_fabricacion" class="block" title="Año de Fabricación"></span>
-            </td>
-            <td colspan="3">
-                <a href="http://localhost/dianFormat/web/app_dev.php/vehiculo/add" class="modal-open block" modal-title=" Transportista">
-                        6- Placa y País
-                </a>
-                <span id="vehiculo_placa_pais" class="block" title="Placa y País"></span>
-            </td>
-            <td colspan="3">
-                <a href="http://localhost/dianFormat/web/app_dev.php/vehiculo/add" class="modal-open block" modal-title=" Transportista">
-                        7- Número o Serie del Chasis
-                </a>
-                <span id="vehiculo_num_serie_chasis" class="block" title="Marca"></span>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="12">
-                <a href="http://localhost/dianFormat/web/app_dev.php/vehiculo/add" class="modal-open block" modal-title=" Transportista">
-                        8- Certificado de Habilitación N°
-                </a>
-                <span id="vehiculo_certifica_habilitacion" class="block" title="N° Certificado de Habilitación"></span>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="12">
-                <span class="block title">IDENTIFICACIÓN DE LA UNIDAD DE CARGA (REMOLQUE O SEMIREMOLQUE)</span>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                <a href="http://localhost/dianFormat/web/app_dev.php/unidadcarga/add" class="modal-open block" modal-title="Unidad de Carga">
-                        9- Marca
-                </a>
-                <span id="unidadcarga_marca" class="block" title="Marca"></span>
-            </td>
-            <td colspan="3">
-                <a href="http://localhost/dianFormat/web/app_dev.php/unidadcarga/add" class="modal-open block" modal-title="Unidad de Carga">
-                        10- Año de Fabricación
-                </a>
-                <span id="unidadcarga_anio_fabrica" class="block" title="Año de Fábrica"></span>
-            </td>
-            <td colspan="3">
-                <a href="http://localhost/dianFormat/web/app_dev.php/unidadcarga/add" class="modal-open block" modal-title="Unidad de Carga">
-                        11- Placa y País
-                </a>
-                <span id="unidadcarga_placa_pais" class="block" title="Placa y País"></span>
-            </td>
-            <td colspan="3">
-                <a href="http://localhost/dianFormat/web/app_dev.php/unidadcarga/add" class="modal-open block" modal-title="Otra Unidad de Carga">
-                        12- Otro
-                </a>
-                <span id="unidadcarga_otro" class="block" title="Otro">
-                    <span id="unidadcarga_otro_marca" class="block" title="Marca"></span>
-                    <span id="unidadcarga_otro_anio_fabrica" class="block" title="Año de Fábrica"></span>
-                    <span id="unidadcarga_otro_placa_pais" class="block" title="Placa y País"></span>
-                </span>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="12">
-                    <span class="block title">IDENTIFICACIÓN DE LA TRIPULACIÓN</span>
-            </td>
-        </tr>
-            <tr>
-                <td colspan="8">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/conductor/add/0" class="modal-open block" modal-title="Conductor Principal">
-                            13- CONDUCTOR PRINCIPAL: Nombre y Apellido
-                    </a>
-                    <span id="conductor_principal_nombre_apellido" class="block" title="Nombre y Apellido - Principal"></span>
-                </td>
-                <td colspan="4">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/conductor/add/1" class="modal-open block" modal-title="Conductor Auxiliar">
-                            18- CONDUCTOR AUXILIAR: Nombre y Apellido
-                    </a>
-                    <span id="conductor_auxiliar_nombre_apellido" class="block" title="Nombre y Apellido - Auxiliar"></span>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="4">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/conductor/add/0" class="modal-open block" modal-title="Conductor Principal">
-                            14- Documento de identidad
-                    </a>
-                    <span id="conductor_principal_doc_id" class="block" title="Documento de Identidad - Principal"></span>
-                </td>
-                <td colspan="4">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/conductor/add/0" class="modal-open block" modal-title="Conductor Principal">
-                            15- Nacionalidad
-                    </a>
-                    <span id="conductor_principal_nacionalidad" class="block" title="Nacionalidad - Principal"></span>
-                </td>
-                <td colspan="3">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/conductor/add/1" class="modal-open block" modal-title="Conductor Auxiliar">
-                        19- Documento de identidad
-                    </a>
-                    <span id="conductor_auxiliar_doc_id" class="block" title="Documento de Identidad - Auxiliar"></span>
-                </td>
-                <td colspan="3">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/conductor/add/1" class="modal-open block" modal-title="Conductor Auxiliar">
-                            20- Nacionalidad
-                    </a>
-                    <span id="conductor_auxiliar_nacionalidad" class="block" title="Nacionalidad - Auxiliar"></span>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="4">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/conductor/add/0" class="modal-open block" modal-title="Conductor Principal">
-                        16- Licencia de conducir N°
-                    </a>
-                    <span id="conductor_principal_licencia" class="block" title="N° de la Licencia de Conducción - Principal"></span>
-                </td>
-                <td colspan="4">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new?auxiliar=0" class="modal-open block" modal-title="Conductor Principal">
-                        17- Libreta de tripulante terrestre N°
-                    </a>
-                    <span id="conductor_principal_libreta" class="block" title="N° de la Libreta de Tripulante Terrestre- Principal"></span>
-                </td>
-                <td colspan="3">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/conductor/add/1" class="modal-open block" modal-title="Conductor Auxiliar">
-                        21- Licencia de Conducir N°
-                    </a>
-                    <span id="conductor_auxiliar_licencia" class="block" title="N° de la Licencia de Conducción - Auxiliar"></span>
-                </td>
-                <td colspan="3">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/conductor/add/1" class="modal-open block" modal-title="Conductor Auxiliar">
-                        22- Libreta de tripulante terrestre N°
-                    </a>
-                    <span id="conductor_auxiliar_libreta" class="block" title="N° de la Libreta de Tripulante Terrestre- Principal"></span>
-                </td>
-            </tr>
-            <tr>
+<div class="hoja_carta_formato print">
+    <div class="margen">
+        {% set col_w = formato.id is not defined or formato.id is empty?10:12 %}
+        {% if formato.id is not defined or formato.id is empty %}
+            <div class="text-right pull-right">
+                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                    buttonset: 'horizontal',
+                    class: 'animate in',
+                    botones  : [
+                        {
+                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                            'type'  :   'primary',
+                            'class' :   'guardar formato-crear animate',
+                            'url'   :   url('formato_save_ajax',{tipo: formato.tipo.abreviacion|upper}),
+                        },
+                        {
+                            'class' :   'reset formato-crear animate',
+                            'type'  :   'warning',
+                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                        },
+                    ],
+                    sizing: 'mediano',
+                } %}
+            </div>
+        {% endif %}
+        <div class="text-center">
+            {% set dataWith = {
+                id:             "formato_nombre",
+                clase:          "formato-crear",
+                placement:      "bottom",
+                name:           "nombre",
+                pk:             formato.id,
+                datos:          {tipo: formato.tipo.abreviacion|upper},
+                originalTitle:  "Nombre del Formato",
+                entityName:     "formato",
+                bundleName:     "formatos" ,
+                emptyText:      "Nombre del Formato " ~ formato.tipo.abreviacion|upper,
+                placeholder:    "Nombre del Formato " ~ formato.tipo.abreviacion|upper, 
+                required:       "NoVacio,NumerosLetras",
+                valor:          formato.nombre,
+            } %}
+            <h4>
+                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
+            </h4>
+        </div>
+        <div class="text-justify">
+            <p>
+                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                    id:             "formato_descripcion",
+                    clase:          "formato-crear",
+                    name:           "descripcion",
+                    type:           "textarea",
+                    emptyText:      "Descripcion del Formato " ~ formato.tipo.abreviacion|upper,
+                    placeholder:    "Descripcion del Formato " ~ formato.tipo.abreviacion|upper, 
+                    required:       "NoVacio,NumerosLetrasConectores",
+                    valor:          formato.descripcion,
+                }) %}
+            </p>
+        </div>
+        <table class="table table-bordered table-striped">
+            <tbody>
+                <tr class="">
+                        <td rowspan="2" colspan="6" class="logo text-center">
+                            <img src="{{- asset("bundles/puertoudescommon/images/comunidad_andina.jpeg")-}}" alt="Comunidad Andina">
+                        </td>
+                        <td colspan="6" class="text-center title">
+                            {{- formato.tipo.nombre|title ~ ' (' ~ formato.tipo.abreviacion|upper ~ ')' -}}
+                        </td>
+                </tr>
+                <tr>
+                        <td colspan="6" class="text-center">
+                            N° 
+                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                id:             "numero_formato",
+                                clase:          "formato-crear",
+                                name:           "numero",
+                                originalTitle:  "Digite Número",
+                                emptyText:      "Número de" ~ formato.tipo.abreviacion|upper,
+                                placeholder:    "Número " ~ formato.tipo.abreviacion|upper, 
+                                required:       "NoVacio,Numeros",
+                                valor:          formato.numero,
+                            }) %}
+                        </td>
+                </tr>
+                <tr>
+                    <td rowspan="2" colspan="6">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                1- Denominación o razón social del transportista autorizado
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                {% set pk = formato.transportista is defined and formato.transportista.usuario is defined?formato.transportista.usuario.id:' ' %}
+                                {% set dataWith = {
+                                    id:             "entidad_razon_social",
+                                    clase:          "entidad-crear",
+                                    name:           "nombre",
+                                    pk:             pk,
+                                    datos:          {tipo: formato.tipo.abreviacion|upper},
+                                    originalTitle:  "Nombre o Razón Social del Transportista",
+                                    entityName:     "usuario",
+                                    bundleName:     "usuarios" ,
+                                    emptyText:      "Razón Social",
+                                    required:       "Vacio,LetrasConectores",
+                                    valor:          pk != ' '?formato.transportista.nombre:'',
+                                } %}
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
+                            </div>
+                            <div class="col-lg-12">
+                                NIT. 
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "entidad_nit",
+                                    clase:          "entidad-crear",
+                                    name:           "doc_id",
+                                    originalTitle:  "NIT del Transportista",
+                                    emptyText:      "NIT",
+                                    required:       "NoVacio,NumerosConectores",
+                                    valor:          pk != ' '?formato.transportista.docId:'',
+                                }) %}
+                            </div>
+                            <div class="col-lg-12">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "entidad_direccion",
+                                    clase:          "entidad-crear",
+                                    name:           "direccion",
+                                    originalTitle:  "Dirección del Transportista",
+                                    emptyText:      "Dirección",
+                                    required:       "Vacio,NumerosLetrasConectores",
+                                    valor:          pk != ' '?formato.transportista.direccion:'',
+                                }) %} - Telfs. 
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "entidad_telefono",
+                                    clase:          "entidad-crear",
+                                    name:           "telefono",
+                                    originalTitle:  "Teléfono del Transportista",
+                                    emptyText:      "Teléfono",
+                                    required:       "Vacio,NumerosConectores",
+                                    valor:          pk != ' '?formato.transportista.telefono:'',
+                                }) %} - 
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "entidad_lugar",
+                                    clase:          "entidad-crear",
+                                    name:           "lugar",
+                                    originalTitle:  "Lugar del Transportista",
+                                    emptyText:      "Lugar",
+                                    required:       "Vacio,LetrasConectores",
+                                    valor:          pk != ' '?formato.transportista.lugar:'',
+                                }) %}
+                            </div>
+                        </div>
+                    </td>
+                    <td colspan="6">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                <div class="text-right pull-right">
+                                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                        'buttonset': 'horizontal',
+                                        'class': 'animate in',
+                                        'botones'  : [
+                                            {
+                                                'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                'type'  :   'success',
+                                                'class' :   'animate agregar notificados',
+                                                'url'   :   url('entidad_add_cpic_ajax',{
+                                                                rol:    'notificado',
+                                                                numero: formato.numero,
+                                                            }),
+                                            },
+                                        ],
+                                        'sizing': 'pequeño',
+                                    } %}
+                                </div>
+                                5- Notificar a
+                            </div>
+                        </div>
+                        <div id="notificados">
+                            {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                {% for notificado in formato.notificados %}
+                                    {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
+                                            abreviacion:    formato.tipo.abreviacion|upper,
+                                            numero:         formato.numero,
+                                            entidad:        notificado,
+                                            rol:            'notificado',
+                                            fila:           loop.index0,
+                                        }) 
+                                    }}
+                                {% else %}
+                                    {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                        {{ render(controller('PuertoUDESUsuariosBundle:Entidad:addEntidadCpicAjax',{
+                                                numero:         formato.numero,
+                                                rol:            'notificado',
+                                                fila:           0,
+                                            }))
+                                        }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                6- Lugar, País y Fecha que el transportista recibe las mercancias
+                            </div>
+                        </div>
+                        {{ include('PuertoUDESFormatosBundle:DatosMercanciasFormato:_addDatosMercanciasAjax.html.twig',{
+                                abreviacion:    formato.tipo.abreviacion|upper,
+                                numero:         formato.numero,
+                                dmf:            formato.datosRecibe is defined?formato.datosRecibe:null,
+                                tipo:            'recibe',
+                            }) 
+                        }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                <div class="text-right pull-right">
+                                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                        'buttonset': 'horizontal',
+                                        'class': 'animate in',
+                                        'botones'  : [
+                                            {
+                                                'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                'type'  :   'success',
+                                                'class' :   'animate agregar remitentes',
+                                                'url'   :   url('entidad_add_cpic_ajax',{
+                                                                rol:    'remitente',
+                                                                numero: formato.numero,
+                                                            }),
+                                            },
+                                        ],
+                                        'sizing': 'pequeño',
+                                    } %}
+                                </div>
+                                2- Nombre y Dirección del Remitente
+                            </div>
+                        </div>
+                        <div id="remitentes">
+                            {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                {% for retiente in formato.remitentes %}
+                                    {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
+                                            abreviacion:    formato.tipo.abreviacion|upper,
+                                            numero:         formato.numero,
+                                            entidad:        remitente,
+                                            rol:            'remitente',
+                                            fila:           loop.index0,
+                                        }) 
+                                    }}
+                                {% else %}
+                                    {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                        {{ render(controller('PuertoUDESUsuariosBundle:Entidad:addEntidadCpicAjax',{
+                                                numero:         formato.numero,
+                                                rol:            'remitente',
+                                                fila:           0,
+                                            }))
+                                        }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td colspan="6">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                7- Lugar, País y Fecha de Embarque de las Mercancías
+                            </div>
+                        </div>
+                        {{ include('PuertoUDESFormatosBundle:DatosMercanciasFormato:_addDatosMercanciasAjax.html.twig',{
+                                abreviacion:    formato.tipo.abreviacion|upper,
+                                numero:         formato.numero,
+                                dmf:            formato.datosEmbarque is defined?formato.datosEmbarque:null,
+                                tipo:            'embarque',
+                            }) 
+                        }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                <div class="text-right pull-right">
+                                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                        'buttonset': 'horizontal',
+                                        'class': 'animate in',
+                                        'botones'  : [
+                                            {
+                                                'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                'type'  :   'success',
+                                                'class' :   'animate agregar destinatarios',
+                                                'url'   :   url('entidad_add_cpic_ajax',{
+                                                                rol:    'destinatario',
+                                                                numero: formato.numero,
+                                                            }),
+                                            },
+                                        ],
+                                        'sizing': 'pequeño',
+                                    } %}
+                                </div>
+                                3- Nombre y Dirección del Destinatario
+                            </div>
+                        </div>
+                        <div id="destinatarios">
+                            {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                {% for destinatario in formato.destinatarios %}
+                                    {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
+                                            abreviacion:    formato.tipo.abreviacion|upper,
+                                            numero:         formato.numero,
+                                            entidad:        destinatario,
+                                            rol:            'destinatario',
+                                            fila:           loop.index0,
+                                        }) 
+                                    }}
+                                {% else %}
+                                    {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                        {{ render(controller('PuertoUDESUsuariosBundle:Entidad:addEntidadCpicAjax',{
+                                                numero:         formato.numero,
+                                                rol:            'destinatario',
+                                                fila:           0,
+                                            }))
+                                        }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td colspan="6">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                8- Lugar, País y Fecha de Convenida para la entrega de las Mercancías
+                            </div>
+                        </div>
+                        {{ include('PuertoUDESFormatosBundle:DatosMercanciasFormato:_addDatosMercanciasAjax.html.twig',{
+                                abreviacion:    formato.tipo.abreviacion|upper,
+                                numero:         formato.numero,
+                                dmf:            formato.datosEntrega is defined?formato.datosEntrega:null,
+                                tipo:            'entrega',
+                            }) 
+                        }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                <div class="text-right pull-right">
+                                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                        'buttonset': 'horizontal',
+                                        'class': 'animate in',
+                                        'botones'  : [
+                                            {
+                                                'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                'type'  :   'success',
+                                                'class' :   'animate agregar consignatarios',
+                                                'url'   :   url('entidad_add_cpic_ajax',{
+                                                                rol:    'consignatario',
+                                                                numero: formato.numero,
+                                                            }),
+                                            },
+                                        ],
+                                        'sizing': 'pequeño',
+                                    } %}
+                                </div>
+                                4- Nombre y Dirección del Consignatario
+                            </div>
+                        </div>
+                        <div id="consignatarios">
+                            {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                {% for consignatario in formato.consignatarios %}
+                                    {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
+                                            abreviacion:    formato.tipo.abreviacion|upper,
+                                            numero:         formato.numero,
+                                            entidad:        consignatario,
+                                            rol:            'consignatario',
+                                            fila:           loop.index0,
+                                        }) 
+                                    }}
+                                {% else %}
+                                    {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                        {{ render(controller('PuertoUDESUsuariosBundle:Entidad:addEntidadCpicAjax',{
+                                                numero:         formato.numero,
+                                                rol:            'consignatario',
+                                                fila:           0,
+                                            }))
+                                        }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td colspan="6">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                9- Condiciones de Transporte y Condiciones de Pago
+                            </div>
+                        </div>
+                        {% set pk = formato.conductores is defined and formato.conductores is not empty and vh is defined and vh.id is defined?vh.id:' ' %}
+                        {% set dataWith = {
+                            clase:          "condicion-crear",
+                            pk:             pk,
+                            name:           "condicion",
+                            url:            'condiciones_add_cpic_ajax_',
+                            entityName:     "condicion",
+                            bundleName:     "formatos" ,
+                            type:           "textarea",
+                            required:       "NoVacio,Letras",
+                        } %}
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "condiciones_transporte",
+                                    datos:          {
+                                                        numero: formato.numero,
+                                                        tipo: 'transporte',
+                                                    },
+                                    originalTitle:  "Condiciones de Transporte",
+                                    valor:          formato.condicionesTransporte is defined and formato.condicionesTransporte is not empty?formato.condicionesTransporte|first:'',
+                                }) %}
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "condiciones_pago",
+                                    datos:          {
+                                                        numero: formato.numero,
+                                                        tipo: 'pago',
+                                                    },
+                                    originalTitle:  "Condiciones de Pago",
+                                    type:           "textarea",
+                                    valor:          formato.condicionesPago is defined and formato.condicionesPago is not empty?formato.condicionesPago|first:'',
+                                }) %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="12">
-                            <span class="block title">DATOS SOBRE LA CARGA</span>
-                    </td>
-            </tr>
-            <tr>
-                <td colspan="6">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/carga/add" class="modal-open block" modal-title=" Carga">
-                            23- Lugar y País de la Carga
-                    </a>
-                    <span id="carga_lugar_pais_carga" class="block" title="Lugar y País de Carga"></span>
-                </td>
-                <td colspan="6">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/carga/add" class="modal-open block" modal-title=" Carga">
-                            24- Lugar y País de Descarga
-                    </a>
-                    <span id="carga_lugar_pais_descarga" class="block" title="Lugar y País de Descarga"></span>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="12">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/carga/add" class="modal-open block" modal-title=" Carga">
-                            25- Naturaleza de la Carga
-                    </a>
-                    <span id="carga_naturaleza_carga" class="block" title="Naturaleza de la Carga"></span>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="6">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/entidad/add" class="modal-open block" modal-title=" Carga">
-                            26- Número de Identificación de los contenedores y su capacidad (Indicar si son 20 o 40 pies u otra)
-                    </a>
-                    <span id="contenedor_num_capacidad" class="block" title="N° de Identificación y Capacidad"></span>
-                </td>
-                <td colspan="6">
-                    <a href="http://localhost/dianFormat/web/app_dev.php/carga/add" class="modal-open block" modal-title=" Carga">
-                            27- Número(s) de los precintos aduaneros
-                    </a>
-                    <span id="carga_num_precintos" class="block" title="N° de Precintos"></span>
-                </td>
-            </tr>
-                            <tr>
-                    <td rowspan="2">
-                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                    28- Carta de Porte N°
-                            </a>
-                    </td>
-                    <td colspan="6" rowspan="2">
-                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                    29- Descripción de las mercancías
-                            </a>
-                    </td>
-                    <td rowspan="2">
-                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                    30- Catidad de los bultos
-                            </a>
-                    </td>
-                    <td rowspan="2">
-                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                    31- Clase y marca de los bultos
-                            </a>
-                    </td>
-                    <td colspan="2">
-                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                    32- Peso en Kilogramos
-                            </a>
-                    </td>
-                    <td rowspan="2">
-                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                    33- Volumen en m3 u otra unidad de medida
-                            </a>
-                    </td>
-            </tr>
-            <tr>
-                    <td>
-                            Bruto
-                    </td>
-                    <td>
-                            Neto
-                    </td>
-            </tr>
-                            <tr>
-                    <td colspan="8">
-                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                    34- Precio de las mercancías (INCOTERMS 2010) y tipo de monedas
-                            </a>
-                    </td>
-                    <td style="border-left: none;">
-                            TOTAL
-                    </td>
-                    <td>
-                            <span id="cpic_total_peso_bruto"></span>
-                    </td>
-                    <td>
-                            <span id="cpic_total_peso_neto"></span>
-                    </td>
-                    <td>
+                        <table class="table table-bordered table-striped" id="cpics">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                <div class="text-right pull-left">
+                                                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                                        'buttonset': 'horizontal',
+                                                        'class': 'animate in',
+                                                        'botones'  : [
+                                                            {
+                                                                'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                                'type'  :   'success',
+                                                                'class' :   'animate agregar-cpic',
+                                                                'url'   :   url('formato_add_cpic_ajax',{
+                                                                                numero_mci: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                                            }),
+                                                            },
+                                                        ],
+                                                        'sizing': 'pequeño',
+                                                    } %}
+                                                </div>
+                                                10- Catidad de los bultos y clase de los bultos
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th colspan="2">
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                11- Marca y número de los bultos
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th colspan="6">
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                12- Descripción corriente de la naturaleza de las mercancías (indicar si son peligrosas)
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th colspan="2">
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                13- Peso en Kilogramos
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th colspan="10" rowspan="4">
+                                            
+                                    </th>
+                                    <th>
+                                            Bruto
+                                    </th>
+                                    <th>
+                                            Neto
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                            
+                                    </th>
+                                    <th>
+                                            
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                33- Volumen en m3 u otra unidad de medida
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                33- Volumen en m3 u otra unidad de medida
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for fh in formato.hijos %}
+                                    {{ include('PuertoUDESFormatosBundle:Formato:_addCpicAjax.html.twig',{
+                                            fila:       loop.index0,
+                                            formato:    fh,
+                                            numero:     formato.numero
+                                        }) 
+                                    }}
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="8">
+                                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
+                                                    34- Precio de las mercancías (INCOTERMS 2010) y tipo de monedas
+                                            </a>
+                                    </td>
+                                    <td style="border-left: none;">
+                                            TOTAL
+                                    </td>
+                                    <td>
+                                            <span id="cpic_total_peso_bruto"></span>
+                                    </td>
+                                    <td>
+                                            <span id="cpic_total_peso_neto"></span>
+                                    </td>
+                                    <td>
 
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </td>
-            </tr>
-            <tr>
-                    <td colspan="6" rowspan="2">
-                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                    35- Observaciones de la Aduana de Partida
-                            </a>
+                </tr>
+                <tr colspan="12">
+                    <td colspan="12">
+                        <table class="table table-bordered table-striped">
+                            <tbody>
+
+                                <tr>
+                                        <td colspan="6" rowspan="2" style="width: 35%;">
+                                                <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
+                                                        35- Observaciones de la Aduana de Partida
+                                                </a>
+                                        </td>
+                                        <td colspan="3">
+                                                <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
+                                                        37- Aduana(s) de Cruce de Frontera
+                                                </a>
+                                        </td>
+                                        <td colspan="3">
+                                                <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
+                                                        38- Aduana de Destino 
+                                                </a>
+                                        </td>
+                                </tr>
+                                <tr>
+                                        <td colspan="6" rowspan="3">
+                                                <p class="text-justify">
+                                                        El suscrito al hacerse cargo de las mercancías, se obliga a cumplir con las disposiciones de las normas que conforman el ordenamiento jurídico de la Comunidad Andina, en particular con la decisión 399 y su reglamento En las presentes observaciones de transporte internacional por carretera
+                                                </p>
+                                                <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
+                                                        39- Nombre, firma y sello del transportista autorizado o su representante
+                                                </a>
+                                        </td>
+                                </tr>
+                                <tr>
+                                        <td colspan="6">
+                                                36- Firma y sello de la autoridad que interviene en la Aduana de Partida
+                                        </td>
+                                </tr>
+                                <tr>
+                                        <td colspan="6">
+                                                <span class="block title">Fecha de Emisión</span>
+                                        </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </td>
-                    <td colspan="3">
-                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                    37- Aduana(s) de Cruce de Frontera
-                            </a>
-                    </td>
-                    <td colspan="3">
-                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                    38- Aduana de Destino 
-                            </a>
-                    </td>
-            </tr>
-            <tr>
-                    <td colspan="6" rowspan="3">
-                            <p class="text-justify">
-                                    El suscrito al hacerse cargo de las mercancías, se obliga a cumplir con las disposiciones de las normas que conforman el ordenamiento jurídico de la Comunidad Andina, en particular con la decisión 399 y su reglamento En las presentes observaciones de transporte internacional por carretera
-                            </p>
-                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                    39- Nombre, firma y sello del transportista autorizado o su representante
-                            </a>
-                    </td>
-            </tr>
-            <tr>
-                    <td colspan="6">
-                            36- Firma y sello de la autoridad que interviene en la Aduana de Partida
-                    </td>
-            </tr>
-            <tr>
-                    <td colspan="6">
-                            <span class="block title">Fecha de Emisión</span>
-                    </td>
-            </tr>
-    </tbody>
-</table>
+                </tr>
+            </tbody>
+        </table>    
+    </div>
+</div>

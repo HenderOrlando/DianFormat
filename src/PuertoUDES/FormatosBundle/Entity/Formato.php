@@ -1,6 +1,7 @@
 <?php
 namespace PuertoUDES\FormatosBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
+use Doctrine\Common\Collections\Criteria;
 
 /** 
  * @ORM\Entity
@@ -27,7 +28,34 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoConductor", mappedBy="formato")
      */
     private $conductores;
+    
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="formato")
+     */
+    private $usuarios;
+    
+    private $notificados;
+    private $consignatarios;
+    private $remitentes;
+    private $destinatarios;
 
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato", mappedBy="formato")
+     */
+    private $datosMercancias;
+
+    private $datosRecibe;
+    private $datosEmbarque;
+    private $datosEntrega;
+    
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Condicion", mappedBy="formato")
+     */
+    private $condiciones;
+    
+    private $condicionesTransporte;
+    private $condicionesPago;
+    
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoAduana", mappedBy="formato")
      */
@@ -71,7 +99,6 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $tipo;
     
-    private $unidadCarga;//Carga
     /**
      * Constructor
      */
@@ -86,6 +113,12 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->contenedoresMercancias = new \Doctrine\Common\Collections\ArrayCollection();
         $this->hijos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->notificados = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->consignatarios = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->remitentes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->datosMercancias = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->condiciones = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -217,6 +250,234 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getConductores()
     {
         return $this->conductores;
+    }
+
+    /**
+     * Add datosMercancias
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato $datosMercancias
+     * @return Formato
+     */
+    public function addDatosMercancias(\PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato $datosMercancias)
+    {
+        $this->datosMercancias[] = $datosMercancias;
+    
+        return $this;
+    }
+
+    /**
+     * Remove datosMercancias
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato $datosMercancias
+     */
+    public function removeDatosMercancias(\PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato $datosMercancias)
+    {
+        $this->datosMercancias->removeElement($datosMercancias);
+    }
+
+    /**
+     * Get datosMercancias
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDatosMercancias()
+    {
+        return $this->datosMercancias;
+    }
+
+    /**
+     * Add condicion
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Condicion $condicion
+     * @return Formato
+     */
+    public function addCondicion(\PuertoUDES\FormatosBundle\Entity\Condicion $condicion)
+    {
+        $this->condicion[] = $condicion;
+    
+        return $this;
+    }
+
+    /**
+     * Remove condicion
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Condicion $condicion
+     */
+    public function removeCondicion(\PuertoUDES\FormatosBundle\Entity\Condicion $condicion)
+    {
+        $this->condicion->removeElement($condicion);
+    }
+
+    /**
+     * Get condicion
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCondiciones()
+    {
+        return $this->condicion;
+    }
+    
+    public function getCondicionesPago(){
+        if(empty($this->condicionesPago)){
+            $this->loadCondicionesTipo();
+        }
+        return $this->condicionesPago;
+    }
+    
+    public function getCondicionesTransporte(){
+        if(empty($this->condicionesTransporte)){
+            $this->loadCondicionesTipo();
+        }
+        return $this->condicionesTransporte;
+    }
+
+    /**
+     * Add usuarios
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\FormatoUsuario $usuarios
+     * @return Formato
+     */
+    public function addUsuario(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $usuarios)
+    {
+        $this->usuarios[] = $usuarios;
+    
+        return $this;
+    }
+
+    /**
+     * Remove usuarios
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\FormatoUsuario $usuarios
+     */
+    public function removeUsuario(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $usuarios)
+    {
+        $this->usuarios->removeElement($usuarios);
+    }
+
+    /**
+     * Get usuarios
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getUsuarios($tipo = '')
+    {
+        $usuarios = $this->usuarios;
+        if(!empty($tipo)){
+            $usuarios = array();
+            foreach($this->usuarios as $u){
+                if(strtolower($u->getRol()->getNombre()) == $tipo)
+                    $usuarios[] = $u;
+            }
+        }
+        return $usuarios;
+    }
+
+    /**
+     * Get usuario
+     * 
+     * @param integer $id Iedentificador del usurio que busca
+     * @return \PuertoUDES\FormatosBundle\Entity\FormatoUsuario
+     */
+    public function getUsuario($id = -1)
+    {
+        if($id >= 0){
+            foreach($this->usuarios as $u){
+                if($u->getUsuario()->getId() == $id)
+                    return $u;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get datosRecibe
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDatosRecibe()
+    {
+        if(empty($this->datosRecibe)){
+            $this->loadDatosMercanciasTipo();
+        }
+        return $this->datosRecibe;
+    }
+
+    /**
+     * Get datosEntrega
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDatosEntrega()
+    {
+        if(empty($this->datosEntrega)){
+            $this->loadDatosMercanciasTipo();
+        }
+        return $this->datosEntrega;
+    }
+
+    /**
+     * Get datosEmbarque
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDatosEmbarque()
+    {
+        if(empty($this->datosEmbarque)){
+            $this->loadDatosMercanciasTipo();
+        }
+        return $this->datosEmbarque;
+    }
+    /**
+     * Get notificados
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getNotificados()
+    {
+        if(empty($this->notificados)){
+            $this->loadUsuariosTipo();
+        }
+        return $this->notificados;
+    }
+
+    /**
+     * Get remitentes
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getRemitentes()
+    {
+        if(empty($this->remitentes)){
+            $this->loadUsuariosTipo();
+        }
+        return $this->remitentes;
+    }
+
+    /**
+     * Get destinatarios
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDestinatarios()
+    {
+        if(empty($this->destinatarios)){
+            $this->loadUsuariosTipo();
+        }
+        return $this->destinatarios;
+    }
+
+    /**
+     * Get consignatarios
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getConsignatarios()
+    {
+        if(empty($this->consignatarios)){
+            $this->loadUsuariosTipo();
+        }
+        return $this->consignatarios;
     }
     /**
      * Get conductor
@@ -446,7 +707,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->tipo;
     }
-    
+        
     public function json($json = true, 
             $padre = false, 
             $gastos = false, 
@@ -513,5 +774,62 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             return json_encode($a);
         }
         return $a;
+    }
+
+    private function loadUsuariosTipo() {
+        $this->notificados = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->consignatarios = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->remitentes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
+        foreach($this->usuarios as $u){
+            switch(strtolower($u->getRol()->getNombre())){
+                case 'notificado':
+                    $this->notificados->add($u->getUsuario()->getEntidad());
+                    break;
+                case 'consignatario':
+                    $this->consignatario->add($u->getUsuario()->getEntidad());
+                    break;
+                case 'destinatario':
+                    $this->destinatario->add($u->getUsuario()->getEntidad());
+                    break;
+                case 'remitente':
+                    $this->remitente->add($u->getUsuario()->getEntidad());
+                    break;
+            }
+        }
+    }
+    
+    private function loadDatosMercanciasTipo() {
+        $this->datosRecibe = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->datosEmbarque = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->datosEntrega = new \Doctrine\Common\Collections\ArrayCollection();
+        foreach($this->datosMercancias as $dm){
+            switch(strtolower($dm->getTipo()->getNombre())){
+                case 'recibe':
+                    $this->datosRecibe = $dm;
+                    break;
+                case 'embarque':
+                    $this->datosEmbarque = $dm;
+                    break;
+                case 'entrega':
+                    $this->datosEntrega = $dm;
+                    break;
+            }
+        }
+    }
+    
+    private function loadCondicionesTipo() {
+        $this->condicionesPago = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->condicionesTransporte = new \Doctrine\Common\Collections\ArrayCollection();
+        foreach($this->condiciones as $dm){
+            switch(strtolower($dm->getTipo()->getNombre())){
+                case 'pago':
+                    $this->condicionesPago = $dm;
+                    break;
+                case 'transporte':
+                    $this->condicionesTransporte = $dm;
+                    break;
+            }
+        }
     }
 }

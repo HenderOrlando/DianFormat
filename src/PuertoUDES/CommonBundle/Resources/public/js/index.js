@@ -10,7 +10,7 @@ $(document).on('ready',function(){
     agregarXEditable();
     botonResetXEditable();
     botonGuardarXEditable();
-        
+    botonEliminarXEditable();
     
     function agregarXEditable(xeditable){
         if(typeof xeditable === 'undefined')
@@ -138,7 +138,7 @@ $(document).on('ready',function(){
             e.preventDefault();
             e.stopPropagation();
             var este = $(this), 
-            clase = 'a.'+este.attr('class').replace(/\s*btn|-primary\s*|-default\s*|guardar\s*|-warning\s*|-danger\s*|\s*animate\s*|\s+in\s+|\s+out\s+/g, '');
+            clase = 'a.'+este.attr('class').replace(/\s*btn|-primary\s*|-default\s*|guardar\s*|-warning\s*|-danger\s*|-success\s*|\s*animate\s*|\s+in\s*|\s*out\s+|pull-right|pull-left/g, '');
             $(clase).not('.btn').editable('submit', {
                 url: este.attr('href'), 
                 ajaxOptions: {
@@ -218,7 +218,7 @@ $(document).on('ready',function(){
             e.preventDefault();
             e.stopPropagation();
             var este = $(this), 
-            clase = 'a.'+este.attr('class').replace(/(\s*btn|-primary\s*|-default\s*)|reset\s*|-warning\s*|-danger\s*|\s*animate\s*|\s+in\s+|\s+out\s+/g, '');
+            clase = 'a.'+este.attr('class').replace(/\s*btn|-primary\s*|-default\s*|reset\s*|-warning\s*|-danger\s*|-success\s*|\s*animate\s*|\s+in\s*|\s*out\s+|pull-right|pull-left/g, '');
             $(clase).not('.btn')
                 .editable('setValue', '')
                 .editable('option', 'pk', '')
@@ -233,6 +233,31 @@ $(document).on('ready',function(){
 
             $('.guardar').removeClass('out').addClass('in');
             //$('#mensajes').hide();                
+        });
+    }
+    
+    function botonEliminarXEditable(eliminar){
+        if(typeof eliminar === 'undefined')
+            eliminar = '.eliminar';
+        $(eliminar).each(function(){
+            var este = $(this),
+                id = '#'+este.attr('class').replace(/(\s*btn|-primary\s*|-default\s*|eliminar\s*|-warning\s*|-danger\s*|-success\s*|\s*animate\s*|\s+in\s*|\s*out\s+|pull-right|pull-left)/g, ''),
+                numChildren = $(id).parent().children().length;
+            if(numChildren <= 1){
+                $(id).parent().children().find('.eliminar').removeClass('in').addClass('out');
+            }else{
+                $(id).parent().children().find('.eliminar').removeClass('out').addClass('in');
+            }
+            este.on('click', function(){
+                var numChildren = $(id).parent().children().length-1;
+                if(numChildren <= 1){
+                    $(id).parent().children().find('.eliminar').removeClass('in').addClass('out');
+                }else{
+                    $(id).parent().children().find('.eliminar').removeClass('out').addClass('in');
+                }
+                este.siblings('reset').click();
+                $(id).remove();
+            });
         });
     }
     
@@ -255,15 +280,39 @@ $(document).on('ready',function(){
             botonResetXEditable($('#cpics tbody').find('.reset'));
 //            botonGuardarXEditable($('#cpics tbody').find('.guardar'));
             botonGuardarXEditable($('#cpics tbody').find('.guardar'));
-            $('#cpics tbody').find('.eliminar').on('click', function(){
-                $(this).siblings('reset').click().end()
-                       .parents('tr').first().remove();
-            });
+            botonEliminarXEditable($('#cpics tbody').find('.eliminar'));
             este.removeAttr('disabled');
         }).fail(function() {
             console.log( "error" );
         }).always(function() {
             console.log( "complete" );
-        })
+        });
+    });
+    $('a.agregar').on('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var este = $(this),
+            id = $('#'+este.attr('class').replace(/\s*btn|-primary\s*|-default\s*|agregar\s*|-warning\s*|-danger\s*|-success\s*|\s*animate\s*|\s+in\s*|\s*out\s+|pull-right|pull-left/g, '')),
+            numChildren = id.children().length;
+        este.attr('disabled',true);
+        $.ajax({
+            type: "POST",
+            url: este.attr('href'),
+            data:{filas: numChildren},
+            dataType: "html",
+            cache: false
+        }).done(function( response ) {
+            id.append(response);
+            arreglaAjax();
+            agregarXEditable(id.find('a.xeditable'));
+            botonResetXEditable(id.find('.reset'));
+            botonGuardarXEditable(id.find('.guardar'));
+            botonEliminarXEditable(id.find('.eliminar'));
+            este.removeAttr('disabled');
+        }).fail(function() {
+            console.log( "error" );
+        }).always(function() {
+            console.log( "complete" );
+        });
     });
 });

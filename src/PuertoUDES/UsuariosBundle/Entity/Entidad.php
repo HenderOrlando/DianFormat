@@ -23,7 +23,7 @@ class Entidad
     private $usuario;
     
     /** 
-     * @ORM\Column(type="string", length=50, nullable=false, name="certificado_idoneidad")
+     * @ORM\Column(type="string", length=50, nullable=true, name="certificado_idoneidad")
      */
     private $certificadoIdoneidad;
     
@@ -374,10 +374,10 @@ class Entidad
     /**
      * Add formatos
      *
-     * @param \PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $formatos
      * @return Usuario
      */
-    public function addFormato(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos)
+    public function addFormato(\PuertoUDES\FormatosBundle\Entity\Formato $formatos)
     {
         $this->formatos[] = $formatos;
     
@@ -389,7 +389,7 @@ class Entidad
      *
      * @param \PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos
      */
-    public function removeFormato(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos)
+    public function removeFormato(\PuertoUDES\FormatosBundle\Entity\Formato $formatos)
     {
         $this->formatos->removeElement($formatos);
     }

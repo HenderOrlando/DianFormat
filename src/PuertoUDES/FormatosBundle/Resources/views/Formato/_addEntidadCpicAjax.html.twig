@@ -1,0 +1,92 @@
+{#
+abreviacion Formato dónde agregar la entidad
+numero      Número del Formato dónde agregar la entidad
+entidad     Entidad de rol "rol" que está en el formato
+rol        Nombre del rol de la entidad en el formato
+fila        Número de la fila de la entidad
+#}
+{% set rol = rol|lower %}
+{% set usuario = entidad is defined and entidad is not empty and entidad.usuario is not empty?entidad.usuario:null %}
+<div class="row" id="entidad{{fila ~ '-' ~ rol}}-crear">
+    <div class="col-lg-12">
+        <div class="text-right pull-left">
+            {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                'buttonset': 'horizontal',
+                'class': 'animate in',
+                'botones'  : [
+                    {
+                        'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                        'type'  :   'primary',
+                        'class' :   'entidad' ~ fila ~ '-' ~ rol ~'-crear animate guardar',
+                        'url'   :   url('entidad_add_cpic_ajax_',{
+                                        numero: numero,
+                                        rol: rol,
+                                        fila: fila,
+                                    }),
+                    },
+                    {
+                        'class' :   'eliminar  entidad' ~ fila ~ '-' ~ rol ~'-crear animate',
+                        'type'  :   'danger',
+                        'label' :   '<span class="glyphicon glyphicon-trash"></span>',
+                    },
+                    {
+                        'class' :   'reset entidad' ~ fila ~ '-' ~ rol ~'-crear animate',
+                        'type'  :   'warning',
+                        'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                    },
+                ],
+                'sizing': 'pequeño',
+            } %}
+        </div>
+        {% set pk = usuario is not null and usuario.id is not empty?usuario.id:' ' %}
+        {% set dataWith = {
+            id:             "entidad_" ~ rol ~"_ _" ~ fila,
+            clase:          "entidad" ~ fila ~ "-"~ rol ~ "-crear",
+            name:           "",
+            pk:             pk,
+            datos:          {tipo: abreviacion|upper},
+            originalTitle:  " " ~ rol | title ,
+            entityName:     "usuario",
+            bundleName:     "usuarios" ,
+            emptyText:      "",
+            required:       "",
+            valor:          '',
+        } %}
+        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
+            id:             "entidad_" ~ rol ~"_razon_social_" ~ fila,
+            name:           "nombre",
+            originalTitle:  "Nombre o Razón Social " ~ rol | title ,
+            emptyText:      "Nombre o Razón Social",
+            required:       "NoVacio,LetrasConectores",
+            valor:          pk != ' '?usuario.nombre:'',
+        }) %}- 
+        NIT. 
+        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
+            id:             "entidad_" ~ rol ~"_nit_" ~ fila,
+            name:           "doc_id",
+            originalTitle:  "NIT " ~ rol | title ,
+            emptyText:      "NIT",
+            required:       "NoVacio,NumerosConectores",
+            valor:          pk != ' '?usuario.docId:'',
+        }) %}
+    </div>
+    <div class="col-lg-12">
+        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
+            id:             "entidad_" ~ rol ~"_direccion_" ~ fila,
+            name:           "direccion",
+            originalTitle:  "Dirección " ~ rol | title ,
+            emptyText:      "Dirección",
+            required:       "Vacio,NumerosLetrasConectores",
+            valor:          pk != ' '?usuario.direccion:'',
+        }) %} - 
+         {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
+            id:             "entidad_" ~ rol ~"_lugar_" ~ fila,
+            name:           "lugar",
+            pk:             usuario is not null and usuario.entidad is defined and usuario.entidad.id is not empty?usuario.entidad.id:' ',
+            originalTitle:  "Lugar " ~ rol | title ,
+            emptyText:      "Lugar",
+            required:       "Vacio,LetrasConectores",
+            valor:          usuario is not null and usuario.entidad.lugar is defined ?usuario.entidad.lugar:'',
+        }) %}
+    </div>
+</div>

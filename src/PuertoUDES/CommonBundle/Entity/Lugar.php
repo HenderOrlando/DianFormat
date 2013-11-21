@@ -25,6 +25,11 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $descargas;
     
     /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato", mappedBy="lugar")
+     */
+    private $datosMercanciasFormato;
+    
+    /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\UsuariosBundle\Entity\Entidad", mappedBy="lugar")
      */
     private $entidades;
@@ -151,6 +156,37 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function addDescarga(\PuertoUDES\FormatosBundle\Entity\Carga $carga)
     {
         $this->descargas[] = $carga;
+        return $this;
+    }
+
+    /**
+     * Remove datosMercanciasFormato
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Carga $datosMercanciasFormato
+     */
+    public function removeDatosMercanciasFormato(\PuertoUDES\FormatosBundle\Entity\Carga $datosMercanciasFormato)
+    {
+        $this->datosMercanciasFormato->removeElement($datosMercanciasFormato);
+    }
+
+    /**
+     * Get datosMercanciasFormato
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDatosMercanciasFormato()
+    {
+        return $this->datosMercanciasFormato;
+    }
+    /**
+     * Add desdatosMercanciasFormato
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato $datosMercanciasFormato
+     * @return Lugar
+     */
+    public function addDatosMercanciasFormato(\PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato $datosMercanciasFormato)
+    {
+        $this->datosMercanciasFormato[] = $datosMercanciasFormato;
         return $this;
     }
 

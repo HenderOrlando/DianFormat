@@ -22,7 +22,144 @@ use PuertoUDES\UsuariosBundle\Form\EntidadType;
  */
 class EntidadController extends Controller
 {
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Agregar/{rol}/a/CPIC-{fila}/{numero}/", name="entidad_add_cpic_ajax_")
+     * @Route("/Agregar/{rol}/a/CPIC/{numero}/", name="entidad_add_cpic_ajax")
+     * @Method({"POST","PUT"})
+     * @Template("PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig")
+     */
+    public function addEntidadCpicAjaxAction(Request $request){
+        $filas = $request->get('filas', 0);
+        $role = $request->get('rol',NULL);
+        $numero = $request->get('numero',NULL);
+        $nombre = $request->get('nombre',NULL);
+        $docId = $request->get('doc_id',NULL);
+        $direccion = $request->get('direccion','');
+        $lugar = $request->get('lugar',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic'));
+        $entidad = null;
+        $datos = array();
+        if($tipo_mci){
+            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_mci->getId(), 'numero' => $numero));
+            if($formato){
+                if($docId && $nombre){
+                    $entidad = $this->getRepositorio()->createQueryBuilder('e')
+                        ->leftJoin('e.usuario', 'u')
+                        ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
+                        ->andWhere("u.docId= '".$docId."'")
+                        ->getQuery()->getOneOrNullResult();
+                    if(!$entidad){
+                        $u = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->createQueryBuilder('u')
+                            ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
+                            ->andWhere("u.docId= '".$docId."'")
+                            ->getQuery()->getOneOrNullResult();
+                        if(!$u){
+                            $u = new Usuario();
+                            $u->setNombre($nombre)
+                              ->setDocId($docId)
+                              ->setDireccion($direccion);
+                            $em->persist($u);
+                            $em->flush();
+                        }
+                        $entidad = new Entidad();
+                        $entidad->setUsuario($u->setEntidad($entidad));
+                        $lugar_pais = preg_split('/\s?,\s?/', $lugar);
+                        if(count($lugar_pais) <= 2 && count($lugar_pais) > 1){
+                            $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
+                                    ->createQueryBuilder('p')
+                                    ->andWhere('p.canonical LIKE \'%'.$lugar_pais[1].'%\' OR p.nombre LIKE \'%'.$lugar_pais[1].'%\'')
+                                    ->getQuery()->getOneOrNullResult();
+                                $l= $em->getRepository('PuertoUDESCommonBundle:Lugar')
+                                    ->createQueryBuilder('p')
+                                    ->andWhere('p.canonical = \''.$lugar_pais[0].'\' OR p.nombre = \''.$lugar_pais[0].'\'')
+                                    ->getQuery()->getOneOrNullResult();
+                                if(!$l){
+                                    $l = new \PuertoUDES\CommonBundle\Entity\Lugar();
+                                    $l->setNombre($lugar_pais[0]);
+                                    $em->persist($l);
+                                }
+                                if(!$pais && isset($lugar_pais[1])){
+                                    $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
+                                    $pais->setNombre($lugar_pais[1])
+                                        ->setNacionalidad($lugar_pais[1]);
+                                    $em->persist($pais);
+                                }
+                                if(!$pais->hasLugar($l)){
+                                    $pais->addLugar($l);
+                                    $em->persist($pais);
+                                }
+                                if(!$l->getPais() || $l->getPais()->getId() != $pais->getId()){
+                                    $l->setPais($pais);
+                                    $em->persist($l);
+                                }
+                                $entidad->setLugar($l);
+                                $l->addEntidad($entidad);
+                                $em->persist($l);
+                        }
+                        $u->setEntidad($entidad);
+                        $em->persist($u);
+                        $em->persist($entidad);
+                    }
+                    
+                    $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
+                            ->andWhere("r.canonical='".$role."' OR r.nombre='".$role."'")
+                            ->getQuery()->getOneOrNullResult();
+                    if(!$rol /*&& !empty($role)*/ || empty($role) ){
+                        $datos['success']['msgs']['Formato'] = array(
+                            'msg' => 'Rol no reconocido',
+                            'tipo' => 'danger'
+                        );
+                        
+//                        $rol = new \PuertoUDES\CommonBundle\Entity\Rol();
+//                        $rol->setDescripcion('Rol '.$role.' de la Entidad, en Formato Usuario')
+//                            ->setAplicableA('FormatoUsuario')
+//                            ->setNombre($role);
+//                        $em->persist($rol);
+                    }else{
+                        $fu = $em->getRepository('PuertoUDESFormatosBundle:FormatoUsuario')->createQueryBuilder('fu')
+                                ->andWhere("fu.usuario=".$u->getId())
+                                ->andWhere("fu.rol=".$rol->getid())
+                                ->getQuery()->getOneOrNullResult();
+                        if(!$fu){
+                            $fu = new \PuertoUDES\FormatosBundle\Entity\FormatoUsuario();
+                            $fu->setFormato($formato);
+                            $fu->setUsuario($u);
+                            $fu->setRol($rol);
+                            $em->persist($fu);
+                        }else{
+                            
+                        }
+                        $em->flush();
+                        $datos['success']['msgs']['Formato'] = array(
+                            'msg' => 'Entidad '.($role == 'notificar'?'a notificar':str_replace('tario', 'taria', $role)).' <strong>"'.$entidad->getNombre().'"</strong> agregada.',
+                            'tipo' => 'success'
+                        );
+                        $datos['id'] = $fu->getId();
+                    }
+                    return JsonResponse::create($datos);
+                }else{
 
+                }
+            }else{
+                $datos['success']['msgs']['Formato'] = array(
+                    'msg' => 'Formato no válido',
+                    'tipo' => 'danger'
+                );
+                return JsonResponse::create($datos);
+            }
+        }
+        return array(
+            'fila'          => $filas,
+            'abreviacion'   =>  $formato->getTipo()->getAbreviacion(),
+            'numero'        =>  $formato->getNumero(),
+            'entidad'       =>  $entidad,
+            'rol'           =>  $role,
+        );
+    }
+    
     /**
      * Lists all Entidad entities.
      *
@@ -222,28 +359,39 @@ class EntidadController extends Controller
                             $lugar_pais = preg_split('/\s?,\s?/', $lugar);
                             if(count($lugar_pais) <= 2 && count($lugar_pais) > 1){
                                 $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
-                                        ->createQueryBuilder('p')
-                                        ->andWhere('p.canonical LIKE \'%'.$lugar_pais[1].'%\' OR p.nombre LIKE \'%'.$lugar_pais[1].'%\'')
-                                        ->getQuery()->getOneOrNullResult();
+                                    ->createQueryBuilder('p')
+                                    ->andWhere('p.canonical LIKE \'%'.$lugar_pais[1].'%\' OR p.nombre LIKE \'%'.$lugar_pais[1].'%\'')
+                                    ->getQuery()->getOneOrNullResult();
                                 $l= $em->getRepository('PuertoUDESCommonBundle:Lugar')
-                                        ->createQueryBuilder('p')
-                                        ->andWhere('p.canonical = \''.$lugar_pais[0].'\' OR p.nombre = \''.$lugar_pais[0].'\'')
-                                        ->getQuery()->getOneOrNullResult();
-                                if((!$l || ($l && strtolower($l->getPais()->getNombre()) != strtolower($lugar_pais[1])) || ($l && $pais && $l->getPais()->getId() != $pais->getId())) && isset($lugar_pais[0]) && isset($lugar_pais[1])){
+                                    ->createQueryBuilder('p')
+                                    ->andWhere('p.canonical = \''.$lugar_pais[0].'\' OR p.nombre = \''.$lugar_pais[0].'\'')
+                                    ->getQuery()->getOneOrNullResult();
+                                if(!$l){
                                     $l = new \PuertoUDES\CommonBundle\Entity\Lugar();
                                     $l->setNombre($lugar_pais[0]);
-                                    if(!$pais && isset($lugar_pais[1])){
-                                        $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
-                                        $pais->setNombre($lugar_pais[1])
-                                            ->setNacionalidad($lugar_pais[1]);
-                                        $em->persist($pais);
-                                        $l->setPais($pais);
-                                    }
+                                    $em->persist($l);
+                                }
+                                if(!$pais && isset($lugar_pais[1])){
+                                    $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
+                                    $pais->setNombre($lugar_pais[1])
+                                        ->setNacionalidad($lugar_pais[1]);
+                                    $em->persist($pais);
+                                }
+                                if(!$pais->hasLugar($l)){
+                                    $pais->addLugar($l);
+                                    $em->persist($pais);
+                                }
+                                if(!$l->getPais() || $l->getPais()->getId() != $pais->getId()){
+                                    $l->setPais($pais);
                                     $em->persist($l);
                                 }
                                 $entidad->setLugar($l);
+                                $l->addEntidad($entidad);
+                                $em->persist($l);
                             }
                             $em->persist($entidad);
+                            $u->setEntidad($entidad);
+                            $em->persist($u);
                         }
                         $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->findOneBy(array('canonical' => 'transportista', 'aplicableA' => 'FormatoUsuario'));
                         $fu = $em->getRepository('PuertoUDESFormatosBundle:FormatoUsuario')->findOneBy(array('usuario' => $u->getId(), 'formato' => $formato->getId(), 'rol' => $rol->getId()));
@@ -521,7 +669,7 @@ class EntidadController extends Controller
             array(
                 'col'=>array(
                     array(
-                        'dato'      =>  'Doc Id',
+                        'dato'      =>  'DocId',
                         'label'     =>  'Documento de Identidad',
                         'class' =>  'text-center',
                     ),

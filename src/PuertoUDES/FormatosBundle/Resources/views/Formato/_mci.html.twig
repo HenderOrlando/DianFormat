@@ -144,7 +144,7 @@
                                 </a>
                             </div>
                             <div class="col-lg-12">
-                                <a href="#" id="entidad_nit" class="xeditable entidad-crear" 
+                                NIT. <a href="#" id="entidad_nit" class="xeditable entidad-crear" 
                                    data-placement="top" 
                                    data-name="doc_id" 
                                    data-type="text" 
@@ -247,9 +247,11 @@
                         <div class="row">
                             <div class="col-lg-12 col-md-12">
                                 {% set permisos = '' %}
-                                {% for pps in formato.transportista.permisosPresentaServicios %}
-                                    {% set permisos = permisos ~ (not loop.first?', ':'') ~ pps.nombre %}
-                                {% endfor %}
+                                {% if formato.transportista is defined and formato.transportista.permisosPresentaServicios is defined %}
+                                    {% for pps in formato.transportista.permisosPresentaServicios %}
+                                        {% set permisos = permisos ~ (not loop.first?', ':'') ~ pps.nombre %}
+                                    {% endfor %}
+                                {% endif %}
                                     <a href="#" id="entidad_permiso_presentacion_servicios" class="xeditable premiso-presenta-servicio-crear" 
                                        data-placement="top" 
                                        data-name="permisosPresentaServicios" 

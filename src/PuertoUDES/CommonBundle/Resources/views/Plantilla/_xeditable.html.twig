@@ -1,0 +1,75 @@
+{# 
+ejemplo:
+
+{% include 'PuertoUDESCommonBundle:Plantilla:xeditable.html.twig' with {
+    id:             "",
+    clase:          "",
+    placement:      ""
+    name:           "",
+    type:           "",
+    pk:             ,
+    url:            '',
+    datos:          {},
+    originalTitle:  "",
+    entityName:     "",
+    bundleName:     "" ,
+    emptyText:      "",
+    placeholder:    "", 
+    required:       "",
+    valor:          ,
+} %}
+
+
+
+
+valor           Valor actual del campo. Por defecto ''.
+clase           Clase del xeditable. Por defecto ''.
+id              Id del xeditable. Por defecto ''.
+placement       Lugar recerá. Por defecto 'top'. Atributo de xeditable. {top, left, bottom, right}.
+name            Nombre del campo. Por defecto ' '.
+type            Tipo de campo a mostrar. Por defecto 'text'.
+pk              Clave primaria. Por defecto ' '.
+url             Nombre de la Url para guardar. Por defecto ''.
+datos           Datos necesarios para el buen funcionamiento de la Url. Por defecto {}
+originalTitle   Titulo de la ventana. Por defecto 'Actualizar'.
+entityName      Nombre de la Entidad. Por defecto ''.
+bundleName      Nombre del Bundle donde está la entidad. Por defecto ''.
+emptyText       Texto a mostrar si está vacío el input. Por defecto mismo valor de originalTitle.
+placeholder     Texto a mostrar si está vacío el link. Por defecto mismo valor de originalTitle.
+required        Lista de requisitos (validaciones en el cliente) para enviar los datos. Por defecto 'NoVacio'. 
+                Puede ser {NoVacio, Vacio, Letras, Numeros, Conectores, NumerosLetras, NumerosConectores, LetrasConectores, NumerosLetrasConectores, Email}
+#}
+{% set id = id is defined and id is not empty? id : '' %}
+{% set clase = clase is defined and clase is not empty? clase : '' %}
+{% set placement = placement is defined and placement is not empty? placement : 'top' %}
+{% set name = name is defined and name is not empty? name : ' ' %}
+{% set type = type is defined and type is not empty? type : 'text' %}
+{% set pk = pk is defined and pk is not empty? pk : ' ' %}
+{% set datos = datos is defined and datos is not empty? datos : {} %}
+{% set url = url is defined and url is not empty?('/' in url? url : url(url,datos) ): url('formato_edit_campo', datos) %}
+{% set originalTitle = originalTitle is defined and originalTitle is not empty? originalTitle : 'Actualizar' %}
+{% set entityName = entityName is defined and entityName is not empty? entityName : '' %}
+{% set bundleName = bundleName is defined and bundleName is not empty? bundleName : '' %}
+{% set emptyText = emptyText is defined and emptyText is not empty? emptyText : originalTitle %}
+{% set placeholder = placeholder is defined and placeholder is not empty? placeholder : originalTitle %}
+{% set required = required is defined and required is not empty? required : 'NoVacio' %}
+{% set valor = valor is defined and valor is not empty? valor : '' %}
+
+<a href="#" {{ id is not empty?'id="' ~ id ~ '"':'' }} class="xeditable {{ clase }}" 
+    data-placement="{{ placement }}" 
+    data-name="{{- name -}}" 
+    data-type="{{- type -}}" 
+    data-pk="{{- pk -}}"
+    data-url="{{- url -}}" 
+    data-original-title="{{- originalTitle -}}" 
+    data-entity-name="{{- entityName -}}"
+    data-entity-bundle="{{- bundleName -}}" 
+    data-emptytext="{{- emptyText -}}" 
+    data-placeholder="{{- placeholder -}}" 
+    data-required="{{- required -}}">
+    {% if valor is not null and valor is not empty and 'fecha' in name %}
+        {{- valor |date('d-M-Y') -}}
+    {% else %}
+        {{- valor -}}
+    {% endif %}
+ </a>

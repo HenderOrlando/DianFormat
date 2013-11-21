@@ -62,6 +62,11 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $roles;
     
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="usuario")
+     */
+    private $formatos;
+    
     /**
      * Constructor
      */
@@ -190,6 +195,39 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
 
     /**
+     * Add formatosEntidad
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $formatos
+     * @return Usuario
+     */
+    public function addFormatoEntidad(\PuertoUDES\FormatosBundle\Entity\Formato $formatos)
+    {
+        $this->entidad->addFormato($formatos);
+    
+        return $this;
+    }
+
+    /**
+     * Remove formatosEntidad
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $formatos
+     */
+    public function removeFormatoEntidad(\PuertoUDES\FormatosBundle\Entity\Formato $formatos)
+    {
+        $this->entidad->removeFormato($formatos);
+    }
+
+    /**
+     * Get formatosEntidad
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getFormatosEntidad()
+    {
+        return $this->entidad->getFormatos();
+    }
+
+    /**
      * Add formatos
      *
      * @param \PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos
@@ -197,7 +235,7 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function addFormato(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos)
     {
-        $this->entidad->addFormato($formatos);
+        $this->formatos[] = $formatos;
     
         return $this;
     }
@@ -209,7 +247,7 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function removeFormato(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos)
     {
-        $this->entidad->removeFormato($formatos);
+        $this->formatos->removeElement($formatos);
     }
 
     /**
@@ -219,7 +257,7 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function getFormatos()
     {
-        return $this->entidad->getFormatos();
+        return $this->formatos;
     }
 
     /**

@@ -16,63 +16,8 @@ use Doctrine\ORM\Query;
 use Symfony\Component\Form\Form;
 use Doctrine\ORM\EntityManager;
 
-class IndexController extends Controller implements PaginatorAwareInterface
+class UtilsController extends Controller implements PaginatorAwareInterface
 {
-    protected $meses= array(
-        1   =>  array('ene','enero',1,'january'),
-        2   =>  array('feb','febrero',2,'february'),
-        3   =>  array('mar','marzo',3,'march'),
-        4   =>  array('abr','abril',4,'april'),
-        5   =>  array('may','mayo',5,'may'),
-        6   =>  array('jun','junio',6,'june'),
-        7   =>  array('jul','julio',7,'july'),
-        8   =>  array('ago','agosto',8,'august'),
-        9   =>  array('sep','septiembre',9,'september'),
-        10  =>  array('oct','octubre',10,'october'),
-        11  =>  array('nov','noviembre',11,'november'),
-        12  =>  array('dic','diciembre',12,'december'),
-        
-        'ene'   =>  array('ene','enero',1,'january'),
-        'jan'   =>  array('ene','enero',1,'january'),
-        'feb'   =>  array('feb','febrero',2,'february'),
-        'mar'   =>  array('mar','marzo',3,'march'),
-        'abr'   =>  array('abr','abril',4,'april'),
-        'apr'   =>  array('abr','abril',4,'april'),
-        'may'   =>  array('may','mayo',5,'may'),
-        'jun'   =>  array('jun','junio',6,'june'),
-        'jul'   =>  array('jul','julio',7,'july'),
-        'ago'   =>  array('ago','agosto',8,'august'),
-        'sep'   =>  array('sep','septiembre',9,'september'),
-        'oct'   =>  array('oct','octubre',10,'october'),
-        'nov'   =>  array('nov','noviembre',11,'november'),
-        'dic'   =>  array('dic','diciembre',12,'december'),
-        
-        'enero'     =>  array('ene','enero',1,'january'),
-        'febrero'   =>  array('feb','febrero',2,'february'),
-        'marzo'     =>  array('mar','marzo',3,'march'),
-        'abril'     =>  array('abr','abril',4,'april'),
-        'mayo'      =>  array('may','mayo',5,'may'),
-        'junio'         =>  array('jun','junio',6,'june'),
-        'julio'         =>  array('jul','julio',7,'july'),
-        'agosto'        =>  array('ago','agosto',8,'august'),
-        'septiembre'    =>  array('sep','septiembre',9,'september'),
-        'octubre'       =>  array('oct','octubre',10,'october'),
-        'noviembre'     =>  array('nov','noviembre',11,'november'),
-        'diciembre'     =>  array('dic','diciembre',12,'december'),
-        
-        'january'     =>  array('ene','enero',1,'january'),
-        'february'   =>  array('feb','febrero',2,'february'),
-        'march'     =>  array('mar','marzo',3,'march'),
-        'april'     =>  array('abr','abril',4,'april'),
-        'may'      =>  array('may','mayo',5,'may'),
-        'june'         =>  array('jun','junio',6,'june'),
-        'july'         =>  array('jul','julio',7,'july'),
-        'august'        =>  array('ago','agosto',8,'august'),
-        'september'    =>  array('sep','septiembre',9,'september'),
-        'october'       =>  array('oct','octubre',10,'october'),
-        'november'     =>  array('nov','noviembre',11,'november'),
-        'december'     =>  array('dic','diciembre',12,'december'),
-    );
     protected $em_, $request_, $formFactory_, $paginator_, $router_, $response_;
     public function __construct($em = null, $formFactory = null, $router = null, $request = null, $paginator = null, $response = null) {
 //        if(!is_null($em))
@@ -604,38 +549,6 @@ class IndexController extends Controller implements PaginatorAwareInterface
         $cadena = strtr($cadena, utf8_decode($originales), $modificadas);
         $cadena = strtolower($cadena);
         return str_replace(' ', '-', utf8_encode($cadena));
-    }
-    /**
-     * get date
-     * 
-     * @param   $fecha  string  Fecha en formato dia[/- ]mes[/- ]año. dia 2 digitos, mes numero o letras, año 2 o 4 dígitos
-     * @return time Marca de tiempo
-     */
-    public function getDate($fecha, $time = null) {
-        if(is_null($time))
-            $time = strtotime("now");
-        $f = preg_split("/[-\/ ]/", $fecha);
-        if(count($f) == 3){
-            $date = strtotime($f[0].' '.$this->getMes($f[1],'ing').' '.$f[2].' '.date('H:i:s', $time));
-            if($date !== FALSE)
-                return $date;
-        }
-        return null;
-    }
-    
-    
-    public function getMes($mes, $num = 'esp'){
-        if(preg_match('/abr|esp|num|ing/', $num) !== false){
-            $get = array(
-                'abr'   =>  0,
-                'esp'   =>  1,
-                'num'   =>  2,
-                'ing'   =>  3,
-            );
-            if(isset($this->meses[$mes][$get[$num]]))
-                return $this->meses[$mes][$get[$num]];
-        }
-        return null;
     }
 }
 

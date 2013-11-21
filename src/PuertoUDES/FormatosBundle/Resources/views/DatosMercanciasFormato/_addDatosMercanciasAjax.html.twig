@@ -1,0 +1,67 @@
+{#
+abreviacion Formato dónde agregar la dmf
+numero      Número del Formato dónde agregar la dmf
+dmf         Datos de las Mercancías del Formato con el "tipo"
+tipo        Nombre del tipo de los datos de las mercancias en el formato. Pueden ser recibe, embarque o entrega
+#}
+{% set tipo = tipo|lower %}
+{% set dmf= dmf is defined and dmf is not empty?dmf:null %}
+<div class="row" id="datos-mercancias-{{ tipo }}-crear">
+    <div class="col-lg-12">
+        {% set pk = dmf is not null and dmf.id is not empty?dmf.id:' ' %}
+        {% set dataWith = {
+            clase:          "datosMercancias-" ~ tipo ~ "-crear",
+            id:             "datos_mercancias_formato_" ~ tipo ~"_ _",
+            name:           "",
+            originalTitle:  " " ~ tipo | title ,
+            emptyText:      "",
+            required:       "",
+            valor:          '',
+            pk:             pk,
+            datos:          {tipo: abreviacion|upper},
+            entityName:     "usuario",
+            bundleName:     "usuarios" ,
+        } %}
+        {% if pk == ' ' %}
+            <div class="text-right pull-right">
+                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                    'buttonset': 'horizontal',
+                    'class': 'animate in',
+                    'botones'  : [
+                        {
+                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                            'type'  :   'primary',
+                            'class' :   'datosMercancias-' ~ tipo ~'-crear animate guardar',
+                            'url'   :   url('datosMercancias_add_cpic_ajax_',{
+                                        numero: numero,
+                                        tipo: tipo|title,
+                                    }),
+                        },
+                        {
+                            'class' :   'reset datosMercancias-' ~ tipo ~ '-crear animate',
+                            'type'  :   'warning',
+                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                        },
+                    ],
+                    'sizing': 'pequeño',
+                } %}
+            </div>
+        {% endif %}
+        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
+            id:             "datos_mercancias_formato_" ~ tipo ~"_lugar_",
+            name:           "lugar",
+            originalTitle:  "Lugar, País" ~ ('recibe' in tipo?' que ':' de ') ~ tipo | title ,
+            emptyText:      "Lugar, País",
+            required:       "NoVacio,LetrasConectores",
+            valor:          pk != ' '?dmf.lugar:'',
+        }) %} 
+        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
+            id:             "datos_mercancias_formato_" ~ tipo ~"_fecha_",
+            name:           "fecha",
+            originalTitle:  "Fecha" ~ ('recibe' in tipo?' que ':' de ') ~ tipo | title ,
+            emptyText:      "Fecha",
+            required:       "Vacio,NumerosLetrasConectores",
+            valor:          pk != ' '?dmf.fecha:'',
+        }) %}
+    </div>
+</div>
