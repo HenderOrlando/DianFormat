@@ -43,7 +43,7 @@ class Entidad
     private $permisosPresentaServicios;
     
     /**
-     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Lugar")
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Lugar", inversedBy="entidades")
      * @ORM\JoinColumn(name="lugar_id", referencedColumnName="id", nullable=true)
      */
     private $lugar;
@@ -107,7 +107,7 @@ class Entidad
     /**
      * Get lugar
      *
-     * @return \PuertoUDES\CommonBundle\Entity\Lugar 
+     * @return \PuertoUDES\CommonBundle\Entity\Lugar
      */
     public function getLugar()
     {
@@ -489,10 +489,11 @@ class Entidad
     
     public function json($json = true, $permisos = false){
         $a = array(
-            'lugar'                 => $this->getLugar()?$this->getLugar()->json(FALSE):null,
             'usuario'               => $this->getUsuario()->json(false),
             'certificado_idoneidad' => $this->getCertificadoIdoneidad(),
         );
+        if($this->getLugar())
+            $a = array_merge ($a, array('lugar' => $this->getLugar()?$this->getLugar()->json(FALSE):null,));
         if(is_bool($permisos) && $permisos){
             $a = array_merge($a, array(
                 'permisos' => $this->jsonPermisosPresentaServicios(false),
@@ -500,6 +501,17 @@ class Entidad
         }
         if(is_bool($json) && $json){
             return json_encode($a);
+        }
+        return $a;
+    }
+    
+    public function getTokens($explode = true){
+        $a = $this->getUsuario()->getTokens(false)
+            .'\\'.$this->getCertificadoIdoneidad();
+        if($this->getLugar())
+            $a .= '\\'.$this->getLugar()->getTokens(false).' ';
+        if(is_bool($explode) && $explode){
+            $a = explode('\\', $a);
         }
         return $a;
     }

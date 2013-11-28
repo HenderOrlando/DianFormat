@@ -138,11 +138,11 @@ $(document).on('ready',function(){
             e.preventDefault();
             e.stopPropagation();
             var este = $(this), 
-            clase = 'a.'+este.attr('class').replace(/\s*btn|-primary\s*|-default\s*|guardar\s*|-warning\s*|-danger\s*|-success\s*|\s*animate\s*|\s+in\s*|\s*out\s+|pull-right|pull-left/g, '');
+            clase = 'a.'+este.attr('class').replace(/btn|-primary|-default|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|\sout|out$|pull-right|pull-left|\s/g, '');
             $(clase).not('.btn').editable('submit', {
                 url: este.attr('href'), 
                 ajaxOptions: {
-                    type: 'post',
+                    type: 'PUT',
                     dataType: 'json'
                 },
                 success: function(data, config) {
@@ -164,35 +164,38 @@ $(document).on('ready',function(){
                                     addMsg(k+": "+v.msg, v.tipo);
                             });
                         }
-                        $(clase+'.guardar').parent().removeClass('in').addClass('out');
+                        $(clase+'.guardar').removeClass('in').addClass('out');
                         if(clase.search('carga') > 0 && clase.search('otra') < 0 ){
                             clase = clase+', a.carga-crear';
                             $('a.carga-crear.guardar').parent().removeClass('in').addClass('out');
                         }
                         $(clase).not('.btn')
                                 .editable('option', 'pk', data.id);
-                        $(this).off('save.formato');
-                        if(!este.parent().hasClass('no-quitar'))
-                            este.parent().removeClass('in').addClass('out');
-                    } else if(data && data.errors){
-                        var msg = '', errors = data.errors;
-                        if(errors && errors.responseText) {
-                            addMsg(errors.responseText, 'danger');
-                        }else {
-                            $.each(errors, function(k, v) {
-                                addMsg(k+": "+v, 'danger');
-                            });
+//                        $(this).off('save.formato');
+//                        if(!este.parent().hasClass('no-quitar'))
+//                            este.parent().removeClass('in').addClass('out');
+                    }else if(data && data.errors){
+                        var errors = data.errors;
+                        if(errors) {
+                            if(errors.responseText)
+                                addMsg(errors.responseText, 'danger');
+                            else {
+                                $.each(errors, function(k, v) {
+                                    addMsg(k+": "+v, 'danger');
+                                });
+                            }
+                        }else{
+                            var success = data.success;
+                            if(success && typeof success.msg !== 'undefined') {
+                                addMsg(success.msg, success.tipo);
+                            } else {
+                                $.each(success.msgs, function(k, v) {
+                                    if(v.msg.search(/[\d\s]/))
+                                        addMsg(k+": "+v.msg, v.tipo);
+                                });
+                            }
                         }
-                        if(msg.indexOf('<br>') !== false){
-                        var msgs = msg.split('<br>');
-                            for(var i in msgs)
-                                if(msgs[i] !== '' && msgs[i] !== ' ')
-                                    addMsg(msgs[i], 'danger');
-                        }
-                        else
-                            addMsg(msg, 'danger');
-                        //server-side validation error, response like {"errors": {"username": "username already exist"} }
-                        config.error.call(this, data.errors);
+                        config.error.call(this, errors);
                     }               
                 },
                 error: function(errors) {
@@ -218,10 +221,12 @@ $(document).on('ready',function(){
             e.preventDefault();
             e.stopPropagation();
             var este = $(this), 
-            clase = 'a.'+este.attr('class').replace(/\s*btn|-primary\s*|-default\s*|reset\s*|-warning\s*|-danger\s*|-success\s*|\s*animate\s*|\s+in\s*|\s*out\s+|pull-right|pull-left/g, '');
+            clase = 'a.'+este.attr('class').replace(/btn|-primary|-default|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|\sout|out$|pull-right|pull-left|\s/g, '');
+            var obj = $(clase).not('.btn').first(), pk = obj.attr('data-pk');
             $(clase).not('.btn')
+                .attr('data-pk',' ')
                 .editable('setValue', '')
-                .editable('option', 'pk', '')
+                .editable('option', 'pk', ' ')
                 .removeClass('editable-unsaved')
                 .each(function(){
                     hideMsg($("#mensajes .alert:contains('"+$(this).attr('data-emptytext')+"')"));
@@ -230,9 +235,30 @@ $(document).on('ready',function(){
                         f = str.charAt(0).toUpperCase();
                     hideMsg($("#mensajes .alert:contains('"+f+str.substr(1)+"')"));
                 });
-
-            $('.guardar').removeClass('out').addClass('in');
-            //$('#mensajes').hide();                
+            $(clase+'.guardar').removeClass('out').addClass('in');
+            $.ajax({
+                type: "DELETE",
+                url: este.attr('href'),
+                data:{pk: pk, entity: obj.attr('data-entity-name'), bundle: obj.attr('data-entity-bundle')},
+                dataType: "json",
+                cache: false
+            }).done(function( data ) {
+//                console.log(data)
+                var msgs = data.msgs;
+                if(msgs) {
+                    if(msgs.responseText)
+                        addMsg(msgs.responseText, msgs.tipo);
+                    else {
+                        $.each(msgs, function(k, v) {
+                            addMsg(k+": "+v.msg, v.tipo);
+                        });
+                    }
+                }
+            }).fail(function() {
+                console.log( "error" );
+            }).always(function() {
+                console.log( "complete" );
+            });
         });
     }
     
@@ -241,7 +267,8 @@ $(document).on('ready',function(){
             eliminar = '.eliminar';
         $(eliminar).each(function(){
             var este = $(this),
-                id = '#'+este.attr('class').replace(/(\s*btn|-primary\s*|-default\s*|eliminar\s*|-warning\s*|-danger\s*|-success\s*|\s*animate\s*|\s+in\s*|\s*out\s+|pull-right|pull-left)/g, ''),
+                classname = este.attr('class').replace(/btn|-primary|-default|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|\sout|out$|pull-right|pull-left|\s/g, ''),
+                id = '#'+classname,
                 numChildren = $(id).parent().children().length;
             if(numChildren <= 1){
                 $(id).parent().children().find('.eliminar').removeClass('in').addClass('out');
@@ -249,14 +276,18 @@ $(document).on('ready',function(){
                 $(id).parent().children().find('.eliminar').removeClass('out').addClass('in');
             }
             este.on('click', function(){
-                var numChildren = $(id).parent().children().length-1;
+                var numChildren = $(id).parent().children().length-1,
+                    pk = $('a.'+classname).not('.btn').first().attr('data-pk');
                 if(numChildren <= 1){
                     $(id).parent().children().find('.eliminar').removeClass('in').addClass('out');
                 }else{
                     $(id).parent().children().find('.eliminar').removeClass('out').addClass('in');
                 }
-                este.siblings('reset').click();
-                $(id).remove();
+                if(pk !== ' ')
+                    este.siblings('.reset').click();
+                $(id).animate({opacity: 0, height: 0}, function(){
+                    $(id).remove();
+                });
             });
         });
     }

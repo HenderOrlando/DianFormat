@@ -23,6 +23,12 @@ class Rol extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\Column(type="string", nullable=false, name="_aplicable_a")
      */
     private $aplicableA;
+        
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Gasto", mappedBy="rolUsuario")
+     */
+    private $gastos;
+    
     
     /**
      * Constructor
@@ -120,5 +126,38 @@ class Rol extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getUsuario()
     {
         return $this->usuarios;
+    }
+    
+    /**
+     * Add gastos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Gasto $gastos
+     * @return Tipo
+     */
+    public function addGasto(\PuertoUDES\FormatosBundle\Entity\Gasto $gastos)
+    {
+        $this->gastos[] = $gastos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove gastos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Gasto $gastos
+     */
+    public function removeGasto(\PuertoUDES\FormatosBundle\Entity\Gasto $gastos)
+    {
+        $this->gastos->removeElement($gastos);
+    }
+
+    /**
+     * Get gastos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastos()
+    {
+        return $this->gastos;
     }
 }

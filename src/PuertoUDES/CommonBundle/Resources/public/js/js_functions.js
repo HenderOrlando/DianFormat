@@ -2,6 +2,62 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+(function ($) {
+    "use strict";
+    
+    var Constructor = function (options) {
+        this.init('typeaheadjs', options, Constructor.defaults);
+    };
+
+    $.fn.editableutils.inherit(Constructor, $.fn.editabletypes.text);
+
+    $.extend(Constructor.prototype, {
+        render: function() {
+            this.renderClear();
+            this.setClass();
+            this.setAttr('placeholder');
+            this.$input.typeahead(this.options.typeahead);
+            
+            // copy `input-sm | input-lg` classes to placeholder input
+            if($.fn.editableform.engine === 'bs3') {
+                if(this.$input.hasClass('input-sm')) {
+                    this.$input.siblings('input.tt-hint').addClass('input-sm');
+                }
+                if(this.$input.hasClass('input-lg')) {
+                    this.$input.siblings('input.tt-hint').addClass('input-lg');
+                }
+            }
+        }
+    });      
+
+    Constructor.defaults = $.extend({}, $.fn.editabletypes.list.defaults, {
+        /**
+        @property tpl 
+        @default <input type="text">
+        **/         
+        tpl:'<input type="text">',
+        /**
+        Configuration of typeahead itself. 
+        [Full list of options](https://github.com/twitter/typeahead.js#dataset).
+        
+        @property typeahead 
+        @type object
+        @default null
+        **/
+        typeahead: null,
+        /**
+        Whether to show `clear` button 
+        
+        @property clear 
+        @type boolean
+        @default true        
+        **/
+        clear: true
+    });
+
+    $.fn.editabletypes.typeaheadjs = Constructor;      
+    
+}(window.jQuery));
 
     var content = $('body'), 
         url_anterior = '',  
@@ -193,12 +249,11 @@
      * @returns {undefined}
      */
     function addXEditable(este){
-        $(este).editable({
+        var datos = {
             /*si es textarea*/
             rows: 3,
             onblur:   'cancel',
 //            source: '/groups',
-//            params: function(params){ /**params contiene pk, name, value*/ params.a = 1; return params;},
             ajaxOptions: {
                 type: 'put',
                 dataType: 'json'
@@ -221,12 +276,47 @@
                     msgs = response.values.msgs;
                     if(typeof response.values.datos !== 'undefined')
                         console.log(response.values.datos)
+                }else if(typeof response.msgs !== 'undefined'){
+                    msgs = response.msgs;
+                    if(typeof response.datos !== 'undefined')
+                        console.log(response.values.datos)
+                }
+                if(typeof response.id !== 'undefined'){
+                    console.log(response.id);
+                    este.attr('data-pk',response.id);
+                    este.editable('option', 'pk', response.id);
                 }
                 for(var i in msgs)
                     if(msgs[i] !== '' && msgs[i] !== ' ')
                         addMsg(msgs[i]['msg'], msgs[i]['tipo']);
             }
-        });
+        };
+        if(este.attr('data-type') === 'typeaheadjs'){
+            var prefetch = typeof este.attr('data-prefetch') !== 'undefined'?este.attr('data-prefetch').replace('"',''):{};
+            $.extend(datos, {
+                typeahead: {
+                    name: este.attr('data-name'),
+                    prefetch: prefetch,
+                    ttl:    5000,
+                    template: function(item) {
+                        if(este.attr('data-entity-name') === 'usuario'){
+                            var entidad = item.datos, usuario = entidad.usuario, lugar = entidad.lugar, ret = '<h5>'+usuario.nombre + ' NIT.' + usuario.doc_id+'</h5>';
+                            if(este.attr('data-name') === 'lugar' && typeof lugar['nombre'] !== 'undefined')
+                                ret += '<p>'+lugar.nombre+', '+lugar.pais.nombre+'</p>';
+                            else if(typeof entidad[este.attr('data-name')] === 'undefined'){
+                                if(este.attr('data-name') !== 'nombre' && este.attr('data-name') !== 'docId' && typeof entidad[este.attr('data-name')] !== 'undefined'){
+                                    ret += '<p>'+usuario[este.attr('data-name')]+'</p>';
+                                }
+                            }else if(typeof entidad[este.attr('data-name')] !== 'undefined')
+                                ret += '<p>'+entidad[este.attr('data-name')]+'</p>';
+                            return ret;
+                        }
+                        return item.value; 
+                    } 
+                }
+            });
+        }
+        $(este).editable(datos);
     }
     /*
      * 

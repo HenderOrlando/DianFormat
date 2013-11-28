@@ -22,7 +22,7 @@ class FosUser extends BaseUser
     protected $usuario;
     
     /**
-     * @ORM\ManyToMany(targetEntity="PuertoUDES\FosUsuarioBundle\Entity\FosGrupo", inversedBy="usuarios")
+     * @ORM\ManyToMany(targetEntity="PuertoUDES\FosUsuarioBundle\Entity\FosGrupo", inversedBy="users")
      * @ORM\JoinTable(name="fos_user_group",
      *      joinColumns={@ORM\JoinColumn(name="usuario_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="grupo_id", referencedColumnName="id")}

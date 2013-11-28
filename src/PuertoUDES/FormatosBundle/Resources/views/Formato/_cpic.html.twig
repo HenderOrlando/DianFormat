@@ -3,10 +3,10 @@
     <div class="margen">
         {% set col_w = formato.id is not defined or formato.id is empty?10:12 %}
         {% if formato.id is not defined or formato.id is empty %}
-            <div class="text-right pull-right">
+            <div class="text-right pull-right hidden-print">
                 {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                     buttonset: 'horizontal',
-                    class: 'animate in',
+                    class: 'animate in hidden-print',
                     botones  : [
                         {
                             'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
@@ -24,7 +24,7 @@
                 } %}
             </div>
         {% endif %}
-        <div class="text-center">
+        <div class="text-center hidden-print">
             {% set dataWith = {
                 id:             "formato_nombre",
                 clase:          "formato-crear",
@@ -44,7 +44,7 @@
                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
             </h4>
         </div>
-        <div class="text-justify">
+        <div class="text-justify hidden-print">
             <p>
                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
                     id:             "formato_descripcion",
@@ -84,9 +84,9 @@
                         </td>
                 </tr>
                 <tr>
-                    <td rowspan="2" colspan="6">
+                    <td rowspan="2" colspan="6" class="text-center">
                         <div class="row">
-                            <div class="enunciado col-lg-12 col-md-12">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
                                 1- Denominación o razón social del transportista autorizado
                             </div>
                         </div>
@@ -151,13 +151,13 @@
                             </div>
                         </div>
                     </td>
-                    <td colspan="6">
+                    <td colspan="6" class="text-center">
                         <div class="row">
-                            <div class="enunciado col-lg-12 col-md-12">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
                                 <div class="text-right pull-right">
                                     {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                                         'buttonset': 'horizontal',
-                                        'class': 'animate in',
+                                        'class': 'animate in hidden-print',
                                         'botones'  : [
                                             {
                                                 'label' :   '<span class="glyphicon glyphicon-plus"></span>',
@@ -201,9 +201,9 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="6">
+                    <td colspan="6" class="text-center">
                         <div class="row">
-                            <div class="enunciado col-lg-12 col-md-12">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
                                 6- Lugar, País y Fecha que el transportista recibe las mercancias
                             </div>
                         </div>
@@ -217,13 +217,13 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="6">
+                    <td colspan="6" class="text-center">
                         <div class="row">
-                            <div class="enunciado col-lg-12 col-md-12">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
                                 <div class="text-right pull-right">
                                     {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                                         'buttonset': 'horizontal',
-                                        'class': 'animate in',
+                                        'class': 'animate in hidden-print',
                                         'botones'  : [
                                             {
                                                 'label' :   '<span class="glyphicon glyphicon-plus"></span>',
@@ -243,7 +243,7 @@
                         </div>
                         <div id="remitentes">
                             {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
-                                {% for retiente in formato.remitentes %}
+                                {% for remitente in formato.remitentes %}
                                     {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
                                             abreviacion:    formato.tipo.abreviacion|upper,
                                             numero:         formato.numero,
@@ -265,9 +265,9 @@
                             {% endif %}
                         </div>
                     </td>
-                    <td colspan="6">
+                    <td colspan="6" class="text-center">
                         <div class="row">
-                            <div class="enunciado col-lg-12 col-md-12">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
                                 7- Lugar, País y Fecha de Embarque de las Mercancías
                             </div>
                         </div>
@@ -281,13 +281,13 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="6">
+                    <td colspan="6" class="text-center">
                         <div class="row">
-                            <div class="enunciado col-lg-12 col-md-12">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
                                 <div class="text-right pull-right">
                                     {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                                         'buttonset': 'horizontal',
-                                        'class': 'animate in',
+                                        'class': 'animate in hidden-print',
                                         'botones'  : [
                                             {
                                                 'label' :   '<span class="glyphicon glyphicon-plus"></span>',
@@ -329,9 +329,9 @@
                             {% endif %}
                         </div>
                     </td>
-                    <td colspan="6">
+                    <td colspan="6" class="text-center">
                         <div class="row">
-                            <div class="enunciado col-lg-12 col-md-12">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
                                 8- Lugar, País y Fecha de Convenida para la entrega de las Mercancías
                             </div>
                         </div>
@@ -345,13 +345,13 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="6">
+                    <td colspan="6" class="text-center">
                         <div class="row">
-                            <div class="enunciado col-lg-12 col-md-12">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
                                 <div class="text-right pull-right">
                                     {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                                         'buttonset': 'horizontal',
-                                        'class': 'animate in',
+                                        'class': 'animate in hidden-print',
                                         'botones'  : [
                                             {
                                                 'label' :   '<span class="glyphicon glyphicon-plus"></span>',
@@ -393,16 +393,13 @@
                             {% endif %}
                         </div>
                     </td>
-                    <td colspan="6">
+                    <td colspan="6" class="text-center">
                         <div class="row">
-                            <div class="enunciado col-lg-12 col-md-12">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
                                 9- Condiciones de Transporte y Condiciones de Pago
                             </div>
                         </div>
-                        {% set pk = formato.conductores is defined and formato.conductores is not empty and vh is defined and vh.id is defined?vh.id:' ' %}
                         {% set dataWith = {
-                            clase:          "condicion-crear",
-                            pk:             pk,
                             name:           "condicion",
                             url:            'condiciones_add_cpic_ajax_',
                             entityName:     "condicion",
@@ -412,193 +409,500 @@
                         } %}
                         <div class="row">
                             <div class="col-lg-6 col-md-6">
+                                {% set condicion = formato.condicionesTransporte is defined and formato.condicionesTransporte is not empty ?formato.condicionesTransporte:'' %}
+                                {% set pk = condicion is not empty ?condicion.id:' ' %}
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    clase:          "condicion-crear-transporte",
                                     id:             "condiciones_transporte",
+                                    pk:             pk,
                                     datos:          {
                                                         numero: formato.numero,
                                                         tipo: 'transporte',
                                                     },
                                     originalTitle:  "Condiciones de Transporte",
-                                    valor:          formato.condicionesTransporte is defined and formato.condicionesTransporte is not empty?formato.condicionesTransporte|first:'',
+                                    valor:          condicion is not empty?condicion.condicion:'',
                                 }) %}
                             </div>
                             <div class="col-lg-6 col-md-6">
+                                {% set condicion = formato.condicionesPago is defined and formato.condicionesPago is not empty ?formato.condicionesPago:'' %}
+                                {% set pk = condicion is not empty ?condicion.id:' ' %}
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    clase:          "condicion-crear-pago",
                                     id:             "condiciones_pago",
+                                    pk:             pk,
                                     datos:          {
                                                         numero: formato.numero,
                                                         tipo: 'pago',
                                                     },
                                     originalTitle:  "Condiciones de Pago",
                                     type:           "textarea",
-                                    valor:          formato.condicionesPago is defined and formato.condicionesPago is not empty?formato.condicionesPago|first:'',
+                                    valor:          condicion is not empty?condicion.condicion:'',
                                 }) %}
                             </div>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="12">
-                        <table class="table table-bordered table-striped" id="cpics">
+                    <td colspan="10">
+                        <table class="table table-bordered table-striped" id="pad-contenedor">
                             <thead>
                                 <tr>
                                     <th colspan="2">
                                         <div class="row">
-                                            <div class="enunciado col-lg-12 col-md-12">
-                                                <div class="text-right pull-left">
-                                                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                                                        'buttonset': 'horizontal',
-                                                        'class': 'animate in',
-                                                        'botones'  : [
-                                                            {
-                                                                'label' :   '<span class="glyphicon glyphicon-plus"></span>',
-                                                                'type'  :   'success',
-                                                                'class' :   'animate agregar-cpic',
-                                                                'url'   :   url('formato_add_cpic_ajax',{
-                                                                                numero_mci: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
-                                                                            }),
-                                                            },
-                                                        ],
-                                                        'sizing': 'pequeño',
-                                                    } %}
-                                                </div>
-                                                10- Catidad de los bultos y clase de los bultos
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                10- Catidad y clase de los bultos
                                             </div>
                                         </div>
                                     </th>
-                                    <th colspan="2">
+                                    <th colspan="1">
                                         <div class="row">
-                                            <div class="enunciado col-lg-12 col-md-12">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
                                                 11- Marca y número de los bultos
                                             </div>
                                         </div>
                                     </th>
-                                    <th colspan="6">
+                                    <th colspan="5">
                                         <div class="row">
-                                            <div class="enunciado col-lg-12 col-md-12">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
                                                 12- Descripción corriente de la naturaleza de las mercancías (indicar si son peligrosas)
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th colspan="2">
-                                        <div class="row">
-                                            <div class="enunciado col-lg-12 col-md-12">
-                                                13- Peso en Kilogramos
-                                            </div>
-                                        </div>
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th colspan="10" rowspan="4">
-                                            
-                                    </th>
-                                    <th>
-                                            Bruto
-                                    </th>
-                                    <th>
-                                            Neto
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th>
-                                            
-                                    </th>
-                                    <th>
-                                            
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        <div class="row">
-                                            <div class="enunciado col-lg-12 col-md-12">
-                                                33- Volumen en m3 u otra unidad de medida
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div class="row">
-                                            <div class="enunciado col-lg-12 col-md-12">
-                                                33- Volumen en m3 u otra unidad de medida
                                             </div>
                                         </div>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for fh in formato.hijos %}
-                                    {{ include('PuertoUDESFormatosBundle:Formato:_addCpicAjax.html.twig',{
-                                            fila:       loop.index0,
-                                            formato:    fh,
-                                            numero:     formato.numero
-                                        }) 
-                                    }}
-                                {% endfor %}
-                            </tbody>
-                            <tfoot>
+                                {% set cm = formato.contenedoresMercancias is defined and formato.contenedoresMercancias is not empty?formato.contenedoresMercancias|first:'' %}
+                                {% set pk = cm is not empty and cm.id is defined?cm.id:' ' %}
+                                {% set dataWith = {
+                                    clase:          "condicion-crear-transporte",
+                                    entityName:     "contenedorMercanciaFormato",
+                                    bundleName:     "formatos" ,
+                                    required:       "NoVacio,Numeros",
+                                    pk:             pk,
+                                    datos:          {
+                                                    numero: formato.numero,
+                                                    tipo: formato.tipo,
+                                                },
+                                } %}
                                 <tr>
-                                    <td colspan="8">
-                                            <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                                    34- Precio de las mercancías (INCOTERMS 2010) y tipo de monedas
-                                            </a>
+                                    <td colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 text-center">
+                                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                                    id:             "num_bultos_contenedor_mercancia_formato",
+                                                    name:           "numBultos",
+                                                    originalTitle:  "Cantidad de Bultos",
+                                                    emptyText:  "Cantidad",
+                                                    valor:          pk is not empty?cm.numBultos:'',
+                                                }) %}  
+                                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                                    id:             "clase_bultos_contenedor_mercancia_formato",
+                                                    name:           "clase",
+                                                    required:       "NoVacio,Letras",
+                                                    originalTitle:  "Clase de Bultos",
+                                                    emptyText:  "Clase",
+                                                    valor:          pk is not empty?cm.bulto.clase:'',
+                                                }) %}
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td style="border-left: none;">
-                                            TOTAL
+                                    <td colspan="1" class="text-center">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 text-center">
+                                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                                    id:             "clase_bultos_contenedor_mercancia_formato",
+                                                    name:           "marca",
+                                                    required:       "NoVacio,Letras",
+                                                    originalTitle:  "Marca de los Bultos",
+                                                    emptyText:      "Marca",
+                                                    valor:          pk is not empty and cm.bulto is defined?cm.bulto.marca:'',
+                                                }) %}
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td>
-                                            <span id="cpic_total_peso_bruto"></span>
-                                    </td>
-                                    <td>
-                                            <span id="cpic_total_peso_neto"></span>
-                                    </td>
-                                    <td>
-
+                                    <td colspan="5" class="text-center">
+                                        <div class="row">
+                                            <div class="col-lg-10 col-md-10 text-justify col-md-offset-1 col-lg-offset-1">
+                                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                                    id:             "descripcion_mercancia_contenedor_mercancia_formato",
+                                                    name:           "descripcion",
+                                                    required:       "NoVacio,Letras",
+                                                    originalTitle:  "Descripción de la Mercancía",
+                                                    emptyText:      "Descripción",
+                                                    valor:          pk is not empty and cm.mercancia is defined?cm.mercancia.descripcion:'',
+                                                }) %}
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
-                            </tfoot>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td colspan="2">
+                        <table class="table table-bordered table-striped" id="cpics">
+                            <tbody>
+                                <tr>
+                                    <th colspan="4" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12 text-center">
+                                                13- Peso en Kilogramos
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12 text-center">
+                                                Bruto
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12 text-center">
+                                                Neto
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12">
+                                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                                    id:             "peso_bruto_contenedor_mercancia_formato",
+                                                    name:           "pesoBruto",
+                                                    originalTitle:  "Peso Bruto - en Kilogramos",
+                                                    emptyText:      "Bruto",
+                                                    valor:          pk is not empty?cm.pesoBruto:'',
+                                                }) %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12">
+                                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                                    id:             "peso_neto_contenedor_mercancia_formato",
+                                                    name:           "pesoNeto",
+                                                    originalTitle:  "Peso Neto - en Kilogramos",
+                                                    emptyText:      "Neto",
+                                                    valor:          pk is not empty?cm.pesoNeto:'',
+                                                }) %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                14- Volumen en metros cúbicos
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12">
+                                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                                    id:             "volumen_contenedor_mercancia_formato",
+                                                    name:           "volumen",
+                                                    originalTitle:  "Volumen en m3",
+                                                    emptyText:      "volumen",
+                                                    valor:          pk is not empty?cm.volumen != 0?cm.volumen:'':'',
+                                                }) %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                15- Otras unidades de medida
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12">
+                                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                                    id:             "volumen_otro_contenedor_mercancia_formato",
+                                                    name:           "volumenOtro",
+                                                    originalTitle:  "Volumen en Otra unidad",
+                                                    emptyText:      "volumen",
+                                                    valor:          pk is not empty?cm.volumenOtro != 0?cm.volumenOtro:'':'',
+                                                }) %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                16- Precios de las Mercancías (INCOTERMS 2010) y tipo de monedas
+                                            </div>
+                                        </div>
+                                        {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                            {% set datosGasto = {
+                                                        abreviacion:    formato.tipo.abreviacion|upper,
+                                                        numero:         formato.numero,
+                                                        tipo:            'Mercancia',
+                                                    } %}
+                                            {% if formato.gastoMercancias is defined and formato.gastoMercancias is not empty %}
+                                                {% set datosGasto = datosGasto|merge({
+                                                        gasto:            formato.gastoMercancias,
+                                                    })
+                                                %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        {% endif %}
+                                        {% set pk = formato is defined and formato.id is not empty? formato.id:' '%}
+                                        {% set dataWith = {
+                                            clase:          "incoterm",
+                                            entityName:     "formato",
+                                            bundleName:     "formatos" ,
+                                            required:       "NoVacio,Letras",
+                                            pk:             pk,
+                                            datos:          {
+                                                            numero: formato.numero,
+                                                            tipo: formato.tipo,
+                                                        },
+                                        } %}
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12">
+                                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                                    id:             "incoterm_formato",
+                                                    name:           "incoterm",
+                                                    originalTitle:  "INCOTERM 2010",
+                                                    emptyText:      "INCOTERM",
+                                                    valor:          formato.incoterm is not empty?formato.incoterm:'',
+                                                }) %} 
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </td>
                 </tr>
                 <tr colspan="12">
+                    <td colspan="6">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th colspan="12" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                17- {{ 'Total gastos a pagar'|upper }}
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th colspan="4" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                Concepto
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                Monto a Cargo de Remitente
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                Tipo de Moneda
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                Monto a cargo de Destinatario
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                Tipo de Moneda
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set totalRemitente = 0 %}
+                                {% set totalDestinatario = 0 %}
+                                {% set conceptos = ["Valor del Flete", "Otros Gastos Suplementarios", "Seguro"] %}
+                                {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                    {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                table:          true,
+                                            } %}
+                                {% endif %}
+                                {% for concepto in conceptos %}
+                                    {% set datosGasto = datosGasto|merge({tipo:   concepto}) %}
+                                    <tr>
+                                        <td colspan="4" class="text-center mediano">
+                                            {{ concepto }}
+                                        </td>
+                                        {% set datosGasto = datosGasto|merge({rolUsuario:   'remitente'}) %}
+                                        {% set gasto = formato.getGastoByConcepto(concepto,'remitente') %}
+                                        {% set datosGasto = datosGasto|merge({ gasto:  gasto}) %}
+                                        {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        
+                                        {% set datosGasto = datosGasto|merge({rolUsuario:   'destinatario'}) %}
+                                        {% set gasto = formato.getGastoByConcepto(concepto,'destinatario') %}
+                                        {% set datosGasto = datosGasto|merge({ gasto:  gasto}) %}
+                                        {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td colspan="4" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                Total
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12" id="monto-total-remitente">
+                                                0
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12" id="moneda-total-remitente">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12" id="monto-total-remitente">
+                                                0
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12" id="moneda-total-remitente">
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="12" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                18- Documentos Recibidos del Remitente
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12">
+                                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                                    id:             "volumen_otro_contenedor_mercancia_formato",
+                                                    name:           "volumenOtro",
+                                                    originalTitle:  "Volumen en Otra unidad",
+                                                    emptyText:      "documentos recibidos",
+                                                    valor:          pk is not empty?cm.volumenOtro != 0?cm.volumenOtro:'':'',
+                                                }) %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="12" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                19- Lugar, País y Fecha de emisión
+                                            </div>
+                                        </div>
+                                        {{ include('PuertoUDESFormatosBundle:DatosMercanciasFormato:_addDatosMercanciasAjax.html.twig',{
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                dmf:            formato.datosEmision is defined?formato.datosEmision:null,
+                                                tipo:            'emision',
+                                            }) 
+                                        }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="12" class="text-center" style="height: 62px;">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                20- Nombre, Firma del Remitente o su Representante o Agente
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
                     <td colspan="12">
                         <table class="table table-bordered table-striped">
                             <tbody>
-
                                 <tr>
-                                        <td colspan="6" rowspan="2" style="width: 35%;">
-                                                <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                                        35- Observaciones de la Aduana de Partida
-                                                </a>
-                                        </td>
-                                        <td colspan="3">
-                                                <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                                        37- Aduana(s) de Cruce de Frontera
-                                                </a>
-                                        </td>
-                                        <td colspan="3">
-                                                <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                                        38- Aduana de Destino 
-                                                </a>
-                                        </td>
+                                    <td colspan="12" class="extra text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                21- Instrucciones al Transportista
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12">
+                                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                                    id:             "volumen_otro_contenedor_mercancia_formato",
+                                                    name:           "volumenOtro",
+                                                    originalTitle:  "Instruccione al Transportista",
+                                                    emptyText:      "Instrucciones",
+                                                    valor:          pk is not empty?cm.volumenOtro != 0?cm.volumenOtro:'':'',
+                                                }) %}
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr>
-                                        <td colspan="6" rowspan="3">
-                                                <p class="text-justify">
-                                                        El suscrito al hacerse cargo de las mercancías, se obliga a cumplir con las disposiciones de las normas que conforman el ordenamiento jurídico de la Comunidad Andina, en particular con la decisión 399 y su reglamento En las presentes observaciones de transporte internacional por carretera
+                                    <td colspan="12" class="extra text-center">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                22- Observaciones del Transportista
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12">
+                                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                                    id:             "volumen_otro_contenedor_mercancia_formato",
+                                                    name:           "volumenOtro",
+                                                    originalTitle:  "Observaciones del Transportista",
+                                                    emptyText:      "Observaciones",
+                                                    valor:          pk is not empty?cm.volumenOtro != 0?cm.volumenOtro:'':'',
+                                                }) %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="12" class="border-none text-center">
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                <br/>
+                                                <p>
+                                                El suscrito al hacerse cargo de las mercancías, se obliga a cumplir las disposiciones de las normas dque conforman el rendimiento jurídico de la Comunidad Andina, en particular con la decisión 399 y su Reglamento. En reverso de ésta CPIC o en hojas separadas el transportista autorizado podrá establecer cláusulas generales y/o particulares de contratación del servicio del transporte.
                                                 </p>
-                                                <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                                        39- Nombre, firma y sello del transportista autorizado o su representante
-                                                </a>
-                                        </td>
-                                </tr>
-                                <tr>
-                                        <td colspan="6">
-                                                36- Firma y sello de la autoridad que interviene en la Aduana de Partida
-                                        </td>
-                                </tr>
-                                <tr>
-                                        <td colspan="6">
-                                                <span class="block title">Fecha de Emisión</span>
-                                        </td>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                                23- Nombre, Firma y Sello del Transportista Autorizado o su Representante o Agente
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

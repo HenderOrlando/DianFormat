@@ -27,7 +27,7 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoAduana", mappedBy="nivel")
      */
-    private $fomatoAduanas;
+    private $formatoAduanas;
 
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Carga", mappedBy="naturalezaCarga")
@@ -38,17 +38,35 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\OneToMany(targetEntity="PuertoUDES\UsuariosBundle\Entity\Conductor", mappedBy="claseLicencia")
      */
     private $conductores;
+    
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Gasto", mappedBy="concepto")
+     */
+    private $gastos;
+    
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Condicion", mappedBy="tipo")
+     */
+    private $condiciones;
+    
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato", mappedBy="tipo")
+     */
+    private $datosMercancias;
+    
+    
     /**
      * Constructor
      */
     public function __construct()
     {
         parent::__construct();
+        $this->abreviacion = '';
         $this->formatos = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->fomatoAduanas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->cargas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->conductores = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->abreviacion = '';
+        $this->formatoAduanas = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->conceptosGastos = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -158,36 +176,36 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
 
     /**
-     * Add fomatoAduanas
+     * Add formatoAduanas
      *
-     * @param \PuertoUDES\FormatosBundle\Entity\FormatoAduana $fomatoAduanas
+     * @param \PuertoUDES\FormatosBundle\Entity\FormatoAduana $formatoAduanas
      * @return Tipo
      */
-    public function addFomatoAduana(\PuertoUDES\FormatosBundle\Entity\FormatoAduana $fomatoAduanas)
+    public function addFomatoAduana(\PuertoUDES\FormatosBundle\Entity\FormatoAduana $formatoAduanas)
     {
-        $this->fomatoAduanas[] = $fomatoAduanas;
+        $this->formatoAduanas[] = $formatoAduanas;
     
         return $this;
     }
 
     /**
-     * Remove fomatoAduanas
+     * Remove formatoAduanas
      *
-     * @param \PuertoUDES\FormatosBundle\Entity\FormatoAduana $fomatoAduanas
+     * @param \PuertoUDES\FormatosBundle\Entity\FormatoAduana $formatoAduanas
      */
-    public function removeFomatoAduana(\PuertoUDES\FormatosBundle\Entity\FormatoAduana $fomatoAduanas)
+    public function removeFomatoAduana(\PuertoUDES\FormatosBundle\Entity\FormatoAduana $formatoAduanas)
     {
-        $this->fomatoAduanas->removeElement($fomatoAduanas);
+        $this->formatoAduanas->removeElement($formatoAduanas);
     }
 
     /**
-     * Get fomatoAduanas
+     * Get formatoAduanas
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getFomatoAduanas()
+    public function getFormatoAduanas()
     {
-        return $this->fomatoAduanas;
+        return $this->formatoAduanas;
     }
 
     /**
@@ -254,5 +272,102 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getConductores()
     {
         return $this->conductores;
+    }
+
+    /**
+     * Add gastos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Gasto $gastos
+     * @return Tipo
+     */
+    public function addGasto(\PuertoUDES\FormatosBundle\Entity\Gasto $gastos)
+    {
+        $this->gastos[] = $gastos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove gastos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Gasto $gastos
+     */
+    public function removeGasto(\PuertoUDES\FormatosBundle\Entity\Gasto $gastos)
+    {
+        $this->gastos->removeElement($gastos);
+    }
+
+    /**
+     * Get gastos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastos()
+    {
+        return $this->gastos;
+    }
+    /**
+     * Add condiciones
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Condicion $condiciones
+     * @return Tipo
+     */
+    public function addCondicion(\PuertoUDES\FormatosBundle\Entity\Condicion $condiciones)
+    {
+        $this->condiciones[] = $condiciones;
+    
+        return $this;
+    }
+
+    /**
+     * Remove condiciones
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Condicion $condiciones
+     */
+    public function removeCondicion(\PuertoUDES\FormatosBundle\Entity\Condicion $condiciones)
+    {
+        $this->condiciones->removeElement($condiciones);
+    }
+
+    /**
+     * Get condiciones
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCondiciones()
+    {
+        return $this->condiciones;
+    }
+    /**
+     * Add datosMercancias
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato $datosMercancias
+     * @return Tipo
+     */
+    public function addDatosMercancias(\PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato $datosMercancias)
+    {
+        $this->datosMercancias[] = $datosMercancias;
+    
+        return $this;
+    }
+
+    /**
+     * Remove datosMercancias
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato $datosMercancias
+     */
+    public function removeDatosMercancias(\PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato $datosMercancias)
+    {
+        $this->datosMercancias->removeElement($datosMercancias);
+    }
+
+    /**
+     * Get datosMercancias
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDatosMercancias()
+    {
+        return $this->datosMercancias;
     }
 }

@@ -54,6 +54,7 @@ required        Lista de requisitos (validaciones en el cliente) para enviar los
 {% set placeholder = placeholder is defined and placeholder is not empty? placeholder : originalTitle %}
 {% set required = required is defined and required is not empty? required : 'NoVacio' %}
 {% set valor = valor is defined and valor is not empty? valor : '' %}
+{% set prefetch = prefetch is defined and prefetch is not empty? prefetch : '' %}
 
 <a href="#" {{ id is not empty?'id="' ~ id ~ '"':'' }} class="xeditable {{ clase }}" 
     data-placement="{{ placement }}" 
@@ -66,10 +67,5 @@ required        Lista de requisitos (validaciones en el cliente) para enviar los
     data-entity-bundle="{{- bundleName -}}" 
     data-emptytext="{{- emptyText -}}" 
     data-placeholder="{{- placeholder -}}" 
-    data-required="{{- required -}}">
-    {% if valor is not null and valor is not empty and 'fecha' in name %}
-        {{- valor |date('d-M-Y') -}}
-    {% else %}
-        {{- valor -}}
-    {% endif %}
- </a>
+    {{ prefetch is not empty? 'data-prefetch=' ~ prefetch:'' }}
+    data-required="{{- required -}}">{% if valor is not null and valor is not empty and 'fecha' in name %}{{- valor |date('d-M-Y') -}}{% else %}{{- valor|nl2br -}}{% endif %}</a>

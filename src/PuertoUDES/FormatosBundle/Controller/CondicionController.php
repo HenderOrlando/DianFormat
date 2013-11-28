@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\FormatosBundle\Entity\Condicion;
 use PuertoUDES\FormatosBundle\Form\CondicionType;
 
@@ -254,132 +256,107 @@ class CondicionController extends Controller
      * @Template("PuertoUDESFormatosBundle:Formato:_addCondicionCpicAjax.html.twig")
      */
     public function addCondicionCpicAjaxAction(Request $request){
+        $nom = $request->get('name',NULL);
+        $valor = $request->get('value',NULL);
+        $llave = $request->get('pk',NULL);
+        $tipo = $request->get('tipo',NULL);
+        
         $filas = $request->get('filas', 0);
-        $role = $request->get('rol',NULL);
         $numero = $request->get('numero',NULL);
-        $nombre = $request->get('nombre',NULL);
-        $docId = $request->get('doc_id',NULL);
-        $direccion = $request->get('direccion','');
-        $lugar = $request->get('lugar',NULL);
         $em = $this->getDoctrine()->getManager();
         $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic'));
         $entidad = null;
+//        $datos = array(
+//            'name'   =>    $nom,
+//            'value'  =>    $valor,
+//            'pk'     =>    $llave,
+//            'save'   =>    $save,
+//            'entity' =>    $entity,
+//            'bundle' =>    $bundle,
+//            'values' =>    array(
+//                'fila'          =>  $filas,
+//                'tipo'           =>  $tipo,
+//                'numero'        =>  $numero,
+//            ),
+//        );
         $datos = array();
         if($tipo_mci){
             $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_mci->getId(), 'numero' => $numero));
             if($formato){
-                if($docId && $nombre){
-                    $entidad = $this->getRepositorio()->createQueryBuilder('e')
-                        ->leftJoin('e.usuario', 'u')
-                        ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
-                        ->andWhere("u.docId= '".$docId."'")
+                if($valor){
+                    $tipo_condicion = $em->getRepository('PuertoUDESCommonBundle:Tipo')->createQueryBuilder('t')
+                        ->andWhere("t.canonical LIKE '%".$tipo."%' OR t.nombre LIKE '%".$tipo."%'")
+                        ->andWhere("t.aplicableA LIKE '%condicion%'")
                         ->getQuery()->getOneOrNullResult();
-                    if(!$entidad){
-                        $u = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->createQueryBuilder('u')
-                            ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
-                            ->andWhere("u.docId= '".$docId."'")
-                            ->getQuery()->getOneOrNullResult();
-                        if(!$u){
-                            $u = new Usuario();
-                            $u->setNombre($nombre)
-                              ->setDocId($docId)
-                              ->setDireccion($direccion);
-                            $em->persist($u);
+                    if($tipo_condicion){
+                        $condicion = null;
+                        if($llave && $llave != ' '){
+                            $condicion = $this->getRepositorio()->find($llave);
+                        }
+                        if(!$condicion){
+                            $condicion = new Condicion();
+                            $condicion->setCondicion($valor)
+                              ->setFormato($formato)
+                              ->setTipo($tipo_condicion);
+                            $em->persist($condicion);
                             $em->flush();
-                        }
-                        $entidad = new Entidad();
-                        $entidad->setUsuario($u->setEntidad($entidad));
-                        $lugar_pais = preg_split('/\s?,\s?/', $lugar);
-                        if(count($lugar_pais) <= 2 && count($lugar_pais) > 1){
-                            $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
-                                    ->createQueryBuilder('p')
-                                    ->andWhere('p.canonical LIKE \'%'.$lugar_pais[1].'%\' OR p.nombre LIKE \'%'.$lugar_pais[1].'%\'')
-                                    ->getQuery()->getOneOrNullResult();
-                                $l= $em->getRepository('PuertoUDESCommonBundle:Lugar')
-                                    ->createQueryBuilder('p')
-                                    ->andWhere('p.canonical = \''.$lugar_pais[0].'\' OR p.nombre = \''.$lugar_pais[0].'\'')
-                                    ->getQuery()->getOneOrNullResult();
-                                if(!$l){
-                                    $l = new \PuertoUDES\CommonBundle\Entity\Lugar();
-                                    $l->setNombre($lugar_pais[0]);
-                                    $em->persist($l);
-                                }
-                                if(!$pais && isset($lugar_pais[1])){
-                                    $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
-                                    $pais->setNombre($lugar_pais[1])
-                                        ->setNacionalidad($lugar_pais[1]);
-                                    $em->persist($pais);
-                                }
-                                if(!$pais->hasLugar($l)){
-                                    $pais->addLugar($l);
-                                    $em->persist($pais);
-                                }
-                                if(!$l->getPais() || $l->getPais()->getId() != $pais->getId()){
-                                    $l->setPais($pais);
-                                    $em->persist($l);
-                                }
-                                $entidad->setLugar($l);
-                                $l->addEntidad($entidad);
-                                $em->persist($l);
-                        }
-                        $u->setEntidad($entidad);
-                        $em->persist($u);
-                        $em->persist($entidad);
-                    }
-                    
-                    $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
-                            ->andWhere("r.canonical='".$role."' OR r.nombre='".$role."'")
-                            ->getQuery()->getOneOrNullResult();
-                    if(!$rol /*&& !empty($role)*/ || empty($role) ){
-                        $datos['success']['msgs']['Formato'] = array(
-                            'msg' => 'Rol no reconocido',
-                            'tipo' => 'danger'
-                        );
-                        
-//                        $rol = new \PuertoUDES\CommonBundle\Entity\Rol();
-//                        $rol->setDescripcion('Rol '.$role.' de la Entidad, en Formato Usuario')
-//                            ->setAplicableA('FormatoUsuario')
-//                            ->setNombre($role);
-//                        $em->persist($rol);
-                    }else{
-                        $fu = $em->getRepository('PuertoUDESFormatosBundle:FormatoUsuario')->createQueryBuilder('fu')
-                                ->andWhere("fu.usuario=".$u->getId())
-                                ->andWhere("fu.rol=".$rol->getid())
-                                ->getQuery()->getOneOrNullResult();
-                        if(!$fu){
-                            $fu = new \PuertoUDES\FormatosBundle\Entity\FormatoUsuario();
-                            $fu->setFormato($formato);
-                            $fu->setUsuario($u);
-                            $fu->setRol($rol);
-                            $em->persist($fu);
                         }else{
-                            
+                            $condicion->setCondicion($valor);
+                            $em->persist($condicion);
                         }
+                        $formato->addCondicion($condicion);
+                        $em->persist($formato);
                         $em->flush();
-                        $datos['success']['msgs']['Formato'] = array(
-                            'msg' => 'Entidad '.($role == 'notificar'?'a notificar':str_replace('tario', 'taria', $role)).' <strong>"'.$entidad->getNombre().'"</strong> agregada.',
+                        $datos['msgs'][] = array(
+                            'msg' => 'Condicion de '.$tipo.' fué creada',
                             'tipo' => 'success'
                         );
-                        $datos['id'] = $fu->getId();
+                        $datos['id'] = $condicion->getId();
+                        $datos['value'] = $condicion->getCondicion();
+                        $datos['datos'] = $condicion->json(false);
+                    }else{
+                        $datos['success']['msgs']['Condicion'] = array(
+                            'msg' => 'Tipo de Condición "'.$tipo.'" no reconocido',
+                            'tipo' => 'danger'
+                        );
                     }
                     return JsonResponse::create($datos);
-                }else{
-
                 }
             }else{
                 $datos['success']['msgs']['Formato'] = array(
                     'msg' => 'Formato no válido',
                     'tipo' => 'danger'
                 );
-                return JsonResponse::create($datos);
             }
+            return JsonResponse::create($datos);
         }
-        return array(
+        $datos = array(
             'fila'          => $filas,
             'abreviacion'   =>  $formato->getTipo()->getAbreviacion(),
             'numero'        =>  $formato->getNumero(),
             'entidad'       =>  $entidad,
             'rol'           =>  $role,
         );
+        if($request->isXmlHttpRequest())
+            return JsonResponse::create($datos);
+        return $datos;
+    }
+    
+    /**
+     * get Utils
+     * 
+     * @return IndexController Utilidades de PuertoUDES
+     */
+    public function getUtils() {
+        return $this->get('puertoudes.util');
+    }
+    
+    /**
+     * get Repositorio
+     * 
+     * @return FormatoRepository  FormatoRepository de PuertoUDES
+     */
+    public function getRepositorio() {
+        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESFormatosBundle:Condicion');
     }
 }

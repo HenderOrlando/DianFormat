@@ -29,7 +29,7 @@ class Condicion
     private $condicion;
     
     /** 
-     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Tipo", inversedBy="datosMercancias")
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Tipo", inversedBy="condiciones")
      * @ORM\JoinColumn(name="tipo_id", referencedColumnName="id", nullable=false)
      */
     private $tipo;//transporte, pago
@@ -151,12 +151,10 @@ class Condicion
     }
     
     public function json($json = true){
-        $a = array_merge(parent::json(false),
-            array(
-                'tipo'      =>  $this->getTipo()->json(false),
-                'condicion' =>  $this->getCondicion(),
-                'formato'   =>  $this->getFormato()->json(false),
-            )
+        $a = array(
+            'tipo'      =>  $this->getTipo()->json(false),
+            'condicion' =>  $this->getCondicion(),
+            'formato'   =>  $this->getFormato()->json(false),
         );
         if(is_bool($json) && $json){
             return json_encode($a);

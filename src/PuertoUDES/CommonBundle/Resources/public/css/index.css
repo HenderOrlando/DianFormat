@@ -121,9 +121,9 @@ form.in,
 .input-group.input-group-lg button{
     width: 30%;
 }
-table.table tbody tr td{
+/*table.table tbody tr td{
     vertical-align: middle;
-}
+}*/
 
 /******************** FORMATOS-MCI ********************/
 .hoja_carta_formato{
@@ -154,6 +154,7 @@ table.table tbody tr td{
 td .row div:not(.enunciado){
     text-align: center;
 }
+td .row div:not(.enunciado).text-justify,
 .text-justify{
     text-align: justify;
 }
@@ -267,6 +268,14 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
     right: 0;
     top: -11px;
 }
+.text-right.pull-right.fuera{
+    right: -30px;
+}
+.text-right.pull-right.mitad{
+    right: -3px;
+    top: -7px;
+    z-index: 999;
+}
 .title .text-right.pull-right,
 .enunciado .text-right.pull-right{
     top: 0;
@@ -277,4 +286,47 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
 }
 .row .enunciado .text-right.pull-left{
     left: -10px;
+}
+.hoja_carta_formato table table#pad-contenedor tr td{
+    border: none;
+    padding-top: 15px;
+    padding-bottom: 20px;
+    vertical-align: middle;
+}
+
+@media print {
+    body{
+        padding: 0;
+        margin: 0;
+    }
+    .visible-print {
+      display: block !important;
+    }
+    .btn,
+    .editable-empty,
+    .hidden-print {
+      display: none !important;
+    }
+    a.editable,
+    a.editable:visited {
+      text-decoration: none;
+      border-bottom: none;
+      padding: 5px;
+    }
+    a.editable[href]:after {
+      content: "";
+    }
+}
+td.mediano{
+    height: 46px;
+}
+td.grande{
+    height: 80px;
+}
+td.extra{
+    height: 100px;
+}
+table tr td.border-none{
+    border:none;
+    border-color: transparent;
 }

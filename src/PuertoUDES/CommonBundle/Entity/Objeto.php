@@ -171,4 +171,13 @@ class Objeto
         }
         return $a;
     }
+    
+    public function getTokens($explode = true){
+        $a = $this->getNombre().'\\'
+            .$this->getDescripcion();
+        if(is_bool($explode) && $explode){
+            $a = explode('\\', $a);
+        }
+        return $a;
+    }
 }

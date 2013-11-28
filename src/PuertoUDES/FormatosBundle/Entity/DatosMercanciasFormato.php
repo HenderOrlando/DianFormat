@@ -24,7 +24,7 @@ class DatosMercanciasFormato
     private $formato;
     
     /**
-     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Lugar")
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Lugar", inversedBy="datosMercanciasFormato")
      * @ORM\JoinColumn(name="lugar_id", referencedColumnName="id", nullable=true)
      */
     private $lugar;

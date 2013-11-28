@@ -1,0 +1,148 @@
+{#
+abreviacion Formato dónde agregar la gasto
+rolUsuario  Rol del Usuario a cargo del gasto en éste formato
+numero      Número del Formato dónde agregar el gasto
+gasto       Información del Gasto con el "tipo"
+table       Si se define devuelve una fila <tr></tr> de los contrario devuelve <div class="row">
+tipo        Concepto del gasto. 
+                Los conceptos Básicos son:  mercancia, valorFlete, seguro, suplementario
+#}
+{% set rolUsuario = (rolUsuario is defined and rolUsuario is not null and rolUsuario is not empty?rolUsuario:'') %}
+{% set tipo = tipo|lower|replace({' ':'_'}) %}
+{% set gasto= gasto is defined and gasto is not empty?gasto:null %}
+{% set pk = gasto is not null and gasto.id is not empty?gasto.id:' ' %}
+{% set dataWith = {
+    clase:          "gasto-" ~ (tipo|replace({'_':'-'})) ~ '-' ~ (rolUsuario is not empty?rolUsuario:'') ~ "-crear",
+    id:             "gasto_" ~ tipo ~"_ _",
+    name:           "",
+    originalTitle:  " " ~ tipo | title ,
+    emptyText:      "",
+    required:       "",
+    valor:          '',
+    pk:             pk,
+    datos:          {tipo: abreviacion|upper},
+    entityName:     "gasto",
+    bundleName:     "formatos" ,
+} %}
+
+{% if table is defined %}
+    <td colspan="2" class="text-center mediano">
+        {% if pk == ' ' %}
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="text-right pull-right mitad">
+                        {% set url_ = 'gasto_add_cpic_ajax' %}
+                        {% set urlDatos = {
+                            numero: numero,
+                            concepto: tipo|title,
+                        } %}
+                        {% if rolUsuario is not empty %}
+                            {% set urlDatos = urlDatos|merge({
+                                'rolUsuario': rolUsuario|title,
+                            }) %}
+                            {% set url_ = url_ ~ '_' %}
+                        {% endif %}
+                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                            'buttonset': 'vertical',
+                            'class': 'animate in',
+                            'botones'  : [
+                                {
+                                    'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                    'type'  :   'primary',
+                                    'class' :   'gasto-' ~ tipo|replace({'_':'-'}) ~ '-' ~ (rolUsuario is not empty?rolUsuario:'') ~ '-crear animate guardar',
+                                    'url'   :   url(url_,urlDatos),
+                                },
+                                {
+                                    'class' :   'reset gasto-' ~ tipo|replace({'_':'-'}) ~ '-' ~ (rolUsuario is not empty?rolUsuario:'') ~ '-crear animate',
+                                    'type'  :   'warning',
+                                    'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                },
+                            ],
+                            'sizing': 'pequeño',
+                        } %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
+                    id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_monto_",
+                    name:           "valor",
+                    originalTitle:  "Monto " ~ tipo | title ,
+                    emptyText:      "Monto",
+                    required:       "NoVacio,NumerosConectores",
+                    valor:          pk != ' '?gasto.valor:'',
+                }) %} 
+            </div>
+        </div>
+    </td>
+    <td colspan="2" class="text-center mediano">
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
+                    id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_moneda_",
+                    name:           "moneda",
+                    originalTitle:  "Moneda " ~ tipo | title ,
+                    emptyText:      "Moneda",
+                    required:       "Vacio,LetrasConectores",
+                    valor:          pk != ' '?gasto.moneda.abreviacion:'',
+                }) %}
+            </div>
+        </div>
+    </td>
+{% else %}
+    <div class="row" id="gasto-{{ tipo }}-crear">
+        <div class="col-lg-12">
+            {% if pk == ' ' %}
+                <div class="text-right pull-right fuera">
+                    {% set url_ = 'gasto_add_cpic_ajax' %}
+                    {% set urlDatos = {
+                        numero: numero,
+                        concepto: tipo|title,
+                    } %}
+                    {% if rolUsuario is not empty %}
+                        {% set urlDatos = urlDatos|merge({
+                            'rolUsuario': rolUsuario,
+                        }) %}
+                        {% set url_ = url_ ~ '_' %}
+                    {% endif %}
+                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                        'buttonset': 'horizontal',
+                        'class': 'animate in',
+                        'botones'  : [
+                            {
+                                'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                'type'  :   'primary',
+                                'class' :   'gasto-' ~ tipo|replace({'_':'-'}) ~ '-' ~ (rolUsuario is not empty?rolUsuario:'') ~'-crear animate guardar',
+                                'url'   :   url(url_,urlDatos),
+                            },
+                            {
+                                'class' :   'reset gasto-' ~ tipo|replace({'_':'-'}) ~ '-' ~ (rolUsuario is not empty?rolUsuario:'') ~ '-crear animate',
+                                'type'  :   'warning',
+                                'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                            },
+                        ],
+                        'sizing': 'pequeño',
+                    } %}
+                </div>
+            {% endif %}
+            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
+                id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_monto_",
+                name:           "valor",
+                originalTitle:  "Monto " ~ tipo | title ,
+                emptyText:      "Monto",
+                required:       "NoVacio,NumerosConectores",
+                valor:          pk != ' '?gasto.valor:'',
+            }) %} 
+            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
+                id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_moneda_",
+                name:           "moneda",
+                originalTitle:  "Moneda " ~ tipo | title ,
+                emptyText:      "Moneda",
+                required:       "Vacio,LetrasConectores",
+                valor:          pk != ' '?gasto.moneda.abreviacion:'',
+            }) %}
+        </div>
+    </div>
+{% endif %}

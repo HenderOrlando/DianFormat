@@ -187,12 +187,16 @@ class FormatoController extends Controller
         $em = $this->getDoctrine()->getManager();
         $valores = array();
         if(!$llave){
-            $obj = $em->getRepository('PuertoUDES'.ucfirst($bundle).'Bundle:'.ucfirst($entity))->findBy(array($nombre => $valor));
-            if($obj){
-                $valores['msgs'][] = array('msg' => 'El '.$entity.' ya existe.', 'tipo' => 'success');
-                $valores['datos'] = $obj->json();
-            }else{
-                $valores['msgs'][] = array('msg' => 'El '.$entity.' no existe.', 'tipo' => 'info');
+            try{
+                $obj = $em->getRepository('PuertoUDES'.ucfirst($bundle).'Bundle:'.ucfirst($entity))->findBy(array($nombre => $valor));
+                if($obj){
+                    $valores['msgs'][] = array('msg' => 'El '.$entity.' ya existe.', 'tipo' => 'success');
+    //                $valores['datos'] = $obj->json();
+                }else{
+                    $valores['msgs'][] = array('msg' => 'El '.$entity.' no existe.', 'tipo' => 'info');
+                }
+            }catch(\Doctrine\ORM\ORMException $e){
+                
             }
         }else{
             $obj = $this->getDoctrine()->getManager()->getRepository('PuertoUDES'.ucfirst($bundle).'Bundle:'.ucfirst($entity))->find($llave);
@@ -254,6 +258,29 @@ class FormatoController extends Controller
                     $em->persist($obj);
                     $tipo->$addName($obj);
                     $em->persist($tipo);
+                    $em->flush();
+                    $valores['datos'] = $obj->json(false);
+                }elseif(strpos($nombre, 'incoterm') !== false){
+                    $incoterm = $em->getRepository('PuertoUDESCommonBundle:Incoterm')
+                        ->createQueryBuilder('i')
+                        ->andWhere('i.canonical LIKE \'%'.$valor.'%\' OR i.nombre LIKE \'%'.$valor.'%\' OR i.sigla LIKE \'%'.$valor.'%\'')
+                        ->getQuery()->getOneOrNullResult();
+                    if(!$incoterm){
+                        $incoterm = new \PuertoUDES\CommonBundle\Entity\Incoterm();
+                        $anio = $request->get('anio',NULL);
+                        if(!$anio)
+                            $anio = 2010;
+                        $incoterm
+                            ->setCategoria(strtoupper($valor[0]))
+                            ->setAnio($anio)
+                            ->setSigla($valor)
+                            ->setNombre($valor);
+                        $em->persist($incoterm);
+                    }
+                    $obj->$set($incoterm);
+                    $em->persist($obj);
+                    $incoterm->$addName($obj);
+                    $em->persist($incoterm);
                     $em->flush();
                     $valores['datos'] = $obj->json(false);
                 }else{

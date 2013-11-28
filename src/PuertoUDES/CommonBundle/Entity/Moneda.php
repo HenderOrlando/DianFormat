@@ -15,7 +15,7 @@ class Moneda extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $abreviacion;
     
     /** 
-     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Gasto", mappedBy="formato")
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Gasto", mappedBy="moneda")
      */
     private $gastos;
     

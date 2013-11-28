@@ -37,6 +37,8 @@ class ContenedorMercanciaFormato extends \PuertoUDES\CommonBundle\Entity\ObjetoC
      * @ORM\JoinColumn(name="bulto", referencedColumnName="id", nullable=false)
      */
     private $bulto;
+    
+    
     /**
      * Constructor
      */
@@ -158,5 +160,42 @@ class ContenedorMercanciaFormato extends \PuertoUDES\CommonBundle\Entity\ObjetoC
     public function getBulto()
     {
         return $this->bulto;
+    }
+    
+    public function json($json = true,
+            $contenedor = false,
+            $mercancia = false,
+            $bulto = false,
+            $formato = false
+            ){
+        $a = array_merge(parent::json(false),
+            array(
+                'numBultos'      =>  $this->getNumBultos(),
+            )
+        );
+        if(is_bool($contenedor) && $contenedor){
+            $a = array_merge($a, array(
+                'contenedor' => $this->getContenedor()->json(false)
+            ));
+        }
+        if(is_bool($formato) && $formato){
+            $a = array_merge($a, array(
+                'formato' => $this->getFormato()->json(false)
+            ));
+        }
+        if(is_bool($bulto) && $bulto){
+            $a = array_merge($a, array(
+                'bulto' => $this->getBulto()->json(false)
+            ));
+        }
+        if(is_bool($mercancia) && $mercancia){
+            $a = array_merge($a, array(
+                'mercancia' => $this->getMercancia()->json(false)
+            ));
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
     }
 }

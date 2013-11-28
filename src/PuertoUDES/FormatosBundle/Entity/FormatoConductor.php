@@ -33,7 +33,7 @@ class FormatoConductor
     private $formato;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Conductor", inversedBy="formatos")
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Conductor", inversedBy="formatosConductor")
      * @ORM\JoinColumn(name="conductor", referencedColumnName="id", nullable=true)
      */
     private $conductor;

@@ -498,6 +498,8 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->conductor->getPais();
     }
+    
+    
     /*ENTIDAD*/
     /**
      * Set certificadoIdoneidad
@@ -520,6 +522,18 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getCertificadoIdoneidad()
     {
         return $this->entidad->getCertificadoIdoneidad();
+    }
+    /**
+     * Set lugar
+     *
+     * @param string $lugar
+     * @return Entidad
+     */
+    public function setLugar($lugar)
+    {
+        $this->entidad->setLugar($lugar);
+    
+        return $this;
     }
 
     /**
@@ -568,5 +582,13 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
         return $a;
     }
 
-    
+    public function getTokens($explode = true){
+        $a = parent::getTokens(FALSE)
+            .'\\'.$this->getDocId()
+            .'\\'.$this->getApellido();
+        if(is_bool($explode) && $explode){
+            $a = explode('\\', $a);
+        }
+        return $a;
+    }
 }

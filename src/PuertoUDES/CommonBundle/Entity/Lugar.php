@@ -312,4 +312,14 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
         }
         return $a;
     }
+    
+    public function getTokens($explode = true){
+        $a = parent::getTokens(FALSE);
+        if($this->getPais())
+            $a .= '\\'.$this->getPais()->getTokens(false).' ';
+        if(is_bool($explode) && $explode){
+            $a = explode(' ', $a);
+        }
+        return $a;
+    }
 }

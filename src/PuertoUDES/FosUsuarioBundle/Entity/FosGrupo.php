@@ -19,7 +19,7 @@ class FosGrupo extends BaseGroup
      protected $id;
      
      /**
-     * @ORM\ManyToMany(targetEntity="PuertoUDES\FosUsuarioBundle\Entity\FosUser", mappedBy="grupos")
+     * @ORM\ManyToMany(targetEntity="PuertoUDES\FosUsuarioBundle\Entity\FosUser", mappedBy="groups")
      */
     protected $users;
     

@@ -175,4 +175,12 @@ class Pais extends \PuertoUDES\CommonBundle\Entity\Objeto
         });
     }
     
+    public function getTokens($explode = true){
+        $a = parent::getTokens(FALSE).' '
+            .$this->getNacionalidad();
+        if(is_bool($explode) && $explode){
+            $a = explode(' ', $a);
+        }
+        return $a;
+    }
 }

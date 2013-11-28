@@ -7,13 +7,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use PuertoUDES\CommonBundle\Controller\IndexController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use PuertoUDES\FormatosBundle\Entity\Gasto;
 use PuertoUDES\FormatosBundle\Form\GastoType;
 
 /**
  * Gasto controller.
  *
- * @Route("/Gasto/")
+ * @Route("/Gasto")
  */
 class GastoController extends Controller
 {
@@ -243,5 +245,201 @@ class GastoController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+    
+    /**
+     * Displays a form to create a new Condicion entity.
+     *
+     * @Route("/{concepto}/Agregar/a/CPIC-{fila}/{numero}/", name="gasto_add_cpic_ajax")
+     * @Route("/{concepto}/Agregar/a/CPIC/{numero}/", name="gasto_add_cpic_ajax")
+     * @Route("/{concepto}/Agregar/a/CPIC-{fila}/{numero}/para/{rolUsuario}/", name="gasto_add_cpic_ajax_")
+     * @Route("/{concepto}/Agregar/a/CPIC/{numero}/para/{rolUsuario}/", name="gasto_add_cpic_ajax_")
+     * @Method({"POST","PUT"})
+     * @Template("PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig")
+     */
+    public function addDatosMercanciasCpicAjaxAction(Request $request){
+        $filas = $request->get('filas', 0);
+        $numero = $request->get('numero', 0);
+        $concepto = $request->get('concepto',NULL);
+        $valor = $request->get('valor',NULL);
+        $moneda = $request->get('moneda',NULL);
+        $rolUsuario = $request->get('rolUsuario',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic', 'aplicableA' => 'Formato'));
+        $gasto = null;
+        $datos = array();
+        if($tipo_mci){
+            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_mci->getId(), 'numero' => $numero));
+            if($formato){
+                if($concepto && !is_null($valor)){
+                    $tipoGasto = $em->getRepository('PuertoUDESCommonBundle:Tipo')->createQueryBuilder('t')
+                            ->andWhere("t.canonical LIKE '%".$concepto."%' OR t.nombre LIKE '%".$concepto."%' OR t.abreviacion LIKE '%".$concepto."%'")
+                            ->andWhere("t.aplicableA LIKE '%gasto%'")
+                            ->getQuery()->getOneOrNullResult();
+                    if(!$tipoGasto){
+                        $tipoGasto = new \PuertoUDES\CommonBundle\Entity\Tipo();
+                        $tipoGasto
+                                ->setAplicableA('Gasto')
+                                ->setNombre(str_replace('-',' ',str_replace('_', ' ', $concepto)))
+                                ->setAbreviacion(str_replace('-',' ',str_replace('_', ' ', $concepto)));
+                        $em->persist($tipoGasto);
+                        $em->flush();
+                    }
+                    $error = false;
+                    $usuario = null;
+                    if($rolUsuario){
+                        $rolUsuario = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
+                                ->andWhere("r.canonical LIKE '%".$rolUsuario."%' OR r.nombre LIKE '%".$rolUsuario."%'")
+                                ->andWhere("r.aplicableA LIKE '%formatoUsuario%'")
+                                ->getQuery()->getOneOrNullResult();
+                        if(!$rolUsuario){
+                            $datos['errors']['Formato'] = 'Datos inválidos. Rol de Usuario no encontrado.';
+                            //Rol no existe
+//                            $error = true;
+                        }else{
+                            $usuario = $formato->getUsuarios($rolUsuario->getCanonical());
+                            if(!empty($usuario) && isset($usuario[0]) && is_a($usuario[0]->getUsuario(),'PuertoUDES\UsuariosBundle\Entity\Usuario'))
+                                $usuario = $usuario[0]->getUsuario();
+                        }
+                    }
+                    if($moneda){
+                        $moneda = $em->getRepository('PuertoUDESCommonBundle:Moneda')->createQueryBuilder('m')
+                                ->andWhere("m.canonical LIKE '%".$moneda."%' OR m.nombre LIKE '%".$moneda."%' OR m.abreviacion LIKE '%".$moneda."%'")
+                                ->getQuery()->getOneOrNullResult();
+                        if(!$moneda){
+                            $datos['errors']['Formato'] = 'Datos inválidos. Moneda no encontrada.';
+                            //Moneda no existe
+                            $error = true;
+                        }
+                    }
+                    if(!$error){
+                        $q = $this->getRepositorio()->createQueryBuilder('g')
+                            ->innerJoin('g.concepto', 't')
+                            ->andWhere("g.formato='".$formato->getId()."'")
+                            ->andWhere("t.canonical LIKE '%".$concepto."%' OR t.nombre LIKE '%".$concepto."%' OR t.abreviacion LIKE '%".$concepto."%'")
+                            ->andWhere("t.id = ".$tipoGasto->getId());
+                        if($rolUsuario){
+                            $q->andWhere('g.rolUsuario='.$rolUsuario->getId());
+                        }
+                        $gasto = $q->getQuery()->getOneOrNullResult();
+                        if(!$gasto){
+                            $gasto = new Gasto();
+                            $gasto
+                                    ->setValor($valor)
+                                    ->setFormato($formato)
+                                    ->setConcepto($tipoGasto);
+                            $em->persist($gasto);
+                        }
+                        $tipoGasto->addGasto($gasto);
+                        $formato->addGasto($gasto);
+                        if($usuario && is_a($usuario, 'PuertoUDES\UsuariosBundle\Entity\Usuario')){
+                            $gasto->setUsuario($usuario);
+                            $em->persist($gasto);
+                            $usuario->addGasto($gasto);
+                            $em->persist($usuario);
+                        }
+                        if($moneda){
+                            $gasto->setMoneda($moneda);
+                            $em->persist($gasto);
+                            $moneda->addGasto($gasto);
+                            $em->persist($moneda);
+                        }
+                        if($rolUsuario){
+                            $gasto->setRolUsuario($rolUsuario);
+                            $em->persist($gasto);
+                            $rolUsuario->addGasto($gasto);
+                            $em->persist($rolUsuario);
+                        }
+                        $em->persist($tipoGasto);
+                        $em->persist($formato);
+                        $em->flush();
+                        $datos['success']['msgs']['Formato'] = array(
+                            'msg' => 'Agregado "'.$gasto->getConcepto().'" ('.$gasto->getValor().')',
+                            'tipo' => 'success'
+                        );
+                        $datos['id'] = $gasto->getId();
+                        $datos['datos'] = $gasto->json(false);
+                    }
+                    return JsonResponse::create($datos);
+                }else{
+                    $datos['errors']['Formato'] = 'Datos incompletos. No definidos el Concepto ni el Valor.';
+                }
+            }else{
+                $datos['errors']['Formato'] = 'Datos no válidos';
+            }
+            return JsonResponse::create($datos);
+        }
+        return array(
+            'fila'          =>  $filas,
+            'abreviacion'   =>  $formato->getTipo()->getAbreviacion(),
+            'numero'        =>  $formato->getNumero(),
+            'gasto'         =>  $gasto,
+            'rolUsuario'    =>  $rolUsuario,
+            'tipo'          =>  $tipoGasto,
+        );
+    }
+    
+    /**
+     * get Utils
+     * 
+     * @return IndexController Utilidades de PuertoUDES
+     */
+    public function getUtils() {
+        return $this->get('puertoudes.util');
+    }
+    
+    /**
+     * get Repositorio
+     * 
+     * @return DatosMercanciasFormatoRepository  DatosMercanciasFormatoRepository de PuertoUDES
+     */
+    public function getRepositorio() {
+        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESFormatosBundle:Gasto');
+    }
+    
+    public function getHeadFiltro(FormBuilder $form, $route){
+        $filas = array(
+            array(
+                'col'=>array(
+                    array(
+                        'dato'      =>  'Formato',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Lugar',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Fecha',
+                        'class' =>  'text-center',
+                    ),
+//                    array(
+//                        'dato'    =>  'canonical',
+//                        'label'   =>  'Tipo de Documento de dentidad',
+//                        'join'    =>  'tipoDocId',
+//                        'class' =>  'text-center',
+//                    ),
+                    array(
+                        'dato'    =>   'Acciones',
+                        'class' =>  'text-center',
+                        'acciones'=>    array(
+                            array(
+                                'url'   => 'datosMercancias__edit',
+                                'data_url'=> array('id'),
+                                'type'  => 'default',
+                                'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
+                            ),
+                            array(
+                                'url'   => 'datosMercancias__delete',
+                                'data_url'=> array('id'),
+                                'type'  => 'danger',
+                                'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
+                            ),
+                        )
+                    ),
+                )
+            ),
+        );
+        return $this->getUtils()->getHeadFiltro($filas, $form, $route);
     }
 }

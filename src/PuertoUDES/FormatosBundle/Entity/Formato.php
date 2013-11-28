@@ -47,6 +47,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $datosRecibe;
     private $datosEmbarque;
     private $datosEntrega;
+    private $datosEmision;
     
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Condicion", mappedBy="formato")
@@ -81,6 +82,10 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Gasto", mappedBy="formato")
      */
     private $gastos;
+    
+    private $gastoMercancias;
+    private $gastosAPagarRemitente;
+    private $gastosAPagarDestinatario;
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", inversedBy="hijos")
@@ -98,6 +103,12 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\JoinColumn(name="tipo", referencedColumnName="id", nullable=false)
      */
     private $tipo;
+    
+    /** 
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Incoterm", inversedBy="formatos")
+     * @ORM\JoinColumn(name="incoterm", referencedColumnName="id", nullable=true)
+     */
+    private $incoterm;
     
     /**
      * Constructor
@@ -366,7 +377,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         if(!empty($tipo)){
             $usuarios = array();
             foreach($this->usuarios as $u){
-                if(strtolower($u->getRol()->getNombre()) == $tipo)
+                if(strtolower($u->getRol()->getNombre()) == strtolower($tipo) || strtolower($u->getRol()->getCanonical()) == strtolower($tipo))
                     $usuarios[] = $u;
             }
         }
@@ -414,6 +425,106 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             $this->loadDatosMercanciasTipo();
         }
         return $this->datosEntrega;
+    }
+    /**
+     * Get datosEmision
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDatosEmision()
+    {
+        if(empty($this->datosEmision)){
+            $this->loadDatosMercanciasTipo();
+        }
+        return $this->datosEmision;
+    }
+    
+    /**
+     * Get gastosAPagarDestinatario
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosAPagarDestinatario()
+    {
+        if(empty($this->gastosAPagarDestinatario)){
+            $this->loadGastos();
+        }
+        return $this->gastosAPagarDestinatario;
+    }
+    
+    /**
+     * Get existGastosAPagarDestinatario
+     * 
+     * @param string $concepto Concepto a revisar si está
+     * @return \PuertoUDES\FormatosBundle\Entity\Gasto 
+     */
+    public function existGastosAPagarDestinatario($concepto)
+    {
+        $r = false;
+        if(is_string($concepto)){
+            $r = $this->getGastosAPagarDestinatario()->exists(function ($key, \PuertoUDES\FormatosBundle\Entity\Gasto $gasto) use ($concepto){
+                return $gasto->getConcepto() == $concepto;
+            });
+        }
+        return $r;
+    }
+    /**
+     * Get gastosAPagarRemitente
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosAPagarRemitente()
+    {
+        if(empty($this->gastosAPagarRemitente)){
+            $this->loadGastos();
+        }
+        return $this->gastosAPagarRemitente;
+    }
+    
+    /**
+     * Get existGastosAPagarRemitente
+     * 
+     * @param string $concepto Concepto a revisar si está
+     * @return \PuertoUDES\FormatosBundle\Entity\Gasto 
+     */
+    public function existGastosAPagarRemitente($concepto)
+    {
+        $r = false;
+        if(is_string($concepto)){
+            $r = $this->getGastosAPagarRemitente()->exists(function ($key, \PuertoUDES\FormatosBundle\Entity\Gasto $gasto) use ($concepto){
+                return $gasto->getConcepto() == $concepto;
+            });
+        }
+        return $r;
+    }
+    /**
+     * Get gastosMercancias
+     * 
+     * @return \PuertoUDES\FormatosBundle\Entity\Gasto 
+     */
+    public function getGastoMercancias()
+    {
+        if(empty($this->gastoMercancias)){
+            $this->loadGastos();
+        }
+        return $this->gastoMercancias;
+    }
+    
+    /**
+     * Get existGastoMercancias
+     * 
+     * @param string $concepto Concepto a revisar si está
+     * @return \PuertoUDES\FormatosBundle\Entity\Gasto 
+     */
+    public function existGastoMercancias($concepto)
+    {
+        $r = false;
+        if(is_string($concepto)){
+            $r = $this->getGastoMercancias()->exists(function ($key, \PuertoUDES\FormatosBundle\Entity\Gasto $gasto) use ($concepto){
+                return $gasto->getConcepto() == $concepto;
+            });
+        }
+        return $r;
     }
 
     /**
@@ -686,6 +797,28 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
 
     /**
+     * Get gastos
+     *
+     * @param string $concepto Concepto a buscar en los gastos
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastoByConcepto($concepto, $rol=null)
+    {
+        foreach ($this->getGastos() as $g){
+            if(     strtolower($g->getConcepto()->getNombre()) == strtolower($concepto) 
+                ||  strtolower($g->getConcepto()->getCanonical()) == strtolower($concepto) 
+                ||  strtolower($g->getConcepto()->getAbreviacion()) == strtolower($concepto)
+            )
+                if(is_null($rol))
+                    return $g;
+                elseif($g->getRolUsuario() && strtolower($g->getRolUsuario()->getNombre()) == strtolower($rol) 
+                ||  strtolower($g->getRolUsuario()->getCanonical()) == strtolower($rol))
+                    return $g;
+        }
+        return null;
+    }
+
+    /**
      * Set tipo
      *
      * @param \PuertoUDES\CommonBundle\Entity\Tipo $tipo
@@ -707,6 +840,30 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->tipo;
     }
+    /**
+     * Set incoterm
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Incoterm $incoterm
+     * @return Formato
+     */
+    public function setIncoterm(\PuertoUDES\CommonBundle\Entity\Incoterm $incoterm)
+    {
+        $this->incoterm = $incoterm;
+    
+        return $this;
+    }
+
+    /**
+     * Get incoterm
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Incoterm 
+     */
+    public function getIncoterm()
+    {
+        return $this->incoterm;
+    }
+    
+    
         
     public function json($json = true, 
             $padre = false, 
@@ -787,13 +944,13 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                     $this->notificados->add($u->getUsuario()->getEntidad());
                     break;
                 case 'consignatario':
-                    $this->consignatario->add($u->getUsuario()->getEntidad());
+                    $this->consignatarios->add($u->getUsuario()->getEntidad());
                     break;
                 case 'destinatario':
-                    $this->destinatario->add($u->getUsuario()->getEntidad());
+                    $this->destinatarios->add($u->getUsuario()->getEntidad());
                     break;
                 case 'remitente':
-                    $this->remitente->add($u->getUsuario()->getEntidad());
+                    $this->remitentes->add($u->getUsuario()->getEntidad());
                     break;
             }
         }
@@ -801,6 +958,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     
     private function loadDatosMercanciasTipo() {
         $this->datosRecibe = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->datosEmision = new \Doctrine\Common\Collections\ArrayCollection();
         $this->datosEmbarque = new \Doctrine\Common\Collections\ArrayCollection();
         $this->datosEntrega = new \Doctrine\Common\Collections\ArrayCollection();
         foreach($this->datosMercancias as $dm){
@@ -813,6 +971,9 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                     break;
                 case 'entrega':
                     $this->datosEntrega = $dm;
+                    break;
+                case 'emision':
+                    $this->datosEmision = $dm;
                     break;
             }
         }
@@ -829,6 +990,26 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                 case 'transporte':
                     $this->condicionesTransporte = $dm;
                     break;
+            }
+        }
+    }
+    
+    private function loadGastos() {
+        $this->gastosAPagarDestinatario = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosAPagarRemitente = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastoMercancias = new \Doctrine\Common\Collections\ArrayCollection();
+        foreach($this->gastos as $g){
+            if(is_null($g->getRolUsuario())){
+                $this->gastoMercancias = $g;
+            }else{
+                switch(strtolower($g->getRolUsuario()->getCanonical())){
+                    case 'remitente':
+                        $this->gastosAPagarRemitente[] = $g;
+                        break;
+                    case 'destinatario':
+                        $this->gastosAPagarDestinatario[] = $g;
+                        break;
+                }
             }
         }
     }

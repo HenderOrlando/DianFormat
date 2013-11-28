@@ -8,9 +8,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Form\FormBuilder;
 use PuertoUDES\UsuariosBundle\Entity\Entidad;
 use PuertoUDES\UsuariosBundle\Entity\Usuario;
-use Symfony\Component\Form\FormBuilder;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\UsuariosBundle\Repository\EntidadRepository;
 use PuertoUDES\UsuariosBundle\Form\EntidadType;
@@ -25,6 +26,53 @@ class EntidadController extends Controller
     /**
      * Displays a form to create a new Formato entity.
      *
+     * @Route("/Lista/para/{name}/", name="list_typeahead_entidades_")
+     * @Route("/{rol}/Lista/para/{name}/", name="list_typeahead_entidades")
+     * @Template("PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig")
+     */
+    public function listTypeahead(Request $request){
+        $list = array();
+        $entities = array();
+        $name = $request->get('name','');
+        $rol = $request->get('rol','');
+        switch($rol){
+            case 'notificado':
+                $entities = $this->getRepositorio()->getNotificados();
+                break;
+            case 'consignatario':
+                $entities = $this->getRepositorio()->getConsignatarios();
+                break;
+            case 'destinatario':
+                $entities = $this->getRepositorio()->getDestinatarios();
+                break;
+            case 'remitente':
+                $entities = $this->getRepositorio()->getRemitentes();
+                break;
+            case 'transportista':
+                $entities = $this->getRepositorio()->getTransportistas();
+                break;
+            default:
+                $entities = $this->getRepositorio()->findAll();
+                break;
+        }
+        $propertyPath = new PropertyAccessor();
+        foreach($entities as $entidad){
+            $value = $propertyPath->getValue($entidad,$name);
+            if(is_null($value))
+                $value = '';
+            elseif(is_object($value))
+                $value = $value->__toString();
+            $list[] = array(
+                'value' =>  $value,
+                'tokens'=>  $entidad->getTokens(),
+                'datos' =>  $entidad->json(false)
+            );
+        }
+        return JsonResponse::create($list);
+    }
+    /**
+     * Displays a form to create a new Formato entity.
+     *
      * @Route("/Agregar/{rol}/a/CPIC-{fila}/{numero}/", name="entidad_add_cpic_ajax_")
      * @Route("/Agregar/{rol}/a/CPIC/{numero}/", name="entidad_add_cpic_ajax")
      * @Method({"POST","PUT"})
@@ -35,7 +83,7 @@ class EntidadController extends Controller
         $role = $request->get('rol',NULL);
         $numero = $request->get('numero',NULL);
         $nombre = $request->get('nombre',NULL);
-        $docId = $request->get('doc_id',NULL);
+        $docId = $request->get('docId',NULL);
         $direccion = $request->get('direccion','');
         $lugar = $request->get('lugar',NULL);
         $em = $this->getDoctrine()->getManager();
@@ -102,16 +150,15 @@ class EntidadController extends Controller
                         $u->setEntidad($entidad);
                         $em->persist($u);
                         $em->persist($entidad);
+                    }else{
+                        $u = $entidad->getUsuario();
                     }
                     
                     $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
                             ->andWhere("r.canonical='".$role."' OR r.nombre='".$role."'")
                             ->getQuery()->getOneOrNullResult();
                     if(!$rol /*&& !empty($role)*/ || empty($role) ){
-                        $datos['success']['msgs']['Formato'] = array(
-                            'msg' => 'Rol no reconocido',
-                            'tipo' => 'danger'
-                        );
+                        $datos['errors']['Formato'] = 'Rol no reconocido';
                         
 //                        $rol = new \PuertoUDES\CommonBundle\Entity\Rol();
 //                        $rol->setDescripcion('Rol '.$role.' de la Entidad, en Formato Usuario')
@@ -138,18 +185,22 @@ class EntidadController extends Controller
                             'tipo' => 'success'
                         );
                         $datos['id'] = $fu->getId();
+                        $datos['datos'] = $fu->json(false);
                     }
                     return JsonResponse::create($datos);
                 }else{
-
+                    $datos['errors']['Formato'] = 'Llene los campos antes de guardar';
+                    if($request->isXmlHttpRequest() && strtoupper($request->getMethod()) === 'PUT')
+                        return JsonResponse::create($datos);
                 }
             }else{
-                $datos['success']['msgs']['Formato'] = array(
-                    'msg' => 'Formato no válido',
-                    'tipo' => 'danger'
-                );
+                $datos['errors']['Formato'] = 'Formato no válido';
                 return JsonResponse::create($datos);
             }
+        }else{
+            $datos['errors']['Tipo de Formato'] = 'Llene los campos antes de guardar';
+            if($request->isXmlHttpRequest() && strtoupper($request->getMethod()) === 'PUT')
+                return JsonResponse::create($datos);
         }
         return array(
             'fila'          => $filas,
@@ -158,6 +209,91 @@ class EntidadController extends Controller
             'entidad'       =>  $entidad,
             'rol'           =>  $role,
         );
+    }
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Reset/{rol}/a/{abreviacion}-{fila}/{numero}/", name="entidad_add_cpic_ajax_reset_")
+     * @Route("/Reset/{rol}/a/{abreviacion}/{numero}/", name="entidad_add_cpic_ajax_reset")
+     * @Route("/Reset/{tipo}/a/{abreviacion}-{fila}/{numero}/", name="entidad_add_cpic_ajax_reset_tipo_")
+     * @Route("/Reset/{tipo}/a/{abreviacion}/{numero}/", name="entidad_add_cpic_ajax_reset_tipo")
+     * @Method({"DELETE"})
+     * @Template()
+     */
+    public function resetAjaxAction(Request $request){
+        $filas = $request->get('filas', 0);
+        $role = $request->get('rol',NULL);
+        $tipo = $request->get('tipo',NULL);
+        $numero = $request->get('numero',NULL);
+        $abreviacion = strtolower($request->get('abreviacion',NULL));
+        $pk = $request->get('pk',NULL);
+        $entity = ucfirst($request->get('entity',NULL));
+        $bundle = ucfirst($request->get('bundle',NULL));
+        $em = $this->getDoctrine()->getManager();
+        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $abreviacion));
+        $datos = array(
+            'entity'        =>  $entity,
+            'bundle'        =>  $bundle,
+            'pk'            =>  $pk,
+            'fila'          =>  $filas,
+            'numero'        =>  $numero,
+            'rol'           =>  $role,
+            'abreviacion'   =>  $abreviacion,
+        );
+        if($tipo_mci){
+            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_mci->getId(), 'numero' => $numero));
+            if($formato){
+                $obj = $em->getRepository('PuertoUDES'.$bundle.'Bundle:'.$entity)->find($pk);
+                if($obj){
+                    $remove = 'remove'.$entity;
+                    $repository = 'Formato'.$entity;
+                    if(strtolower($entity) == 'usuario'){
+                        $find = array('formato' => $formato, strtolower($entity) => $obj);
+                        if(is_string($role)){
+                            $role = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
+                                    ->andWhere("r.canonical='".$role."' OR r.nombre='".$role."'")
+                                    ->getQuery()->getOneOrNullResult();
+                            if($role)
+                                $find = array_merge($find,array('rol' => $role));
+                        }
+                        if(is_string($tipo)){
+                            $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->createQueryBuilder('t')
+                                    ->andWhere("t.canonical LIKE '%".$tipo."%' OR t.nombre LIKE '%".$tipo."%' OR t.abreviacion LIKE '%".$tipo."%'")
+                                    ->getQuery()->getOneOrNullResult();
+                            if($tipo)
+                                $find = array_merge($find,array('tipo' => $tipo));
+                        }
+                        $fu = $em->getRepository('PuertoUDESFormatosBundle:'.$repository)->findOneBy($find);
+                        $em->remove($fu);
+                        $em->flush();
+//                        $formato->$remove($fu);
+//                        $obj->removeFormato($fu);
+                    }
+                    $datos['msgs']['Formato'] = array(
+                        'msg' => 'Eliminado'.($role?' '.$role.' ':' ').$obj->__toString(),
+                        'tipo' => 'success'
+                    );
+                }else{
+                    $datos['msgs']['Formato'] = array(
+                        'msg' => 'Imposible de limpiar',
+                        'tipo' => 'danger'
+                    );
+                }
+            }else{
+                $datos['msgs']['Formato'] = array(
+                    'msg' => 'Formato no válido',
+                    'tipo' => 'danger'
+                );
+            }
+        }else{
+            $datos['msgs']['Formato'] = array(
+                'msg' => 'Tipo de Formato no válido',
+                'tipo' => 'danger'
+            );
+        }
+        if(!$request->isXmlHttpRequest())
+            throw $this->createNotFoundException('Lo siento, la Página no existe');
+        return JsonResponse::create($datos);
     }
     
     /**

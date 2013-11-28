@@ -16,19 +16,24 @@ class ObjetoC
     private $id;
 
     /** 
-     * @ORM\Column(type="decimal", nullable=true, name="peso_bruto", precision=4, scale=2)
+     * @ORM\Column(type="decimal", nullable=true, name="peso_bruto", precision=10, scale=4)
      */
     private $pesoBruto;
 
     /** 
-     * @ORM\Column(type="decimal", nullable=true, name="peso_neto", precision=4, scale=2)
+     * @ORM\Column(type="decimal", nullable=true, name="peso_neto", precision=10, scale=4)
      */
     private $pesoNeto;
 
     /** 
-     * @ORM\Column(type="decimal", nullable=true, precision=4, scale=2)
+     * @ORM\Column(type="decimal", nullable=true, precision=10, scale=4)
      */
     private $volumen;
+    
+    /** 
+     * @ORM\Column(type="decimal", nullable=true, precision=10, scale=4)
+     */
+    private $volumenOtro;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
@@ -120,6 +125,28 @@ class ObjetoC
     {
         return $this->volumen;
     }
+    /**
+     * Set volumenOtro
+     *
+     * @param float $volumenOtro
+     * @return ObjetoC
+     */
+    public function setVolumenOtro($volumenOtro)
+    {
+        $this->volumenOtro = $volumenOtro;
+    
+        return $this;
+    }
+
+    /**
+     * Get volumenOtro
+     *
+     * @return float 
+     */
+    public function getVolumenOtro()
+    {
+        return $this->volumenOtro;
+    }
 
     /**
      * Set fechaCreado
@@ -146,5 +173,19 @@ class ObjetoC
     
     public function __toString() {
         return $this->getPesoBruto().' '.$this->getPesoNeto();
+    }
+    
+    public function json($json = true){
+        $a = array(
+            'id'            =>  $this->getId(),
+            'pesoBruto'     =>  $this->getPesoBruto(),
+            'pesoNeto'      =>  $this->getPesoNeto(),
+            'volumen'       =>  $this->getVolumen(),
+            'volumenOtro'   =>  $this->getVolumenOtro(),
+        );
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
     }
 }
