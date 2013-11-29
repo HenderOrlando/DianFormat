@@ -330,6 +330,9 @@ class FormatoController extends Controller
                 $formato->setTipo($tipo);
                 $formato->setPadre($formato_mci);
                 $formato->setNombre($tipo->getNombre().' de '. $formato_mci->getNombre());
+                if($formato_mci->getTransportista()){
+                    $formato->setTransportista($formato_mci->getTransportista());
+                }
                 if($numero > 0){
                     $formato->setNumero($numero);
                     $em->persist($formato);

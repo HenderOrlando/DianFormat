@@ -6,44 +6,48 @@ numero      Número del Manifiesto de Carga
 <tr id="cpic-{{fila}}">
     <td class="valor-cpic">
         {% if formato.padre is defined %}
-            <div id="opciones-cpic{{ fila }}" class="opciones-filas-cpic pull-right no-quitar {{ formato.id is not empty?'mas':'' }}">
-                {% set botons = [
-                        {
-                            'class' :   'eliminar cpic-' ~ fila ~ ' animate pull-right',
-                            'type'  :   'danger',
-                            'label' :   '<span class="glyphicon glyphicon-trash"></span>',
-                        },
-                        {
-                            'class' :   'reset cpic' ~ fila ~ '-crear animate pull-right',
-                            'type'  :   'warning',
-                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                        },
-                        {
-                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
-                            'type'  :   'primary',
-                            'class' :   'guardar cpic' ~ fila ~ '-crear animate pull-right',
-                            'url'   :   url('formato_add_cpic_ajax',{
-                                            numero_mci: numero,
-                                            save: true,
-                                        }),
-                        },
-                    ] %}
-                {% if formato.id is not empty %}
-                    {% set botons = botons | merge([{
-                            'label' :   '<span class="glyphicon glyphicon-eye-open"></span>',
-                            'type'  :   'success',
-                            'class' :   'cpic' ~ fila ~ '-crear animate pull-right',
-                            'url'   :   url('formato__edit',{
-                                            id: formato.id,
-                                        }),
-                        }]) %}
-                {% endif %}
-                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                    buttonset: 'horizontal',
-                    class: 'animate in',
-                    botones  : botons,
-                    sizing: 'mediano',
-                } %}
+            <div class="row">
+                <div>
+                    <div id="opciones-cpic{{ fila }}" class="opciones-filas-cpic text-left pull-left no-quitar btns-action-left {{ formato.id is not empty?'mas':'' }}">
+                        {% set botons = [
+                                {
+                                    'class' :   'eliminar cpic-' ~ fila ~ ' animate pull-right',
+                                    'type'  :   'danger',
+                                    'label' :   '<span class="glyphicon glyphicon-trash"></span>',
+                                },
+                                {
+                                    'class' :   'reset cpic' ~ fila ~ '-crear animate pull-right',
+                                    'type'  :   'warning',
+                                    'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                },
+                                {
+                                    'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                    'type'  :   'primary',
+                                    'class' :   'guardar cpic' ~ fila ~ '-crear animate pull-right',
+                                    'url'   :   url('formato_add_cpic_ajax',{
+                                                    numero_mci: numero,
+                                                    save: true,
+                                                }),
+                                },
+                            ] %}
+                        {% if formato.id is not empty %}
+                            {% set botons = botons | merge([{
+                                    'label' :   '<span class="glyphicon glyphicon-eye-open"></span>',
+                                    'type'  :   'success',
+                                    'class' :   'cpic' ~ fila ~ '-crear animate pull-right',
+                                    'url'   :   url('formato__edit',{
+                                                    id: formato.id,
+                                                }),
+                                }]) %}
+                        {% endif %}
+                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                            buttonset: 'horizontal',
+                            class: 'animate in',
+                            botones  : botons,
+                            sizing: 'mediano',
+                        } %}
+                    </div>
+                </div>
             </div>
         {% endif %}
         {#<div class="row">

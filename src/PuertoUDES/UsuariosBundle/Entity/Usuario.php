@@ -68,6 +68,17 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $formatos;
     
     /**
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FosUsuarioBundle\Entity\FosGrupo", mappedBy="docente")
+     */
+    protected $gruposDocente;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\FosUsuarioBundle\Entity\FosGrupo", inversedBy="usuarios")
+     * @ORM\JoinColumn(name="grupo_id", referencedColumnName="id", nullable=true)
+     */
+    protected $grupo;
+    
+    /**
      * Constructor
      */
     public function __construct()
@@ -77,6 +88,7 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->gastos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->entidad = null;
         $this->conductor = null;
+        $this->grupoDocente = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**

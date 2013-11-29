@@ -110,8 +110,12 @@
                             
                             {% if 'fecha' in col.dato|lower %}
                                 {{ attribute(obj,attr)|date("Y-m-d H:i:s") }}
+                            {% elseif attribute(obj,attr|replace({' ':'_'})) is defined %}
+                                {{ attribute(obj,attr|replace({' ':'_'})) }}
+                            {% elseif attribute(obj,attr|replace({' ':''})) is defined %}
+                                {{ attribute(obj,attr|replace({' ':''})) }}
                             {% else %}
-                                {{ attribute(obj,attr) }}
+                                {{ attr }}
                             {% endif %}
                         {% endif %}
                     </td>

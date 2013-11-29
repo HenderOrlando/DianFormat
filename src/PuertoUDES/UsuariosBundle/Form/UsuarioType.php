@@ -20,6 +20,7 @@ class UsuarioType extends AbstractType
             ->add('direccion')
             ->add('telefono')
             ->add('docId')
+//            ->add('grupo')
         ;
     }
     

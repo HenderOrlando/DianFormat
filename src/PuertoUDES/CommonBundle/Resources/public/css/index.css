@@ -13,6 +13,15 @@ form{
     opacity: 0;
     display: none;
 }
+div{
+    position: relative;
+}
+.btn-group,
+.btn-group-vertical,
+.btn-group > .btn,
+.btn-group-vertical > .btn{
+    border-radius: 0;
+}
 .editable-container form,
 .animate{
     -webkit-transition-delay: 0s;
@@ -105,6 +114,7 @@ form.in,
     max-width: 0;
     padding: 0;
     border-width: 0px;
+    opacity: 0;
 }
 .btn.animate.in{
     max-width: 215px;
@@ -172,7 +182,6 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
     top: -17px;
 }
 .row .pull-right .btn-group{
-    margin-right: 15px;
     z-index: 999;
 }
 .table .table,
@@ -242,10 +251,9 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
 #cpics .opciones-filas-cpic{
     position: absolute;
     margin-top: -8px;
-    margin-left: -110px;
-}
-#cpics .opciones-filas-cpic.mas{
-    margin-left: -145px;
+    left: -195%;
+    width: 205%;
+    text-align: right;
 }
 .btn-group>.btn.pull-right:first-child:not(:last-child):not(.dropdown-toggle) {
     border-top-left-radius: 0;
@@ -263,28 +271,40 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
     position: relative;
     margin-right: -7.5px;
 }
-.text-right.pull-right{
+ .btns-action-right{
     position: absolute;
     right: 0;
     top: -11px;
+    display: none;
 }
-.text-right.pull-right.fuera{
+.row .btns-action-left{
+    position: absolute;
+    z-index: 999;
+    display: none;
+}
+.btns-action-left.no-quitar,
+.btns-action-right.no-quitar{
+    display: block;
+}
+.btns-action-left.no-quitar .btn-group{
+    margin-left: 7px;
+}
+.btns-action-right.no-quitar .btn-group{
+    margin-right: 0px;
+}
+ .btns-action-right.fuera{
     right: -30px;
 }
-.text-right.pull-right.mitad{
-    right: -3px;
+ .btns-action-right.mitad{
+    right: -20px;
     top: -7px;
     z-index: 999;
 }
-.title .text-right.pull-right,
-.enunciado .text-right.pull-right{
+.title  .btns-action-right,
+.enunciado .btns-action-right{
     top: 0;
 }
-.row .text-right.pull-left{
-    position: absolute;
-    z-index: 999;
-}
-.row .enunciado .text-right.pull-left{
+.row .enunciado .btns-action-left{
     left: -10px;
 }
 .hoja_carta_formato table table#pad-contenedor tr td{
@@ -317,16 +337,49 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
       content: "";
     }
 }
+.mediano,
 td.mediano{
     height: 46px;
 }
+.grande,
 td.grande{
     height: 80px;
 }
+.extra,
 td.extra{
     height: 100px;
 }
 table tr td.border-none{
     border:none;
     border-color: transparent;
+}
+.imita{
+    border-bottom: dashed 1px #08C;
+    color: #08C;
+    cursor: pointer;
+}
+#aduanas-cruce .row{
+    height: 25px;
+}
+#aduanas-cruce .btns-action-left{
+    left: 0;
+}
+
+td:hover .row > div .btns-action-left,
+td:focus .row > div .btns-action-left,
+th:hover .row > div .btns-action-left,
+th:focus .row > div .btns-action-left,
+td:hover .row > div .btns-action-right,
+td:focus .row > div .btns-action-right
+th:hover .row > div .btns-action-right,
+th:focus .row > div .btns-action-right{
+    display: block;
+}
+.btns-action-left.actions-top,
+.btns-action-right.actions-top{
+    top: -10px;
+}
+.btns-action-right .btn-group-vertical .btn.animate.in,
+.btns-action-left .btn-group-vertical .btn.animate.in{
+    top: 0;
 }

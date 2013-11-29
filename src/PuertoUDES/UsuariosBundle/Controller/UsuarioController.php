@@ -231,10 +231,15 @@ class UsuarioController extends Controller
         $entity = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->find($id);
 
         if (!$entity) {
-            return $this->redirect($this->generateUrl('usuario__new', array(
-                'id'    =>  $this->getRequest()->get('id',-1)
-            )));
+            $entity = $em->getRepository('PuertoUDESFosUsuarioBundle:FosUser')->find($id);
+            if (!$entity || !$entity->getUsuario()) {
+                return $this->redirect($this->generateUrl('usuario__new', array(
+                    'id'    =>  $this->getRequest()->get('id',-1)
+                )));
             //throw $this->createNotFoundException('Unable to find Usuario entity.');
+            }else{
+                $entity = $entity->getUsuario();
+            }
         }
 
         $editForm = $this->createEditForm($entity);
@@ -366,10 +371,12 @@ class UsuarioController extends Controller
                 'col'=>array(
                     array(
                         'dato'    =>   'Nombre',
+                        'join'     =>  'usuario',
                         'class' =>  'text-center',
                     ),
                     array(
                         'dato'    =>   'Descripcion',
+                        'join'     =>  'usuario',
                         'class' =>  'text-center',
                     ),
                     array(

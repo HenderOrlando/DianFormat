@@ -35,7 +35,7 @@ class EntidadController extends Controller
         $entities = array();
         $name = $request->get('name','');
         $rol = $request->get('rol','');
-        switch($rol){
+        switch(strtolower($rol)){
             case 'notificado':
                 $entities = $this->getRepositorio()->getNotificados();
                 break;

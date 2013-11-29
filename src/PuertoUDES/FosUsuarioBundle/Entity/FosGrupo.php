@@ -19,14 +19,20 @@ class FosGrupo extends BaseGroup
      protected $id;
      
      /**
-     * @ORM\ManyToMany(targetEntity="PuertoUDES\FosUsuarioBundle\Entity\FosUser", mappedBy="groups")
-     */
-    protected $users;
+      * @ORM\OneToMany(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario", mappedBy="grupo")
+      */
+    protected $usuarios;
+     
+     /**
+      * @ORM\ManyToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario", inversedBy="gruposDocente")
+      * @ORM\JoinColumn(name="docente_id", referencedColumnName="id", nullable=true)
+      */
+    protected $docente;
     
     public function __construct()
     {
         parent::__construct();
-        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->usuarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->roles = new \Doctrine\Common\Collections\ArrayCollection();
     }
 }

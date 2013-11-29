@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\CommonBundle\Entity\Lugar;
 use PuertoUDES\CommonBundle\Form\LugarType;
@@ -18,6 +20,33 @@ use PuertoUDES\CommonBundle\Form\LugarType;
  */
 class LugarController extends Controller
 {
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Lista/para/{name}/", name="list_typeahead_lugares_")
+     * @Route("/{tipo}/Lista/para/{name}/", name="list_typeahead_lugares")
+     * @Template()
+     */
+    public function listTypeaheadAction(Request $request){
+        $list = array();
+        $entities = array();
+        $name = $request->get('name','');
+        $entities = $this->getRepositorio()->findAll();
+        $propertyPath = new PropertyAccessor();
+        foreach($entities as $lugar){
+            $value = $propertyPath->getValue($lugar,$name);
+            if(is_null($value))
+                $value = '';
+            elseif(is_object($value))
+                $value = $value->__toString();
+            $list[] = array(
+                'value' =>  $value,
+                'tokens'=>  $lugar->getTokens(),
+                'datos' =>  $lugar->json(false)
+            );
+        }
+        return JsonResponse::create($list);
+    }
 
     /**
      * Lists all Lugar entities.

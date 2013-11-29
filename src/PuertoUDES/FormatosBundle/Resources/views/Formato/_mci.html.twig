@@ -90,31 +90,6 @@
                 </tr>
                 <tr>
                     <td colspan="12" class="text-center title">
-                        {% if formato.transportista is not defined or formato.transportista.id is not defined %}
-                            <div class="text-right pull-right">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                                    'buttonset': 'horizontal',
-                                    'class': 'animate in',
-                                    'botones'  : [
-                                        {
-                                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
-                                            'type'  :   'primary',
-                                            'class' :   'entidad-crear animate guardar',
-                                            'url'   :   url('entidad_save_transportista_ajax',{
-                                                            tipo: formato.tipo.abreviacion|upper,
-                                                            numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
-                                                        }),
-                                        },
-                                        {
-                                            'class' :   'reset entidad-crear animate',
-                                            'type'  :   'warning',
-                                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                                        },
-                                    ],
-                                    'sizing': 'pequeño',
-                                } %}
-                            </div>
-                        {% endif %}
                         IDENTIFICACIÓN DEL TRANSPORTISTA AUTORIZADO
                     </td>
                 </tr>
@@ -122,6 +97,31 @@
                     <td rowspan="2" colspan="8">
                         <div class="row">
                             <div class="enunciado col-lg-12 col-md-12">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                                    'type'  :   'primary',
+                                                    'class' :   'entidad-crear animate guardar ' ~ (formato.transportista is not defined or formato.transportista.id is not defined?'in':'out'),
+                                                    'url'   :   url('entidad_save_transportista_ajax',{
+                                                                    tipo: formato.tipo.abreviacion|upper,
+                                                                    numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                                }),
+                                                },
+                                                {
+                                                    'class' :   'reset entidad-crear animate',
+                                                    'type'  :   'warning',
+                                                    'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>
                                 1- Denominación o razón social del transportista autorizado
                             </div>
                         </div>
@@ -275,8 +275,8 @@
                 </tr>
                 <tr>
                     <td colspan="12" class="text-center title">
-                        {% if formato.conductores is empty %}
-                            <div class="text-right pull-right">
+                        <div>
+                            <div class="text-right pull-right btns-action-right no-quitar">
                                 {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                                     'buttonset': 'horizontal',
                                     'class': 'animate in',
@@ -284,7 +284,7 @@
                                         {
                                             'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
                                             'type'  :   'primary',
-                                            'class' :   'vehiculo-crear animate guardar',
+                                            'class' :   'vehiculo-crear animate guardar ' ~ (formato.conductores is empty?'in':'out'),
                                             'url'   :   url('vehiculo_save_ajax',{
                                                             tipo: formato.tipo.abreviacion|upper,
                                                             numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
@@ -299,7 +299,7 @@
                                     'sizing': 'pequeño',
                                 } %}
                             </div>
-                        {% endif %}
+                        </div>
                         IDENTIFICACIÓN DEL VEHICULO HABILITADO (CAMIÓN O TRACTO CAMIÓN)
                         {% set vh = formato.conductores is not empty?(formato.conductores|first).vehiculo:formato.conductores %}
                     </td>
@@ -449,31 +449,33 @@
                 </tr>
                 <tr>
                     <td colspan="12" class="text-center title">
-                        {% if formato.cargas is empty %}
-                            <div class="text-right pull-right">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                                    'buttonset': 'horizontal',
-                                    'class': 'animate in',
-                                    'botones'  : [
-                                        {
-                                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
-                                            'type'  :   'primary',
-                                            'class' :   'unidad-carga-crear animate guardar',
-                                            'url'   :   url('unidad_carga_save_ajax',{
-                                                            tipo: formato.tipo.abreviacion|upper,
-                                                            numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
-                                                        }),
-                                        },
-                                        {
-                                            'class' :   'reset unidad-carga-crear animate',
-                                            'type'  :   'warning',
-                                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                                        },
-                                    ],
-                                    'sizing': 'pequeño',
-                                } %}
+                        <div clasS="row">
+                            <div>
+                                <div class="text-left pull-left btns-action-left no-quitar">
+                                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                        'buttonset': 'horizontal',
+                                        'class': 'animate in',
+                                        'botones'  : [
+                                            {
+                                                'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                                'type'  :   'primary',
+                                                'class' :   'unidad-carga-crear animate guardar ' ~ (formato.cargas is empty?'in':'out'),
+                                                'url'   :   url('unidad_carga_save_ajax',{
+                                                                tipo: formato.tipo.abreviacion|upper,
+                                                                numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                            }),
+                                            },
+                                            {
+                                                'class' :   'reset unidad-carga-crear animate',
+                                                'type'  :   'warning',
+                                                'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                            },
+                                        ],
+                                        'sizing': 'pequeño',
+                                    } %}
+                                </div>
                             </div>
-                        {% endif %}
+                        </div>
                         {% set unidadCarga = formato.cargas is not empty?(formato.cargas|first).unidadCargas is not empty?(formato.cargas|first).unidadCargas|first:(formato.cargas|first).unidadCargas %}
                         IDENTIFICACIÓN DE LA UNIDAD DE CARGA (REMOLQUE O SEMIREMOLQUE)
                     </td>
@@ -575,8 +577,8 @@
                     <td colspan="3">
                         <div class="row">
                             <div class="enunciado col-lg-12 col-md-12">
-                                {% if formato.cargas | length < 2 %}
-                                    <div class="text-right pull-right">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right actions-top">
                                         {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                                             'buttonset': 'horizontal',
                                             'class': 'animate in',
@@ -584,7 +586,7 @@
                                                 {
                                                     'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
                                                     'type'  :   'primary',
-                                                    'class' :   'otra-unidad-carga-crear animate guardar',
+                                                    'class' :   'otra-unidad-carga-crear animate guardar ' ~ (formato.cargas | length < 2?'in':'out'),
                                                     'url'   :   url('unidad_carga_save_ajax',{
                                                                     tipo: formato.tipo.abreviacion|upper,
                                                                     numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
@@ -599,7 +601,7 @@
                                             'sizing': 'pequeño',
                                         } %}
                                     </div>
-                                {% endif %}
+                                </div>
                                 12- Otro
                                 {% set otraUnidadCarga = formato.cargas is not empty?(formato.cargas|first).unidadCargas is not empty?(formato.cargas|first).unidadCargas|last:(formato.cargas|first).unidadCargas %}
                             </div>
@@ -676,6 +678,62 @@
                 </tr>
                 <tr>
                     <td colspan="12" class="text-center title">
+                        <div class="row">
+                            <div>
+                                <div class="text-right pull-left btns-action-left no-quitar">
+                                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                        buttonset: 'horizontal',
+                                        class: 'animate in',
+                                        botones  : [
+                                            {
+                                                'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                                'type'  :   'primary',
+                                                'class' :   'guardar conductor-principal-crear animate ' ~ (formato.conductores is empty or (formato.conductores|first).conductor is empty?'in':'out'),
+                                                'url'   :   url('conductor_save_ajax',{
+                                                                tipo_conductor: 'Principal',
+                                                                tipo: formato.tipo.abreviacion|upper,
+                                                                numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                            }),
+                                            },
+                                            {
+                                                'class' :   'reset conductor-principal-crear animate',
+                                                'type'  :   'warning',
+                                                'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                            },
+                                        ],
+                                        sizing: 'pequeño',
+                                    } %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div>
+                                <div class="text-right pull-right btns-action-right no-quitar">
+                                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                        buttonset: 'horizontal',
+                                        class: 'animate in',
+                                        botones  : [
+                                            {
+                                                'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                                'type'  :   'primary',
+                                                'class' :   'guardar conductor-auxiliar-crear animate ' ~ (formato.conductores|length < 2?'in':'out'),
+                                                'url'   :   url('conductor_save_ajax',{
+                                                                tipo_conductor: 'Auxiliar',
+                                                                tipo: formato.tipo.abreviacion|upper,
+                                                                numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                            }),
+                                            },
+                                            {
+                                                'class' :   'reset conductor-auxiliar-crear animate',
+                                                'type'  :   'warning',
+                                                'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                            },
+                                        ],
+                                        sizing: 'pequeño',
+                                    } %}
+                                </div>
+                            </div>
+                        </div>
                         IDENTIFICACIÓN DE LA TRIPULACIÓN
                     </td>
                 </tr>
@@ -683,32 +741,6 @@
                         <td colspan="6" style="width: 50%;">
                             <div class="row">
                                 <div class="enunciado col-lg-12 col-md-12">
-                                    {% if formato.conductores is empty or (formato.conductores|first).conductor is empty %}
-                                        <div class="pull-right">
-                                            {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                                                buttonset: 'horizontal',
-                                                class: 'animate in',
-                                                botones  : [
-                                                    {
-                                                        'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
-                                                        'type'  :   'primary',
-                                                        'class' :   'guardar conductor-principal-crear animate',
-                                                        'url'   :   url('conductor_save_ajax',{
-                                                                        tipo_conductor: 'Principal',
-                                                                        tipo: formato.tipo.abreviacion|upper,
-                                                                        numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
-                                                                    }),
-                                                    },
-                                                    {
-                                                        'class' :   'reset conductor-principal-crear animate',
-                                                        'type'  :   'warning',
-                                                        'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                                                    },
-                                                ],
-                                                sizing: 'pequeño',
-                                            } %}
-                                        </div>
-                                    {% endif %}
                                     13- CONDUCTOR PRINCIPAL: Nombre y Apellido
                                     {% set c1 = formato.conductores is not empty?formato.getConductor('principal'):formato.conductores %}
                                 </div>
@@ -751,32 +783,6 @@
                         <td colspan="6">
                             <div class="row">
                                 <div class="enunciado col-lg-12 col-md-12">
-                                    {% if formato.conductores|length < 2  %}
-                                        <div class="pull-right">
-                                            {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                                                buttonset: 'horizontal',
-                                                class: 'animate in',
-                                                botones  : [
-                                                    {
-                                                        'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
-                                                        'type'  :   'primary',
-                                                        'class' :   'guardar conductor-auxiliar-crear animate',
-                                                        'url'   :   url('conductor_save_ajax',{
-                                                                        tipo_conductor: 'Auxiliar',
-                                                                        tipo: formato.tipo.abreviacion|upper,
-                                                                        numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
-                                                                    }),
-                                                    },
-                                                    {
-                                                        'class' :   'reset conductor-auxiliar-crear animate',
-                                                        'type'  :   'warning',
-                                                        'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                                                    },
-                                                ],
-                                                sizing: 'pequeño',
-                                            } %}
-                                        </div>
-                                    {% endif %}
                                     18- CONDUCTOR AUXILIAR: Nombre y Apellido
                                     {% set c2 = formato.conductores is not empty?formato.getConductor('auxiliar'):formato.conductores %}
                                 </div>
@@ -1031,8 +1037,8 @@
                     </tr>
                     <tr>
                         <td colspan="12" class="text-center title">
-                            {% if formato.cargas is empty %}
-                                <div class="text-right pull-right">
+                            <div>
+                                <div class="text-right pull-right btns-action-right no-quitar">
                                     {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                                         'buttonset': 'horizontal',
                                         'class': 'animate in',
@@ -1040,7 +1046,7 @@
                                             {
                                                 'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
                                                 'type'  :   'primary',
-                                                'class' :   'unidad-carga-crear animate guardar',
+                                                'class' :   'unidad-carga-crear animate guardar ' ~ (formato.cargas is empty?'in':'out'),
                                                 'url'   :   url('unidad_carga_save_ajax',{
                                                                 tipo: formato.tipo.abreviacion|upper,
                                                                 numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
@@ -1055,7 +1061,7 @@
                                         'sizing': 'pequeño',
                                     } %}
                                 </div>
-                            {% endif %}
+                            </div>
                             {% set carga = formato.cargas is not empty?formato.cargas|first:formato.cargas %}
                             DATOS SOBRE LA CARGA
                         </td>
@@ -1197,14 +1203,14 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="12">
+                        <td colspan="12" class="extra">
                             <table class="table table-bordered table-striped" id="cpics">
                                 <thead>
                                     <tr>
-                                        <th rowspan="2">
+                                        <th rowspan="2" class="text-center">
                                             <div class="row">
-                                                <div class="enunciado col-lg-12 col-md-12">
-                                                    <div class="text-right pull-left">
+                                                <div>
+                                                    <div class="text-right pull-left btns-action-left">
                                                         {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                                                             'buttonset': 'horizontal',
                                                             'class': 'animate in',
@@ -1221,39 +1227,41 @@
                                                             'sizing': 'pequeño',
                                                         } %}
                                                     </div>
+                                                </div>
+                                                <div class="enunciado col-lg-12 col-md-12">
                                                     28- Carta de Porte N°
                                                 </div>
                                             </div>
                                         </th>
-                                        <th colspan="6" rowspan="2">
+                                        <th colspan="6" rowspan="2" class="text-center">
                                             <div class="row">
                                                 <div class="enunciado col-lg-12 col-md-12">
                                                     29- Descripción de las mercancías
                                                 </div>
                                             </div>
                                         </th>
-                                        <th rowspan="2">
+                                        <th rowspan="2" class="text-center">
                                             <div class="row">
                                                 <div class="enunciado col-lg-12 col-md-12">
                                                     30- Catidad de los bultos
                                                 </div>
                                             </div>
                                         </th>
-                                        <th rowspan="2">
+                                        <th rowspan="2" class="text-center">
                                             <div class="row">
                                                 <div class="enunciado col-lg-12 col-md-12">
                                                     31- Clase y marca de los bultos
                                                 </div>
                                             </div>
                                         </th>
-                                        <th colspan="2">
+                                        <th colspan="2" class="text-center">
                                             <div class="row">
                                                 <div class="enunciado col-lg-12 col-md-12">
                                                     32- Peso en Kilogramos
                                                 </div>
                                             </div>
                                         </th>
-                                        <th rowspan="2">
+                                        <th rowspan="2" class="text-center">
                                             <div class="row">
                                                 <div class="enunciado col-lg-12 col-md-12">
                                                     33- Volumen en m3 u otra unidad de medida
@@ -1262,10 +1270,10 @@
                                         </th>
                                     </tr>
                                     <tr>
-                                        <th>
+                                        <th class="text-center">
                                                 Bruto
                                         </th>
-                                        <th>
+                                        <th class="text-center">
                                                 Neto
                                         </th>
                                     </tr>
@@ -1282,22 +1290,56 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="8">
-                                                <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                                        34- Precio de las mercancías (INCOTERMS 2010) y tipo de monedas
-                                                </a>
+                                        <td colspan="8" class="text-center">
+                                            <div class="row">
+                                                <div class="enunciado text-left col-lg-9 col-md-9">
+                                                    34- Precio de las mercancías (INCOTERMS 2010) y tipo de monedas
+                                                </div>
+                                                <div class="col-lg-3 col-md-3">
+                                                    <span class="imita">
+                                                        {% set precioMercancias = 0 %}
+                                                        {% set tipoMoneda = '' %}
+                                                        {% set incoterm = '' %}
+                                                        {% set pesoBruto = 0 %}
+                                                        {% set pesoNeto = 0 %}
+                                                        {% set volumen = 0 %}
+                                                        {% set volumenOtro = 0 %}
+                                                        {% for fh in formato.hijos %}
+                                                            {% set precioMercancias = precioMercancias + fh.gastoMercancias is defined and fh.gastoMercancias is not empty and fh.gastoMercancias.valor is defined?fh.gastoMercancias.valor:0 %}
+                                                            {% set tipoMoneda = fh.gastoMercancias is defined and fh.gastoMercancias is not empty and fh.gastoMercancias.moneda is defined?fh.gastoMercancias.moneda.abreviacion|upper:0 %}
+                                                            {% set incoterm = fh.incoterm is defined and fh.incoterm is not empty and fh.incoterm.sigla is defined?fh.incoterm.sigla|upper:0 %}
+                                                            {% for cmf in fh.contenedoresMercancias%}
+                                                                {% set pesoBruto = pesoBruto + (cmf.pesoBruto is defined and cmf.pesoBruto is not empty?cmf.pesoBruto:0) %}
+                                                                {% set pesoNeto = pesoNeto + (cmf.pesoNeto is defined and cmf.pesoNeto is not empty?cmf.pesoNeto:0) %}
+                                                                {% set volumen = volumen + (cmf.volumen is defined and cmf.volumen is not empty?cmf.volumen:0) %}
+                                                                {% set volumenOtro = volumenOtro + (cmf.volumenOtro is defined and cmf.volumenOtro is not empty?cmf.volumenOtro:0) %}
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                        {{ incoterm }} {{ precioMercancias }} {{ tipoMoneda }}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </td>
-                                        <td style="border-left: none;">
+                                        <td class="text-center">
                                                 TOTAL
                                         </td>
-                                        <td>
-                                                <span id="cpic_total_peso_bruto"></span>
+                                        <td class="text-center">
+                                            {% if pesoBruto > 0 %}
+                                                <span id="cpic_total_peso_bruto" class="imita">{{ pesoBruto }}</span>
+                                            {% endif %}
                                         </td>
-                                        <td>
-                                                <span id="cpic_total_peso_neto"></span>
+                                        <td class="text-center">
+                                            {% if pesoNeto > 0 %}
+                                                <span id="cpic_total_peso_neto" class="imita">{{ pesoNeto }}</span>
+                                            {% endif %}
                                         </td>
-                                        <td>
-
+                                        <td class="text-center">
+                                            {% if volumen > 0 %}
+                                                <span id="cpic_total_volumen" class="imita"> {{ volumen }} </span>
+                                            {% endif %}
+                                            {% if volumenOtro > 0 %}
+                                                <span id="cpic_total_volumenOtro" class="imita"> {{ volumenOtro }} </span>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -1305,50 +1347,170 @@
                         </td>
                     </tr>
                     <tr colspan="12">
-                        <td colspan="12">
-                            <table class="table table-bordered table-striped">
-                                <tbody>
-
-                                    <tr>
-                                            <td colspan="6" rowspan="2" style="width: 35%;">
-                                                    <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                                            35- Observaciones de la Aduana de Partida
-                                                    </a>
-                                            </td>
-                                            <td colspan="3">
-                                                    <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                                            37- Aduana(s) de Cruce de Frontera
-                                                    </a>
-                                            </td>
-                                            <td colspan="3">
-                                                    <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                                            38- Aduana de Destino 
-                                                    </a>
-                                            </td>
-                                    </tr>
-                                    <tr>
-                                            <td colspan="6" rowspan="3">
-                                                    <p class="text-justify">
-                                                            El suscrito al hacerse cargo de las mercancías, se obliga a cumplir con las disposiciones de las normas que conforman el ordenamiento jurídico de la Comunidad Andina, en particular con la decisión 399 y su reglamento En las presentes observaciones de transporte internacional por carretera
-                                                    </p>
-                                                    <a href="http://localhost/dianFormat/web/app_dev.php/entidad/new" class="modal-open block" modal-title=" Transportista">
-                                                            39- Nombre, firma y sello del transportista autorizado o su representante
-                                                    </a>
-                                            </td>
-                                    </tr>
-                                    <tr>
-                                            <td colspan="6">
-                                                    36- Firma y sello de la autoridad que interviene en la Aduana de Partida
-                                            </td>
-                                    </tr>
-                                    <tr>
-                                            <td colspan="6">
-                                                    <span class="block title">Fecha de Emisión</span>
-                                            </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <td colspan="6" rowspan="2" class="text-center grande">
+                            <div class="row">
+                                <div class="enunciado text-left col-lg-12 col-md-12">
+                                    35- Observaciones de la Aduana de Partida
+                                </div>
+                            </div>
+                            <div class="row">
+                                {% set dataWith = {
+                                    clase:      "observaciones",
+                                    entityName: "formato",
+                                    bundleName: "formatos" ,
+                                    type:           "textarea",
+                                    required:   "Vacio,LetrasNumerosConectores",
+                                    pk:         formato.id is defined and formato.id is not empty?formato.id:' ',
+                                    datos:      {
+                                        numero: formato.numero,
+                                        tipo: formato.tipo,
+                                    },
+                                } %}
+                                <div class="col-lg-12 col-md-12">
+                                    {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                        id:             "formato_observaciones",
+                                        name:           "observaciones",
+                                        originalTitle:  "Observaciones de la Aduana de Partida",
+                                        emptyText:      "Observaciones",
+                                        valor:          formato.observaciones is defined and formato.observaciones is not empty?formato.observaciones:'',
+                                    }) %}
+                                </div>
+                            </div>
                         </td>
+                        <td colspan="3" class="text-center">
+                            <div class="row">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in hidden-print',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                    'type'  :   'success',
+                                                    'class' :   'animate agregar aduanas-cruce',
+                                                    'url'   :   url('aduana_add_mci_ajax',{
+                                                                    tipo:    'cruce-de-frontera',
+                                                                    numero: formato.numero,
+                                                                }),
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>
+                                <div class="enunciado text-left col-lg-12 col-md-12">
+                                    37- Aduana(s) de Cruce de Frontera
+                                </div>
+                            </div>
+                            <div id="aduanas-cruce">
+                                {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                    {% for ac in formato.aduanasCruce %}
+                                        {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                aduana:         ac,
+                                                tipo:            'cruce-de-frontera',
+                                                fila:           loop.index0,
+                                            }) 
+                                        }}
+                                    {% else %}
+                                        {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:            'cruce-de-frontera',
+                                                fila:           0,
+                                            }) 
+                                        }}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td colspan="3" class="text-center">
+                            <div class="row">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in hidden-print',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                    'type'  :   'success',
+                                                    'class' :   'animate agregar aduanas-destino',
+                                                    'url'   :   url('aduana_add_mci_ajax',{
+                                                                    tipo:    'destino',
+                                                                    numero: formato.numero,
+                                                                }),
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>
+                                <div class="enunciado text-left col-lg-12 col-md-12">
+                                    38- Aduana(s) de Destino
+                                </div>
+                            </div>
+                            <div id="aduanas-cruce">
+                                {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                    {% for ac in formato.aduanasCruce %}
+                                        {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                aduana:         ac,
+                                                tipo:            'destino',
+                                                fila:           loop.index0,
+                                            }) 
+                                        }}
+                                    {% else %}
+                                        {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:            'destino',
+                                                fila:           0,
+                                            }) 
+                                        }}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" rowspan="3" class="text-center">
+                            <div class="row">
+                                <div class="text-justify col-lg-10 col-md-10 col-md-offset-1 col-lg-offset-1">
+                                    El suscrito al hacerse cargo de las mercancías, se obliga a cumplir con las disposiciones de las normas que conforman el ordenamiento jurídico de la Comunidad Andina, en particular con la decisión 399 y su reglamento En las presentes observaciones de transporte internacional por carretera
+                                </div>
+                            </div>
+                                <br/>
+                            <div class="clear clearfix"></div>
+                            <div class="row">
+                                <div class="enunciado text-left col-lg-12 col-md-12">
+                                    39- Nombre, firma y sello del transportista autorizado o su representante
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" class="text-center grande">
+                            <div class="row">
+                                <div class="enunciado text-left col-lg-12 col-md-12">
+                                    36- Firma y sello de la autoridad que interviene en la Aduana de Partida
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <div class="row">
+                                <div class="enunciado text-left col-lg-12 col-md-12">
+                                    Fecha de Emisión
+                                </div>
+                            </div>
+                        </td>
+                            <td colspan="6">
+                            </td>
                     </tr>
             </tbody>
         </table>    

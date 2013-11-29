@@ -22,31 +22,35 @@ tipo        Nombre del tipo de los datos de las mercancias en el formato. Pueden
             entityName:     "usuario",
             bundleName:     "usuarios" ,
         } %}
-        {% if pk == ' ' %}
-            <div class="text-right pull-right">
-                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                    'buttonset': 'horizontal',
-                    'class': 'animate in',
-                    'botones'  : [
-                        {
-                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
-                            'type'  :   'primary',
-                            'class' :   'datosMercancias-' ~ tipo ~'-crear animate guardar',
-                            'url'   :   url('datosMercancias_add_cpic_ajax_',{
-                                        numero: numero,
-                                        tipo: tipo|title,
-                                    }),
-                        },
-                        {
-                            'class' :   'reset datosMercancias-' ~ tipo ~ '-crear animate',
-                            'type'  :   'warning',
-                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                        },
-                    ],
-                    'sizing': 'pequeño',
-                } %}
+        <div class="row">
+            <div class="col-lg-10 col-lg-offset-1">
+                <div>
+                    <div class="text-left pull-left btns-action-left">
+                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                            'buttonset': 'horizontal',
+                            'class': 'animate in',
+                            'botones'  : [
+                                {
+                                    'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                    'type'  :   'primary',
+                                    'class' :   'datosMercancias-' ~ tipo ~'-crear animate guardar ' ~ (pk == ' '?'in':'out'),
+                                    'url'   :   url('datosMercancias_add_cpic_ajax_',{
+                                                numero: numero,
+                                                tipo: tipo|title,
+                                            }),
+                                },
+                                {
+                                    'class' :   'reset datosMercancias-' ~ tipo ~ '-crear animate',
+                                    'type'  :   'warning',
+                                    'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                },
+                            ],
+                            'sizing': 'pequeño',
+                        } %}
+                    </div>
+                </div>
             </div>
-        {% endif %}
+        </div>
         {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
             id:             "datos_mercancias_formato_" ~ tipo ~"_lugar_",
             name:           "lugar",

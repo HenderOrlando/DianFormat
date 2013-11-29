@@ -30,6 +30,16 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $conductores;
     
     /** 
+     * @ORM\Column(type="text", nullable=true, name="instrucciones")
+     */
+    private $instrucciones;
+    
+    /** 
+     * @ORM\Column(type="text", nullable=true, name="observaciones")
+     */
+    private $observaciones;
+    
+    /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="formato")
      */
     private $usuarios;
@@ -61,6 +71,10 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoAduana", mappedBy="formato")
      */
     private $aduanas;
+    
+    private $aduanasDestino;
+    private $aduanasCruce;
+    private $aduanasPartida;
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Entidad", inversedBy="formatos")
@@ -140,6 +154,52 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getCompleto()
     {
         return $this->completo;
+    }
+    
+    /**
+     * Set instrucciones
+     *
+     * @param string $instrucciones
+     * @return Objeto
+     */
+    public function setInstrucciones($instrucciones)
+    {
+        $this->instrucciones = $instrucciones;
+    
+        return $this;
+    }
+
+    /**
+     * Get instrucciones
+     *
+     * @return string 
+     */
+    public function getInstrucciones()
+    {
+        return $this->instrucciones;
+    }
+    
+    /**
+     * Set observaciones
+     *
+     * @param string $observaciones
+     * @return Objeto
+     */
+    public function setObservaciones($observaciones)
+    {
+        $this->observaciones = $observaciones;
+    
+        return $this;
+    }
+
+    /**
+     * Get observaciones
+     *
+     * @return string 
+     */
+    public function getObservaciones()
+    {
+        return $this->observaciones;
     }
     
     /**
@@ -508,6 +568,45 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             $this->loadGastos();
         }
         return $this->gastoMercancias;
+    }
+    
+    /**
+     * Get aduanasPartida
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAduanasPartida()
+    {
+        if(empty($this->aduanasPartida)){
+            $this->loadAduanas();
+        }
+        return $this->aduanasPartida;
+    }
+    
+    /**
+     * Get aduanasCruce
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAduanasCruce()
+    {
+        if(empty($this->aduanasCruce)){
+            $this->loadAduanas();
+        }
+        return $this->aduanasCruce;
+    }
+    
+    /**
+     * Get aduanasDestino
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAduanasDestino()
+    {
+        if(empty($this->aduanasDestino)){
+            $this->loadAduanas();
+        }
+        return $this->aduanasDestino;
     }
     
     /**
@@ -962,7 +1061,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->datosEmbarque = new \Doctrine\Common\Collections\ArrayCollection();
         $this->datosEntrega = new \Doctrine\Common\Collections\ArrayCollection();
         foreach($this->datosMercancias as $dm){
-            switch(strtolower($dm->getTipo()->getNombre())){
+            switch(strtolower($dm->getTipo()->getCanonical())){
                 case 'recibe':
                     $this->datosRecibe = $dm;
                     break;
@@ -1010,6 +1109,25 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                         $this->gastosAPagarDestinatario[] = $g;
                         break;
                 }
+            }
+        }
+    }
+    
+    private function loadAduanas() {
+        $this->aduanasCruce = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->aduanasDestino = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->aduanasPartida = new \Doctrine\Common\Collections\ArrayCollection();
+        foreach($this->aduanas as $a){
+            switch(strtolower($a->getNivel()->getCanonical())){
+                case 'partida':
+                    $this->aduanasPartida[] = $a;
+                    break;
+                case 'cruce-de-frontera':
+                    $this->aduanasCruce[] = $a;
+                    break;
+                case 'destino':
+                    $this->aduanasDestino[] = $a;
+                    break;
             }
         }
     }

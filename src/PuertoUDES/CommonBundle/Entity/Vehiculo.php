@@ -41,7 +41,6 @@ class Vehiculo extends \PuertoUDES\CommonBundle\Entity\ObjetoB
     public function setNumeroSerieChasis($numeroSerieChasis)
     {
         $this->numeroSerieChasis = $numeroSerieChasis;
-    
         return $this;
     }
 
@@ -109,5 +108,12 @@ class Vehiculo extends \PuertoUDES\CommonBundle\Entity\ObjetoB
     public function getFormatos()
     {
         return $this->formatos;
+    }
+    
+    public function numSerieChasis(){
+        return $this->getNumeroSerieChasis();
+    }
+    public function certificaHabilita(){
+        return $this->getCertificadoHabilitacion();
     }
 }

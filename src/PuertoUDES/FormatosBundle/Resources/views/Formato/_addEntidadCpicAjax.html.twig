@@ -8,42 +8,44 @@ fila        Número de la fila de la entidad
 {% set rol = rol|lower %}
 {% set usuario = entidad is defined and entidad is not empty and entidad.usuario is not empty?entidad.usuario:null %}
 <div class="row" id="entidad{{fila ~ '-' ~ rol}}-crear">
+    {% set pk = usuario is not null and usuario.id is not empty?usuario.id:' ' %}
     <div class="col-lg-12">
-        {% set pk = usuario is not null and usuario.id is not empty?usuario.id:' ' %}
-        <div class="text-right pull-left">
-            {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                'buttonset': 'horizontal',
-                'class': 'animate in',
-                'botones'  : [
-                    {
-                        'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
-                        'type'  :   'primary',
-                        'class' :   'entidad' ~ fila ~ '-' ~ rol ~'-crear animate guardar ' ~ (pk == ' '?'in':'out'),
-                        'url'   :   url('entidad_add_cpic_ajax_',{
-                                        numero: numero,
-                                        rol: rol,
-                                        fila: fila,
-                                    }),
-                    },
-                    {
-                        'class' :   'eliminar  entidad' ~ fila ~ '-' ~ rol ~'-crear animate',
-                        'type'  :   'danger',
-                        'label' :   '<span class="glyphicon glyphicon-trash"></span>',
-                    },
-                    {
-                        'class' :   'reset entidad' ~ fila ~ '-' ~ rol ~'-crear animate',
-                        'type'  :   'warning',
-                        'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                        'url'   :   url('entidad_add_cpic_ajax_reset_',{
-                                        numero: numero,
-                                        rol: rol,
-                                        fila: fila,
-                                        abreviacion: abreviacion|upper,
-                                    }),
-                    },
-                ],
-                'sizing': 'pequeño',
-            } %}
+        <div>
+            <div class="text-right pull-left btns-action-left">
+                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                    'buttonset': 'horizontal',
+                    'class': 'animate in',
+                    'botones'  : [
+                        {
+                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                            'type'  :   'primary',
+                            'class' :   'entidad' ~ fila ~ '-' ~ rol ~'-crear animate guardar ' ~ (pk == ' '?'in':'out'),
+                            'url'   :   url('entidad_add_cpic_ajax_',{
+                                            numero: numero,
+                                            rol: rol,
+                                            fila: fila,
+                                        }),
+                        },
+                        {
+                            'class' :   'eliminar  entidad' ~ fila ~ '-' ~ rol ~'-crear animate',
+                            'type'  :   'danger',
+                            'label' :   '<span class="glyphicon glyphicon-trash"></span>',
+                        },
+                        {
+                            'class' :   'reset entidad' ~ fila ~ '-' ~ rol ~'-crear animate',
+                            'type'  :   'warning',
+                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                            'url'   :   url('entidad_add_cpic_ajax_reset_',{
+                                            numero: numero,
+                                            rol: rol,
+                                            fila: fila,
+                                            abreviacion: abreviacion|upper,
+                                        }),
+                        },
+                    ],
+                    'sizing': 'pequeño',
+                } %}
+            </div>
         </div>
         {% set dataWith = {
             id:             "entidad_" ~ rol ~"_ _" ~ fila,

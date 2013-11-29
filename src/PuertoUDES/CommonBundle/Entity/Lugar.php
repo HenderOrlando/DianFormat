@@ -234,6 +234,10 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
     
     public function __toString() {
+        return $this->getLugar();
+    }
+    
+    public function getLugar() {
         return $this->getNombre().', '.$this->getPais();
     }
     
