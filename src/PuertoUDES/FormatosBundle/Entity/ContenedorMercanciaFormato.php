@@ -161,6 +161,41 @@ class ContenedorMercanciaFormato extends \PuertoUDES\CommonBundle\Entity\ObjetoC
     {
         return $this->bulto;
     }
+
+    /**
+     * Get marca
+     *
+     * @return string 
+     */
+    public function getMarca()
+    {
+        return $this->getBulto()->getMarca();
+    }
+
+    /**
+     * Set marca bulto
+     *
+     * @param string $marca
+     * @return ContenedorMercanciaFormato
+     */
+    public function setMarca($marca)
+    {
+        $this->getBulto()->setMarca($marca);
+    
+        return $this;
+    }
+    /**
+     * Set clase
+     *
+     * @param string $clase
+     * @return ContenedorMercanciaFormato
+     */
+    public function setClase($clase)
+    {
+        $this->getBulto()->setClase($clase);
+    
+        return $this;
+    }
     
     public function json($json = true,
             $contenedor = false,

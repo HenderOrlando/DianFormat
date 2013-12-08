@@ -54,4 +54,11 @@ class Mercancia extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->contenedoresFormatos;
     }
+    
+    public function __toString() {
+        $parent = parent::__toString();
+        if(empty($parent))
+            return $this->getDescripcion ();
+        return $parent;
+    }
 }

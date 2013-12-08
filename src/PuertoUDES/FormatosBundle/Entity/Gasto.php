@@ -259,6 +259,7 @@ class Gasto
         $a = array(
                 'concepto'   =>  $this->getConcepto()->json(false),
                 'valor'      =>  $this->getValor(),
+                'moneda'     =>  $this->getMoneda()->getAbreviacion(),
             );
         if(is_bool($usuario) && $usuario){
             $a = array_merge($a, array( 

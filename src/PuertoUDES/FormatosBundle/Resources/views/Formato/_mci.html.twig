@@ -1279,6 +1279,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% set precioMercancias = 0 %}
+                                    {% set tipoMoneda = '' %}
+                                    {% set incoterm = '' %}
+                                    {% set pesoBruto = 0 %}
+                                    {% set pesoNeto = 0 %}
+                                    {% set volumen = 0 %}
+                                    {% set volumenOtro = 0 %}
                                     {% for fh in formato.hijos %}
                                         {{ include('PuertoUDESFormatosBundle:Formato:_addCpicAjax.html.twig',{
                                                 fila:       loop.index0,
@@ -1286,6 +1293,15 @@
                                                 numero:     formato.numero
                                             }) 
                                         }}
+                                        {% set precioMercancias = precioMercancias + fh.gastoMercancias is defined and fh.gastoMercancias is not empty and fh.gastoMercancias.valor is defined?fh.gastoMercancias.valor:0 %}
+                                        {% set tipoMoneda = fh.gastoMercancias is defined and fh.gastoMercancias is not empty and fh.gastoMercancias.moneda is defined?fh.gastoMercancias.moneda.abreviacion|upper:0 %}
+                                        {% set incoterm = fh.incoterm is defined and fh.incoterm is not empty and fh.incoterm.sigla is defined?fh.incoterm.sigla|upper:0 %}
+                                        {% for cmf in fh.contenedoresMercancias%}
+                                            {% set pesoBruto = pesoBruto + (cmf.pesoBruto is defined and cmf.pesoBruto is not empty?cmf.pesoBruto:0) %}
+                                            {% set pesoNeto = pesoNeto + (cmf.pesoNeto is defined and cmf.pesoNeto is not empty?cmf.pesoNeto:0) %}
+                                            {% set volumen = volumen + (cmf.volumen is defined and cmf.volumen is not empty?cmf.volumen:0) %}
+                                            {% set volumenOtro = volumenOtro + (cmf.volumenOtro is defined and cmf.volumenOtro is not empty?cmf.volumenOtro:0) %}
+                                        {% endfor %}
                                     {% endfor %}
                                 </tbody>
                                 <tfoot>
@@ -1297,24 +1313,6 @@
                                                 </div>
                                                 <div class="col-lg-3 col-md-3">
                                                     <span class="imita">
-                                                        {% set precioMercancias = 0 %}
-                                                        {% set tipoMoneda = '' %}
-                                                        {% set incoterm = '' %}
-                                                        {% set pesoBruto = 0 %}
-                                                        {% set pesoNeto = 0 %}
-                                                        {% set volumen = 0 %}
-                                                        {% set volumenOtro = 0 %}
-                                                        {% for fh in formato.hijos %}
-                                                            {% set precioMercancias = precioMercancias + fh.gastoMercancias is defined and fh.gastoMercancias is not empty and fh.gastoMercancias.valor is defined?fh.gastoMercancias.valor:0 %}
-                                                            {% set tipoMoneda = fh.gastoMercancias is defined and fh.gastoMercancias is not empty and fh.gastoMercancias.moneda is defined?fh.gastoMercancias.moneda.abreviacion|upper:0 %}
-                                                            {% set incoterm = fh.incoterm is defined and fh.incoterm is not empty and fh.incoterm.sigla is defined?fh.incoterm.sigla|upper:0 %}
-                                                            {% for cmf in fh.contenedoresMercancias%}
-                                                                {% set pesoBruto = pesoBruto + (cmf.pesoBruto is defined and cmf.pesoBruto is not empty?cmf.pesoBruto:0) %}
-                                                                {% set pesoNeto = pesoNeto + (cmf.pesoNeto is defined and cmf.pesoNeto is not empty?cmf.pesoNeto:0) %}
-                                                                {% set volumen = volumen + (cmf.volumen is defined and cmf.volumen is not empty?cmf.volumen:0) %}
-                                                                {% set volumenOtro = volumenOtro + (cmf.volumenOtro is defined and cmf.volumenOtro is not empty?cmf.volumenOtro:0) %}
-                                                            {% endfor %}
-                                                        {% endfor %}
                                                         {{ incoterm }} {{ precioMercancias }} {{ tipoMoneda }}
                                                     </span>
                                                 </div>

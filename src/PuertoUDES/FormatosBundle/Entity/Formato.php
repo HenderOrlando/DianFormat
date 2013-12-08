@@ -124,6 +124,14 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $incoterm;
     
+    private $totalPesoBruto;
+    private $totalPesoNeto;
+    private $totalVolumen;
+    private $totalVolumenOtro;
+    
+    private $gastoTotalRemitente;
+    private $gastoTotalDestinatario;
+    
     /**
      * Constructor
      */
@@ -144,6 +152,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->datosMercancias = new \Doctrine\Common\Collections\ArrayCollection();
         $this->condiciones = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->totalPesoBruto = $this->totalPesoNeto = $this->totalVolumen = $this->totalVolumenOtro = $this->gastoTotalDestinatario = $this->gastoTotalRemitente = 0;
     }
     
     /**
@@ -962,7 +971,48 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         return $this->incoterm;
     }
     
-    
+    /**/
+    public function getTotalPesoBruto(){
+        if($this->totalPesoBruto == 0){
+            $this->loadMedidas();
+        }
+        return $this->totalPesoBruto;
+    }
+    /**/
+    public function getTotalPesoNeto(){
+        if($this->totalPesoNeto == 0){
+            $this->loadMedidas();
+        }
+        return $this->totalPesoNeto;
+    }
+    /**/
+    public function getTotalVolumen(){
+        if($this->totalVolumen == 0){
+            $this->loadMedidas();
+        }
+        return $this->totalVolumen;
+    }
+    /**/
+    public function getTotalVolumenOtro(){
+        if($this->totalVolumenOtro == 0){
+            $this->loadMedidas();
+        }
+        return $this->totalVolumenOtro;
+    }
+    /**/
+    public function getGastoTotalRemitente(){
+        if($this->gastoTotalRemitente == 0){
+            $this->loadGastos();
+        }
+        return $this->gastoTotalRemitente;
+    }
+    /**/
+    public function getGastoTotalDestinatario(){
+        if($this->gastoTotalDestinatario == 0){
+            $this->loadGastos();
+        }
+        return $this->gastoTotalDestinatario;
+    }
         
     public function json($json = true, 
             $padre = false, 
@@ -1097,6 +1147,8 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->gastosAPagarDestinatario = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosAPagarRemitente = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastoMercancias = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastoTotalRemitente = 0;
+        $this->gastoTotalDestinatario = 0;
         foreach($this->gastos as $g){
             if(is_null($g->getRolUsuario())){
                 $this->gastoMercancias = $g;
@@ -1104,9 +1156,11 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                 switch(strtolower($g->getRolUsuario()->getCanonical())){
                     case 'remitente':
                         $this->gastosAPagarRemitente[] = $g;
+                        $this->gastoTotalRemitente += $g->getValor();
                         break;
                     case 'destinatario':
                         $this->gastosAPagarDestinatario[] = $g;
+                        $this->gastoTotalDestinatario += $g->getValor();
                         break;
                 }
             }
@@ -1130,5 +1184,22 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                     break;
             }
         }
+    }
+    
+    private function loadMedidas(){
+        $pesoBruto = 0;
+        $pesoNeto = 0;
+        $volumen = 0;
+        $volumenOtro = 0;
+        foreach ($this->getContenedoresMercancias() as $cm) {
+            $pesoBruto += $cm->getPesoBruto();
+            $pesoNeto += $cm->getPesoNeto();
+            $volumen += $cm->getVolumen();
+            $volumenOtro += $cm->getVolumenOtro();
+        }
+        $this->totalPesoBruto = $pesoBruto;
+        $this->totalPesoNeto = $pesoNeto;
+        $this->totalVolumen = $volumen;
+        $this->totalVolumenOtro = $volumenOtro;
     }
 }

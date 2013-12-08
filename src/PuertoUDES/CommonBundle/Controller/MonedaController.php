@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\CommonBundle\Entity\Moneda;
 use PuertoUDES\CommonBundle\Form\MonedaType;
@@ -19,6 +21,32 @@ use PuertoUDES\CommonBundle\Form\MonedaType;
 class MonedaController extends Controller
 {
 
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Lista/para/{name}/", name="list_typeahead_monedas_")
+     * @Template()
+     */
+    public function listTypeaheadAction(Request $request){
+        $list = array();
+        $name = $request->get('name','');
+        $entities = $this->getRepositorio()->findAll();
+        $propertyPath = new PropertyAccessor();
+        foreach($entities as $moneda){
+            $value = $propertyPath->getValue($moneda,$name);
+            if(is_null($value))
+                $value = '';
+            elseif(is_object($value))
+                $value = $value->__toString();
+            $list[] = array(
+                'value' =>  $value,
+                'tokens'=>  $moneda->getTokens(),
+                'datos' =>  $moneda->json(false)
+            );
+        }
+        return JsonResponse::create($list);
+    }
+    
     /**
      * Lists all Moneda entities.
      *

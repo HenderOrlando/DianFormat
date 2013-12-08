@@ -19,8 +19,8 @@ tipo        Nombre del tipo de los datos de las mercancias en el formato. Pueden
             valor:          '',
             pk:             pk,
             datos:          {tipo: abreviacion|upper},
-            entityName:     "usuario",
-            bundleName:     "usuarios" ,
+            entityName:     "datosMercanciasFormato",
+            bundleName:     "formatos" ,
         } %}
         <div class="row">
             <div class="col-lg-10 col-lg-offset-1">
@@ -43,6 +43,12 @@ tipo        Nombre del tipo de los datos de las mercancias en el formato. Pueden
                                     'class' :   'reset datosMercancias-' ~ tipo ~ '-crear animate',
                                     'type'  :   'warning',
                                     'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                    'url'   :   url('datosMercancias_ajax_reset_',{
+                                                numero: numero,
+                                                tipo: tipo|title,
+                                                pk: pk,
+                                                abreviacion: abreviacion|upper,
+                                            }),
                                 },
                             ],
                             'sizing': 'pequeño',
@@ -58,6 +64,8 @@ tipo        Nombre del tipo de los datos de las mercancias en el formato. Pueden
             emptyText:      "Lugar, País",
             required:       "NoVacio,LetrasConectores",
             valor:          pk != ' '?dmf.lugar:'',
+            type:           'typeaheadjs',
+            prefetch:       url('list_typeahead_lugares_',{name: 'lugar'}),
         }) %} 
         {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
             id:             "datos_mercancias_formato_" ~ tipo ~"_fecha_",
@@ -66,6 +74,7 @@ tipo        Nombre del tipo de los datos de las mercancias en el formato. Pueden
             emptyText:      "Fecha",
             required:       "Vacio,NumerosLetrasConectores",
             valor:          pk != ' '?dmf.fecha:'',
+            type:           'date',
         }) %}
     </div>
 </div>

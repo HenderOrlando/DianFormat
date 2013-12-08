@@ -190,4 +190,49 @@ class Bulto
     {
         return $this->contenedorMercanciaFormatos;
     }
+    
+    public function json($json = true, $contenedores = false){
+        $a = array(
+            'id'        =>  $this->getId(),
+            'marca'     =>  $this->getMarca(),
+            'clase'     =>  $this->getClase(),
+            'nombre'    =>  $this->getNombre(),
+        );
+        if(is_bool($contenedores) && $contenedores){
+            $a = array_merge($a, array(
+                'contenedores'  =>  $this->jsonContenedores()
+            ));
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+
+    public function getTokens($explode = true){
+        $a = $this->getClase()
+            .'\\'.$this->getMarca()
+            .'\\'.$this->getNombre();
+        if(is_bool($explode) && $explode){
+            $a = explode('\\', $a);
+        }
+        return $a;
+    }
+
+    /**
+     * Json contenedores
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function jsonContenedores($json = true)
+    {
+        $a = array();
+        foreach ($this->getContenedorMercanciaFormatos() as $cmf) {
+            $a[$cmf->getId()] = $cmf->json(false);
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
 }

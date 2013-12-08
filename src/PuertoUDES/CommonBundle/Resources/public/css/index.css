@@ -161,7 +161,7 @@ form.in,
     font-size: 12px;
     font-weight: bolder;
 }
-td .row div:not(.enunciado){
+td .row div:not(.enunciado):not(.opciones-filas){
     text-align: center;
 }
 td .row div:not(.enunciado).text-justify,
@@ -248,6 +248,7 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
     vertical-align: middle;
     text-align: center;
 }
+.opciones-filas,
 #cpics .opciones-filas-cpic{
     position: absolute;
     margin-top: -8px;
@@ -294,6 +295,12 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
 }
  .btns-action-right.fuera{
     right: -30px;
+}
+.btns-action-left.fuera{
+    left: -20px;
+}
+.btns-action-left.fuera.top{
+    top: -10px;
 }
  .btns-action-right.mitad{
     right: -20px;
@@ -358,6 +365,9 @@ table tr td.border-none{
     color: #08C;
     cursor: pointer;
 }
+.imita.editable-empty{
+    color: #d14;
+}
 #aduanas-cruce .row{
     height: 25px;
 }
@@ -365,14 +375,14 @@ table tr td.border-none{
     left: 0;
 }
 
-td:hover .row > div .btns-action-left,
-td:focus .row > div .btns-action-left,
-th:hover .row > div .btns-action-left,
-th:focus .row > div .btns-action-left,
-td:hover .row > div .btns-action-right,
-td:focus .row > div .btns-action-right
-th:hover .row > div .btns-action-right,
-th:focus .row > div .btns-action-right{
+table tbody tr td .row:hover > div .btns-action-left,
+table tbody tr td .row:focus > div .btns-action-left,
+table tbody tr th .row:hover > div .btns-action-left,
+table tbody tr th .row:focus > div .btns-action-left,
+table tbody tr td .row:hover > div .btns-action-right,
+table tbody tr td .row:focus  > div.btns-action-right
+table tbody tr th .row:hover > div .btns-action-right,
+table tbody tr th .row:focus > div .btns-action-right{
     display: block;
 }
 .btns-action-left.actions-top,
@@ -382,4 +392,67 @@ th:focus .row > div .btns-action-right{
 .btns-action-right .btn-group-vertical .btn.animate.in,
 .btns-action-left .btn-group-vertical .btn.animate.in{
     top: 0;
+}
+.editable-date.well{
+    background: transparent;
+}
+.hoja_carta_formato .editable-date.well .datepicker table tr th,
+.hoja_carta_formato .editable-date.well .datepicker table tr td{
+    padding: 5px;
+    vertical-align: middle;
+    text-align: center;
+}
+.hoja_carta_formato .editable-date.well .datepicker table tr td span{
+    height: 46.5px;
+    line-height: 46.5px;
+}
+.icon-arrow-left,
+.icon-arrow-right{
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    -webkit-font-smoothing: antialiased;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+}
+.icon-arrow-left:before {
+  content: "\e091";
+}
+
+.icon-arrow-right:before {
+  content: "\e092";
+}
+.hoja_carta_formato table table#pad-contenedor tr td.animate.out{
+    height: 0;
+    padding: 0;
+    margin: 0;
+    line-height: 0;
+    opacity: 0;
+}
+.hoja_carta_formato table table#pad-contenedor tr.odd td{
+    background-color: #F9F9F9;
+}
+.hoja_carta_formato table table#pad-contenedor tr.even td{
+    background-color: transparent;
+}
+#mDialog{
+    padding-top: 20px;
+    margin-bottom: 0px;
+    min-width: 300px;
+    max-width: 600px;
+    overflow: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+#mDialog .close{
+    margin-top: 20px;
+    margin-right: 20px;
+}
+.text-right {
+    text-align: right !important;
+}
+.text-left {
+    text-align: left !important;
 }

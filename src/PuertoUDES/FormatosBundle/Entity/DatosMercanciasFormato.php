@@ -179,12 +179,10 @@ class DatosMercanciasFormato
     }
     
     public function json($json = true){
-        $a = array_merge(parent::json(false),
-            array(
-                'tipo'      =>  $this->getTipo()->json(false),
-                'lugar'     =>  $this->getLugar()->json(false),
-                'formato'   =>  $this->getFormato()->json(false),
-            )
+        $a = array(
+            'tipo'      =>  $this->getTipo()->json(false),
+            'lugar'     =>  $this->getLugar()->json(false),
+            'formato'   =>  $this->getFormato()->json(false),
         );
         if(is_bool($json) && $json){
             return json_encode($a);
@@ -193,6 +191,6 @@ class DatosMercanciasFormato
     }
     
     public function __toString() {
-        return $this->getLugar().' '.$this->getFecha();
+        return $this->getLugar().' '.$this->getFecha()->format('d-m-y');
     }
 }

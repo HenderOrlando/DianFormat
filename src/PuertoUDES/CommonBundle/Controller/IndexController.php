@@ -611,12 +611,12 @@ class IndexController extends Controller implements PaginatorAwareInterface
      * @param   $fecha  string  Fecha en formato dia[/- ]mes[/- ]año. dia 2 digitos, mes numero o letras, año 2 o 4 dígitos
      * @return time Marca de tiempo
      */
-    public function getDate($fecha, $time = null) {
+    public function getDate($fecha, $mes = null, $time = null) {
         if(is_null($time))
             $time = strtotime("now");
         $f = preg_split("/[-\/ ]/", $fecha);
         if(count($f) == 3){
-            $date = strtotime($f[0].' '.$this->getMes($f[1],'ing').' '.$f[2].' '.date('H:i:s', $time));
+            $date = strtotime($f[0].' '.$this->getMes($f[1], $mes).' '.$f[2].' '.date('H:i:s', $time));
             if($date !== FALSE)
                 return $date;
         }
@@ -624,7 +624,13 @@ class IndexController extends Controller implements PaginatorAwareInterface
     }
     
     
-    public function getMes($mes, $num = 'esp'){
+    public function getMes($mes, $num = null){
+        if(is_null($num)){
+            if(is_numeric($mes))
+                $num = 'num';
+            else
+                $num = 'esp';
+        }
         if(preg_match('/abr|esp|num|ing/', $num) !== false){
             $get = array(
                 'abr'   =>  0,

@@ -45,17 +45,20 @@ required        Lista de requisitos (validaciones en el cliente) para enviar los
 {% set name = name is defined and name is not empty? name : ' ' %}
 {% set type = type is defined and type is not empty? type : 'text' %}
 {% set pk = pk is defined and pk is not empty? pk : ' ' %}
-{% set datos = datos is defined and datos is not empty? datos : {} %}
-{% set url = url is defined and url is not empty?('/' in url? url : url(url,datos) ): url('formato_edit_campo', datos) %}
-{% set originalTitle = originalTitle is defined and originalTitle is not empty? originalTitle : 'Actualizar' %}
 {% set entityName = entityName is defined and entityName is not empty? entityName : '' %}
 {% set bundleName = bundleName is defined and bundleName is not empty? bundleName : '' %}
+{% set datos = datos is defined and datos is not empty? datos : {tipo: entityName} %}
+{% set url = url is defined and url is not empty?('/' in url? url : url(url,datos) ): url('formato_edit_campo', datos) %}
+{% set originalTitle = originalTitle is defined and originalTitle is not empty? originalTitle : 'Actualizar' %}
 {% set emptyText = emptyText is defined and emptyText is not empty? emptyText : originalTitle %}
-{% set placeholder = placeholder is defined and placeholder is not empty? placeholder : originalTitle %}
+{% set placeholder = (placeholder is defined and placeholder is not empty? placeholder : originalTitle)|replace({'_':' '}) %}
 {% set required = required is defined and required is not empty? required : 'NoVacio' %}
 {% set valor = valor is defined and valor is not empty? valor : '' %}
 {% set prefetch = prefetch is defined and prefetch is not empty? prefetch : '' %}
-
+{% if type == 'date' %}
+    {% set date_format = date_format is defined and date_format is not empty? date_format : 'yyyy-mm-dd' %}
+    {% set date_viewformat = date_viewformat is defined and date_viewformat is not empty? date_viewformat : 'd-M-yyyy' %}
+{% endif %}
 <a href="#" {{ id is not empty?'id="' ~ id ~ '"':'' }} class="xeditable {{ clase }}" 
     data-placement="{{ placement }}" 
     data-name="{{- name -}}" 
@@ -66,6 +69,10 @@ required        Lista de requisitos (validaciones en el cliente) para enviar los
     data-entity-name="{{- entityName -}}"
     data-entity-bundle="{{- bundleName -}}" 
     data-emptytext="{{- emptyText -}}" 
+    {% if type == 'date' %}
+        data-format="{{ date_format }}"
+        data-viewformat="{{ date_viewformat }}"
+    {% endif %}
     data-placeholder="{{- placeholder -}}" 
     {{ prefetch is not empty? 'data-prefetch=' ~ prefetch:'' }}
     data-required="{{- required -}}">{% if valor is not null and valor is not empty and 'fecha' in name %}{{- valor |date('d-M-Y') -}}{% else %}{{- valor|nl2br -}}{% endif %}</a>

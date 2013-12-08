@@ -174,6 +174,9 @@ class Objeto
     
     public function getTokens($explode = true){
         $a = $this->getNombre().'\\'
+            .$this->getCanonical().'\\'
+            .str_replace(' ','\\',$this->getNombre()).'\\'
+            .str_replace('-','\\',$this->getCanonical()).'\\'
             .$this->getDescripcion();
         if(is_bool($explode) && $explode){
             $a = explode('\\', $a);

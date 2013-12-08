@@ -8,6 +8,7 @@
             'bundles/puertoudescommon/css/bootstrap-theme.min.css'
             'bundles/puertoudescommon/xeditable/bootstrap-editable/css/bootstrap-editable.css'
             'bundles/puertoudescommon/css/bootstrap-typeahead-theme.css'
+            'bundles/puertoudescommon/css/datepicker.css'
             'bundles/puertoudescommon/css/index.css'
         filter='cssrewrite' %}
             <link rel="stylesheet" href="{{ asset_url }}" />
@@ -184,12 +185,31 @@
                     '@PuertoUDESCommonBundle/Resources/public/js/bootstrap.min.js'
                     '@PuertoUDESCommonBundle/Resources/public/xeditable/bootstrap-editable/js/bootstrap-editable.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/js_functions.js'
+                    '@PuertoUDESCommonBundle/Resources/public/js/bootstrap-datepicker.es.js'
+                    '@PuertoUDESCommonBundle/Resources/public/js/bootstrap-datepicker.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/typeahead.min.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/index.js'
                  %}
                     <script type="text/javascript" src="{{ asset_url }}"></script>
                 {% endjavascripts %}
                 {% block javascript %}{% endblock %}
+            </div>
+            <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="Modal" aria-hidden="true">
+              <div id="mDialog">
+                <div class="modal-content" id="mContent">
+                  <div class="modal-header" id="mHeader">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="mTitle">Titulo</h4>
+                  </div>
+                  <div class="modal-body" id="mBody">
+                    ...
+                  </div>
+                  <div class="modal-footer" id="mFooter">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    {# <button type="button" class="btn btn-primary">Save changes</button>#}
+                  </div>
+                </div>
+              </div>
             </div>
         </section>
     </body>

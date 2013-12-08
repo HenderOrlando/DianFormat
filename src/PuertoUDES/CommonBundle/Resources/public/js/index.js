@@ -11,7 +11,7 @@ $(document).on('ready',function(){
     botonResetXEditable();
     botonGuardarXEditable();
     botonEliminarXEditable();
-    
+    loadModal();
     function agregarXEditable(xeditable){
         if(typeof xeditable === 'undefined')
             xeditable = 'a.xeditable';
@@ -32,70 +32,72 @@ $(document).on('ready',function(){
             }
             if(typeof este.attr('data-required') !== 'undefined'){
                 este.editable('option', 'validate', function(v) {
-                    var req = este.attr('data-required').split(','), 
-                        msg = '',
-                        valido = true, i=0;
-                    while(i < req.length){
-                        if(i > 0)
-                            msg += '\n';
-                        switch(req[i]){
-                            case 'Vacio':// Puede ser vacio
-                                valido = !validateNoVacio(v);
-                                if(valido)
-                                    return;
-                                break;
-                            case 'NoVacio':// No puede ser vacio
-                                valido = validateNoVacio(v);
-                                if(!valido)
-                                    msg = 'No puede ser vacío';
-                                break;
-                            case 'Letras'://Contiene sólo Letras
-                                valido = validateLetras(v);
-                                if(!valido)
-                                    msg += 'Acepta sólo letras y espacio';
-                                break;
-                            case 'Numeros'://Contiene sólo Números
-                                valido = validateNumeros(v);
-                                if(!valido)
-                                    msg += 'Acepta sólo Números y espacio';
-                                break;
-                            case 'Conectores'://Contiene sólo Caracteres especiales permitidos
-                                valido = validateConectores(v);
-                                if(!valido)
-                                    msg += 'Acepta caracteres de escritura y espacio';
-                                break;
-                            case 'NumerosLetras'://Contiene sólo Números y Letras
-                                valido = validateNumerosLetras(v);
-                                if(!valido)
-                                    msg += 'Acepta sólo números, letras y espacio';
-                                break;
-                            case 'NumerosConectores'://Contiene sólo Números y caracteres de escritura
-                                valido = validateNumerosConectores(v);
-                                if(!valido)
-                                    msg += 'Acepta sólo números, caracteres de escritura y espacio';
-                                break;
-                            case 'LetrasConectores'://Contiene sólo Letras y caracteres de escritura
-                                valido = validateLetrasConectores(v);
-                                if(!valido)
-                                    msg += 'Acepta sólo letras, caracteres de escritura y espacio';
-                                break;
-                            case 'NumerosLetrasConectores'://Contiene sólo Números, Letras y Caracteres especiales permitidos
-                                valido = validateNumerosLetrasConectores(v);
-                                if(!valido)
-                                    msg += 'Acepta sólo números, letras, caracteres de escritura y espacio';
-                                break;
-                            case 'Email'://Contiene Email
-                                valido = validateConectores(v);
-                                if(!valido)
-                                    msg += 'Email no válido';
-                                break;
-                            default:
-                                valido = false;
-                                break;
+                    if(typeof v !== 'object'){
+                        var req = este.attr('data-required').split(','), 
+                            msg = '',
+                            valido = true, i=0;
+                        while(i < req.length){
+                            if(i > 0)
+                                msg += '\n';
+                            switch(req[i]){
+                                case 'Vacio':// Puede ser vacio
+                                    valido = !validateNoVacio(v);
+                                    if(valido)
+                                        return;
+                                    break;
+                                case 'NoVacio':// No puede ser vacio
+                                    valido = validateNoVacio(v);
+                                    if(!valido)
+                                        msg = 'No puede ser vacío';
+                                    break;
+                                case 'Letras'://Contiene sólo Letras
+                                    valido = validateLetras(v);
+                                    if(!valido)
+                                        msg += 'Acepta sólo letras y espacio';
+                                    break;
+                                case 'Numeros'://Contiene sólo Números
+                                    valido = validateNumeros(v);
+                                    if(!valido)
+                                        msg += 'Acepta sólo Números y espacio';
+                                    break;
+                                case 'Conectores'://Contiene sólo Caracteres especiales permitidos
+                                    valido = validateConectores(v);
+                                    if(!valido)
+                                        msg += 'Acepta caracteres de escritura y espacio';
+                                    break;
+                                case 'NumerosLetras'://Contiene sólo Números y Letras
+                                    valido = validateNumerosLetras(v);
+                                    if(!valido)
+                                        msg += 'Acepta sólo números, letras y espacio';
+                                    break;
+                                case 'NumerosConectores'://Contiene sólo Números y caracteres de escritura
+                                    valido = validateNumerosConectores(v);
+                                    if(!valido)
+                                        msg += 'Acepta sólo números, caracteres de escritura y espacio';
+                                    break;
+                                case 'LetrasConectores'://Contiene sólo Letras y caracteres de escritura
+                                    valido = validateLetrasConectores(v);
+                                    if(!valido)
+                                        msg += 'Acepta sólo letras, caracteres de escritura y espacio';
+                                    break;
+                                case 'NumerosLetrasConectores'://Contiene sólo Números, Letras y Caracteres especiales permitidos
+                                    valido = validateNumerosLetrasConectores(v);
+                                    if(!valido)
+                                        msg += 'Acepta sólo números, letras, caracteres de escritura y espacio';
+                                    break;
+                                case 'Email'://Contiene Email
+                                    valido = validateConectores(v);
+                                    if(!valido)
+                                        msg += 'Email no válido';
+                                    break;
+                                default:
+                                    valido = false;
+                                    break;
+                            }
+                            i++;
                         }
-                        i++;
                     }
-                    if(msg.length && (msg.search(/^\n+$/) || msg.search(/^[\n\r\t\0\s]+$/))){
+                    if(typeof msg !== "undefined" && msg.length && (msg.search(/^\n+$/) || msg.search(/^[\n\r\t\0\s]+$/))){
                         var name = este.attr('data-emptytext');
                         if(msg.indexOf('\n') !== false){
                             var msgs = msg.split('\n');
@@ -112,6 +114,13 @@ $(document).on('ready',function(){
                         var str = este.attr('data-entity-name'),
                             f = str.charAt(0).toUpperCase();
                         hideMsg($("#mensajes .alert:contains('"+f+str.substr(1)+"')"));
+                    }
+                    if(typeof v === 'object'){
+                        console.log(v)
+                        console.log(v.getUTCDate())
+                        console.log(v.getUTCFullYear())
+                        console.log(v.getUTCMonth())
+                        console.log(v.toUTCString())
                     }
                 });
             }
@@ -163,6 +172,12 @@ $(document).on('ready',function(){
                                 if(v.msg.search(/[\d\s]/))
                                     addMsg(k+": "+v.msg, v.tipo);
                             });
+                        }
+                        if(typeof data.url !== 'undefined'){
+                            $(clase+'.carga-modal').attr('href',data.url).removeClass('out').addClass('in')
+                        }
+                        if(data.datos){
+                            validaDataName(data.datos);
                         }
                         $(clase+'.guardar').removeClass('in').addClass('out');
                         if(clase.search('carga') > 0 && clase.search('otra') < 0 ){
@@ -254,6 +269,9 @@ $(document).on('ready',function(){
                         });
                     }
                 }
+                if(data.datos){
+                    validaDataName(data.datos);
+                }
             }).fail(function() {
                 console.log( "error" );
             }).always(function() {
@@ -323,22 +341,34 @@ $(document).on('ready',function(){
         e.preventDefault();
         e.stopPropagation();
         var este = $(this),
-            id = $('#'+este.attr('class').replace(/\s*btn|-primary\s*|-default\s*|agregar\s*|-warning\s*|-danger\s*|-success\s*|\s*animate\s*|\s+in\s*|\s*out\s+|pull-right|pull-left/g, '')),
+            clase = este.attr('class').replace(/btn|-primary|-default|agregar|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|\sout|out$|pull-right|pull-left|\s/g, ''),
+            id = $('#'+clase),
             numChildren = id.children().length;
+        console.log(clase)
         este.attr('disabled',true);
         $.ajax({
             type: "POST",
             url: este.attr('href'),
             data:{filas: numChildren},
-            dataType: "html",
             cache: false
         }).done(function( response ) {
-            id.append(response);
-            arreglaAjax();
-            agregarXEditable(id.find('a.xeditable'));
-            botonResetXEditable(id.find('.reset'));
-            botonGuardarXEditable(id.find('.guardar'));
-            botonEliminarXEditable(id.find('.eliminar'));
+            if(typeof response.errors === 'undefined'){
+                id.append(response);
+                arreglaAjax();
+                agregarXEditable(id.find('a.xeditable'));
+                botonResetXEditable(id.find('.reset'));
+                botonGuardarXEditable(id.find('.guardar'));
+                botonEliminarXEditable(id.find('.eliminar'));
+            }else{
+                var msgs = response.errors;
+                if(msgs.responseText)
+                    addMsg(msgs.responseText, 'danger');
+                else {
+                    $.each(msgs, function(k, v) {
+                        addMsg(k+": "+v, 'danger');
+                    });
+                }
+            }
             este.removeAttr('disabled');
         }).fail(function() {
             console.log( "error" );

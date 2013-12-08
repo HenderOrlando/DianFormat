@@ -278,8 +278,8 @@ class DatosMercanciasFormatoController extends Controller
                         ->getQuery()->getOneOrNullResult();
                     if(!$dmf){
                         $dmf = new DatosMercanciasFormato();
-                        $date = $this->getUtils()->getDate($fecha);
-                        $dmf->setFecha(new \DateTime(date('Y-m-d H:i:s',$date)));
+                        $date = date('Y-m-d H:i:s',strtotime($fecha.' '.date('H:i:s')));
+                        $dmf->setFecha(new \DateTime($date));
                         $lugar_pais = preg_split('/\s?,\s?/', $lugar);
                         if(count($lugar_pais) <= 2 && count($lugar_pais) > 1){
                             $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
@@ -352,6 +352,61 @@ class DatosMercanciasFormatoController extends Controller
             'dmf'           =>  $dmf,
             'tipo'          =>  $tipo,
         );
+    }
+    
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Reset/{tipo}-{pk}/en/{abreviacion}-{numero}/", name="datosMercancias_ajax_reset_")
+     * @Route("/Reset/{tipo}/en/{abreviacion}-{numero}/", name="datosMercancias_ajax_reset")
+     * @Method({"DELETE"})
+     * @Template()
+     */
+    public function resetAjaxAction(Request $request){
+        if(!$request->isXmlHttpRequest())
+            throw $this->createNotFoundException('Lo siento, la Página no existe');
+        $tipo = $request->get('tipo',NULL);
+        $numero = $request->get('numero',NULL);
+        $abreviacion = strtolower($request->get('abreviacion',NULL));
+        $pk = $request->get('pk',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $abreviacion));
+        $datos = array(
+            'pk'            =>  $pk,
+            'numero'        =>  $numero,
+            'tipo'           =>  $tipo,
+            'abreviacion'   =>  $abreviacion,
+        );
+        if($tipo_mci){
+            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_mci->getId(), 'numero' => $numero));
+            if($formato){
+                $obj = $em->getRepository('PuertoUDESFormatosBundle:DatosMercanciasFormato')->find($pk);
+                if($obj){
+                    $em->remove($obj);
+                    $em->flush();
+                    $datos['msgs']['Formato'] = array(
+                        'msg' => 'Eliminado'.($tipo?' '.$tipo.' ':' ').$obj->__toString(),
+                        'tipo' => 'success'
+                    );
+                }else{
+                    $datos['msgs']['Formato'] = array(
+                        'msg' => 'Ya está limpio',
+                        'tipo' => 'danger'
+                    );
+                }
+            }else{
+                $datos['msgs']['Formato'] = array(
+                    'msg' => 'Formato no válido',
+                    'tipo' => 'danger'
+                );
+            }
+        }else{
+            $datos['msgs']['Formato'] = array(
+                'msg' => 'Tipo de Formato no válido',
+                'tipo' => 'danger'
+            );
+        }
+        return JsonResponse::create($datos);
     }
     
     /**

@@ -104,7 +104,7 @@
      */
     function arreglaAjax(){
         if(Modernizr.fontface){
-            $('button.glyphicon').text('')
+            $('button.glyphicon').text('');
         }
         $('.mensajes').children().appendTo('#mensajes');
         if($('.mensajes').length){
@@ -128,7 +128,12 @@
             var id = $(this).attr('for'), placeholder = $(this).text().replace(':','');
             id = $(this).attr('for');
             $('input#'+id+':not([type="checkbox"]), textarea#'+id)
-                    .attr('placeholder',placeholder);
+                    .attr('placeholder',placeholder)
+                    .tooltip({
+                        placement:  "right",
+                        trigger:    "focus",
+                        title:      placeholder
+                    });
         });
         $('input:not([type="checkbox"]), textarea, select').each(function(){
             if(typeof $(this).parent().attr('id') !== 'undefined'){
@@ -192,9 +197,64 @@
                 }
             });
         };
+        $('.carga-modal').on('click', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            var este = $(this), modal = $('#Modal');
+            $.ajax({
+                type: "POST",
+                url: este.attr('href'),
+                dataType: "json",
+                cache: false
+            }).done(function( response ) {
+                $('#mTitle').html(response.title);
+                $('#mBody').html(response.body);
+                arreglaAjax();
+                formAjax('#mBody');
+                modal.modal('show');
+                modal.on('hidden.bs.modal', function (e) {
+                    $('#mTitle').html('Titulo');
+                    $('#mBody').html('...');
+                });
+            }).fail(function() {
+                console.log( "error" );
+            }).always(function() {
+                console.log( "complete" );
+            });
+        });
     }
     
-    
+    function formAjax(id){
+        if(typeof id === 'undefined'){
+            id = 'body';
+        }
+        var metodo = $('#mBody').find('input[name="_method"]').attr('value');
+        if(metodo !== 'PUT')
+            metodo = 'POST';
+        $(id).find('form').on('submit', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            var este = $(this);
+            $.ajax({
+                type: metodo,
+                url: este.attr('action'),
+                data: este.serializeArray(),
+                dataType: "json",
+                cache: false
+            }).done(function( response ) {
+                $('#mTitle').html(response.title);
+                $('#mBody').html(response.body);
+                if(response.datos)
+                    validaDataName(response.datos);
+                arreglaAjax();
+                formAjax('#mBody');
+            }).fail(function() {
+                console.log( "error" );
+            }).always(function() {
+                console.log( "complete" );
+            });
+        });
+    }
     /*SUCCESS Y ERROR*/
 //success: function(data, config) {
 //    if(data && data.id) {  //record created, response like {"id": 2}
@@ -262,24 +322,31 @@
                 return getParamsXEditable(params, este);
             },
             success: function(response, val) {
+                if(typeof response.values.datos !== 'undefined'){
+                    console.log(response.datos);
+                }
                 if(response.status == 'error') 
                     return response.msg; //msg will be shown in editable form
                 var msgs = new Array();
                 if(typeof response.value !== 'undefined'){
                     $(este).text(response.value);
                 }
+                //Mensajes
                 if(typeof response.msgs !== 'undefined'){
                     msgs = response.msgs;
-                    if(typeof response.datos !== 'undefined')
-                        console.log(response.datos)
                 }else if(typeof response.values.msgs !== 'undefined'){
                     msgs = response.values.msgs;
-                    if(typeof response.values.datos !== 'undefined')
-                        console.log(response.values.datos)
                 }else if(typeof response.msgs !== 'undefined'){
                     msgs = response.msgs;
-                    if(typeof response.datos !== 'undefined')
-                        console.log(response.values.datos)
+                }
+                //Datos
+                if(typeof response.datos !== 'undefined'){
+                    var datos = response.datos;
+                }else if(typeof response.values.datos !== 'undefined'){
+                    datos = response.values.datos;
+                }
+                if(typeof datos !== 'undefined'){
+                    validaDataName(datos);
                 }
                 if(typeof response.id !== 'undefined'){
                     console.log(response.id);
@@ -309,6 +376,10 @@
                                 }
                             }else if(typeof entidad[este.attr('data-name')] !== 'undefined')
                                 ret += '<p>'+entidad[este.attr('data-name')]+'</p>';
+                            return ret;
+                        }
+                        else if(este.attr('data-name') === 'moneda'){
+                            var moneda = item.datos, ret = '<h5>' + moneda.abreviacion + '</h5> <h6>' + moneda.nombre + '</h6>';
                             return ret;
                         }
                         return item.value; 
@@ -424,4 +495,27 @@
     }
     function validateEmail(value){
         return value.search(/(^$|^.*@.*\..*$)/) >= 0?true:false;
+    }
+    
+    function loadModal(id){
+        if(typeof id === 'undefined')
+            id = '#Modal';
+        $(id).modal({
+            show:  false
+         });
+    }
+    
+    function validaDataName(datos){
+        for(var name in datos){
+            if(datos[name] !== 'null'){
+                var d = $('[data-name="'+name+'"]'), val = '';
+                if(
+                    name.indexOf('peso') > -1 || (name.indexOf('volumen') > -1 && datos[name] > 0) ||
+                    name.indexOf('gastoRemitente') > -1 || name.indexOf('gastoDestinatario') > -1
+                ){
+                    val = datos[name];
+                    d.text(val);
+                }
+            }
+        }
     }

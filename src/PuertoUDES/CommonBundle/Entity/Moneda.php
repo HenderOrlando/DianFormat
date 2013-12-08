@@ -83,4 +83,45 @@ class Moneda extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->gastos;
     }
+    
+    /**
+     * Json gastos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function jsonGastos($json = true)
+    {
+        $a = array();
+        foreach ($this->getGastos() as $g) {
+            $a[$g->getId()] = $g->json(false);
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+    
+    public function json($json = true, $gastos = false){
+        $a = array_merge(parent::json(false), array(
+            'abreviacion'     =>  $this->getAbreviacion(),
+        ));
+        if(is_bool($gastos) && $gastos){
+            $a = array_merge($a, array(
+                'gastos' => $this->jsonGastos(false),
+            ));
+        }
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+
+    public function getTokens($explode = true){
+        $a = parent::getTokens(FALSE)
+            .'\\'.$this->getAbreviacion();
+        if(is_bool($explode) && $explode){
+            $a = explode('\\', $a);
+        }
+        return $a;
+    }
 }

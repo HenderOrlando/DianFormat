@@ -30,7 +30,7 @@ class EntidadController extends Controller
      * @Route("/{rol}/Lista/para/{name}/", name="list_typeahead_entidades")
      * @Template("PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig")
      */
-    public function listTypeahead(Request $request){
+    public function listTypeaheadAction(Request $request){
         $list = array();
         $entities = array();
         $name = $request->get('name','');
@@ -275,7 +275,7 @@ class EntidadController extends Controller
                     );
                 }else{
                     $datos['msgs']['Formato'] = array(
-                        'msg' => 'Imposible de limpiar',
+                        'msg' => 'Ya está limpio',
                         'tipo' => 'danger'
                     );
                 }

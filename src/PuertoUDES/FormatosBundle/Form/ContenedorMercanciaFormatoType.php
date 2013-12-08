@@ -18,12 +18,13 @@ class ContenedorMercanciaFormatoType extends AbstractType
             ->add('pesoBruto')
             ->add('pesoNeto')
             ->add('volumen')
-            ->add('fechaCreado')
-            ->add('numBultos')
-            ->add('formato')
-            ->add('mercancia')
+            ->add('volumenOtro')
+            //->add('fechaCreado')
+            //->add('numBultos')
+            //->add('formato')
+            //->add('mercancia')
             ->add('contenedor')
-            ->add('bulto')
+            //->add('bulto')
         ;
     }
     

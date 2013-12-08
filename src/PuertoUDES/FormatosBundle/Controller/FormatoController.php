@@ -186,6 +186,7 @@ class FormatoController extends Controller
         $bundle = $request->get('bundle',NULL);
         $em = $this->getDoctrine()->getManager();
         $valores = array();
+        $obj = null;
         if(!$llave){
             try{
                 $obj = $em->getRepository('PuertoUDES'.ucfirst($bundle).'Bundle:'.ucfirst($entity))->findBy(array($nombre => $valor));
@@ -203,8 +204,25 @@ class FormatoController extends Controller
             $addName = 'add'. ucfirst($entity);
             $set = 'set'. ucfirst($nombre);
             $get = 'get'. ucfirst($nombre);
+            if($entity == 'gasto' && $nombre == 'valor')
+                $valor = str_replace (',', '.', $valor);
             if($obj){
-                if(strpos($nombre, 'lugar') !== false){
+                if($entity === 'contenedorMercanciaFormato' && $nombre === 'descripcion' && is_a($obj, 'PuertoUDES\FormatosBundle\Entity\ContenedorMercanciaFormato')){
+                    $mercancia = $em->getRepository('PuertoUDESCommonBundle:Mercancia')
+                        ->createQueryBuilder('m')
+                        ->andWhere('m.descripcion LIKE \'%'.$valor.'%\'')
+                        ->getQuery()->getOneOrNullResult();
+                    if(!$mercancia){
+                        $mercancia = new \PuertoUDES\CommonBundle\Entity\Mercancia();
+                        $mercancia->setDescripcion($valor);
+                        $em->persist($mercancia);
+                    }
+                    $obj->setMercancia($mercancia);
+                    $em->persist($obj);
+                    $em->flush();
+                    $valores['datos'] = $obj->json(false);
+                }
+                else if(strpos($nombre, 'lugar') !== false){
                     $lugar_pais = preg_split('/\s?,\s?/', ucwords($valor));
                     if(count($lugar_pais) <= 2 && count($lugar_pais) > 1){
                         $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
@@ -283,13 +301,24 @@ class FormatoController extends Controller
                     $em->persist($incoterm);
                     $em->flush();
                     $valores['datos'] = $obj->json(false);
+                }elseif(strpos($nombre, 'fecha') !== false){
+                    $valor = date('Y-m-d H:i:s',strtotime($valor.' '.date('H:i:s')));
+                    if($obj->$get()->format('Y-m-d H:i:s') != $valor){
+                        $obj->$set(new \DateTime($valor));
+                        $em->persist($obj);
+                        $em->flush();
+                        $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' fué actualizado.', 'tipo' => 'success');
+                        $valores['datos'] = $obj->json(false);
+                    }else{
+                        $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' ya tenía éste valor.', 'tipo' => 'info');
+                    }
                 }else{
                     if($obj->$get() != $valor){
                         $obj->$set($valor);
                         $em->persist($obj);
                         $em->flush();
                         $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' fué actualizado.', 'tipo' => 'success');
-                        $valores['datos'] = $obj->json();
+                        $valores['datos'] = $obj->json(false);
                     }else{
                         $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' ya tenía éste valor.', 'tipo' => 'info');
                     }
@@ -297,6 +326,12 @@ class FormatoController extends Controller
             }else{
                 $valores['msgs'][] = array('msg' => $entity.': Llena los demás datos y pulsa el botón guardar.', 'tipo' => 'warning');
             }
+        }
+        if($entity == 'gasto' && $nombre == 'valor' && is_a($obj, 'PuertoUDES\FormatosBundle\Entity\Gasto')){
+            $valores['datos'] = array_merge($valores['datos'],array(
+                'gastoRemitente' => $obj->getFormato()->getGastoTotalRemitente(),
+                'gastoDestinatario' => $obj->getFormato()->getGastoTotalDestinatario(),
+            ));
         }
         
         return JsonResponse::create(array(

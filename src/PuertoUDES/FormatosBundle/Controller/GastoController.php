@@ -257,7 +257,7 @@ class GastoController extends Controller
      * @Method({"POST","PUT"})
      * @Template("PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig")
      */
-    public function addDatosMercanciasCpicAjaxAction(Request $request){
+    public function addGastosCpicAjaxAction(Request $request){
         $filas = $request->get('filas', 0);
         $numero = $request->get('numero', 0);
         $concepto = $request->get('concepto',NULL);
@@ -353,12 +353,15 @@ class GastoController extends Controller
                         $em->persist($tipoGasto);
                         $em->persist($formato);
                         $em->flush();
-                        $datos['success']['msgs']['Formato'] = array(
-                            'msg' => 'Agregado "'.$gasto->getConcepto().'" ('.$gasto->getValor().')',
+                        $datos['success']['msgs']['Gasto'] = array(
+                            'msg' => 'Agregado "'.$gasto->getConcepto().'" ('.$gasto->getValor().$gasto->getMoneda()->getAbreviacion().')',
                             'tipo' => 'success'
                         );
                         $datos['id'] = $gasto->getId();
-                        $datos['datos'] = $gasto->json(false);
+                        $datos['datos'] = array_merge($gasto->json(false),array(
+                                'gastoRemitente' => $formato->getGastoTotalRemitente(),
+                                'gastoDestinatario' => $formato->getGastoTotalDestinatario(),
+                            ));
                     }
                     return JsonResponse::create($datos);
                 }else{
@@ -377,6 +380,65 @@ class GastoController extends Controller
             'rolUsuario'    =>  $rolUsuario,
             'tipo'          =>  $tipoGasto,
         );
+    }
+    
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Reset/en/{abreviacion}-{fila}/{numero}/", name="gasto_add_cpic_ajax_reset_")
+     * @Route("/Reset/en/{abreviacion}/{numero}/", name="gasto_add_cpic_ajax_reset")
+     * @Method({"DELETE"})
+     * @Template()
+     */
+    public function resetAjaxAction(Request $request){
+        $filas = $request->get('filas', 0);
+        $numero = $request->get('numero',NULL);
+        $abreviacion = strtolower($request->get('abreviacion',NULL));
+        $pk = $request->get('pk',NULL);
+        $entity = ucfirst($request->get('entity',NULL));
+        $bundle = ucfirst($request->get('bundle',NULL));
+        $em = $this->getDoctrine()->getManager();
+        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $abreviacion));
+        $datos = array(
+            'entity'        =>  $entity,
+            'bundle'        =>  $bundle,
+            'pk'            =>  $pk,
+            'fila'          =>  $filas,
+            'numero'        =>  $numero,
+            'abreviacion'   =>  $abreviacion,
+        );
+        if($tipo_mci){
+            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_mci->getId(), 'numero' => $numero));
+            if($formato && !is_null($pk)){
+                $obj = $em->getRepository('PuertoUDES'.$bundle.'Bundle:'.$entity)->find($pk);
+                if($obj){
+                    $em->remove($obj);
+                    $em->flush();
+                    $datos['datos'] = array(
+                        'gastoRemitente' => $formato->getGastoTotalRemitente(),
+                        'gastoDestinatario' => $formato->getGastoTotalDestinatario(),
+                    );
+                }else{
+                    $datos['msgs']['Formato'] = array(
+                        'msg' => 'Ya está limpio',
+                        'tipo' => 'danger'
+                    );
+                }
+            }else{
+                $datos['msgs']['Formato'] = array(
+                    'msg' => 'Formato no válido',
+                    'tipo' => 'danger'
+                );
+            }
+        }else{
+            $datos['msgs']['Formato'] = array(
+                'msg' => 'Tipo de Formato no válido',
+                'tipo' => 'danger'
+            );
+        }
+        if(!$request->isXmlHttpRequest())
+            throw $this->createNotFoundException('Lo siento, la Página no existe');
+        return JsonResponse::create($datos);
     }
     
     /**

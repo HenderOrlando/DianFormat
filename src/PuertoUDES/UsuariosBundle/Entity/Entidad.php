@@ -479,7 +479,7 @@ class Entidad
     {
         $a = array();
         foreach ($this->getPermisosPresentaServicios() as $pps) {
-            $a[$pps->getId()] = $pps->json($json);
+            $a[$pps->getId()] = $pps->json(false);
         }
         if(is_bool($json) && $json){
             return json_encode($a);
