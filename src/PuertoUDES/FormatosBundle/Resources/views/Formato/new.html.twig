@@ -1,18 +1,12 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    {% if only_form is defined %}
+    {% if form is defined %}
         {{ form(form) }}
     {% elseif entity.tipo is defined and entity.tipo.abreviacion is defined %}
         {% include 'PuertoUDESFormatosBundle:Formato:_' ~ entity.tipo.abreviacion ~ '.html.twig' with {
                 formato: entity
             } %}
-        {% if 'mci' in entity.tipo.abreviacion %}
-
-        {% elseif 'cpic' in entity.tipo.abreviacion %}
-        
-        {% endif %}
-            
     {% else %}
         <h1>Formato creation</h1>
 

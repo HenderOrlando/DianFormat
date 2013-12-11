@@ -191,4 +191,16 @@ class ObjetoB
         }
         return $a;
     }
+    public function getTokens($explode = true){
+        $a = $this->getPlaca().'\\'
+            .$this->getMarca().'\\'
+            .strtolower($this->getMarca()).'\\'
+            .strtolower($this->getPlaca()).'\\'
+            .  str_replace('-','\\',$this->getPlaca()).'\\'
+            .$this->getAnioFabrica().'\\';
+        if(is_bool($explode) && $explode){
+            $a = explode('\\', $a);
+        }
+        return $a;
+    }
 }

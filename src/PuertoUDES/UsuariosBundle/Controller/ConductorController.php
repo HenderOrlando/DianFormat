@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\UsuariosBundle\Entity\Conductor;
 use PuertoUDES\UsuariosBundle\Entity\Usuario;
@@ -21,6 +22,44 @@ use PuertoUDES\UsuariosBundle\Form\ConductorType;
 class ConductorController extends Controller
 {
 
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Lista/para/{name}/", name="list_typeahead_conductores_")
+     * @Template()
+     */
+    public function listTypeaheadAction(Request $request){
+        $list = array();
+        $entities = $this->getRepositorio()->findAll();
+        $name = $request->get('name','');
+        $propertyPath = new PropertyAccessor();
+        foreach($entities as $conductor){
+            $value = $propertyPath->getValue($conductor,$name);
+            if(is_null($value))
+                $value = '';
+            elseif(is_object($value))
+                $value = $value->__toString();
+            $list[] = array(
+                'value' =>  $value,
+                'tokens'=>  $conductor->getTokens(),
+                'datos' =>  $conductor->json(false)
+            );
+        }
+        if($name === 'nacionalidad')
+            return JsonResponse::create($this->listTypeaheadPaises($list));
+        return JsonResponse::create($list);
+    }
+    public function listTypeaheadPaises($list = array()){
+        $entities = $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Pais')->findAll();
+        foreach($entities as $pais){
+            $list[] = array(
+                'value' =>  $pais->getNacionalidad(),
+                'tokens'=>  $pais->getTokens(),
+                'datos' =>  $pais->json(false)
+            );
+        }
+        return $list;
+    }
     /**
      * Lists all Conductor entities.
      *

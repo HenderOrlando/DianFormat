@@ -4,14 +4,14 @@ use Doctrine\ORM\EntityRepository;
 
 class TipoRepository extends EntityRepository
 {
-    public function findAllOrderedByNombre()
-    {
-        return $this->getEntityManager()
-            ->createQuery(
-                'SELECT u FROM PuertoUDESFormatosBundle:Tipo u ORDER BY u.nombre ASC'
-            )
-            ->getResult();
-    }
+//    public function findAllOrderedByNombre()
+//    {
+//        return $this->getEntityManager()
+//            ->createQuery(
+//                'SELECT u FROM PuertoUDESCommonBundle:Tipo u ORDER BY u.nombre ASC'
+//            )
+//            ->getResult();
+//    }
     public function getAll($query = false, $querybuilder = false)
     {
         $q = $this->getEntityManager()

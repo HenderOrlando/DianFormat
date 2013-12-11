@@ -109,11 +109,11 @@ $(document).on('ready',function(){
                             addMsg(name+': '+msg, 'danger');
                         return ' ';
                     }else{
-                        hideMsg($("#mensajes .alert:contains('"+$(this).attr('data-emptytext')+"')"));
-                        hideMsg($("#mensajes .alert:contains('"+$(this).attr('data-entity-name')+"')"));
-                        var str = este.attr('data-entity-name'),
-                            f = str.charAt(0).toUpperCase();
-                        hideMsg($("#mensajes .alert:contains('"+f+str.substr(1)+"')"));
+//                        hideMsg($("#mensajes .alert:contains('"+$(this).attr('data-emptytext')+"')"));
+//                        hideMsg($("#mensajes .alert:contains('"+$(this).attr('data-entity-name')+"')"));
+//                        var str = este.attr('data-entity-name'),
+//                            f = str.charAt(0).toUpperCase();
+//                        hideMsg($("#mensajes .alert:contains('"+f+str.substr(1)+"')"));
                     }
                     if(typeof v === 'object'){
                         console.log(v)
@@ -126,11 +126,11 @@ $(document).on('ready',function(){
             }
         }).on('save.formato', function(){
             var that = $(this);
-            hideMsg($("#mensajes .alert:contains('"+$(this).attr('data-emptytext')+"')"));
-            hideMsg($("#mensajes .alert:contains('"+$(this).attr('data-entity-name')+"')"));
-            var str = $(this).attr('data-entity-name'),
-                f = str.charAt(0).toUpperCase();
-            hideMsg($("#mensajes .alert:contains('"+f+str.substr(1)+"')"));
+//            hideMsg($("#mensajes .alert:contains('"+$(this).attr('data-emptytext')+"')"));
+//            hideMsg($("#mensajes .alert:contains('"+$(this).attr('data-entity-name')+"')"));
+//            var str = $(this).attr('data-entity-name'),
+//                f = str.charAt(0).toUpperCase();
+//            hideMsg($("#mensajes .alert:contains('"+f+str.substr(1)+"')"));
             setTimeout(function() {
                 var obj = editable_object[editable_index[that.attr('id')]+1];
                 if(typeof obj !== 'undefined')
@@ -147,7 +147,7 @@ $(document).on('ready',function(){
             e.preventDefault();
             e.stopPropagation();
             var este = $(this), 
-            clase = 'a.'+este.attr('class').replace(/btn|-primary|-default|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|\sout|out$|pull-right|pull-left|\s/g, '');
+            clase = 'a.'+getClase(este.attr('class'));
             $(clase).not('.btn').editable('submit', {
                 url: este.attr('href'), 
                 ajaxOptions: {
@@ -177,7 +177,7 @@ $(document).on('ready',function(){
                             $(clase+'.carga-modal').attr('href',data.url).removeClass('out').addClass('in')
                         }
                         if(data.datos){
-                            validaDataName(data.datos);
+                            validaDataName(data.datos, clase);
                         }
                         $(clase+'.guardar').removeClass('in').addClass('out');
                         if(clase.search('carga') > 0 && clase.search('otra') < 0 ){
@@ -189,7 +189,7 @@ $(document).on('ready',function(){
 //                        $(this).off('save.formato');
 //                        if(!este.parent().hasClass('no-quitar'))
 //                            este.parent().removeClass('in').addClass('out');
-                    }else if(data && data.errors){
+                    }else if(data && (data.errors || data.msgs || data.valores.msgs || data.success)){
                         var errors = data.errors;
                         if(errors) {
                             if(errors.responseText)
@@ -201,9 +201,15 @@ $(document).on('ready',function(){
                             }
                         }else{
                             var success = data.success;
+                            if(typeof success.msg === 'undefined' || typeof success.msgs === 'undefined'){
+                                success = data;
+                            }
+                            if (typeof success.msg === 'undefined' || typeof success.msgs === 'undefined'){
+                                success = data.valores;
+                            }
                             if(success && typeof success.msg !== 'undefined') {
                                 addMsg(success.msg, success.tipo);
-                            } else {
+                            } else if (typeof success.msgs !== 'undefined'){
                                 $.each(success.msgs, function(k, v) {
                                     if(v.msg.search(/[\d\s]/))
                                         addMsg(k+": "+v.msg, v.tipo);
@@ -236,7 +242,7 @@ $(document).on('ready',function(){
             e.preventDefault();
             e.stopPropagation();
             var este = $(this), 
-            clase = 'a.'+este.attr('class').replace(/btn|-primary|-default|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|\sout|out$|pull-right|pull-left|\s/g, '');
+            clase = 'a.'+getClase(este.attr('class'));
             var obj = $(clase).not('.btn').first(), pk = obj.attr('data-pk');
             $(clase).not('.btn')
                 .attr('data-pk',' ')
@@ -270,7 +276,7 @@ $(document).on('ready',function(){
                     }
                 }
                 if(data.datos){
-                    validaDataName(data.datos);
+                    validaDataName(data.datos, clase);
                 }
             }).fail(function() {
                 console.log( "error" );
@@ -285,7 +291,7 @@ $(document).on('ready',function(){
             eliminar = '.eliminar';
         $(eliminar).each(function(){
             var este = $(this),
-                classname = este.attr('class').replace(/btn|-primary|-default|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|\sout|out$|pull-right|pull-left|\s/g, ''),
+                classname = getClase(este.attr('class')),
                 id = '#'+classname,
                 numChildren = $(id).parent().children().length;
             if(numChildren <= 1){
@@ -341,7 +347,7 @@ $(document).on('ready',function(){
         e.preventDefault();
         e.stopPropagation();
         var este = $(this),
-            clase = este.attr('class').replace(/btn|-primary|-default|agregar|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|\sout|out$|pull-right|pull-left|\s/g, ''),
+            clase = getClase(este.attr('class')),
             id = $('#'+clase),
             numChildren = id.children().length;
         console.log(clase)

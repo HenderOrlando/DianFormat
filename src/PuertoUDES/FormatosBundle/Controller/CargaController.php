@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\FormatosBundle\Entity\Carga;
 use PuertoUDES\FormatosBundle\Form\CargaType;
@@ -19,6 +21,44 @@ use PuertoUDES\FormatosBundle\Form\CargaType;
 class CargaController extends Controller
 {
 
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Lista/para/{name}/", name="list_typeahead_cargas_")
+     * @Template()
+     */
+    public function listTypeaheadAction(Request $request){
+        $list = array();
+        $entities = $this->getRepositorio()->findAll();
+        $name = $request->get('name','');
+        $propertyPath = new PropertyAccessor();
+        foreach($entities as $vehiculo){
+            $value = $propertyPath->getValue($vehiculo,$name);
+            if(is_null($value))
+                $value = '';
+            elseif(is_object($value))
+                $value = $value->__toString();
+            $list[] = array(
+                'value' =>  $value,
+                'tokens'=>  $vehiculo->getTokens(true),
+                'datos' =>  $vehiculo->json(false)
+            );
+        }
+        if($name === 'lugarCarga' || $name === 'lugarDescarga')
+            return JsonResponse::create($this->listTypeaheadLugares());
+        return JsonResponse::create($list);
+    }
+    public function listTypeaheadLugares($list = array()){
+        $entities = $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Lugar')->findAll();
+        foreach($entities as $lugar){
+            $list[] = array(
+                'value' =>  $lugar->__toString(),
+                'tokens'=>  $lugar->getTokens(),
+                'datos' =>  $lugar->json(false)
+            );
+        }
+        return $list;
+    }
     /**
      * Lists all Carga entities.
      *

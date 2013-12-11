@@ -70,6 +70,7 @@ class FormatoController extends Controller
                 'url'   => $url_,
                 'type'  => 'primary',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
+                'class' => 'carga-modal',
             ),
         );
         $datos = array(
@@ -80,7 +81,7 @@ class FormatoController extends Controller
             'datos_form'       =>  $data,
         );
         if($request->isXmlHttpRequest() || $request->get('ajax',false)){
-            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+            return $this->render('PuertoUDESCommonBundle:Plantilla:_menu.html.twig', $datos);
         }
         return $datos;
     }
@@ -142,7 +143,8 @@ class FormatoController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('formato__show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('formato__edit', array('id' => $entity->getId())));
+//            return $this->redirect($this->generateUrl('formato__show', array('id' => $entity->getId())));
         }
 
         return array(
@@ -163,9 +165,16 @@ class FormatoController extends Controller
         $form = $this->createForm(new FormatoType(), $entity, array(
             'action' => $this->generateUrl('formato__create'),
             'method' => 'POST',
+            'attr'   => array(
+                    'class'  =>  'inputBig form-horizontal',
+                    'role'   =>  'form'
+                )
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array(
+            'label' => 'Agregar',
+            'attr' => array('class' => 'btn btn-lg btn-success')
+        ));
 
         return $form;
     }
@@ -206,6 +215,13 @@ class FormatoController extends Controller
             $get = 'get'. ucfirst($nombre);
             if($entity == 'gasto' && $nombre == 'valor')
                 $valor = str_replace (',', '.', $valor);
+            if($nombre == 'pesoBruto' || $nombre == 'pesoNeto'){
+                $valor = str_replace (',', '.', $valor);
+                if(($nombre == 'pesoBruto' && $valor < $obj->getPesoNeto()) || ($nombre == 'pesoNeto' && $valor > $obj->getPesoBruto())){
+                    $valores['msgs'][] = array('msg' =>'Formato: El peso bruto debe ser mayor que el Peso Neto.', 'tipo' => 'danger');
+                    return JsonResponse::create($valores);
+                }
+            }
             if($obj){
                 if($entity === 'contenedorMercanciaFormato' && $nombre === 'descripcion' && is_a($obj, 'PuertoUDES\FormatosBundle\Entity\ContenedorMercanciaFormato')){
                     $mercancia = $em->getRepository('PuertoUDESCommonBundle:Mercancia')
@@ -307,33 +323,50 @@ class FormatoController extends Controller
                         $obj->$set(new \DateTime($valor));
                         $em->persist($obj);
                         $em->flush();
-                        $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' fué actualizado.', 'tipo' => 'success');
+                        $valores['msgs'][] = array('msg' => 'Formato: El '.$nombre.' fué actualizado.', 'tipo' => 'success');
                         $valores['datos'] = $obj->json(false);
                     }else{
-                        $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' ya tenía éste valor.', 'tipo' => 'info');
+                        $valores['msgs'][] = array('msg' => 'Formato: El '.$nombre.' ya tenía éste valor.', 'tipo' => 'info');
                     }
                 }else{
                     if($obj->$get() != $valor){
                         $obj->$set($valor);
                         $em->persist($obj);
                         $em->flush();
-                        $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' fué actualizado.', 'tipo' => 'success');
+                        $valores['msgs'][] = array('msg' => 'Formato: El '.$nombre.' fué actualizado.', 'tipo' => 'success');
                         $valores['datos'] = $obj->json(false);
                     }else{
-                        $valores['msgs'][] = array('msg' => $entity.': El '.$nombre.' ya tenía éste valor.', 'tipo' => 'info');
+                        $valores['msgs'][] = array('msg' => 'Formato: El '.$nombre.' que tenía era el mismo.', 'tipo' => 'info');
                     }
                 }
             }else{
-                $valores['msgs'][] = array('msg' => $entity.': Llena los demás datos y pulsa el botón guardar.', 'tipo' => 'warning');
+                $valores['msgs'][] = array('msg' => 'Formato: Llena los demás datos y pulsa el botón guardar.', 'tipo' => 'warning');
             }
         }
-        if($entity == 'gasto' && $nombre == 'valor' && is_a($obj, 'PuertoUDES\FormatosBundle\Entity\Gasto')){
-            $valores['datos'] = array_merge($valores['datos'],array(
-                'gastoRemitente' => $obj->getFormato()->getGastoTotalRemitente(),
-                'gastoDestinatario' => $obj->getFormato()->getGastoTotalDestinatario(),
-            ));
+        if(isset($valores['datos'])){
+            if($entity == 'gasto' && $nombre == 'valor' && is_a($obj, 'PuertoUDES\FormatosBundle\Entity\Gasto')){
+                $valores['datos'] = array_merge($valores['datos'],array(
+                    'gastoRemitente' => $obj->getFormato()->getGastoTotalRemitente(),
+                    'gastoDestinatario' => $obj->getFormato()->getGastoTotalDestinatario(),
+                ));
+            }elseif($nombre == 'pesoBruto'){
+                $valores['datos'] = array_merge($valores['datos'],array(
+                    'totalPesoBruto' => $obj->getFormato()->getTotalPesoBruto(),
+                ));
+            }elseif($nombre == 'pesoNeto'){
+                $valores['datos'] = array_merge($valores['datos'],array(
+                    'totalPesoNeto' => $obj->getFormato()->getTotalPesoNeto(),
+                ));
+            }elseif($nombre == 'volumen'){
+                $valores['datos'] = array_merge($valores['datos'],array(
+                    'totalVolumen' => $obj->getFormato()->getTotalVolumen(),
+                ));
+            }elseif($nombre == 'volumenOtro'){
+                $valores['datos'] = array_merge($valores['datos'],array(
+                    'totalVolumenOtro' => $obj->getFormato()->getTotalVolumenOtro(),
+                ));
+            }
         }
-        
         return JsonResponse::create(array(
             'name'   =>    $nombre,
             'value'  =>    $valor,
@@ -364,19 +397,19 @@ class FormatoController extends Controller
                 $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic'));
                 $formato->setTipo($tipo);
                 $formato->setPadre($formato_mci);
-                $formato->setNombre($tipo->getNombre().' de '. $formato_mci->getNombre());
+                $formato->setNombre($tipo->getNombre().' de ');
                 if($formato_mci->getTransportista()){
                     $formato->setTransportista($formato_mci->getTransportista());
                 }
-                if($numero > 0){
+                $pesoBruto = $request->get('pesoBruto', null);
+                $pesoNeto = $request->get('pesoNeto', null);
+                if($numero > 0 && $pesoBruto > $pesoNeto){
                     $formato->setNumero($numero);
                     $em->persist($formato);
                     $formato_mci->addHijo($formato);
                     $em->persist($formato_mci);
                     
                     $numBultos = $request->get('numBultos', null);
-                    $pesoBruto = $request->get('pesoBruto', null);
-                    $pesoNeto = $request->get('pesoNeto', null);
                     $volumen = $request->get('volumen', null);
                     $clase = $request->get('clase', null);
                     $marca = $request->get('marca', null);
@@ -496,14 +529,16 @@ class FormatoController extends Controller
      *
      * @Route("/nuevo/{abrevia}", name="formato__new_")
      * @Route("/nuevo/", name="formato__new")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      * @Template()
      */
     public function newAction($abrevia = null)
     {
         $entity = new Formato();
         $em = $this->getDoctrine()->getManager();
-        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($abrevia?$abrevia:'mci')));
+        $tipo = null;
+        if(!is_null($abrevia))
+            $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($abrevia)));
         $numero = $this->getRepositorio()->countFormatos()+1;
 //        $entity->setNumero($numero);
         if($tipo){
@@ -516,10 +551,18 @@ class FormatoController extends Controller
 //        else{
 //            throw $this->createNotFoundException('No encontrado el Tipo de Formato.');
 //        }
-//        $form   = $this->createCreateForm($entity);
-//
-//        $datos['form'] = $form->createView();
+        $form   = $this->createCreateForm($entity);
 
+        $datos['form'] = $form->createView();
+
+        if($this->getRequest()->isXmlHttpRequest()){
+            $datos['claseContentForm'] = 'text-center';
+            return JsonResponse::create (array(
+                    'ajaxForm'  =>   false,
+                    'title'     =>   'Agregar Formato '.($tipo?$tipo->getNombre():''),
+                    'body'      =>   $this->renderView('PuertoUDESCommonBundle:Plantilla:_new.html.twig', $datos)
+                ));
+        }
         return $datos;
     }
 

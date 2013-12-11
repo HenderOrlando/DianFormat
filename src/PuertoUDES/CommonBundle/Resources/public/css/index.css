@@ -137,7 +137,7 @@ form.in,
 
 /******************** FORMATOS-MCI ********************/
 .hoja_carta_formato{
-    height: 27.9cm;
+    /*height: 27.9cm;*/
     width: 21.6cm;
     margin: 0 auto;
     box-shadow: 0 0 15px -4px;
@@ -314,6 +314,9 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
 .row .enunciado .btns-action-left{
     left: -10px;
 }
+.enunciado{
+    text-align: left;
+}
 .hoja_carta_formato table table#pad-contenedor tr td{
     border: none;
     padding-top: 15px;
@@ -343,6 +346,9 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
     a.editable[href]:after {
       content: "";
     }
+    .imita{
+        border-color: transparent;
+    }
 }
 .mediano,
 td.mediano{
@@ -356,6 +362,9 @@ td.grande{
 td.extra{
     height: 100px;
 }
+.table-striped>tbody>tr:nth-child(odd)>td.border-none,
+.table-striped>tbody>tr:nth-child(odd)>th.border-none,
+table tr.border-none td:not(.border-l):not(.border-r),
 table tr td.border-none{
     border:none;
     border-color: transparent;
@@ -455,4 +464,43 @@ table tbody tr th .row:focus > div .btns-action-right{
 }
 .text-left {
     text-align: left !important;
+}
+.table thead>tr>th:not(.title), 
+.table tbody>tr>th:not(.title), 
+.table tfoot>tr>th:not(.title), 
+.table thead>tr>td:not(.title), 
+.table tbody>tr>td:not(.title), 
+.table tfoot>tr>td:not(.title){
+    padding-top: 0;
+}
+.no-border-right{
+    border-right: none;
+    border-right-color: transparent;
+}
+.no-border-left{
+    border-left: none;
+    border-left-color: transparent;
+}
+.no-border-top{
+    border-top: none !important;
+    border-top-color: transparent;
+}
+.no-border-bottom{
+    border-bottom: none !important;
+    border-bottom-color: transparent;
+}
+.text-midle{
+    vertical-align: middle !important;
+}
+table>tbody>tr>td.border-l{
+    border-top: none;
+    border-bottom: none;
+    border-left-width: 1px;
+    border-left-style: solid;
+}
+table>tbody>tr>td.border-r{
+    border-top: none;
+    border-bottom: none;
+    border-right-width: 1px;
+    border-right-style: solid;
 }

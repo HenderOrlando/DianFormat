@@ -17,9 +17,29 @@ class FormatoType extends AbstractType
         $builder
             ->add('numero')
             ->add('nombre')
-            ->add('descripcion')
-            ->add('tipo')
+            ->add('descripcion', null, array(
+                'attr' => array(
+                    'class' => 'input-lg'
+                )
+            ))
         ;
+        $info = array(
+            'label' => 'Tipo de Formato',
+            'empty_value' => 'Elija una Opción',
+            'class'         =>  'PuertoUDESCommonBundle:Tipo',
+            'query_builder' =>  function(\Doctrine\ORM\EntityRepository $er) {
+                return $er->createQueryBuilder('t')
+                    ->andWhere("t.aplicableA LIKE '%formato%'")
+                    ->orderBy('t.nombre', 'ASC');
+            }
+        );
+        if(isset($options['data']) && $options['data']->getTipo() !== null){
+            $info = array_merge($info,array(
+                'label' => ' ',
+                'attr'  =>  array('class' => 'hide')
+            ));
+        }
+        $builder->add('tipo', 'entity', $info);
     }
     
     /**

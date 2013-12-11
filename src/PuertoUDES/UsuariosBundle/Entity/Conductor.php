@@ -462,4 +462,29 @@ class Conductor
     {
         return $this->getUsuario()->getGastos();
     }
+    
+    public function json($json = true, $permisos = false){
+        $a = array(
+            'usuario'               => $this->getUsuario()->json(false),
+            'pais'                  => $this->getPais()->json(false),
+            'numLibretaTripulante'  => $this->getNumLibretaTripulante(),
+            'numLicenciaConducir'   => $this->getNumLicencia(),
+            'claseLicencia'         => $this->getClaseLicencia(),
+        );
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+    
+    public function getTokens($explode = true){
+        $a = $this->getUsuario()->getTokens(false)
+            .'\\'.$this->getNumLibretaTripulante()
+            .'\\'.$this->getClaseLicencia()
+            .'\\'.$this->getNumLicencia();
+        if(is_bool($explode) && $explode){
+            $a = explode('\\', $a);
+        }
+        return $a;
+    }
 }

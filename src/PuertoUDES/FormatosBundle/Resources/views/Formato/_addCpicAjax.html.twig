@@ -3,27 +3,29 @@ fila        Número de la Fila
 formato     Formato CPIC a mostrar
 numero      Número del Manifiesto de Carga
 #}
-<tr id="cpic-{{fila}}">
+{% for cmf in formato.contenedoresMercancias%}
+
+<tr id="cpic-{{fila ~ loop.index0}}" class="border-none">
     <td class="valor-cpic">
         {% if formato.padre is defined %}
             <div class="row">
                 <div>
-                    <div id="opciones-cpic{{ fila }}" class="opciones-filas text-left pull-left no-quitar btns-action-left {{ formato.id is not empty?'mas':'' }}">
+                    <div id="opciones-cpic{{ fila ~ loop.index0 }}" class="opciones-filas text-right pull-left no-quitar btns-action-left {{ formato.id is not empty?'mas':'' }}">
                         {% set botons = [
                                 {
-                                    'class' :   'eliminar cpic-' ~ fila ~ ' animate pull-right',
+                                    'class' :   'eliminar cpic-' ~ fila ~ loop.index0 ~ ' animate pull-right',
                                     'type'  :   'danger',
                                     'label' :   '<span class="glyphicon glyphicon-trash"></span>',
                                 },
                                 {
-                                    'class' :   'reset cpic' ~ fila ~ '-crear animate pull-right',
+                                    'class' :   'reset cpic' ~ fila ~ loop.index0 ~ '-crear animate pull-right',
                                     'type'  :   'warning',
                                     'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
                                 },
                                 {
                                     'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
                                     'type'  :   'primary',
-                                    'class' :   'guardar cpic' ~ fila ~ '-crear animate pull-right',
+                                    'class' :   'guardar cpic' ~ fila ~ loop.index0 ~ '-crear animate pull-right ' ~ (formato.id is not empty?'out':'in'),
                                     'url'   :   url('formato_add_cpic_ajax',{
                                                     numero_mci: numero,
                                                     save: true,
@@ -34,7 +36,7 @@ numero      Número del Manifiesto de Carga
                             {% set botons = botons | merge([{
                                     'label' :   '<span class="glyphicon glyphicon-eye-open"></span>',
                                     'type'  :   'success',
-                                    'class' :   'cpic' ~ fila ~ '-crear animate pull-right',
+                                    'class' :   'cpic' ~ fila ~ loop.index0 ~ '-crear animate pull-right',
                                     'url'   :   url('formato__edit',{
                                                     id: formato.id,
                                                 }),
@@ -51,13 +53,13 @@ numero      Número del Manifiesto de Carga
             </div>
         {% endif %}
         {#<div class="row">
-            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{fila}}">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila ~ loop.index0 }}">
                 28- Carta de Porte N°
             </div>
         </div>#}
         <div class="row">
             <div class="col-lg-12 col-md-12">
-                <a href="#" id="cpic{{ fila }}-numero-" class="xeditable cpic{{fila}}-crear" 
+                <a href="#" id="cpic{{ fila ~ loop.index0 }}-numero-" class="xeditable cpic{{ fila ~ loop.index0 }}-crear" 
                    data-placement="top" 
                    data-name="numero" 
                    data-type="text" 
@@ -74,16 +76,15 @@ numero      Número del Manifiesto de Carga
             </div>
         </div>
     </td>
-    <td class="valor-cpic" colspan="6">
+    <td class="valor-cpic" colspan="4">
         {#<div class="row">
-            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{fila}}">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila ~ loop.index0 }}">
                 29- Descripción de las mercancías
             </div>
         </div>#}
-        {% set cmf = formato.contenedoresMercancias is defined and formato.contenedoresMercancias is not empty?formato.contenedoresMercancias|first:formato.contenedoresMercancias %}
         <div class="row">
             <div class="col-lg-12 col-md-12">
-                <a href="#" id="cpic{{ fila }}-descripcion" class="xeditable cpic{{fila}}-crear" 
+                <a href="#" id="cpic{{ fila ~ loop.index0 }}-descripcion" class="xeditable cpic{{ fila ~ loop.index0 }}-crear" 
                    data-placement="top" 
                    data-name="descripcion" 
                    data-type="text" 
@@ -102,13 +103,13 @@ numero      Número del Manifiesto de Carga
     </td>
     <td class="valor-cpic">
         {#<div class="row">
-            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{fila}}">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila ~ loop.index0 }}">
                 30- Catidad de los bultos
             </div>
         </div>#}
         <div class="row">
             <div class="col-lg-12 col-md-12">
-                <a href="#" id="cpic{{ fila }}-num-bultos" class="xeditable cpic{{fila}}-crear" 
+                <a href="#" id="cpic{{ fila ~ loop.index0 }}-num-bultos" class="xeditable cpic{{ fila ~ loop.index0 }}-crear" 
                    data-placement="top" 
                    data-name="numBultos" 
                    data-type="text" 
@@ -125,15 +126,15 @@ numero      Número del Manifiesto de Carga
             </div>
         </div>
     </td>
-    <td class="valor-cpic">
+    <td class="valor-cpic" colspan="2">
         {#<div class="row">
-            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{fila}}">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila ~ loop.index0 }}">
                 31- Clase y marca de los bultos
             </div>
         </div>#}
         <div class="row">
             <div class="col-lg-12 col-md-12">
-                <a href="#" id="cpic{{ fila }}-clase" class="xeditable cpic{{fila}}-crear" 
+                <a href="#" id="cpic{{ fila ~ loop.index0 }}-clase" class="xeditable cpic{{ fila ~ loop.index0 }}-crear" 
                    data-placement="top" 
                    data-name="clase" 
                    data-type="text" 
@@ -147,7 +148,7 @@ numero      Número del Manifiesto de Carga
                    data-required="Vacio,NumerosLetrasConectores">
                     {{- cmf is not empty and cmf.bulto is defined? cmf.bulto.clase:'' -}}
                 </a> - 
-                <a href="#" id="cpic{{ fila }}-marca" class="xeditable cpic{{fila}}-crear" 
+                <a href="#" id="cpic{{ fila ~ loop.index0 }}-marca" class="xeditable cpic{{ fila ~ loop.index0 }}-crear" 
                    data-placement="top" 
                    data-name="marca" 
                    data-type="text" 
@@ -164,15 +165,15 @@ numero      Número del Manifiesto de Carga
             </div>
         </div>
     </td>
-    <td class="valor-cpic">
+    <td class="valor-cpic border-l  border-r">
         {#<div class="row">
-            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{fila}}">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila ~ loop.index0 }}">
                 32- Peso Bruto en Kilogramos
             </div>
         </div>#}
         <div class="row">
             <div class="col-lg-12 col-md-12">
-                <a href="#" id="cpic{{ fila }}-peso-bruto" class="xeditable cpic{{fila}}-crear" 
+                <a href="#" id="cpic{{ fila ~ loop.index0 }}-peso-bruto" class="xeditable cpic{{ fila ~ loop.index0 }}-crear" 
                    data-placement="top" 
                    data-name="pesoBruto" 
                    data-type="text" 
@@ -184,20 +185,20 @@ numero      Número del Manifiesto de Carga
                    data-emptytext="Peso Bruto" 
                    data-placeholder="Peso Bruto de los Bultos de la Mercancía del Formulario CPIC" 
                    data-required="NoVacio,NumerosConectores">
-                    {{- cmf is not empty?cmf.pesoBruto:'' -}}
+                    {{- cmf is not empty?(cmf.pesoBruto > 0?cmf.pesoBruto:''):'' -}}
                 </a>
             </div>
         </div>
     </td>
-    <td class="valor-cpic">
+    <td class="valor-cpic border-l  border-r">
         {#<div class="row">
-            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{fila}}">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila ~ loop.index0 }}">
                 32- Peso Neto en Kilogramos
             </div>
         </div>#}
         <div class="row">
             <div class="col-lg-12 col-md-12">
-                <a href="#" id="cpic{{ fila }}-peso-neto" class="xeditable cpic{{fila}}-crear" 
+                <a href="#" id="cpic{{ fila ~ loop.index0 }}-peso-neto" class="xeditable cpic{{ fila ~ loop.index0 }}-crear" 
                    data-placement="top" 
                    data-name="pesoNeto" 
                    data-type="text" 
@@ -209,20 +210,20 @@ numero      Número del Manifiesto de Carga
                    data-emptytext="Peso Neto" 
                    data-placeholder="Peso Neto de los Bultos de la Mercancía del Formulario CPIC" 
                    data-required="NoVacio,NumerosConectores">
-                    {{- cmf is not empty?cmf.pesoNeto:'' -}}
+                    {{- cmf is not empty?(cmf.pesoNeto > 0?cmf.pesoNeto:''):'' -}}
                 </a>
             </div>
         </div>
     </td>
-    <td class="valor-cpic">
+    <td class="valor-cpic" colspan="2">
         {#<div class="row">
-            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{fila}}">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila ~ loop.index0 }}">
                 33- Volumen en m3 u otra unidad de medida
             </div>
         </div>#}
         <div class="row">
             <div class="col-lg-12 col-md-12">
-                <a href="#" id="cpic{{ fila }}-volumen" class="xeditable cpic{{fila}}-crear" 
+                <a href="#" id="cpic{{ fila ~ loop.index0 }}-volumen" class="xeditable cpic{{ fila ~ loop.index0 }}-crear" 
                    data-placement="top" 
                    data-name="volumen" 
                    data-type="text" 
@@ -234,9 +235,24 @@ numero      Número del Manifiesto de Carga
                    data-emptytext="Volumen" 
                    data-placeholder="Volumen de los Bultos de la Mercancía del Formulario CPIC" 
                    data-required="Vacio,NumerosConectores">
-                    {{- cmf is not empty?cmf.volumen:'' -}}
+                    {{- cmf is not empty?(cmf.volumen > 0?cmf.volumen:''):'' -}}
+                </a> <br/>
+                <a href="#" id="cpic{{ fila ~ loop.index0 }}-volumenOtro" class="xeditable cpic{{ fila ~ loop.index0 }}-crear" 
+                   data-placement="top" 
+                   data-name="volumenOtro" 
+                   data-type="text" 
+                   data-pk="{{- cmf is not empty and cmf.id is defined?cmf.id:' ' -}}"
+                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                   data-original-title="Otra unidad de Volumen de los Bultos de la Mercancía del Formulario CPIC" 
+                   data-entity-name="contenedorMercanciaFormato"
+                   data-entity-bundle="formatos" 
+                   data-emptytext="Otro Volumen" 
+                   data-placeholder="Otro Volumen de los Bultos de la Mercancía del Formulario CPIC" 
+                   data-required="Vacio,NumerosConectores">
+                    {{- cmf is not empty?(cmf.volumen > 0?cmf.volumen:''):'' -}}
                 </a>
             </div>
         </div>
     </td>
 </tr>
+{% endfor %}

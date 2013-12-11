@@ -50,8 +50,8 @@ required        Lista de requisitos (validaciones en el cliente) para enviar los
 {% set datos = datos is defined and datos is not empty? datos : {tipo: entityName} %}
 {% set url = url is defined and url is not empty?('/' in url? url : url(url,datos) ): url('formato_edit_campo', datos) %}
 {% set originalTitle = originalTitle is defined and originalTitle is not empty? originalTitle : 'Actualizar' %}
-{% set emptyText = emptyText is defined and emptyText is not empty? emptyText : originalTitle %}
-{% set placeholder = (placeholder is defined and placeholder is not empty? placeholder : originalTitle)|replace({'_':' '}) %}
+{% set emptyText = (emptyText is defined and emptyText is not empty? emptyText : originalTitle) | replace({'_':' '}) %}
+{% set placeholder = placeholder is defined and placeholder is not empty? placeholder : originalTitle %}
 {% set required = required is defined and required is not empty? required : 'NoVacio' %}
 {% set valor = valor is defined and valor is not empty? valor : '' %}
 {% set prefetch = prefetch is defined and prefetch is not empty? prefetch : '' %}
@@ -75,4 +75,5 @@ required        Lista de requisitos (validaciones en el cliente) para enviar los
     {% endif %}
     data-placeholder="{{- placeholder -}}" 
     {{ prefetch is not empty? 'data-prefetch=' ~ prefetch:'' }}
+    {{ multiple is defined and 'typeahead' in type? 'data-multiple=' ~ multiple:'' }}
     data-required="{{- required -}}">{% if valor is not null and valor is not empty and 'fecha' in name %}{{- valor |date('d-M-Y') -}}{% else %}{{- valor|nl2br -}}{% endif %}</a>

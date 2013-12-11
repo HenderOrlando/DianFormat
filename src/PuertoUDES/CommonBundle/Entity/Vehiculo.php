@@ -116,4 +116,26 @@ class Vehiculo extends \PuertoUDES\CommonBundle\Entity\ObjetoB
     public function certificaHabilita(){
         return $this->getCertificadoHabilitacion();
     }
+    
+    public function json($json = true, $permisos = false){
+        $a = array_merge(parent::json(false),array(
+            'numeroSerieChasis'      => $this->getNumeroSerieChasis(),
+            'certificadoHabilitacion'=> $this->getCertificadoHabilitacion(),
+        ));
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+    
+    public function getTokens($explode = true){
+        $a = parent::getTokens(false)
+            .'\\'.$this->getCertificadoHabilitacion()
+            .'\\'.  str_replace('-','\\',$this->getCertificadoHabilitacion())
+            .'\\'.$this->getNumeroSerieChasis();
+        if(is_bool($explode) && $explode){
+            $a = explode('\\', $a);
+        }
+        return $a;
+    }
 }

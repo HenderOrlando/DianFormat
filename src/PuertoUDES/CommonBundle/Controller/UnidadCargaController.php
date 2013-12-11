@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\CommonBundle\Entity\UnidadCarga;
 use PuertoUDES\CommonBundle\Form\UnidadCargaType;
@@ -19,7 +20,44 @@ use PuertoUDES\CommonBundle\Form\UnidadCargaType;
  */
 class UnidadCargaController extends Controller
 {
-
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Lista/para/{name}/", name="list_typeahead_unidades_carga_")
+     * @Template()
+     */
+    public function listTypeaheadAction(Request $request){
+        $list = array();
+        $entities = $this->getRepositorio()->findAll();
+        $name = $request->get('name','');
+        $propertyPath = new PropertyAccessor();
+        foreach($entities as $unidadCarga){
+            $value = $propertyPath->getValue($unidadCarga,$name);
+            if(is_null($value))
+                $value = '';
+            elseif(is_object($value))
+                $value = $value->__toString();
+            $list[] = array(
+                'value' =>  $value,
+                'tokens'=>  $unidadCarga->getTokens(true),
+                'datos' =>  $unidadCarga->json(false)
+            );
+        }
+        if($name === 'pais')
+            return JsonResponse::create($this->listTypeaheadPaises($list));
+        return JsonResponse::create($list);
+    }
+    public function listTypeaheadPaises($list = array()){
+        $entities = $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Pais')->findAll();
+        foreach($entities as $pais){
+            $list[] = array(
+                'value' =>  $pais->getNombre(),
+                'tokens'=>  $pais->getTokens(),
+                'datos' =>  $pais->json(false)
+            );
+        }
+        return $list;
+    }
     /**
      * Displays a form to create a new Entidad entity.
      *

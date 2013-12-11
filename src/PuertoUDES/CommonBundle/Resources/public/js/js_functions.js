@@ -68,32 +68,33 @@
         to_msg;
     function addMsg(msg, type_alert){
     	if(typeof type_alert === 'boolean'){
-    		type_alert = type_alert?'error':'success';
+            type_alert = type_alert?'error':'success';
     	}
     	if(typeof type_alert === 'undefined'){
-    		type_alert = 'info';
+            type_alert = 'info';
     	}
     	if(typeof msg !== 'undefined'){
-            var m = $('<div class="span2 alert alert-'+(type_alert)+' msg-json in"><button type="button" class="close" data-dismiss="alert">×</button>'+msg+'</div>');
+            var m = $('<div class="span2 alert alert-'+(type_alert)+' msg-json animate out"><button type="button" class="close" data-dismiss="alert">×</button>'+msg+'</div>');
             $(m).bind('closed.bs.alert', function () {
                 if($('#mensajes').children().length <= 1)
                     hideMsg();
             });
-            $('#mensajes').append(m);
+            $('#mensajes').prepend(m);
             showMsg(m);
     	}
     	showMsg();
     }
     function showMsg(m){
-        if(typeof $(m) !== 'undefined' && !$(m).hasClass('alert'))
+        if(typeof $(m) !== 'undefined' && $(m).hasClass('alert'))
             $(m).removeClass('out').addClass('animate in');
-        else
+        else{
             $('#mensajes').removeClass('out').addClass('animate in');
+        }
     }
     function hideMsg(m){
         if(typeof m !== 'undefined'){
             $(m).removeClass('in').addClass('out');
-            $(m).find('.close').click();
+//            $(m).find('.close').click();
         }
         else
             $('#mensajes').removeClass('in').addClass('out');
@@ -107,7 +108,15 @@
             $('button.glyphicon').text('');
         }
         $('.mensajes').children().appendTo('#mensajes');
-        if($('.mensajes').length){
+        if($('form.inputBig').length){
+            $('form.inputBig').find('input, textarea, select').addClass('input-lg');
+        }
+        if($('form.inputFull').length){
+            $('form.inputFull')
+                    .find('input, textarea, select')
+                    .addClass('col-lg-10 col-md-10 col-lg-offset-1 col-md-offset-1');
+        }
+        if($('#mensajes').length){
             $('#mensajes')
                 .addClass('animate in')
                 .children()
@@ -210,7 +219,8 @@
                 $('#mTitle').html(response.title);
                 $('#mBody').html(response.body);
                 arreglaAjax();
-                formAjax('#mBody');
+                if(typeof response.ajaxForm === 'undefined')
+                    formAjax('#mBody');
                 modal.modal('show');
                 modal.on('hidden.bs.modal', function (e) {
                     $('#mTitle').html('Titulo');
@@ -228,7 +238,7 @@
         if(typeof id === 'undefined'){
             id = 'body';
         }
-        var metodo = $('#mBody').find('input[name="_method"]').attr('value');
+        var metodo = $(id).find('input[name="_method"]').attr('value');
         if(metodo !== 'PUT')
             metodo = 'POST';
         $(id).find('form').on('submit', function(e){
@@ -322,52 +332,61 @@
                 return getParamsXEditable(params, este);
             },
             success: function(response, val) {
-                if(typeof response.values.datos !== 'undefined'){
-                    console.log(response.datos);
-                }
                 if(response.status == 'error') 
                     return response.msg; //msg will be shown in editable form
-                var msgs = new Array();
+                var msgs = new Array(), ok = true;
                 if(typeof response.value !== 'undefined'){
                     $(este).text(response.value);
                 }
                 //Mensajes
                 if(typeof response.msgs !== 'undefined'){
                     msgs = response.msgs;
-                }else if(typeof response.values.msgs !== 'undefined'){
+                }else if(typeof response.values !== 'undefined' && typeof response.values.msgs !== 'undefined'){
                     msgs = response.values.msgs;
-                }else if(typeof response.msgs !== 'undefined'){
-                    msgs = response.msgs;
                 }
                 //Datos
                 if(typeof response.datos !== 'undefined'){
                     var datos = response.datos;
-                }else if(typeof response.values.datos !== 'undefined'){
+                }else if(typeof response.values !== 'undefined' && typeof response.values.datos !== 'undefined'){
                     datos = response.values.datos;
                 }
                 if(typeof datos !== 'undefined'){
-                    validaDataName(datos);
+                    validaDataName(datos, getClase(este.attr('class')));
                 }
                 if(typeof response.id !== 'undefined'){
                     console.log(response.id);
                     este.attr('data-pk',response.id);
                     este.editable('option', 'pk', response.id);
                 }
-                for(var i in msgs)
-                    if(msgs[i] !== '' && msgs[i] !== ' ')
+                for(var i in msgs){
+                    if(typeof msgs[i]['tipo'] === 'undefined')
+                        msgs[i]['tipo'] = 'warning';
+                    if(typeof msgs[i]['msg'] !== 'undefined')
                         addMsg(msgs[i]['msg'], msgs[i]['tipo']);
+                    if(msgs[i]['tipo'] === 'danger')
+                        ok = false;
+                }
+                if(ok){
+                    console.log(val);
+                    console.log(datos);
+                }
+                return ok;
             }
         };
         if(este.attr('data-type') === 'typeaheadjs'){
-            var prefetch = typeof este.attr('data-prefetch') !== 'undefined'?este.attr('data-prefetch').replace('"',''):{};
-            $.extend(datos, {
-                typeahead: {
-                    name: este.attr('data-name'),
-                    prefetch: prefetch,
-                    ttl:    5000,
+            var prefetch = typeof este.attr('data-prefetch') !== 'undefined'?este.attr('data-prefetch').replace('"',''):{},
+                datosTypeahead = {
+                    name: este.attr('data-entity-name') + '_' + este.attr('data-name'),
+                    prefetch: {
+                        url: prefetch,
+                        ttl: '0'
+                    },
+                    limit:  10,
                     template: function(item) {
-                        if(este.attr('data-entity-name') === 'usuario'){
-                            var entidad = item.datos, usuario = entidad.usuario, lugar = entidad.lugar, ret = '<h5>'+usuario.nombre + ' NIT.' + usuario.doc_id+'</h5>';
+                        if(typeof item.datos.usuario !== 'undefined'){
+                            var entidad = item.datos, usuario = entidad.usuario, 
+                                lugar = entidad.lugar,
+                                ret = '<h5>'+usuario.nombre + (typeof usuario.apellido !== 'undefined'?' '+usuario.apellido+' ':'') + ' NIT.' + usuario.doc_id+'</h5>';
                             if(este.attr('data-name') === 'lugar' && typeof lugar['nombre'] !== 'undefined')
                                 ret += '<p>'+lugar.nombre+', '+lugar.pais.nombre+'</p>';
                             else if(typeof entidad[este.attr('data-name')] === 'undefined'){
@@ -379,15 +398,57 @@
                             return ret;
                         }
                         else if(este.attr('data-name') === 'moneda'){
-                            var moneda = item.datos, ret = '<h5>' + moneda.abreviacion + '</h5> <h6>' + moneda.nombre + '</h6>';
+                            var moneda = item.datos, 
+                                ret = '<h5>' + moneda.abreviacion + '</h5> <h6>' + moneda.nombre + '</h6>';
                             return ret;
                         }
-                        return item.value; 
-                    } 
-                }
+                        else if(este.attr('data-entity-name') === 'vehiculo' || este.attr('data-entity-name') === 'unidadCarga' || este.attr('data-entity-name') === 'otraUnidadCarga'){
+                            var vehiculo = item.datos, 
+                                ret = '<h5>' + vehiculo.placa + '</h5> <h6>' + (typeof vehiculo.numeroSerieChasis === 'undefined'?vehiculo.marca:vehiculo.numeroSerieChasis) + '</h6>';
+                            if(typeof vehiculo.placa === 'undefined'){
+                                ret = '<h5>' + vehiculo.nombre + '</h5>';
+                            }
+                            else if(typeof vehiculo[este.attr('data-name')] !== 'undefined' && este.attr('data-name') !== 'placa' && este.attr('data-name') !== 'chasis'){
+                                if(este.attr('data-name') === 'pais')
+                                    ret += '<p>' + vehiculo['pais'].nombre + '</p>';
+                                else
+                                    ret += '<p>' + vehiculo[este.attr('data-name')] + '</p>';
+                            }
+                            return ret;
+                        }
+                        return '<h5>' + item.value + '</h5>'; 
+                    }
+                };
+            if(typeof este.attr('data-multiple') !== 'undefined'){
+                datosTypeahead =$.extend(datosTypeahead,{
+                    updater: function(item) {
+                        return this.$element.val().replace(/[^,]*$/,'')+item+',';
+                    },
+                    matcher: function (item) {
+                      var tquery = extractor(this.query);
+                      if(!tquery) return false;
+                      return ~item.toLowerCase().indexOf(tquery.toLowerCase());
+                    },
+                    highlighter: function (item) {
+
+                      var query = extractor(this.query).replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+                      return item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+                        return '<strong>' + match + '</strong>';
+                      });
+                    }
+                });
+            }
+            $.extend(datos, {
+                typeahead: datosTypeahead
             });
         }
         $(este).editable(datos);
+    }
+    function extractor(query) {
+        var result = /([^,]+)$/.exec(query);
+        if(result && result[1])
+            return result[1].trim();
+        return '';
     }
     /*
      * 
@@ -505,11 +566,25 @@
          });
     }
     
-    function validaDataName(datos){
+    function validaDataName(datos,clase){
+        if(typeof clase === 'undefined' || clase.indexOf('remitente') > -1 || clase.indexOf('destinatario') > -1)
+            clase = '';
+        else
+            clase = '.'+clase;
         for(var name in datos){
             if(datos[name] !== 'null'){
-                var d = $('[data-name="'+name+'"]'), val = '';
-                if(
+                var d = $(clase+'[data-name="'+name+'"]'), val = '';
+                if(name.indexOf('total') > -1){
+                    clase = '';
+                    var d = $('[data-name="'+name+'"]'), 
+                        x = name.replace('totalP','p').replace('totalV','v'), 
+                        val = 0;
+                    $('[data-name="'+x+'"]').each(function(){
+                        val += $(this).text()*1;
+                    });
+                    d.text(val.toFixed(4));
+                }
+                else if(
                     name.indexOf('peso') > -1 || (name.indexOf('volumen') > -1 && datos[name] > 0) ||
                     name.indexOf('gastoRemitente') > -1 || name.indexOf('gastoDestinatario') > -1
                 ){
@@ -518,4 +593,8 @@
                 }
             }
         }
+    }
+    
+    function getClase(clase){
+        return clase.replace(/btn|-primary|-default|xeditable|editable-open|editable-click|editable|agregar|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|\sout|out$|pull-right|pull-left|\s/g, '')
     }

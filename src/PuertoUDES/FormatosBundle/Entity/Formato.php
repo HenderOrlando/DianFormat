@@ -129,6 +129,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $totalVolumen;
     private $totalVolumenOtro;
     
+    private $gastoTotalMercancias;
     private $gastoTotalRemitente;
     private $gastoTotalDestinatario;
     
@@ -152,7 +153,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->datosMercancias = new \Doctrine\Common\Collections\ArrayCollection();
         $this->condiciones = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->totalPesoBruto = $this->totalPesoNeto = $this->totalVolumen = $this->totalVolumenOtro = $this->gastoTotalDestinatario = $this->gastoTotalRemitente = 0;
+        $this->totalPesoBruto = $this->totalPesoNeto = $this->totalVolumen = $this->totalVolumenOtro = $this->gastoTotalDestinatario = $this->gastoTotalRemitente = $this->gastoTotalMercancias = 0;
     }
     
     /**
@@ -569,12 +570,17 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     /**
      * Get gastosMercancias
      * 
-     * @return \PuertoUDES\FormatosBundle\Entity\Gasto 
+     * @return \Doctrine\Common\Collections\Collection 
      */
     public function getGastoMercancias()
     {
-        if(empty($this->gastoMercancias)){
+        if(count($this->gastoMercancias) <= 0){
             $this->loadGastos();
+            $gm = $this->gastoMercancias;
+            foreach ($this->getHijos() as $f) {
+                $gm = new \Doctrine\Common\Collections\ArrayCollection(array_merge($gm->toArray(),$f->getGastoMercancias()->toArray()));
+            }
+            $this->gastoMercancias = $gm;
         }
         return $this->gastoMercancias;
     }
@@ -1013,6 +1019,25 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         }
         return $this->gastoTotalDestinatario;
     }
+    /**/
+    public function getGastoTotalMercancias(){
+        if($this->gastoTotalMercancias == 0){
+            $this->loadGastos();
+            $gastos = $this->gastoTotalMercancias;
+            foreach ($this->getHijos() as $f) {
+                $gastos += $f->getGastoTotalMercancias();
+            }
+            $this->gastoTotalMercancias = $gastos;
+        }
+        return $this->gastoTotalMercancias;
+    }
+    /**/
+    public function getTipoMoneda(){
+        $gm = $this->getGastoMercancias()->first();
+        if($gm)
+            return $gm->getMoneda();
+        return null;
+    }
         
     public function json($json = true, 
             $padre = false, 
@@ -1149,22 +1174,28 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->gastoMercancias = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastoTotalRemitente = 0;
         $this->gastoTotalDestinatario = 0;
+        $this->gastoTotalMercancias = 0;
         foreach($this->gastos as $g){
             if(is_null($g->getRolUsuario())){
-                $this->gastoMercancias = $g;
+                $this->gastoMercancias->add($g);
+                $this->gastoTotalMercancias += $g->getValor();
             }else{
                 switch(strtolower($g->getRolUsuario()->getCanonical())){
                     case 'remitente':
-                        $this->gastosAPagarRemitente[] = $g;
+                        $this->gastosAPagarRemitente->add($g);
                         $this->gastoTotalRemitente += $g->getValor();
                         break;
                     case 'destinatario':
-                        $this->gastosAPagarDestinatario[] = $g;
+                        $this->gastosAPagarDestinatario->add($g);
                         $this->gastoTotalDestinatario += $g->getValor();
                         break;
                 }
             }
         }
+//        var_dump('<pre>');
+//        var_dump(count($this->gastoMercancias));
+//        var_dump('</pre>');
+//        var_dump(get_class($this->gastoMercancias[0]));
     }
     
     private function loadAduanas() {
@@ -1174,13 +1205,13 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         foreach($this->aduanas as $a){
             switch(strtolower($a->getNivel()->getCanonical())){
                 case 'partida':
-                    $this->aduanasPartida[] = $a;
+                    $this->aduanasPartida->add($a);
                     break;
                 case 'cruce-de-frontera':
-                    $this->aduanasCruce[] = $a;
+                    $this->aduanasCruce->add($a);
                     break;
                 case 'destino':
-                    $this->aduanasDestino[] = $a;
+                    $this->aduanasDestino->add($a);
                     break;
             }
         }
@@ -1196,6 +1227,12 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             $pesoNeto += $cm->getPesoNeto();
             $volumen += $cm->getVolumen();
             $volumenOtro += $cm->getVolumenOtro();
+        }
+        foreach ($this->getHijos() as $f) {
+            $pesoBruto += $f->getTotalPesoBruto();
+            $pesoNeto += $f->getTotalPesoNeto();
+            $volumen += $f->getTotalVolumen();
+            $volumenOtro += $f->getTotalVolumenOtro();
         }
         $this->totalPesoBruto = $pesoBruto;
         $this->totalPesoNeto = $pesoNeto;

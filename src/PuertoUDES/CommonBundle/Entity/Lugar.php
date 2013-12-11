@@ -322,7 +322,7 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
         if($this->getPais())
             $a .= '\\'.$this->getPais()->getTokens(false).' ';
         if(is_bool($explode) && $explode){
-            $a = explode(' ', $a);
+            $a = explode('\\', $a);
         }
         return $a;
     }

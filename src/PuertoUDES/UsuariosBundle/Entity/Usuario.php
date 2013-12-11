@@ -587,6 +587,7 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
             'telefono'      =>  $this->getTelefono(),
             'tipo_doc_id'   =>  $this->getTipoDocId(),
             'doc_id'        =>  $this->getDocId(),
+            'apellido'        =>  $this->getApellido(),
         ));
         if(is_bool($json) && $json){
             return json_encode($a);

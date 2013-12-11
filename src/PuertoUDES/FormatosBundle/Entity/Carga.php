@@ -306,4 +306,14 @@ class Carga
             return false;
         });
     }
+    
+    public function getTokens($explode = true){
+        $a = $this->getLugarCarga()->getTokens(false)
+            .$this->getLugarDescarga()->getTokens(false).'\\'
+            .$this->getNaturalezaCarga().'\\';
+        if(is_bool($explode) && $explode){
+            $a = explode('\\', $a);
+        }
+        return $a;
+    }
 }

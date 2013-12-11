@@ -45,23 +45,24 @@
                 valor:          formato.nombre,
             } %}
             <h4>
-                    {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
-                         -
-                    {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                        id:             "formato_padre",
-                        clase:          "formato-crear",
-                        placement:      "bottom",
-                        name:           "padre",
-                        pk:             formato.id,
-                        datos:          {tipo: formato.tipo.abreviacion|upper},
-                        originalTitle:  "Padre del Formato " ~ formato.tipo.abreviacion|upper,
-                        entityName:     "formato",
-                        bundleName:     "formatos" ,
-                        emptyText:      "Padre" ~ formato.tipo.abreviacion|upper,
-                        required:       "Vacio,Numeros",
-                        valor:          formato.padre is defined and formato.padre is not empty?formato.padre.nombre:'',
-                    }) %}
+                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
             </h4>
+            <h5>
+                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                    id:             "formato_padre",
+                    clase:          "formato-crear",
+                    placement:      "bottom",
+                    name:           "padre",
+                    pk:             formato.id,
+                    datos:          {tipo: formato.tipo.abreviacion|upper},
+                    originalTitle:  "Padre del Formato " ~ formato.tipo.abreviacion|upper,
+                    entityName:     "formato",
+                    bundleName:     "formatos" ,
+                    emptyText:      "Padre" ~ formato.tipo.abreviacion|upper,
+                    required:       "Vacio,Numeros",
+                    valor:          formato.padre is defined and formato.padre is not empty?formato.padre.nombre:'',
+                }) %}
+            </h5>
         </div>
         <div class="text-justify hidden-print">
             <p>
@@ -649,7 +650,7 @@
                                                     } %}
                                             {% if formato.gastoMercancias is defined and formato.gastoMercancias is not empty %}
                                                 {% set datosGasto = datosGasto|merge({
-                                                        gasto:            formato.gastoMercancias,
+                                                        gasto:            formato.gastoMercancias|first,
                                                     })
                                                 %}
                                             {% endif %}
@@ -860,7 +861,7 @@
                         <table class="table table-bordered table-striped">
                             <tbody>
                                 <tr>
-                                    <td colspan="12" class="extra text-center">
+                                    <td colspan="12" class="grande text-center">
                                         <div class="row">
                                             <div class="enunciado text-left col-lg-12 col-md-12">
                                                 21- Instrucciones al Transportista
@@ -892,7 +893,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="12" class="extra text-center">
+                                    <td colspan="12" class="grande text-center">
                                         <div class="row">
                                             <div class="enunciado text-left col-lg-12 col-md-12">
                                                 22- Observaciones del Transportista

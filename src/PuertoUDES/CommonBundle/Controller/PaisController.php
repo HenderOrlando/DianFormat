@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\CommonBundle\Entity\Pais;
 use PuertoUDES\CommonBundle\Form\PaisType;
@@ -19,6 +21,32 @@ use PuertoUDES\CommonBundle\Form\PaisType;
 class PaisController extends Controller
 {
 
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Lista/para/{name}/", name="list_typeahead_paises_")
+     * @Template()
+     */
+    public function listTypeaheadAction(Request $request){
+        $list = array();
+        $entities = $this->getRepositorio()->findAll();
+        $name = $request->get('name','');
+        $propertyPath = new PropertyAccessor();
+        foreach($entities as $vehiculo){
+            $value = $propertyPath->getValue($vehiculo,$name);
+            if(is_null($value))
+                $value = '';
+            elseif(is_object($value))
+                $value = $value->__toString();
+            $list[] = array(
+                'value' =>  $value,
+                'tokens'=>  $vehiculo->getTokens(),
+                'datos' =>  $vehiculo->json(false)
+            );
+        }
+        return JsonResponse::create($list);
+    }
+    
     /**
      * Lists all Pais entities.
      *
