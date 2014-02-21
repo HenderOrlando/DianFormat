@@ -16,9 +16,7 @@ class IncotermType extends AbstractType
     {
         $builder
             ->add('nombre')
-            ->add('canonical')
             ->add('descripcion')
-            ->add('fechaCreado')
             ->add('sigla')
             ->add('categoria')
             ->add('anio')

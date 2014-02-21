@@ -17,6 +17,15 @@ class RolType extends AbstractType
         $builder
             ->add('nombre')
             ->add('descripcion')
+            ->add('aplicableA','choice',array(
+                'choices'   =>  array(
+                    'Aduana'    => 'Aduana',
+                    'Carga'     => 'Carga',
+                    'Conductor' => 'Conductor',
+                    'Formato'   => 'Formato',
+                    'Usuario'   => 'Usuario',
+                ),
+            ))
         ;
     }
     

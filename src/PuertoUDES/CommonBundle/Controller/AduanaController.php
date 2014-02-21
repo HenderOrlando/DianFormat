@@ -74,9 +74,9 @@ class AduanaController extends Controller
         $filas = $request->get('filas', 0);
         $tipo = $request->get('tipo',NULL);
         $numero = $request->get('numero',NULL);
-        $nombre = $request->get('nombre',NULL);
-        $docId = $request->get('docId',NULL);
-        $direccion = $request->get('direccion','');
+        $nombre = $request->get('name',NULL);
+        $valor = $request->get('value',NULL);
+        $llave = $request->get('pk',NULL);
         $lugar = $request->get('lugar',NULL);
         $em = $this->getDoctrine()->getManager();
         $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'mci'));
@@ -85,27 +85,15 @@ class AduanaController extends Controller
         if($tipo_mci){
             $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_mci->getId(), 'numero' => $numero));
             if($formato){
-                if($docId && $nombre){
-                    $aduana = $this->getRepositorio()->createQueryBuilder('e')
-                        ->leftJoin('e.usuario', 'u')
-                        ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
-                        ->andWhere("u.docId= '".$docId."'")
-                        ->getQuery()->getOneOrNullResult();
+                if($nombre || $llave && $valor){
+                    $aduana = $this->getRepositorio()->find($llave);
+                    $existe_aduana = true;
                     if(!$aduana){
-                        $u = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->createQueryBuilder('u')
-                            ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
-                            ->andWhere("u.docId= '".$docId."'")
-                            ->getQuery()->getOneOrNullResult();
-                        if(!$u){
-                            $u = new Usuario();
-                            $u->setNombre($nombre)
-                              ->setDocId($docId)
-                              ->setDireccion($direccion);
-                            $em->persist($u);
-                            $em->flush();
+                        $existe_aduana = false;
+                        $aduana = new Aduana();
+                        if($nombre === 'lugar'){
+                            $lugar = $valor;
                         }
-                        $aduana = new Entidad();
-                        $aduana->setUsuario($u->setEntidad($aduana));
                         $lugar_pais = preg_split('/\s?,\s?/', $lugar);
                         if(count($lugar_pais) <= 2 && count($lugar_pais) > 1){
                             $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
@@ -135,64 +123,68 @@ class AduanaController extends Controller
                                     $l->setPais($pais);
                                     $em->persist($l);
                                 }
+                                $em->persist($l);
+                                $em->persist($aduana);
                                 $aduana->setLugar($l);
-                                $l->addEntidad($aduana);
+                                $l->addAduana($aduana);
                                 $em->persist($l);
                         }
-                        $u->setEntidad($aduana);
-                        $em->persist($u);
+                        $aduana->setNombre('Aduana de '.$lugar);
                         $em->persist($aduana);
-                    }else{
-                        $u = $aduana->getUsuario();
                     }
-                    
-                    $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
-                            ->andWhere("r.canonical='".$role."' OR r.nombre='".$role."'")
+                    $nivel = $em->getRepository('PuertoUDESCommonBundle:Tipo')
+                            ->createQueryBuilder('t')
+                            ->andWhere('t.canonical LIKE \'%'.$tipo.'%\' OR t.nombre LIKE \'%'.$tipo.'%\'')
                             ->getQuery()->getOneOrNullResult();
-                    if(!$rol /*&& !empty($role)*/ || empty($role) ){
-                        $datos['errors']['Formato'] = 'Rol no reconocido';
-                        
-//                        $rol = new \PuertoUDES\CommonBundle\Entity\Rol();
-//                        $rol->setDescripcion('Rol '.$role.' de la Entidad, en Formato Usuario')
-//                            ->setAplicableA('FormatoUsuario')
-//                            ->setNombre($role);
-//                        $em->persist($rol);
-                    }else{
-                        $fu = $em->getRepository('PuertoUDESFormatosBundle:FormatoUsuario')->createQueryBuilder('fu')
-                                ->andWhere("fu.usuario=".$u->getId())
-                                ->andWhere("fu.rol=".$rol->getid())
-                                ->getQuery()->getOneOrNullResult();
-                        if(!$fu){
-                            $fu = new \PuertoUDES\FormatosBundle\Entity\FormatoUsuario();
-                            $fu->setFormato($formato);
-                            $fu->setUsuario($u);
-                            $fu->setRol($rol);
-                            $em->persist($fu);
+                    if($nivel){
+                        if($existe_aduana){
+                            $fa = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(
+                                array(
+                                    'nivel' => $nivel,
+                                    'aduana' => $aduana,
+                                    'formato' => $formato
+                                ));
                         }else{
-                            
+                            $fa = null;
                         }
-                        $em->flush();
-                        $datos['success']['msgs']['Formato'] = array(
-                            'msg' => 'Entidad '.($role == 'notificar'?'a notificar':str_replace('tario', 'taria', $role)).' <strong>"'.$aduana->getNombre().'"</strong> agregada.',
+                        if(!$fa){
+                            $fa = new \PuertoUDES\FormatosBundle\Entity\FormatoAduana();
+                            $fa->setAduana($aduana)
+                                ->setFormato($formato)
+                                ->setNivel($nivel);
+                            $em->persist($fa);
+                        }
+                        $datos['success']['msgs']['Aduana'] = array(
+                            'msg' => 'Aduana '.' <strong>"'.$aduana->getNombre().'"</strong> agregada.',
                             'tipo' => 'success'
                         );
-                        $datos['id'] = $fu->getId();
-                        $datos['datos'] = $fu->json(false);
+                        $em->flush();
+                        $datos['id'] = $aduana->getId();
+                        $datos['datos'] = $aduana->json(false);
+                        return JsonResponse::create($datos);
+                    }else{
+                        $datos['errors']['Formato'] = 'Nivel de Aduana no encontrado';
+                        if($request->isXmlHttpRequest() && strtoupper($request->getMethod()) === 'PUT'){
+                            return JsonResponse::create($datos);
+                        }
                     }
-                    return JsonResponse::create($datos);
                 }else{
                     $datos['errors']['Formato'] = 'Llene los campos antes de guardar';
-                    if($request->isXmlHttpRequest() && strtoupper($request->getMethod()) === 'PUT')
+                    if($request->isXmlHttpRequest() && strtoupper($request->getMethod()) === 'PUT'){
                         return JsonResponse::create($datos);
+                    }
                 }
             }else{
                 $datos['errors']['Formato'] = 'Formato no válido';
-                return JsonResponse::create($datos);
+                if($request->isXmlHttpRequest() && strtoupper($request->getMethod()) === 'PUT'){
+                    return JsonResponse::create($datos);
+                }
             }
         }else{
             $datos['errors']['Tipo de Formato'] = 'Llene los campos antes de guardar';
-            if($request->isXmlHttpRequest() && strtoupper($request->getMethod()) === 'PUT')
+            if($request->isXmlHttpRequest() && strtoupper($request->getMethod()) === 'PUT'){
                 return JsonResponse::create($datos);
+            }
         }
         return array(
             'fila'          => $filas,
@@ -240,15 +232,8 @@ class AduanaController extends Controller
                 if($obj){
                     $remove = 'remove'.$entity;
                     $repository = 'Formato'.$entity;
-                    if(strtolower($entity) == 'usuario'){
+                    if(strtolower($entity) == 'aduana'){
                         $find = array('formato' => $formato, strtolower($entity) => $obj);
-                        if(is_string($role)){
-                            $role = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
-                                    ->andWhere("r.canonical='".$role."' OR r.nombre='".$role."'")
-                                    ->getQuery()->getOneOrNullResult();
-                            if($role)
-                                $find = array_merge($find,array('rol' => $role));
-                        }
                         if(is_string($tipo)){
                             $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->createQueryBuilder('t')
                                     ->andWhere("t.canonical LIKE '%".$tipo."%' OR t.nombre LIKE '%".$tipo."%' OR t.abreviacion LIKE '%".$tipo."%'")
@@ -256,19 +241,28 @@ class AduanaController extends Controller
                             if($tipo)
                                 $find = array_merge($find,array('tipo' => $tipo));
                         }
+//                        var_dump($find);
+//                        die;
                         $fu = $em->getRepository('PuertoUDESFormatosBundle:'.$repository)->findOneBy($find);
+//                        $formato->$remove($fu);
+//                        $obj->removeFormato($fu);
                         $em->remove($fu);
                         $em->flush();
 //                        $formato->$remove($fu);
 //                        $obj->removeFormato($fu);
+                        $datos['msgs']['Aduana'] = array(
+                            'msg' => 'Eliminado'.($role?' '.$role.' ':' ').$obj->__toString(),
+                            'tipo' => 'success'
+                        );
+                    }else{
+                        $datos['msgs']['Aduana'] = array(
+                            'msg' => 'Imposible de limpiar '.$entity,
+                            'tipo' => 'danger'
+                        );
                     }
-                    $datos['msgs']['Formato'] = array(
-                        'msg' => 'Eliminado'.($role?' '.$role.' ':' ').$obj->__toString(),
-                        'tipo' => 'success'
-                    );
                 }else{
                     $datos['msgs']['Formato'] = array(
-                        'msg' => 'Imposible de limpiar',
+                        'msg' => 'Objeto no válido',
                         'tipo' => 'danger'
                     );
                 }

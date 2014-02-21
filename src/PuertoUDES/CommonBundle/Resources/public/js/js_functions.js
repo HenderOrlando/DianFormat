@@ -80,6 +80,9 @@
                     hideMsg();
             });
             $('#mensajes').prepend(m);
+            setTimeout(function(){
+                m.find('.close').click();
+            },30*1000);
             showMsg(m);
     	}
     	showMsg();
@@ -104,6 +107,12 @@
      * Arregla Ajax
      */
     function arreglaAjax(){
+        $('html,body').on('mouseleave','.alert', function(){
+            hideMsg($(this));
+            if($('#mensajes').children().length <= 1){
+                hideMsg();
+            }
+        });
         if(Modernizr.fontface){
             $('button.glyphicon').text('');
         }
@@ -206,32 +215,6 @@
                 }
             });
         };
-        $('.carga-modal').on('click', function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            var este = $(this), modal = $('#Modal');
-            $.ajax({
-                type: "POST",
-                url: este.attr('href'),
-                dataType: "json",
-                cache: false
-            }).done(function( response ) {
-                $('#mTitle').html(response.title);
-                $('#mBody').html(response.body);
-                arreglaAjax();
-                if(typeof response.ajaxForm === 'undefined')
-                    formAjax('#mBody');
-                modal.modal('show');
-                modal.on('hidden.bs.modal', function (e) {
-                    $('#mTitle').html('Titulo');
-                    $('#mBody').html('...');
-                });
-            }).fail(function() {
-                console.log( "error" );
-            }).always(function() {
-                console.log( "complete" );
-            });
-        });
     }
     
     function formAjax(id){
@@ -367,8 +350,8 @@
                         ok = false;
                 }
                 if(ok){
-                    console.log(val);
-                    console.log(datos);
+//                    console.log(val);
+//                    console.log(datos);
                 }
                 return ok;
             }
@@ -437,6 +420,9 @@
                       });
                     }
                 });
+            }
+            if(localStorage){
+                localStorage.clear();
             }
             $.extend(datos, {
                 typeahead: datosTypeahead

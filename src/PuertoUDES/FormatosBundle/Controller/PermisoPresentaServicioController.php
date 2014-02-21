@@ -62,12 +62,13 @@ class PermisoPresentaServicioController extends Controller
         $tipo = $request->get('tipo',NULL);
         $numero = $request->get('numero',NULL);
         $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('numero' => $numero));
-        $entidad = $em->getRepository('PuertoUDESUsuariosBundle:Entidad')->find($llave);
+        $entidad = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->find($llave);
         $datos = array(
             'errors' => array(),
         );
 //        $this->getUtils()->dump($permisos);
         if($formato && $entidad){
+            $entidad = $entidad->getEntidad();
             $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($tipo)));
             if($tipo->getId() === $formato->getTipo()->getId()){
                 $mod = false;

@@ -115,6 +115,28 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->entidades;
     }
+    /**
+     * Add entidades
+     *
+     * @param \PuertoUDES\UsuariosBundle\Entity\Usuario $entidad
+     * @return Lugar
+     */
+    public function addUsuario(\PuertoUDES\UsuariosBundle\Entity\Usuario $usuario)
+    {
+        $this->entidades[] = $usuario->getEntidad();
+    
+        return $this;
+    }
+
+    /**
+     * Remove entidades
+     *
+     * @param \PuertoUDES\UsuariosBundle\Entity\Usuario $entidad
+     */
+    public function removeUsuario(\PuertoUDES\UsuariosBundle\Entity\Usuario $usuario)
+    {
+        $this->entidades->removeElement($usuario->getEntidad());
+    }
 
     /**
      * Add cargas

@@ -226,7 +226,7 @@ class UtilsController extends Controller implements PaginatorAwareInterface
      *
      * @return  array   Arreglo con 2 variables, la paginación "pag", y el formulario "form_filter"
      */
-    public function getPaginacion($entity, $bundle, $limit = 5, $route = null,$qb = null,EntityManager $em = null,Request $request = null){
+    public function getPaginacion($entity, $bundle, $limit = 10, $route = null,$qb = null,EntityManager $em = null,Request $request = null){
         if(is_null($em))
             $em = $this->em_;
         if(is_null($request))

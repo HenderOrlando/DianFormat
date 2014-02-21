@@ -133,6 +133,11 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $gastoTotalRemitente;
     private $gastoTotalDestinatario;
     
+    /** 
+     * @ORM\Column(type="datetime", nullable=false, name="fecha_emision")
+     */
+    private $fechaEmision;
+    
     /**
      * Constructor
      */
@@ -140,6 +145,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         parent::__construct();
         $this->completo = false;
+        $this->fechaEmision = new \DateTime("now");
         $this->documentos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->conductores = new \Doctrine\Common\Collections\ArrayCollection();
         $this->aduanas = new \Doctrine\Common\Collections\ArrayCollection();
@@ -154,6 +160,29 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->datosMercancias = new \Doctrine\Common\Collections\ArrayCollection();
         $this->condiciones = new \Doctrine\Common\Collections\ArrayCollection();
         $this->totalPesoBruto = $this->totalPesoNeto = $this->totalVolumen = $this->totalVolumenOtro = $this->gastoTotalDestinatario = $this->gastoTotalRemitente = $this->gastoTotalMercancias = 0;
+    }
+    
+    /**
+     * Set fechaEmision
+     *
+     * @param \DateTime $fechaEmision
+     * @return Objeto
+     */
+    public function setFechaEmision($fechaEmision)
+    {
+        $this->fechaEmision = $fechaEmision;
+    
+        return $this;
+    }
+
+    /**
+     * Get fechaEmision
+     *
+     * @return \DateTime 
+     */
+    public function getFechaEmision()
+    {
+        return $this->fechaEmision;
     }
     
     /**
@@ -605,7 +634,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function getAduanasCruce()
     {
-        if(empty($this->aduanasCruce)){
+        if(empty($this->aduanasCruce) || is_null($this->aduanasCruce)){
             $this->loadAduanas();
         }
         return $this->aduanasCruce;
@@ -1203,16 +1232,12 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->aduanasDestino = new \Doctrine\Common\Collections\ArrayCollection();
         $this->aduanasPartida = new \Doctrine\Common\Collections\ArrayCollection();
         foreach($this->aduanas as $a){
-            switch(strtolower($a->getNivel()->getCanonical())){
-                case 'partida':
+            if(strpos($a->getNivel()->getCanonical(), 'partida') !== false){
                     $this->aduanasPartida->add($a);
-                    break;
-                case 'cruce-de-frontera':
+            }elseif(strpos($a->getNivel()->getCanonical(), 'cruce') !== false){
                     $this->aduanasCruce->add($a);
-                    break;
-                case 'destino':
+            }elseif(strpos($a->getNivel()->getCanonical(), 'destino') !== false){
                     $this->aduanasDestino->add($a);
-                    break;
             }
         }
     }

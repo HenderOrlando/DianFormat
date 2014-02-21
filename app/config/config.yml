@@ -74,6 +74,9 @@ fos_user:
     user_class: PuertoUDES\FosUsuarioBundle\Entity\FosUser
     group:
         group_class: PuertoUDES\FosUsuarioBundle\Entity\FosGrupo
+    registration:
+        confirmation:
+            enabled:    true
         
 knp_paginator:
     page_range: 5

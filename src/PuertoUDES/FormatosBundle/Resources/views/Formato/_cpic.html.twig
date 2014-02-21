@@ -676,6 +676,8 @@
                                                     originalTitle:  "INCOTERM 2010",
                                                     emptyText:      "INCOTERM",
                                                     valor:          formato.incoterm is not empty?formato.incoterm:'',
+                                                    prefetch:       url('list_typeahead_incoterms_',{name: 'sigla'}),
+                                                    type:           'typeaheadjs',
                                                 }) %} 
                                             </div>
                                         </div>

@@ -23,7 +23,7 @@ class ContenedorMercanciaFormatoType extends AbstractType
             //->add('numBultos')
             //->add('formato')
             //->add('mercancia')
-            ->add('contenedor')
+//            ->add('contenedor')
             //->add('bulto')
         ;
     }

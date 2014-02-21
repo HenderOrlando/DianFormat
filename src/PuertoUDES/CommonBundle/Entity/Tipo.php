@@ -54,6 +54,8 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $datosMercancias;
     
+    private $fullName;
+    
     
     /**
      * Constructor
@@ -62,6 +64,7 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         parent::__construct();
         $this->abreviacion = '';
+        $this->fullName = '';
         $this->formatos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->cargas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->conductores = new \Doctrine\Common\Collections\ArrayCollection();
@@ -90,6 +93,19 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getAbreviacion()
     {
         return $this->abreviacion;
+    }
+    
+    /**
+     * Get FullName
+     *
+     * @return string 
+     */
+    public function getFullName()
+    {
+        if(is_null($this->fullName) || empty($this->fullName)){
+            $this->fullName = $this->getNombre().' - '.$this->getDescripcion();
+        }
+        return $this->fullName;
     }
     
     /**

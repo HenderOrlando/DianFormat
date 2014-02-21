@@ -34,23 +34,28 @@ class EntidadController extends Controller
         $list = array();
         $entities = array();
         $name = $request->get('name','');
+        if($name === 'lugar'){
+            return JsonResponse::create($this->listTypeaheadLugares());
+        }
         $rol = $request->get('rol','');
         switch(strtolower($rol)){
-            case 'notificado':
-                $entities = $this->getRepositorio()->getNotificados();
-                break;
-            case 'consignatario':
-                $entities = $this->getRepositorio()->getConsignatarios();
-                break;
-            case 'destinatario':
-                $entities = $this->getRepositorio()->getDestinatarios();
-                break;
-            case 'remitente':
-                $entities = $this->getRepositorio()->getRemitentes();
-                break;
-            case 'transportista':
-                $entities = $this->getRepositorio()->getTransportistas();
-                break;
+//            case 'notificado':
+//                $entities = $this->getRepositorio()->getNotificados();
+//                break;
+//            case 'consignatario':
+//                $entities = $this->getRepositorio()->getConsignatarios();
+//                break;
+//            case 'destinatario':
+//                $entities = $this->getRepositorio()->getDestinatarios();
+//                break;
+//            case 'remitente':
+//                $entities = $this->getRepositorio()->getRemitentes();
+//                break;
+//            case 'transportista':
+//                $entities = $this->getRepositorio()->getTransportistas();
+//                break;
+//            default:
+//                $entities = $this->getRepositorio()->findAll();
             default:
                 $entities = $this->getRepositorio()->findAll();
                 break;
@@ -69,6 +74,18 @@ class EntidadController extends Controller
             );
         }
         return JsonResponse::create($list);
+    }
+    
+    public function listTypeaheadLugares($list = array()){
+        $entities = $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Lugar')->findAll();
+        foreach($entities as $lugar){
+            $list[] = array(
+                'value' =>  $lugar->__toString(),
+                'tokens'=>  $lugar->getTokens(),
+                'datos' =>  $lugar->json(false)
+            );
+        }
+        return $list;
     }
     /**
      * Displays a form to create a new Formato entity.
@@ -455,7 +472,7 @@ class EntidadController extends Controller
         $tipo = $request->get('tipo',NULL);
         $numero = $request->get('numero',NULL);
         $nombre = $request->get('nombre',NULL);
-        $doc_id = $request->get('doc_id',NULL);
+        $doc_id = $request->get('docId',NULL);
         $direccion = $request->get('direccion','');
         $telefono = $request->get('telefono','');
         $lugar = $request->get('lugar',NULL);
@@ -465,11 +482,11 @@ class EntidadController extends Controller
             'errors' => array(),
         );
         
-        if($numero){
-            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('numero' => $numero));
-            if($formato){
-                $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($tipo)));
-                if($tipo->getId() === $formato->getTipo()->getId()){
+        if($tipo){
+            $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($tipo)));
+            if(is_numeric($numero)){
+                $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('numero' => $numero, 'tipo' => $tipo));
+                if($formato){
                     if($doc_id && $nombre){
                         $entidad = $this->getRepositorio()->createQueryBuilder('e')
                             ->leftJoin('e.usuario', 'u')
@@ -528,6 +545,9 @@ class EntidadController extends Controller
                             $em->persist($entidad);
                             $u->setEntidad($entidad);
                             $em->persist($u);
+                            $em->flush();
+                        }else{
+                            $u = $entidad->getUsuario();
                         }
                         $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->findOneBy(array('canonical' => 'transportista', 'aplicableA' => 'FormatoUsuario'));
                         $fu = $em->getRepository('PuertoUDESFormatosBundle:FormatoUsuario')->findOneBy(array('usuario' => $u->getId(), 'formato' => $formato->getId(), 'rol' => $rol->getId()));
@@ -560,15 +580,15 @@ class EntidadController extends Controller
                         );
                     }
                 }else{
-                    $datos['errors']['Formato'] = 'No Concuerda';
+                    $datos['errors']['Formato'] = 'Formato no encontrado';
                 }
             }
             else{
-                $datos['errors']['Formato'] = 'No encontrado';
+                $datos['errors']['Número'] = 'Número de formato no válido';
             }
         }
         else{
-            $datos['errors']['Número de '.$tipo] = 'El Número no existe';
+            $datos['errors']['Tipo'] = 'Tipo de Formato no válido';
         }
         return JsonResponse::create($datos);
     }
@@ -811,11 +831,6 @@ class EntidadController extends Controller
                     ),
                     array(
                         'dato'    =>   'Nombre',
-                        'class' =>  'text-center',
-                    ),
-                    array(
-                        'dato'    =>   'Descripcion',
-                        'label'     =>  'Descripción',
                         'class' =>  'text-center',
                     ),
                     array(

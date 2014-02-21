@@ -16,7 +16,6 @@ class EntidadType extends AbstractType
     {
         $builder
             ->add('nombre')
-            ->add('descripcion')
             ->add('direccion')
             ->add('telefono')
             ->add('docId')

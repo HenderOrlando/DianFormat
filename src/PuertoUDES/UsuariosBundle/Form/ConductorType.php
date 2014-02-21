@@ -16,13 +16,20 @@ class ConductorType extends AbstractType
     {
         $builder
             ->add('nombre')
-            ->add('descripcion')
             ->add('direccion')
             ->add('telefono')
             ->add('docId')
             ->add('numLicencia')
             ->add('numLibretaTripulante')
-            ->add('claseLicencia')
+            ->add('claseLicencia', 'entity', array(
+                'class' => 'PuertoUDESCommonBundle:Tipo',
+                'property' => 'fullName',
+                'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
+                    return $er->createQueryBuilder('t')
+                        ->andWhere("t.aplicableA LiKE '%Conductor%'")
+                        ->orderBy('t.nombre', 'ASC');
+                },
+            ))
             ->add('pais')
         ;
     }

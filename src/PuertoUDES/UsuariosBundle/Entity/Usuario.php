@@ -538,7 +538,6 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     /**
      * Set lugar
      *
-     * @param string $lugar
      * @return Entidad
      */
     public function setLugar($lugar)
@@ -546,6 +545,16 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->entidad->setLugar($lugar);
     
         return $this;
+    }
+    
+    /**
+     * Get lugar
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Lugar
+     */
+    public function getLugar()
+    {
+        return $this->entidad->getLugar();
     }
 
     /**

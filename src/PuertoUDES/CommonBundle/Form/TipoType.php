@@ -16,6 +16,7 @@ class TipoType extends AbstractType
     {
         $builder
             ->add('nombre')
+            ->add('abreviacion')
             ->add('descripcion')
             ->add('aplicableA','choice',array(
                 'choices'   =>  array(
@@ -24,6 +25,7 @@ class TipoType extends AbstractType
                     'Conductor' => 'Conductor',
                     'Formato'   => 'Formato',
                     'Usuario'   => 'Usuario',
+                    'datosMercancias'   => 'Datos de Mercancía',
                 ),
             ))
         ;

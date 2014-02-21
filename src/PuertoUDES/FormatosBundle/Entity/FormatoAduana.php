@@ -147,4 +147,14 @@ class FormatoAduana
     {
         return $this->nivel;
     }
+
+    /**
+     * Get nivel
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Tipo 
+     */
+    public function getLugar()
+    {
+        return $this->getAduana()->getLugar();
+    }
 }

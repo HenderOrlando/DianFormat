@@ -51,6 +51,11 @@ fila        Número de la fila de la aduana
             id:             "aduana_" ~ tipo ~"_ _" ~ fila,
             clase:          "aduana" ~ fila ~ "-"~ tipo ~ "-crear",
             name:           "",
+            url:            url('aduana_add_mci_ajax_',{
+                                numero: numero,
+                                tipo: tipo,
+                                fila: fila,
+                            }),
             pk:             pk,
             datos:          {tipo: abreviacion|upper},
             originalTitle:  " " ~ tipo | title ,

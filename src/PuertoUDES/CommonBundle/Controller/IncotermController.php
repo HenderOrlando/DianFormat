@@ -7,33 +7,106 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\CommonBundle\Entity\Incoterm;
 use PuertoUDES\CommonBundle\Form\IncotermType;
 
 /**
  * Incoterm controller.
  *
- * @Route("/incoterm_")
+ * @Route("/Incoterm")
  */
 class IncotermController extends Controller
 {
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Lista/para/{name}/", name="list_typeahead_incoterms_")
+     * @Route("/{tipo}/Lista/para/{name}/", name="list_typeahead_incoterms")
+     * @Template()
+     */
+    public function listTypeaheadAction(Request $request){
+        $list = array();
+        $entities = array();
+        $name = $request->get('name','');
+        $entities = $this->getRepositorio()->findAll();
+        $propertyPath = new PropertyAccessor();
+        foreach($entities as $incoterm){
+            $value = $propertyPath->getValue($incoterm,$name);
+            if(is_null($value))
+                $value = '';
+            elseif(is_object($value))
+                $value = $value->__toString();
+            $list[] = array(
+                'value' =>  $value,
+                'tokens'=>  $incoterm->getTokens(),
+                'datos' =>  $incoterm->json(false)
+            );
+        }
+        return JsonResponse::create($list);
+    }
 
     /**
      * Lists all Incoterm entities.
      *
      * @Route("/", name="incoterm_")
-     * @Method("GET")
-     * @Template()
+     * @Method({"GET"})
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
-    public function indexAction()
+    public function indexAction(Request $request, $config = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('PuertoUDESCommonBundle:Incoterm')->findAll();
-
-        return array(
-            'entities' => $entities,
+        $title = 'Incotermes';
+        $entity = 'Incoterm';
+        $bundle = 'Common';
+        $route = 'incoterm_';
+        $limit = 5;
+        $utils = $this->getUtils();
+        if(is_null($config)){
+            $qb = $this->getRepositorio()->getAll(false, true);
+        }else{
+            $title = $config['title'];
+            $entity = $config['entity'];
+            $bundle = $config['bundle'];
+            $route = $config['route'];
+            $limit = $config['limit'];
+            $qb = $config['qb'];
+        }
+        
+        $head = $this->getHeadFiltro($utils->getFormFilter(array(), $route, true), $route);
+        $form = $head['filtros'];
+        $head['filtros'] = $form->createView();
+        $form->handleRequest($request);
+        $data = array();
+        if ($form->isValid()) {
+           $data = $form->getData();
+            $str_query = $utils->getQueryFilter($data, $head['fil'][0]['col'], $qb);
+            if(!empty($str_query))
+                $qb->andWhere($str_query);
+        }
+        
+//        $qb = $qb->getQuery();
+        $paginacion = $utils->getPaginacion($entity, $bundle, $limit, $route, $qb);
+//        $paginacion['form_filter'] = $form;
+        $botones = array(
+            array(
+                'url'   => $this->generateUrl('incoterm__new'),
+                'type'  => 'primary',
+                'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
+            ),
         );
+        $datos = array(
+            'paginas'       =>  $paginacion['pag'],
+            'title'         =>  $title,
+            'head'          =>  $head,
+            'botones'       =>  $botones,
+            'datos_form'       =>  $data,
+        );
+        if($request->isXmlHttpRequest() || $request->get('ajax',false)){
+            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+        }
+        return $datos;
     }
     /**
      * Creates a new Incoterm entity.
@@ -243,5 +316,74 @@ class IncotermController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+    
+    
+    /**
+     * get Utils
+     * 
+     * @return IndexController Utilidades de PuertoUDES
+     */
+    public function getUtils() {
+        return $this->get('puertoudes.util');
+    }
+    
+    /**
+     * get Repositorio
+     * 
+     * @return EntidadRepository  EntidadRepository de PuertoUDES
+     */
+    public function getRepositorio() {
+        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Incoterm');
+    }
+    
+    public function getHeadFiltro($form, $route){
+        $filas = array(
+            array(
+                'col'=>array(
+                    array(
+                        'dato'  =>  'Nombre',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'  =>  'Descripcion',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'  =>  'Sigla',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'  =>  'categoria',
+                        'label' =>  'Categoría',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'  =>  'anio',
+                        'label' =>  'Año',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Acciones',
+                        'class' =>  'text-center',
+                        'acciones'=>    array(
+                            array(
+                                'url'   => 'incoterm__edit',
+                                'data_url'=> array('id'),
+                                'type'  => 'default',
+                                'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
+                            ),
+                            array(
+                                'url'   => 'incoterm__delete',
+                                'data_url'=> array('id'),
+                                'type'  => 'danger',
+                                'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
+                            ),
+                        )
+                    ),
+                )
+            ),
+        );
+        return $this->getUtils()->getHeadFiltro($filas, $form, $route);
     }
 }

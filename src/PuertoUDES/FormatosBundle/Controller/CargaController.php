@@ -31,21 +31,24 @@ class CargaController extends Controller
         $list = array();
         $entities = $this->getRepositorio()->findAll();
         $name = $request->get('name','');
+        if($name === 'lugarCarga' || $name === 'lugarDescarga'){
+            return JsonResponse::create($this->listTypeaheadLugares());
+        }elseif($name === 'naturalezaCarga'){
+            return JsonResponse::create($this->listTypeaheadNaturalezas());
+        }
         $propertyPath = new PropertyAccessor();
-        foreach($entities as $vehiculo){
-            $value = $propertyPath->getValue($vehiculo,$name);
+        foreach($entities as $carga){
+            $value = $propertyPath->getValue($carga,$name);
             if(is_null($value))
                 $value = '';
             elseif(is_object($value))
                 $value = $value->__toString();
             $list[] = array(
                 'value' =>  $value,
-                'tokens'=>  $vehiculo->getTokens(true),
-                'datos' =>  $vehiculo->json(false)
+                'tokens'=>  $carga->getTokens(true),
+                'datos' =>  $carga->json(false)
             );
         }
-        if($name === 'lugarCarga' || $name === 'lugarDescarga')
-            return JsonResponse::create($this->listTypeaheadLugares());
         return JsonResponse::create($list);
     }
     public function listTypeaheadLugares($list = array()){
@@ -55,6 +58,20 @@ class CargaController extends Controller
                 'value' =>  $lugar->__toString(),
                 'tokens'=>  $lugar->getTokens(),
                 'datos' =>  $lugar->json(false)
+            );
+        }
+        return $list;
+    }
+    public function listTypeaheadNaturalezas($list = array()){
+        $entities = $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Tipo')
+                ->createQueryBuilder('t')
+                ->andWhere("t.aplicableA LIKE '%carga%'")
+                ->getQuery()->execute();
+        foreach($entities as $naturaleza){
+            $list[] = array(
+                'value' =>  $naturaleza->__toString(),
+                'tokens'=>  $naturaleza->getTokens(),
+                'datos' =>  $naturaleza->json(false)
             );
         }
         return $list;

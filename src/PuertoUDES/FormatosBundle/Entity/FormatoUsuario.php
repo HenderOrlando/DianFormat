@@ -146,4 +146,16 @@ class FormatoUsuario
     {
         return $this->rol;
     }
+    
+    public function json($json = true){
+        $a = array(
+            'rol'       => $this->getFormato()->json(false),
+            'usuario'   => $this->getUsuario()->json(false),
+            'formato'   => $this->getRol()->json(false),
+        );
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
 }

@@ -255,4 +255,257 @@ numero      Número del Manifiesto de Carga
         </div>
     </td>
 </tr>
+{% else %}
+
+<tr id="cpic-{{fila }}" class="border-none">
+    <td class="valor-cpic">
+        {% if formato.padre is defined %}
+            <div class="row">
+                <div>
+                    <div id="opciones-cpic{{ fila }}" class="opciones-filas text-right pull-left no-quitar btns-action-left {{ formato.id is not empty?'mas':'' }}">
+                        {% set botons = [
+                                {
+                                    'class' :   'eliminar cpic-' ~ fila ~ ' animate pull-right',
+                                    'type'  :   'danger',
+                                    'label' :   '<span class="glyphicon glyphicon-trash"></span>',
+                                },
+                                {
+                                    'class' :   'reset cpic' ~ fila ~ '-crear animate pull-right',
+                                    'type'  :   'warning',
+                                    'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                },
+                                {
+                                    'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                    'type'  :   'primary',
+                                    'class' :   'guardar cpic' ~ fila ~ '-crear animate pull-right ' ~ (formato.id is not empty?'out':'in'),
+                                    'url'   :   url('formato_add_cpic_ajax',{
+                                                    numero_mci: numero,
+                                                    save: true,
+                                                }),
+                                },
+                            ] %}
+                        {% if formato.id is not empty %}
+                            {% set botons = botons | merge([{
+                                    'label' :   '<span class="glyphicon glyphicon-eye-open"></span>',
+                                    'type'  :   'success',
+                                    'class' :   'cpic' ~ fila ~ '-crear animate pull-right',
+                                    'url'   :   url('formato__edit',{
+                                                    id: formato.id,
+                                                }),
+                                }]) %}
+                        {% endif %}
+                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                            buttonset: 'horizontal',
+                            class: 'animate in',
+                            botones  : botons,
+                            sizing: 'mediano',
+                        } %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {#<div class="row">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila }}">
+                28- Carta de Porte N°
+            </div>
+        </div>#}
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <a href="#" id="cpic{{ fila }}-numero-" class="xeditable cpic{{ fila }}-crear" 
+                   data-placement="top" 
+                   data-name="numero" 
+                   data-type="text" 
+                   data-pk="{{- formato is defined and formato.id is not empty?formato.id:' ' -}}"
+                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                   data-original-title="Número de CPIC" 
+                   data-entity-name="formato"
+                   data-entity-bundle="formatos" 
+                   data-emptytext="Número" 
+                   data-placeholder="Número de CPIC" 
+                   data-required="NoVacio,Numeros">
+                    {{- formato.numero is defined?formato.numero:'' -}}
+                </a>
+            </div>
+        </div>
+    </td>
+    <td class="valor-cpic" colspan="4">
+        {#<div class="row">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila }}">
+                29- Descripción de las mercancías
+            </div>
+        </div>#}
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <a href="#" id="cpic{{ fila }}-descripcion" class="xeditable cpic{{ fila }}-crear" 
+                   data-placement="top" 
+                   data-name="descripcion" 
+                   data-type="text" 
+                   data-pk="{{- cmf is defined and cmf.id is not empty?cmf.mercancia.id:' ' -}}"
+                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                   data-original-title="Descripción de la Mercancía del Formulario CPIC" 
+                   data-entity-name="mercancia"
+                   data-entity-bundle="common" 
+                   data-emptytext="Descripción" 
+                   data-placeholder="Descripción de la Mercancía del Formulario CPIC" 
+                   data-required="NoVacio,NumerosLetrasConectores">
+                    {{- cmf is defined and cmf.mercancia is defined and cmf.mercancia is not empty?cmf.mercancia.descripcion:'' -}}
+                </a>
+            </div>
+        </div>
+    </td>
+    <td class="valor-cpic">
+        {#<div class="row">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila }}">
+                30- Catidad de los bultos
+            </div>
+        </div>#}
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <a href="#" id="cpic{{ fila }}-num-bultos" class="xeditable cpic{{ fila }}-crear" 
+                   data-placement="top" 
+                   data-name="numBultos" 
+                   data-type="text" 
+                   data-pk="{{- cmf is defined and cmf is not empty?cmf.id:' ' -}}"
+                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                   data-original-title="Número de Bultos de la Mercancía del Formulario CPIC" 
+                   data-entity-name="contenedorMercanciaFormato"
+                   data-entity-bundle="formatos" 
+                   data-emptytext="Cantidad" 
+                   data-placeholder="Número de Bultos de la Mercancía del Formulario CPIC" 
+                   data-required="NoVacio,Numeros">
+                    {{- cmf is defined and cmf.numBultos is defined and cmf.numBultos is not empty?cmf.numBultos:'' -}}
+                </a>
+            </div>
+        </div>
+    </td>
+    <td class="valor-cpic" colspan="2">
+        {#<div class="row">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila }}">
+                31- Clase y marca de los bultos
+            </div>
+        </div>#}
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <a href="#" id="cpic{{ fila }}-clase" class="xeditable cpic{{ fila }}-crear" 
+                   data-placement="top" 
+                   data-name="clase" 
+                   data-type="text" 
+                   data-pk="{{- cmf is defined and cmf is not empty?cmf.bulto.id:' ' -}}"
+                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                   data-original-title="Clase de Bulto del Formulario CPIC" 
+                   data-entity-name="bulto"
+                   data-entity-bundle="common" 
+                   data-emptytext="Clase" 
+                   data-placeholder="Clase de Bulto del Formulario CPIC" 
+                   data-required="Vacio,NumerosLetrasConectores">
+                    {{- cmf is defined and cmf.bulto is defined and cmf.bulto is not empty? cmf.bulto.clase:'' -}}
+                </a> - 
+                <a href="#" id="cpic{{ fila }}-marca" class="xeditable cpic{{ fila }}-crear" 
+                   data-placement="top" 
+                   data-name="marca" 
+                   data-type="text" 
+                   data-pk="{{- cmf is defined and cmf is not empty?cmf.bulto.id:' ' -}}"
+                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                   data-original-title="Marca del Bulto del Formulario CPIC" 
+                   data-entity-name="bulto"
+                   data-entity-bundle="common" 
+                   data-emptytext="Marca" 
+                   data-placeholder="Marca del Bulto del Formulario CPIC" 
+                   data-required="Vacio,NumerosLetrasConectores">
+                    {{- cmf is defined and cmf.bulto is defined and cmf.bulto is not empty?cmf.bulto.marca:'' -}}
+                </a>
+            </div>
+        </div>
+    </td>
+    <td class="valor-cpic border-l  border-r">
+        {#<div class="row">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila }}">
+                32- Peso Bruto en Kilogramos
+            </div>
+        </div>#}
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <a href="#" id="cpic{{ fila }}-peso-bruto" class="xeditable cpic{{ fila }}-crear" 
+                   data-placement="top" 
+                   data-name="pesoBruto" 
+                   data-type="text" 
+                   data-pk="{{- cmf is defined and cmf is not empty?cmf.id:' ' -}}"
+                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                   data-original-title="Peso Bruto de los Bultos de la Mercancía del Formulario CPIC" 
+                   data-entity-name="contenedorMercanciaFormato"
+                   data-entity-bundle="formatos" 
+                   data-emptytext="Peso Bruto" 
+                   data-placeholder="Peso Bruto de los Bultos de la Mercancía del Formulario CPIC" 
+                   data-required="NoVacio,NumerosConectores">
+                    {{- cmf is defined and cmf.pesoBruto is defined and cmf.pesoBruto is not empty?(cmf.pesoBruto > 0?cmf.pesoBruto:''):'' -}}
+                </a>
+            </div>
+        </div>
+    </td>
+    <td class="valor-cpic border-l  border-r">
+        {#<div class="row">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila }}">
+                32- Peso Neto en Kilogramos
+            </div>
+        </div>#}
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <a href="#" id="cpic{{ fila }}-peso-neto" class="xeditable cpic{{ fila }}-crear" 
+                   data-placement="top" 
+                   data-name="pesoNeto" 
+                   data-type="text" 
+                   data-pk="{{- cmf is defined and cmf is not empty?cmf.id:' ' -}}"
+                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                   data-original-title="Peso Neto de los Bultos de la Mercancía del Formulario CPIC" 
+                   data-entity-name="contenedorMercanciaFormato"
+                   data-entity-bundle="formatos" 
+                   data-emptytext="Peso Neto" 
+                   data-placeholder="Peso Neto de los Bultos de la Mercancía del Formulario CPIC" 
+                   data-required="NoVacio,NumerosConectores">
+                    {{- cmf is defined and cmf.pesoNeto is defined and cmf.pesoNeto is not empty?(cmf.pesoNeto > 0?cmf.pesoNeto:''):'' -}}
+                </a>
+            </div>
+        </div>
+    </td>
+    <td class="valor-cpic" colspan="2">
+        {#<div class="row">
+            <div class="enunciado col-lg-12 col-md-12 cpic_fila_{{ fila }}">
+                33- Volumen en m3 u otra unidad de medida
+            </div>
+        </div>#}
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <a href="#" id="cpic{{ fila }}-volumen" class="xeditable cpic{{ fila }}-crear" 
+                   data-placement="top" 
+                   data-name="volumen" 
+                   data-type="text" 
+                   data-pk="{{- cmf is defined and cmf is not empty?cmf.id:' ' -}}"
+                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                   data-original-title="Volumen de los Bultos de la Mercancía del Formulario CPIC" 
+                   data-entity-name="contenedorMercanciaFormato"
+                   data-entity-bundle="formatos" 
+                   data-emptytext="Volumen" 
+                   data-placeholder="Volumen de los Bultos de la Mercancía del Formulario CPIC" 
+                   data-required="Vacio,NumerosConectores">
+                    {{- cmf is defined and cmf.volumen is defined and cmf.volumen is not empty?(cmf.volumen > 0?cmf.volumen:''):'' -}}
+                </a> <br/>
+                <a href="#" id="cpic{{ fila }}-volumenOtro" class="xeditable cpic{{ fila }}-crear" 
+                   data-placement="top" 
+                   data-name="volumenOtro" 
+                   data-type="text" 
+                   data-pk="{{- cmf is defined and cmf is not empty?cmf.id:' ' -}}"
+                   data-url="{{- url('formato_edit_campo',{tipo: formato.tipo.abreviacion|upper}) -}}" 
+                   data-original-title="Otra unidad de Volumen de los Bultos de la Mercancía del Formulario CPIC" 
+                   data-entity-name="contenedorMercanciaFormato"
+                   data-entity-bundle="formatos" 
+                   data-emptytext="Otro Volumen" 
+                   data-placeholder="Otro Volumen de los Bultos de la Mercancía del Formulario CPIC" 
+                   data-required="Vacio,NumerosConectores">
+                    {{- cmf is defined and cmf.volumen is defined and cmf.volumen is not empty?(cmf.volumen > 0?cmf.volumen:''):'' -}}
+                </a>
+            </div>
+        </div>
+    </td>
+</tr>
+
 {% endfor %}

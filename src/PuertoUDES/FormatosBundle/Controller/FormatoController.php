@@ -217,7 +217,7 @@ class FormatoController extends Controller
                 $valor = str_replace (',', '.', $valor);
             if($nombre == 'pesoBruto' || $nombre == 'pesoNeto'){
                 $valor = str_replace (',', '.', $valor);
-                if(($nombre == 'pesoBruto' && $valor < $obj->getPesoNeto()) || ($nombre == 'pesoNeto' && $valor > $obj->getPesoBruto())){
+                if(($nombre == 'pesoBruto' && method_exists($obj, 'getPesoNeto') && $valor < $obj->getPesoNeto()) || ($nombre == 'pesoNeto' && method_exists($obj, 'getPesoBruto') && $valor > $obj->getPesoBruto())){
                     $valores['msgs'][] = array('msg' =>'Formato: El peso bruto debe ser mayor que el Peso Neto.', 'tipo' => 'danger');
                     return JsonResponse::create($valores);
                 }
@@ -238,7 +238,7 @@ class FormatoController extends Controller
                     $em->flush();
                     $valores['datos'] = $obj->json(false);
                 }
-                else if(strpos($nombre, 'lugar') !== false){
+                else if(strpos(strtolower ($nombre), 'lugar') !== false){
                     $lugar_pais = preg_split('/\s?,\s?/', ucwords($valor));
                     if(count($lugar_pais) <= 2 && count($lugar_pais) > 1){
                         $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
@@ -323,20 +323,38 @@ class FormatoController extends Controller
                         $obj->$set(new \DateTime($valor));
                         $em->persist($obj);
                         $em->flush();
-                        $valores['msgs'][] = array('msg' => 'Formato: El '.$nombre.' fué actualizado.', 'tipo' => 'success');
+                        $valores['msgs'][] = array('msg' => 'Formato: El campo '.$nombre.' fué actualizado.', 'tipo' => 'success');
                         $valores['datos'] = $obj->json(false);
                     }else{
-                        $valores['msgs'][] = array('msg' => 'Formato: El '.$nombre.' ya tenía éste valor.', 'tipo' => 'info');
+                        $valores['msgs'][] = array('msg' => 'Formato: El campo '.$nombre.' ya tenía éste valor.', 'tipo' => 'info');
                     }
+                }elseif(strpos($nombre, 'moneda') !== false){
+                    $moneda = $em->getRepository('PuertoUDESCommonBundle:Moneda')
+                        ->createQueryBuilder('m')
+                        ->andWhere('m.canonical LIKE \'%'.$valor.'%\' OR m.nombre LIKE \'%'.$valor.'%\' OR m.abreviacion LIKE \'%'.$valor.'%\'')
+                        ->getQuery()->getOneOrNullResult();
+                    if(!$moneda){
+                        $moneda = new \PuertoUDES\CommonBundle\Entity\Moneda();
+                        $moneda
+                            ->setAbreviacion($valor)
+                            ->setNombre(str_replace('-', ' ', $valor));
+                        $em->persist($moneda);
+                    }
+                    $obj->$set($moneda);
+                    $em->persist($obj);
+                    $moneda->$addName($obj);
+                    $em->persist($moneda);
+                    $em->flush();
+                    $valores['datos'] = $obj->json(false);
                 }else{
-                    if($obj->$get() != $valor){
+                    if(method_exists($obj, $get) && $obj->$get() != $valor){
                         $obj->$set($valor);
                         $em->persist($obj);
                         $em->flush();
-                        $valores['msgs'][] = array('msg' => 'Formato: El '.$nombre.' fué actualizado.', 'tipo' => 'success');
+                        $valores['msgs'][] = array('msg' => 'Formato: El campo '.$nombre.' fué actualizado.', 'tipo' => 'success');
                         $valores['datos'] = $obj->json(false);
                     }else{
-                        $valores['msgs'][] = array('msg' => 'Formato: El '.$nombre.' que tenía era el mismo.', 'tipo' => 'info');
+                        $valores['msgs'][] = array('msg' => 'Formato: El campo '.$nombre.' que tenía era el mismo.', 'tipo' => 'info');
                     }
                 }
             }else{
@@ -397,13 +415,13 @@ class FormatoController extends Controller
                 $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic'));
                 $formato->setTipo($tipo);
                 $formato->setPadre($formato_mci);
-                $formato->setNombre($tipo->getNombre().' de ');
+                $formato->setNombre($tipo->getNombre().' de '.$formato_mci->getNombre());
                 if($formato_mci->getTransportista()){
                     $formato->setTransportista($formato_mci->getTransportista());
                 }
                 $pesoBruto = $request->get('pesoBruto', null);
                 $pesoNeto = $request->get('pesoNeto', null);
-                if($numero > 0 && $pesoBruto > $pesoNeto){
+                if($numero > 0 && $pesoBruto >= $pesoNeto){
                     $formato->setNumero($numero);
                     $em->persist($formato);
                     $formato_mci->addHijo($formato);
@@ -467,7 +485,7 @@ class FormatoController extends Controller
                     $datos['id'] = $formato->getId();
                     return JsonResponse::create($datos);
                 }else{
-
+                    
                 }
             }
         }
@@ -603,7 +621,6 @@ class FormatoController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('PuertoUDESFormatosBundle:Formato')->find($id);
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Formato entity.');
         }

@@ -967,15 +967,14 @@
                                         clase:          'carga-crear',
                                         placement:      'top',
                                         name:           'lugarCarga',
-                                        pk:             carga is not empty?carga.id:' ',
+                                        pk:             carga is not empty and carga.id is defined?carga.id:' ',
                                         originalTitle:  "Lugar de la Carga",
                                         emptyText:      "Lugar",
                                         entityName:     "carga",
                                         bundleName:     "formatos" ,
                                         required:       "NoVacio,LetrasConectores",
                                         valor:          carga.lugarCarga is defined?carga.lugarCarga:' ',
-                                        prefetch:       url('list_typeahead_cargas_',{name: 'lugarCarga'}),
-                                        type:           'typeaheadjs',
+                                        prefetch:       url('list_typeahead_cargas_',{name: 'lugarCarga'})
                                     } %}
                                     {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
                                 </div>
@@ -996,7 +995,8 @@
                                         emptyText:      "Lugar",
                                         required:       "NoVacio,LetrasConectores",
                                         valor:          carga.lugarDescarga is defined?carga.lugarDescarga:' ',
-                                        prefetch:       url('list_typeahead_cargas_',{name: 'lugarDescarga'}),
+                                        type:           'typeaheadjs',
+                                        prefetch:       url('list_typeahead_cargas_',{name: 'lugarDescarga'})
                                     }) %}
                                 </div>
                             </div>
@@ -1018,7 +1018,8 @@
                                         emptyText:      "Naturaleza",
                                         required:       "NoVacio,LetrasConectores",
                                         valor:          carga.naturalezaCarga is defined?carga.naturalezaCarga:' ',
-                                        prefetch:       url('list_typeahead_cargas_',{name: 'naturalezaCarga'}),
+                                        type:           'typeaheadjs',
+                                        prefetch:       url('list_typeahead_cargas_',{name: 'naturalezaCarga'})
                                     }) %}
                                 </div>
                             </div>
@@ -1040,7 +1041,6 @@
                                         emptyText:      "Número de Identificación del Contenedor",
                                         required:       "NoVacio,NumerosLetrasConectores",
                                         valor:          carga.numContenedores is defined?carga.numContenedores:' ',
-                                        prefetch:       url('list_typeahead_cargas_',{name: 'numContenedores'}),
                                     }) %}
                                 </div>
                             </div>
@@ -1266,7 +1266,7 @@
                                                 aduana:         ac,
                                                 tipo:            'cruce-de-frontera',
                                                 fila:           loop.index0,
-                                            }) 
+                                            })
                                         }}
                                     {% else %}
                                         {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
@@ -1308,7 +1308,7 @@
                             </div>
                             <div id="aduanas-cruce">
                                 {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
-                                    {% for ac in formato.aduanasCruce %}
+                                    {% for ac in formato.aduanasDestino %}
                                         {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
                                                 abreviacion:    formato.tipo.abreviacion|upper,
                                                 numero:         formato.numero,
@@ -1359,12 +1359,33 @@
                         <td colspan="6" class="text-center">
                             <div class="row">
                                 <div class="enunciado text-left col-lg-12 col-md-12">
-                                    Fecha de Emisión
+                                    <div class="text-left col-lg-4">
+                                        Fecha de Emisión
+                                    </div>
+                                    <div class="text-center col-lg-8">
+                                        {% set dataWith = {
+                                            id:             "formato_fecha_emision",
+                                            clase:          "formato-fecha-emision",
+                                            placement:      "top",
+                                            name:           "fechaEmision",
+                                            pk:             formato.id,
+                                            datos:          {tipo: formato.tipo.abreviacion|upper},
+                                            originalTitle:  "Fecha de Emisión del Formato",
+                                            entityName:     "formato",
+                                            bundleName:     "formatos" ,
+                                            emptyText:      "Fecha de Emisión " ~ formato.tipo.abreviacion|upper,
+                                            placeholder:    "Fecha de Emisión " ~ formato.tipo.abreviacion|upper, 
+                                            required:       "NoVacio,NumerosLetras",
+                                            valor:          formato.fechaEmision,
+                                            type:           'date',
+                                        } %}
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
+                                    </div>
+                                </div>
+                                <div class="enunciado text-left col-lg-12 col-md-12">
                                 </div>
                             </div>
                         </td>
-                            <td colspan="6">
-                            </td>
                     </tr>
             </tbody>
         </table>    

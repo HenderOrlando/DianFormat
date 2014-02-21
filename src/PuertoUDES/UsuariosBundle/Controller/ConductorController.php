@@ -64,6 +64,7 @@ class ConductorController extends Controller
      * Lists all Conductor entities.
      *
      * @Route("/", name="conductor_")
+     * @Route("/", name="Conductor_")
      * @Method({"GET"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
@@ -386,6 +387,7 @@ class ConductorController extends Controller
      * Edits an existing Conductor entity.
      *
      * @Route("/{id}", name="conductor__update")
+     * @Route("/{id}", name="Conductor__update")
      * @Method("PUT")
      * @Template("PuertoUDESUsuariosBundle:Conductor:edit.html.twig")
      */
@@ -419,6 +421,7 @@ class ConductorController extends Controller
      * Deletes a Conductor entity.
      *
      * @Route("/{id}", name="conductor__delete")
+     * @Route("/{id}", name="Conductor__delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -483,19 +486,13 @@ class ConductorController extends Controller
                 'col'=>array(
                     array(
                         'dato'    =>   'Doc Id',
-                        'label'    =>   'Documento de Identidad',
-                        'join'    =>   'usuario',
+                        'label'    =>  'Documento de Identidad',
+                        'join'    =>   'Usuario',
                         'class' =>  'text-center',
                     ),
                     array(
                         'dato'    =>   'Nombre',
-                        'join'    =>   'usuario',
-                        'class' =>  'text-center',
-                    ),
-                    array(
-                        'dato'    =>   'Descripcion',
-                        'label'    =>   'Descripción',
-                        'join'    =>   'usuario',
+                        'join'    =>   'Usuario',
                         'class' =>  'text-center',
                     ),
                     array(
@@ -507,7 +504,7 @@ class ConductorController extends Controller
                     array(
                         'dato'    =>   'Telefono',
                         'label'    =>   'Teléfono',
-                        'join'    =>   'usuario',
+                        'join'    =>   'Usuario',
                         'class' =>  'text-center',
                     ),
                     array(
