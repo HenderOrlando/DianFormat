@@ -121,6 +121,7 @@ class CargaController extends Controller
             array(
                 'url'   => $this->generateUrl('carga__new'),
                 'type'  => 'primary',
+                'class'  => 'carga-modal',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
             ),
         );
@@ -194,10 +195,18 @@ class CargaController extends Controller
         $entity = new Carga();
         $form   = $this->createCreateForm($entity);
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+        $template = 'new';
+        $parametros = array(
+            'entity'      => $entity,
+            'form' => $form->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => 'Agregar Nueva Carga',
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -219,10 +228,18 @@ class CargaController extends Controller
 
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $template = 'show';
+        $parametros = array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => 'Carga '.(empty($entity->getNaturalezaCarga()->getNombre())?'en '.$entity->getFormato()->getNombre():$entity->getNaturalezaCarga()->getNombre()),
+                'body'  => $this->renderView('PuertoUDESFormatosBundle:Carga:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -245,11 +262,19 @@ class CargaController extends Controller
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $template = 'edit';
+        $parametros = array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => 'Carga '.(empty($entity->getNaturalezaCarga()->getNombre())?'en '.$entity->getFormato()->getNombre():$entity->getNaturalezaCarga()->getNombre()),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -400,12 +425,14 @@ class CargaController extends Controller
                                 'url'   => 'carga__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
                                 'url'   => 'carga__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
                             ),
                         )

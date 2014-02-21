@@ -1,15 +1,21 @@
 
-<h1>
-{% if title is not defined%}
-    Editar
-{% else %}
-    {{ title }}
-{% endif %}
-</h1>
+<div class="row-fluid">
+    <div class="row-fluid">
+        <div class="col-lg-12 col-md-12 {{ claseContentTitle is defined?claseContentTitle:'' }}">
+            <h1>
+            {% if title is defined%}
+                {{ title }}
+            {% endif %}
+            </h1>
+        </div>
+    </div>
 
-<div>
-    {{ form(edit_form) }}
-</div>
-<div>
-    {{ form(delete_form) }}
+    <div class="row-fluid">
+        <div class="col-lg-12 col-md-12 {{ claseContentForm is defined?claseContentForm:'' }}">
+            {% include 'PuertoUDESCommonBundle:Plantilla:_form.html.twig' with {form: edit_form} %}
+        </div>
+    </div>
+    <div>
+        {% include 'PuertoUDESCommonBundle:Plantilla:_form.html.twig' with {form: delete_form} %}
+    </div>
 </div>

@@ -18,7 +18,7 @@ class UsuarioRepository extends EntityRepository
         $q = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a')
-            ->from('PuertoUDESFosUsuarioBundle:FosUser', 'a');
+            ->from('PuertoUDESUsuariosBundle:Usuario', 'a');
         if(is_bool($querybuilder) && $querybuilder)
             $rta = $q;
         elseif(is_bool($query) && $query)

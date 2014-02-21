@@ -64,6 +64,7 @@ class MercanciaController extends Controller
             array(
                 'url'   => $this->generateUrl('mercancia__new'),
                 'type'  => 'primary',
+                'class'  => 'carga-modal',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
             ),
         );
@@ -137,10 +138,18 @@ class MercanciaController extends Controller
         $entity = new Mercancia();
         $form   = $this->createCreateForm($entity);
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+        $template = 'new';
+        $parametros = array(
+            'entity'      => $entity,
+            'form' => $form->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => 'Agregar Nueva Mercancía',
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -162,10 +171,18 @@ class MercanciaController extends Controller
 
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $template = 'show';
+        $parametros = array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Mercancia:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -188,11 +205,19 @@ class MercanciaController extends Controller
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $template = 'edit';
+        $parametros = array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -328,12 +353,14 @@ class MercanciaController extends Controller
                                 'url'   => 'mercancia__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
                                 'url'   => 'mercancia__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
                             ),
                         )

@@ -8,6 +8,11 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class UsuarioType extends AbstractType
 {
+    private $user;
+    
+    public function __construct(\PuertoUDES\FosUsuarioBundle\Entity\FosUser $fu) {
+        $this->user = $fu;
+    }
         /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -22,6 +27,10 @@ class UsuarioType extends AbstractType
             ->add('docId')
 //            ->add('grupo')
         ;
+        if($this->user->hasRole('ROLE_ADMIN')){
+            $builder
+                ->add('grupo');
+        }
     }
     
     /**

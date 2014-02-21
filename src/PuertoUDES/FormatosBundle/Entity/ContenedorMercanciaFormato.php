@@ -27,7 +27,7 @@ class ContenedorMercanciaFormato extends \PuertoUDES\CommonBundle\Entity\ObjetoC
     private $mercancia;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Contenedor", inversedBy="mercanciasFormatos")
+     * @ORM\ManyToOne(targetEntity="\PuertoUDES\CommonBundle\Entity\Contenedor", inversedBy="mercanciasFormatos")
      * @ORM\JoinColumn(name="contenedor", referencedColumnName="id", nullable=true)
      */
     private $contenedor;

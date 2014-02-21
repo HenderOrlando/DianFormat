@@ -107,12 +107,6 @@
      * Arregla Ajax
      */
     function arreglaAjax(){
-        $('html,body').on('mouseleave','.alert', function(){
-            hideMsg($(this));
-            if($('#mensajes').children().length <= 1){
-                hideMsg();
-            }
-        });
         if(Modernizr.fontface){
             $('button.glyphicon').text('');
         }
@@ -150,7 +144,8 @@
                     .tooltip({
                         placement:  "right",
                         trigger:    "focus",
-                        title:      placeholder
+                        title:      placeholder,
+                        container:  'body',
                     });
         });
         $('input:not([type="checkbox"]), textarea, select').each(function(){
@@ -583,4 +578,53 @@
     
     function getClase(clase){
         return clase.replace(/btn|-primary|-default|xeditable|editable-open|editable-click|editable|agregar|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|\sout|out$|pull-right|pull-left|\s/g, '')
+    }
+    
+    function armarModal(response){
+        cleanModal();
+        if(typeof response.body !== 'undefined' && typeof response.title !== 'undefined'){
+            var modal = $('#Modal')
+            $('#mTitle').html(response.title);
+            $('#mBody').html(response.body);
+            arreglaAjax();
+            if($('#mBody').find('btn').length > 0 || $('#mBody').find('input').length > 0){
+                $('#mBody').find('.btn, input:button, input:submit, input:reset, button').each(function(){
+                    var este = $(this), btn = $('<div></div>').attr('class', este.attr('class')), action = 'guardar';
+                    console.log(este.text())
+                    if(este.text().toLowerCase().indexOf('delete') >= 0){
+                        btn.text('Borrar');
+                        action = 'borrar';
+                    }else if(este.text().toLowerCase().indexOf('Update') >= 0){
+                        btn.text('Actualizar')
+                    }else if(este.text().toLowerCase().indexOf('Create') >= 0){
+                        btn.text('Crear')
+                    }else{
+                        btn.text('Guardar');
+                    }
+                    btn.addClass('btn-add-foot-modal');
+//                    btn.text(este.text());
+                    este.hide()
+                    btn.on('click',function(){
+                        este.click();
+//                        modal.find('.close.btn').click();
+                    });
+                    $('#mFooter > .btn-group').prepend(btn);
+                });
+            }
+            if(typeof response.ajaxForm === 'undefined'){
+                formAjax('#mBody');
+            }
+            modal.modal('show');
+            modal.on('hidden.bs.modal', function (e) {
+                cleanModal();
+            });
+        }
+    }
+    function cleanModal(modal){
+        if(typeof modal === 'undefined'){
+            modal = '';
+        }
+        $('#mTitle').html('Titulo');
+        $('#mBody').html('...');
+        $('#mFooter').find('.btn-add-foot-modal').remove();
     }

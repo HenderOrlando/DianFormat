@@ -1067,6 +1067,24 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             return $gm->getMoneda();
         return null;
     }
+    
+    public function getContenedor(){
+        if(!$this->getContenedoresMercancias()->isEmpty()){
+            return $this->getContenedoresMercancias()->first()->getContenedor();
+        }
+        return null;
+    }
+    
+    public function getContenedorHijos(){
+        if(!$this->getHijos()->isEmpty()){
+            foreach($this->getHijos() as $hijo){
+                if(!is_null($hijo->getContenedor())){
+                    return $hijo->getContenedor();
+                }
+            }
+        }
+        return null;
+    }
         
     public function json($json = true, 
             $padre = false, 

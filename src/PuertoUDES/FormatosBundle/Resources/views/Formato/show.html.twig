@@ -3,30 +3,7 @@
 {% block body -%}
     <h1>Formato</h1>
 
-    <table class="record_properties">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Nombre</th>
-                <td>{{ entity.nombre }}</td>
-            </tr>
-            <tr>
-                <th>Canonical</th>
-                <td>{{ entity.canonical }}</td>
-            </tr>
-            <tr>
-                <th>Descripcion</th>
-                <td>{{ entity.descripcion }}</td>
-            </tr>
-            <tr>
-                <th>Fechacreado</th>
-                <td>{{ entity.fechaCreado|date('Y-m-d H:i:s') }}</td>
-            </tr>
-        </tbody>
-    </table>
+    {% include 'PuertoUDESFormatosBundle:Formato:_show.html.twig' %}
 
         <ul class="record_actions">
     <li>
@@ -39,6 +16,5 @@
             Edit
         </a>
     </li>
-    <li>{{ form(delete_form) }}</li>
 </ul>
 {% endblock %}

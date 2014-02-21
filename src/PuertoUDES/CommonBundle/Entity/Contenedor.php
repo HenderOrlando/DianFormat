@@ -12,6 +12,7 @@ class Contenedor
     /** 
      * @ORM\Id
      * @ORM\Column(type="bigint")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
@@ -21,7 +22,7 @@ class Contenedor
     private $numero;
 
     /** 
-     * @ORM\Column(type="decimal", nullable=false, precision=4, scale=2, name="capacidad")
+     * @ORM\Column(type="decimal", nullable=false, precision=10, scale=2, name="capacidad")
      */
     private $capacidad;
 
@@ -47,7 +48,7 @@ class Contenedor
      */
     public function __construct()
     {
-        parent::__construct();
+        $this->fechaCreado = new \DateTime('now');
         $this->mercanciasFormatos = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
@@ -197,5 +198,18 @@ class Contenedor
     public function getMercanciasFormatos()
     {
         return $this->mercanciasFormatos;
+    }
+    
+    public function json($json = true){
+        $a = array(
+            'id'        =>  $this->getId(),
+            'sigla'     =>  $this->getSigla(),
+            'numero'    =>  $this->getNumero(),
+            'capacidad' =>  $this->getCapacidad(),
+        );
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
     }
 }

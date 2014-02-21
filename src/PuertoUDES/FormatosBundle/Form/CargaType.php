@@ -19,7 +19,8 @@ class CargaType extends AbstractType
             ->add('numPrecintos')
             ->add('naturalezaCarga')
             ->add('formato')
-            ->add('lugar')
+            ->add('lugarCarga')
+            ->add('lugarDescarga')
             ->add('unidadCargas')
         ;
     }

@@ -1,0 +1,20 @@
+
+
+<table class="record_properties">
+    <tbody>
+        <tr>
+            <th>Nombre</th>
+            <td>{{ entity.nombre }}</td>
+        </tr>
+        <tr>
+            <th>Descripcion</th>
+            <td>{{ entity.descripcion }}</td>
+        </tr>
+        <tr>
+            <th>Fechacreado</th>
+            <td>{{ entity.fechaCreado|date('Y-m-d H:i:s') }}</td>
+        </tr>
+    </tbody>
+</table>
+
+{{ form(delete_form) }}

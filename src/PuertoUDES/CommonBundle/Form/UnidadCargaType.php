@@ -18,7 +18,6 @@ class UnidadCargaType extends AbstractType
             ->add('marca')
             ->add('anioFabrica')
             ->add('placa')
-            ->add('fechaCreado')
             ->add('pais')
             ->add('cargas')
         ;

@@ -12,33 +12,36 @@ $(document).on('ready',function(){
     botonGuardarXEditable();
     botonEliminarXEditable();
     loadModal();
-//    $('.table-responsive > table').find('.btn-group-vertical a').addClass('carga-modal');
-//    $('body').on('click','.carga-modal', function(e){
-//        e.preventDefault();
-//        e.stopPropagation();
-//        var este = $(this), modal = $('#Modal');
-//        $.ajax({
-////            type: "POST",
-//            url: este.attr('href'),
-//            dataType: "json",
-//            cache: false
-//        }).done(function( response ) {
-//            $('#mTitle').html(response.title);
-//            $('#mBody').html(response.body);
-//            arreglaAjax();
-//            if(typeof response.ajaxForm === 'undefined')
-//                formAjax('#mBody');
-//            modal.modal('show');
-//            modal.on('hidden.bs.modal', function (e) {
-//                $('#mTitle').html('Titulo');
-//                $('#mBody').html('...');
-//            });
-//        }).fail(function() {
-//            console.log( "error" );
-//        }).always(function() {
-//            console.log( "complete" );
-//        });
-//    });
+//    $('.table-responsive > table').find('.btn-group-vertical a:not(.no-ajax)').addClass('carga-modal');
+//    $('.table-responsive > table').find('.btn-group-vertical a:not(.no-ajax)').addClass('carga-modal');
+    $('body').on('click','.carga-modal', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            var este = $(this);
+            $.ajax({
+                type: "POST",
+                url: este.attr('href'),
+                dataType: "json",
+                cache: false
+            }).done(function( response ) {
+                armarModal(response);
+            }).fail(function() {
+                $.ajax({
+                    type: "GET",
+                    url: este.attr('href'),
+                    dataType: "json",
+                    cache: false
+                }).done(function( response ) {
+                    armarModal(response);
+                }).fail(function() {
+                    console.log( "error" );
+                }).always(function() {
+                    console.log( "complete" );
+                });
+            }).always(function() {
+                console.log( "complete" );
+            });
+    });
     function agregarXEditable(xeditable){
         if(typeof xeditable === 'undefined')
             xeditable = 'a.xeditable';

@@ -106,6 +106,7 @@ class ConductorController extends Controller
             array(
                 'url'   => $this->generateUrl('conductor__new'),
                 'type'  => 'primary',
+                'class'  => 'carga-modal',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
             ),
         );
@@ -253,6 +254,7 @@ class ConductorController extends Controller
      * Creates a new Conductor entity.
      *
      * @Route("/", name="conductor__create")
+     * @Route("/", name="Conductor__create")
      * @Method("POST")
      * @Template("PuertoUDESUsuariosBundle:Conductor:new.html.twig")
      */
@@ -307,10 +309,18 @@ class ConductorController extends Controller
         $entity = new Conductor();
         $form   = $this->createCreateForm($entity);
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+        $template = 'new';
+        $parametros = array(
+            'entity'      => $entity,
+            'form' => $form->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => 'Agregar Nueva Mercancía',
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -332,10 +342,18 @@ class ConductorController extends Controller
 
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $template = 'show';
+        $parametros = array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Conductor:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -358,11 +376,19 @@ class ConductorController extends Controller
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $template = 'edit';
+        $parametros = array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -485,45 +511,41 @@ class ConductorController extends Controller
             array(
                 'col'=>array(
                     array(
-                        'dato'    =>   'Doc Id',
-                        'label'    =>  'Documento de Identidad',
-                        'join'    =>   'Usuario',
+                        'dato'      =>  'DocId',
+                        'label'     =>  'Documento de Identidad',
                         'class' =>  'text-center',
                     ),
                     array(
                         'dato'    =>   'Nombre',
-                        'join'    =>   'Usuario',
                         'class' =>  'text-center',
                     ),
                     array(
                         'dato'    =>   'Direccion',
-                        'label'    =>   'Dirección',
-                        'join'    =>   'usuario',
+                        'label'     =>  'Dirección',
                         'class' =>  'text-center',
                     ),
                     array(
-                        'dato'    =>   'Telefono',
-                        'label'    =>   'Teléfono',
-                        'join'    =>   'Usuario',
+                        'dato'    =>   'telefono',
+                        'label'     =>  'Teléfono',
                         'class' =>  'text-center',
                     ),
                     array(
-                        'dato'    =>   'Pais',
+                        'dato'    =>   'pais',
                         'label'    =>   'Nacionalidad',
                         'class' =>  'text-center',
                     ),
                     array(
-                        'dato'    =>   'Clase Licencia',
+                        'dato'    =>   'claseLicencia',
                         'label'    =>   'Clase de Licencia de Conducción',
                         'class' =>  'text-center',
                     ),
                     array(
-                        'dato'    =>   'Num Licencia',
+                        'dato'    =>   'NumLicencia',
                         'label'    =>   'Número de Licencia',
                         'class' =>  'text-center',
                     ),
                     array(
-                        'dato'    =>   'Num Libreta Tripulante',
+                        'dato'    =>   'NumLibretaTripulante',
                         'label'    =>   'Número de Libreta de Tripulante',
                         'class' =>  'text-center',
                     ),
@@ -535,12 +557,14 @@ class ConductorController extends Controller
                                 'url'   => 'conductor__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
                                 'url'   => 'conductor__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
                             ),
                         )

@@ -245,9 +245,12 @@ class Conductor
      */
     public function getDireccion()
     {
-        return $this->getUsuario()->getDireccion();
+        if($this->getUsuario()){
+            return $this->getUsuario()->getDireccion();
+        }
+        return '';
     }
-
+    
     /**
      * Set apellido
      *
@@ -271,30 +274,6 @@ class Conductor
         return $this->getUsuario()->getApellido();
     }
     
-
-    /**
-     * Set nombre
-     *
-     * @param string $nombre
-     * @return Usuario
-     */
-    public function setNombre($nombre)
-    {
-        $this->getUsuario()->setNombre($nombre);
-    
-        return $this;
-    }
-
-    /**
-     * Get nombre
-     *
-     * @return string 
-     */
-    public function getNombre()
-    {
-        return $this->getUsuario()->getNombre();
-    }
-    
     /**
      * Set telefono
      *
@@ -315,7 +294,10 @@ class Conductor
      */
     public function getTelefono()
     {
-        return $this->getUsuario()->getTelefono();
+        if($this->getUsuario()){
+            return $this->getUsuario()->getTelefono();
+        }
+        return '';
     }
 
     /**
@@ -338,7 +320,59 @@ class Conductor
      */
     public function getDocId()
     {
-        return $this->getUsuario()->getDocId();
+        if($this->getUsuario()){
+            return $this->getUsuario()->getDocId();
+        }
+        return '';
+    }
+
+    /**
+     * Set canonical
+     *
+     * @param integer $canonical
+     * @return Usuario
+     */
+    public function setCanonical($canonical)
+    {
+        $this->getUsuario()->setCanonical($canonical);
+    
+        return $this;
+    }
+
+    /**
+     * Get canonical
+     *
+     * @return integer 
+     */
+    public function getCanonical()
+    {
+        return $this->getUsuario()->getCanonical();
+    }
+
+    /**
+     * Set nombre
+     *
+     * @param integer $nombre
+     * @return Usuario
+     */
+    public function setNombre($nombre)
+    {
+        $this->getUsuario()->setNombre($nombre);
+    
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return integer 
+     */
+    public function getNombre()
+    {
+        if($this->getUsuario()){
+            return $this->getUsuario()->getNombre();
+        }
+        return '';
     }
 
     /**
@@ -361,7 +395,10 @@ class Conductor
      */
     public function getTipoDocId()
     {
-        return $this->getUsuario()->getTipoDocId();
+        if($this->getUsuario()){
+            return $this->getUsuario()->getTipoDocId();
+        }
+        return -1;
     }
 
     /**

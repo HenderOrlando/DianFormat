@@ -18,7 +18,6 @@ class VehiculoType extends AbstractType
             ->add('marca')
             ->add('anioFabrica')
             ->add('placa')
-            ->add('fechaCreado')
             ->add('numeroSerieChasis')
             ->add('certificadoHabilitacion')
             ->add('pais')

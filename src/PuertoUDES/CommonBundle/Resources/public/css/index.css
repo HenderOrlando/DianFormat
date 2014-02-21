@@ -504,3 +504,6 @@ table>tbody>tr>td.border-r{
     border-right-width: 1px;
     border-right-style: solid;
 }
+.tooltip{
+    z-index: 99999999999999;
+}

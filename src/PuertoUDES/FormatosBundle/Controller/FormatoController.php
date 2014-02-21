@@ -354,7 +354,11 @@ class FormatoController extends Controller
                         $valores['msgs'][] = array('msg' => 'Formato: El campo '.$nombre.' fué actualizado.', 'tipo' => 'success');
                         $valores['datos'] = $obj->json(false);
                     }else{
-                        $valores['msgs'][] = array('msg' => 'Formato: El campo '.$nombre.' que tenía era el mismo.', 'tipo' => 'info');
+                        if(!method_exists($obj, $get)){
+                            $valores['msgs'][] = array('msg' => 'Formato: Error obteniendo datos de '.$nombre.'.', 'tipo' => 'danger');
+                        }else{
+                            $valores['msgs'][] = array('msg' => 'Formato: El campo '.$nombre.' que tenía era el mismo.', 'tipo' => 'info');
+                        }
                     }
                 }
             }else{
@@ -603,10 +607,18 @@ class FormatoController extends Controller
 
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $template = 'show';
+        $parametros = array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return JsonResponse::create(array(
+                'title' => $entity->getNombre(),
+                'body'  => $this->renderView('PuertoUDESFormatosBundle:Formato:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -628,11 +640,19 @@ class FormatoController extends Controller
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $parametros = array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
+        $template = 'edit';
+        if($this->getRequest()->isXmlHttpRequest()){
+            return JsonResponse::create(array(
+                'title' => $entity->getNombre(),
+                'body'  => $this->renderView('PuertoUDESUsuariosBundle:Formato:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -776,6 +796,7 @@ class FormatoController extends Controller
             'acciones'=>    array(
                 array(
                     'url'   => 'formato__edit',
+                    'class' =>  'no-ajax',
                     'data_url'=> array('id'),
                     'type'  => 'default',
                     'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',

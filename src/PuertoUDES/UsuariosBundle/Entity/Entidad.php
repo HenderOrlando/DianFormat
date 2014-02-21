@@ -230,7 +230,10 @@ class Entidad
      */
     public function getDireccion()
     {
-        return $this->getUsuario()->getDireccion();
+        if($this->getUsuario()){
+            return $this->getUsuario()->getDireccion();
+        }
+        return '';
     }
     
     /**
@@ -276,7 +279,10 @@ class Entidad
      */
     public function getTelefono()
     {
-        return $this->getUsuario()->getTelefono();
+        if($this->getUsuario()){
+            return $this->getUsuario()->getTelefono();
+        }
+        return '';
     }
 
     /**
@@ -299,7 +305,10 @@ class Entidad
      */
     public function getDocId()
     {
-        return $this->getUsuario()->getDocId();
+        if($this->getUsuario()){
+            return $this->getUsuario()->getDocId();
+        }
+        return '';
     }
 
     /**
@@ -345,7 +354,10 @@ class Entidad
      */
     public function getNombre()
     {
-        return $this->getUsuario()->getNombre();
+        if($this->getUsuario()){
+            return $this->getUsuario()->getNombre();
+        }
+        return '';
     }
 
     /**
@@ -368,7 +380,10 @@ class Entidad
      */
     public function getTipoDocId()
     {
-        return $this->getUsuario()->getTipoDocId();
+        if($this->getUsuario()){
+            return $this->getUsuario()->getTipoDocId();
+        }
+        return -1;
     }
 
     /**

@@ -1,0 +1,48 @@
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ entity.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Descripcion</th>
+                <td>{{ entity.descripcion }}</td>
+            </tr>
+            <tr>
+                <th>Usuarios</th>
+                <td>
+                    {% for u in entity.usuarios %}
+                        {{ u.nombre }}
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th>Usuarios en Formatos</th>
+                <td>
+                    <ul class="list-unstyled">
+                        {% for u in entity.usuariosFormatos %}
+                        <li>
+                            {{ u.usuario.nombre }}
+                        </li>
+                        {% endfor %}
+                            
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th>Gastos</th>
+                <td>
+                    <ul class="list-unstyled">
+                        {% for g in entity.gastos %}
+                        <li>
+                            {{ g.formato.nombre }} - <span class="text-info">{{ g.concepto }}</span> - <span class="text-muted">{{ g.valor }} {{ g.moneda.abreviacion }}</span>
+                        </li>
+                        {% endfor %}
+                            
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{{ form(delete_form) }}

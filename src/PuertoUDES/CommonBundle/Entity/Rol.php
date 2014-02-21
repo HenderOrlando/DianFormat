@@ -123,7 +123,7 @@ class Rol extends \PuertoUDES\CommonBundle\Entity\Objeto
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getUsuario()
+    public function getUsuarios()
     {
         return $this->usuarios;
     }

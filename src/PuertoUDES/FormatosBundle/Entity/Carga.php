@@ -316,4 +316,8 @@ class Carga
         }
         return $a;
     }
+    
+    public function __toString() {
+        return $this->getNaturalezaCarga().' - Carga en '.$this->getLugarCarga()->getNombre().' - Descarga en '.$this->getLugarDescarga()->getNombre();
+    }
 }

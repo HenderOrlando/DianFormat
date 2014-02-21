@@ -1,0 +1,27 @@
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Numprecintos</th>
+                <td>{{ entity.numPrecintos }}</td>
+            </tr>
+            <tr>
+                <th>Naturaleza de la carga</th>
+                <td>{{ entity.naturalezaCarga.Nombre }}</td>
+            </tr>
+            <tr>
+                <th>Formato</th>
+                <td>{{ entity.formato.Nombre }}</td>
+            </tr>
+            <tr>
+                <th>Lugar de Carga</th>
+                <td>{{ entity.lugarCarga.Nombre }}</td>
+            </tr>
+            <tr>
+                <th>Lugar de Descarga</th>
+                <td>{{ entity.lugarDescarga.Nombre }}</td>
+            </tr>
+            
+        </tbody>
+    </table>
+{{ form(delete_form) }}

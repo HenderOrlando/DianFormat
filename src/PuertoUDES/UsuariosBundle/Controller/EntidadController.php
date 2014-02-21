@@ -326,6 +326,7 @@ class EntidadController extends Controller
         $entity = 'Entidad';
         $bundle = 'Usuarios';
         $route = 'entidad_';
+        $route_new = $route.'_new';
         $limit = 10;
         $utils = $this->getUtils();
         if(is_null($config)){
@@ -337,6 +338,7 @@ class EntidadController extends Controller
             $route = $config['route'];
             $limit = $config['limit'];
             $qb = $config['qb'];
+            $route_new = $config['route'].'_new';
         }
         
         $head = $this->getHeadFiltro($utils->getFormFilter(array(), $route, true), $route);
@@ -354,11 +356,12 @@ class EntidadController extends Controller
         $paginacion = $utils->getPaginacion($entity, $bundle, $limit, $route, $qb);
 //        $paginacion['form_filter'] = $form;
         $botones = array(
-            array(
-                'url'   => $this->generateUrl('entidad__new'),
-                'type'  => 'primary',
-                'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
-            ),
+//            array(
+//                'url'   => $this->generateUrl($route_new),
+//                'type'  => 'primary',
+//                'class' => 'carga-modal',
+//                'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
+//            ),
         );
         $datos = array(
             'paginas'       =>  $paginacion['pag'],
@@ -549,7 +552,7 @@ class EntidadController extends Controller
                         }else{
                             $u = $entidad->getUsuario();
                         }
-                        $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->findOneBy(array('canonical' => 'transportista', 'aplicableA' => 'FormatoUsuario'));
+                        $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->findOneBy(array('canonical' => 'transportista', 'aplicableA' => 'Usuario'));
                         $fu = $em->getRepository('PuertoUDESFormatosBundle:FormatoUsuario')->findOneBy(array('usuario' => $u->getId(), 'formato' => $formato->getId(), 'rol' => $rol->getId()));
                         if(!$fu){
                             $fu = new \PuertoUDES\FormatosBundle\Entity\FormatoUsuario();
@@ -557,6 +560,7 @@ class EntidadController extends Controller
                                 ->setFormato($formato)
                                 ->setUsuario($entidad->getUsuario());
                             $em->persist($fu);
+                            $u->addRol('ROLE_'.strtoupper($rol->getCanonical()));
                         }
                         $formato->setTransportista($entidad);
                         $em->persist($formato);
@@ -642,6 +646,11 @@ class EntidadController extends Controller
      * Displays a form to create a new Entidad entity.
      *
      * @Route("/new", name="entidad__new")
+     * @Route("/new/Remitentes/", name="entidad__remitentes_new")
+     * @Route("/new/Destinatarios/", name="entidad__destinatarios_new")
+     * @Route("/new/Transportistas/", name="entidad__transportistas_new")
+     * @Route("/new/Consignatarios/", name="entidad__Consignatario_new")
+     * @Route("/new/Notificados/", name="entidad__notificados_new")
      * @Method("GET")
      * @Template()
      */
@@ -650,10 +659,18 @@ class EntidadController extends Controller
         $entity = new Entidad();
         $form   = $this->createCreateForm($entity);
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+        $template = 'new';
+        $parametros = array(
+            'entity'    => $entity,
+            'form'      => $form->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return JsonResponse::create(array(
+                'title' => 'Agregar Nueva Entidad',
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -674,11 +691,19 @@ class EntidadController extends Controller
         }
 
         $deleteForm = $this->createDeleteForm($id);
-
-        return array(
+        
+        $template = 'show';
+        $parametros = array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return JsonResponse::create(array(
+                'title' => $entity->getNombre(),
+                'body'  => $this->renderView('PuertoUDESUsuariosBundle:Entidad:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -701,11 +726,19 @@ class EntidadController extends Controller
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $parametros = array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
+        $template = 'edit';
+        if($this->getRequest()->isXmlHttpRequest()){
+            return JsonResponse::create(array(
+                'title' => $entity->getNombre(),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -839,7 +872,7 @@ class EntidadController extends Controller
                         'class' =>  'text-center',
                     ),
                     array(
-                        'dato'    =>   'Telefono',
+                        'dato'    =>   'telefono',
                         'label'     =>  'Teléfono',
                         'class' =>  'text-center',
                     ),
@@ -849,12 +882,12 @@ class EntidadController extends Controller
                         'join'     =>  'entidad',
                         'class' =>  'text-center',
                     ),
-                    array(
-                        'dato'    =>   'canonical',
-                        'label'     =>  'Tipo de Documento de dentidad',
-                        'join'     =>  'tipoDocId',
-                        'class' =>  'text-center',
-                    ),
+//                    array(
+//                        'dato'    =>   'tipoDocId',
+//                        'label'     =>  'Tipo de Documento de dentidad',
+//                        'join'     =>  'tipoDocId',
+//                        'class' =>  'text-center',
+//                    ),
                     array(
                         'dato'    =>   'Acciones',
                         'class' =>  'text-center',
@@ -863,12 +896,14 @@ class EntidadController extends Controller
                                 'url'   => 'entidad__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
                                 'url'   => 'entidad__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
                             ),
                         )

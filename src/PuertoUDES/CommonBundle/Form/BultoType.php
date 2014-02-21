@@ -15,9 +15,7 @@ class BultoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('pesoBruto')
-            ->add('pesoNeto')
-            ->add('volumen')
+            ->add('nombre')
             ->add('marca')
             ->add('clase')
         ;

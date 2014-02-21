@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\UsuariosBundle\Entity\Usuario;
 use PuertoUDES\UsuariosBundle\Form\UsuarioType;
@@ -64,6 +65,7 @@ class UsuarioController extends Controller
             array(
                 'url'   => $this->generateUrl('usuario__new'),
                 'type'  => 'primary',
+                'class'  => 'carga-modal',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
             ),
         );
@@ -157,7 +159,7 @@ class UsuarioController extends Controller
     */
     private function createCreateForm(Usuario $entity, $id = -1)
     {
-        $form = $this->createForm(new UsuarioType(), $entity, array(
+        $form = $this->createForm(new UsuarioType($this->getUser()), $entity, array(
             'action' => $this->generateUrl('usuario__create',array('id' => $id)),
             'method' => 'POST',
         ));
@@ -185,11 +187,18 @@ class UsuarioController extends Controller
             return $this->redirect($this->generateUrl('fos_user_registration_register'));
         }
 
-        return array(
-            'entity' => $entity,
-            'id' => $id,
-            'form'   => $form->createView(),
+        $template = 'new';
+        $parametros = array(
+            'entity'    => $entity,
+            'form'      => $form->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return JsonResponse::create(array(
+                'title' => 'Agregar Nuevo Usuario',
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -211,10 +220,18 @@ class UsuarioController extends Controller
 
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $template = 'show';
+        $parametros = array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return JsonResponse::create(array(
+                'title' => $entity->getNombre(),
+                'body'  => $this->renderView('PuertoUDESUsuariosBundle:Usuario:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -245,11 +262,19 @@ class UsuarioController extends Controller
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $parametros = array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
+        $template = 'edit';
+        if($this->getRequest()->isXmlHttpRequest()){
+            return JsonResponse::create(array(
+                'title' => $entity->getNombre(),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -261,7 +286,7 @@ class UsuarioController extends Controller
     */
     private function createEditForm(Usuario $entity)
     {
-        $form = $this->createForm(new UsuarioType(), $entity, array(
+        $form = $this->createForm(new UsuarioType($this->getUser()), $entity, array(
             'action' => $this->generateUrl('usuario__update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
@@ -371,12 +396,10 @@ class UsuarioController extends Controller
                 'col'=>array(
                     array(
                         'dato'    =>   'Nombre',
-                        'join'     =>  'usuario',
                         'class' =>  'text-center',
                     ),
                     array(
                         'dato'    =>   'Descripcion',
-                        'join'     =>  'usuario',
                         'class' =>  'text-center',
                     ),
                     array(
@@ -387,12 +410,14 @@ class UsuarioController extends Controller
                                 'url'   => 'usuario__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
                                 'url'   => 'usuario__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
                             ),
                         )

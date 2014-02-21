@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\CommonBundle\Entity\Contenedor;
 use PuertoUDES\CommonBundle\Form\ContenedorType;
@@ -19,6 +20,73 @@ use PuertoUDES\CommonBundle\Form\ContenedorType;
 class ContenedorController extends Controller
 {
 
+    /**
+     * Displays a form to create a new Entidad entity.
+     *
+     * @Route("/Guardar/{tipo}/{numero_mci}/", name="contenedor_save_ajax")
+     * @Method({"POST","PUT"})
+     * @Template()
+     */
+    public function saveAjaxAction(Request $request){
+        $capacidad = $request->get('capacidad',NULL);
+        $numeroContenedor = $request->get('numero',NULL);
+        $numero = $request->get('numero_mci',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('numero' => $numero));
+        $datos = array(
+            'errors' => array(),
+        );
+        if($formato && is_numeric($capacidad)){
+            $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower('MCI')));
+            if($tipo->getId() === $formato->getTipo()->getId()){
+                $contenedor = $this->getRepositorio()->findOneBy(array('numero' => $numeroContenedor));
+                if(!$contenedor){
+                    $contenedor = new Contenedor();
+                    $contenedor
+                            ->setNumero($numeroContenedor)
+                            ->setCapacidad($capacidad)
+                            ->setSigla($numeroContenedor);
+                    $em->persist($contenedor);
+                    $em->flush();
+                }
+                $cmfs = $em->getRepository('PuertoUDESFormatosBundle:ContenedorMercanciaFormato')
+                    ->createQueryBuilder('cmf')
+                    ->join('cmf.formato', 'f')
+                    ->andWhere('f.padre = '.$formato->getId())
+                    ->getQuery()->execute();
+                if(empty($cmfs)){
+                    $cmf = new \PuertoUDES\FormatosBundle\Entity\ContenedorMercanciaFormato();
+                    $cmf
+                        ->setContenedor($contenedor)
+                        ->setFormato($formato);
+                    $em->persist($cmf);
+                    $formato->addContenedoresMercancia($cmf);
+                    $contenedor->addMercanciasFormato($cmf);
+                    $em->persist($formato);
+                }
+                foreach($cmfs as $cmf){
+                    $cmf->setContenedor($contenedor);
+                    $em->persist($cmf);
+                }
+                $em->flush();
+                $datos['id'] = $contenedor->getId();
+                $datos['valores'] = $contenedor->json(false);
+                $datos['success']['msgs']['Contenedor'] = array(
+                    'msg' => 'Contenedor de número <strong>"'.$contenedor->getNumero().'"</strong> fué agregado',
+                    'tipo' => 'success'
+                );
+            }else{
+                $datos['errors']['Unidad de Carga'] = 'Datos inválidos.';
+            }
+        }else{
+            if(!is_string($aniof) || strlen($aniof) != 4){
+                $datos['errors']['Unidad de Carga'] = 'El año de fabricación de la Unidad de Carga debe ser de 4 dígitos.';
+            }else
+                $datos['errors']['Unidad de Carga'] = 'El Formato "'.$tipo.'" no existe.';
+        }
+        return JsonResponse::create($datos);
+    }
+    
     /**
      * Lists all Contenedor entities.
      *
@@ -64,6 +132,7 @@ class ContenedorController extends Controller
             array(
                 'url'   => $this->generateUrl('contenedor__new'),
                 'type'  => 'primary',
+                'class'  => 'carga-modal',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
             ),
         );
@@ -137,10 +206,18 @@ class ContenedorController extends Controller
         $entity = new Contenedor();
         $form   = $this->createCreateForm($entity);
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+        $template = 'new';
+        $parametros = array(
+            'entity'      => $entity,
+            'form' => $form->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => 'Agregar Nuevo Contenedor',
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -162,10 +239,18 @@ class ContenedorController extends Controller
 
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $template = 'show';
+        $parametros = array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => empty($entity->getNumero())?$entity->getSigla():$entity->getNumero(),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Contenedor:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -188,11 +273,19 @@ class ContenedorController extends Controller
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $template = 'edit';
+        $parametros = array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => empty($entity->getNumero())?$entity->getSigla():$entity->getNumero(),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -333,12 +426,14 @@ class ContenedorController extends Controller
                                 'url'   => 'contenedor__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
                                 'url'   => 'contenedor__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
                             ),
                         )

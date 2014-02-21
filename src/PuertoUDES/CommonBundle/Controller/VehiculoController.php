@@ -203,6 +203,7 @@ class VehiculoController extends Controller
             array(
                 'url'   => $this->generateUrl('vehiculo__new'),
                 'type'  => 'primary',
+                'class'  => 'carga-modal',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
             ),
         );
@@ -276,10 +277,18 @@ class VehiculoController extends Controller
         $entity = new Vehiculo();
         $form   = $this->createCreateForm($entity);
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+        $template = 'new';
+        $parametros = array(
+            'entity'      => $entity,
+            'form' => $form->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => 'Agregar Nuevo Vehiculo',
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -301,10 +310,18 @@ class VehiculoController extends Controller
 
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $template = 'show';
+        $parametros = array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => empty($entity->getPlaca())?$entity->getMarca():$entity->getPlaca(),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Vehiculo:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -327,11 +344,19 @@ class VehiculoController extends Controller
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        $template = 'edit';
+        $parametros = array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
+        if($this->getRequest()->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => empty($entity->getPlaca())?$entity->getMarca():$entity->getPlaca(),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+        return $parametros;
     }
 
     /**
@@ -488,12 +513,14 @@ class VehiculoController extends Controller
                                 'url'   => 'vehiculo__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
                                 'url'   => 'vehiculo__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
+                                'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
                             ),
                         )

@@ -3,12 +3,12 @@
 {% block body -%}
     <h1>Mercancia edit</h1>
 
-    {{ form(edit_form) }}
+    {% include 'PuertoUDESCommonBundle:Mercancia:_edit.html.twig' %}
 
         <ul class="record_actions">
     <li>
         <a href="{{ path('mercancia_') }}">
-            Back to the list
+            Volver
         </a>
     </li>
     <li>{{ form(delete_form) }}</li>

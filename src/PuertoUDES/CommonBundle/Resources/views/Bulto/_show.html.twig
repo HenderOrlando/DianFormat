@@ -1,0 +1,26 @@
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Marca</th>
+                <td>{{ entity.marca }}</td>
+            </tr>
+            <tr>
+                <th>Clase</th>
+                <td>{{ entity.clase }}</td>
+            </tr>
+            <tr>
+                <th>Contenedores de Mercancías</th>
+                <td>
+                    <ul class="list-unstyled">
+                        {% for cmf in entity.contenedorMercanciaFormatos %}
+                        <li>
+                            Mercancia <span class="text-info">{{ cmf.mercancia.nombre is empty?cmf.mercancia.descripcion:cmf.mercancia.nombre }}</span> en el Contenedor <span class="text-info">{{ cmf.contenedor.numero }}</span> en el <span class="text-info">{{ cmf.formato.nombre }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{{ form(delete_form) }}
