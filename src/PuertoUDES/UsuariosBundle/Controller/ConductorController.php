@@ -316,7 +316,7 @@ class ConductorController extends Controller
         );
         if($this->getRequest()->isXmlHttpRequest()){
             return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => 'Agregar Nueva Mercancía',
+                'title' => 'Agregar Nuevo Conductor',
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -350,7 +350,7 @@ class ConductorController extends Controller
         if($this->getRequest()->isXmlHttpRequest()){
             return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
                 'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
-                'body'  => $this->renderView('PuertoUDESCommonBundle:Conductor:_'.$template.'.html.twig', $parametros),
+                'body'  => $this->renderView('PuertoUDESUsuariosBundle:Conductor:_'.$template.'.html.twig', $parametros),
             ));
         }
         return $parametros;

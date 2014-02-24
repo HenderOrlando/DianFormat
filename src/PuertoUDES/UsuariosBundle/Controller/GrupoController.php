@@ -1,6 +1,6 @@
 <?php
 
-namespace PuertoUDES\FormatosBundle\Controller;
+namespace PuertoUDES\UsuariosBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -10,86 +10,71 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use PuertoUDES\CommonBundle\Controller\IndexController;
-use PuertoUDES\FormatosBundle\Entity\Carga;
-use PuertoUDES\FormatosBundle\Form\CargaType;
+use PuertoUDES\UsuariosBundle\Entity\Grupo;
+use PuertoUDES\UsuariosBundle\Entity\Usuario;
+use PuertoUDES\UsuariosBundle\Form\GrupoType;
 
 /**
- * Carga controller.
+ * Grupo controller.
  *
- * @Route("/Carga")
+ * @Route("/Grupo")
  */
-class CargaController extends Controller
+class GrupoController extends Controller
 {
 
     /**
      * Displays a form to create a new Formato entity.
      *
-     * @Route("/Lista/para/{name}/", name="list_typeahead_cargas_")
+     * @Route("/Lista/para/{name}/", name="list_typeahead_grupos_")
      * @Template()
      */
     public function listTypeaheadAction(Request $request){
         $list = array();
         $entities = $this->getRepositorio()->findAll();
         $name = $request->get('name','');
-        if($name === 'lugarCarga' || $name === 'lugarDescarga'){
-            return JsonResponse::create($this->listTypeaheadLugares());
-        }elseif($name === 'naturalezaCarga'){
-            return JsonResponse::create($this->listTypeaheadNaturalezas());
-        }
         $propertyPath = new PropertyAccessor();
-        foreach($entities as $carga){
-            $value = $propertyPath->getValue($carga,$name);
+        foreach($entities as $grupo){
+            $value = $propertyPath->getValue($grupo,$name);
             if(is_null($value))
                 $value = '';
             elseif(is_object($value))
                 $value = $value->__toString();
             $list[] = array(
                 'value' =>  $value,
-                'tokens'=>  $carga->getTokens(true),
-                'datos' =>  $carga->json(false)
+                'tokens'=>  $grupo->getTokens(),
+                'datos' =>  $grupo->json(false)
             );
         }
+        if($name === 'nacionalidad')
+            return JsonResponse::create($this->listTypeaheadPaises($list));
         return JsonResponse::create($list);
     }
-    public function listTypeaheadLugares($list = array()){
-        $entities = $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Lugar')->findAll();
-        foreach($entities as $lugar){
+    public function listTypeaheadPaises($list = array()){
+        $entities = $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Pais')->findAll();
+        foreach($entities as $pais){
             $list[] = array(
-                'value' =>  $lugar->__toString(),
-                'tokens'=>  $lugar->getTokens(),
-                'datos' =>  $lugar->json(false)
-            );
-        }
-        return $list;
-    }
-    public function listTypeaheadNaturalezas($list = array()){
-        $entities = $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Tipo')
-                ->createQueryBuilder('t')
-                ->andWhere("t.aplicableA LIKE '%carga%'")
-                ->getQuery()->execute();
-        foreach($entities as $naturaleza){
-            $list[] = array(
-                'value' =>  $naturaleza->__toString(),
-                'tokens'=>  $naturaleza->getTokens(),
-                'datos' =>  $naturaleza->json(false)
+                'value' =>  $pais->getNacionalidad(),
+                'tokens'=>  $pais->getTokens(),
+                'datos' =>  $pais->json(false)
             );
         }
         return $list;
     }
     /**
-     * Lists all Carga entities.
+     * Lists all Grupo entities.
      *
-     * @Route("/", name="carga_")
+     * @Route("/", name="grupo_")
+     * @Route("/", name="Grupo_")
      * @Method({"GET"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexAction(Request $request, $config = null)
     {
-        $title = 'Cargas';
-        $entity = 'Carga';
-        $bundle = 'Formatos';
-        $route = 'carga_';
-        $limit = 10;
+        $title = 'Grupos de Usuarios';
+        $entity = 'Grupo';
+        $bundle = 'Usuarios';
+        $route = 'grupo_';
+        $limit = 5;
         $utils = $this->getUtils();
         if(is_null($config)){
             $qb = $this->getRepositorio()->getAll(false, true);
@@ -119,7 +104,7 @@ class CargaController extends Controller
 //        $paginacion['form_filter'] = $form;
         $botones = array(
             array(
-                'url'   => $this->generateUrl('carga__new'),
+                'url'   => $this->generateUrl('grupo__new'),
                 'type'  => 'primary',
                 'class'  => 'carga-modal',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
@@ -137,16 +122,18 @@ class CargaController extends Controller
         }
         return $datos;
     }
+    
     /**
-     * Creates a new Carga entity.
+     * Creates a new Grupo entity.
      *
-     * @Route("/", name="carga__create")
+     * @Route("/", name="grupo__create")
+     * @Route("/", name="Grupo__create")
      * @Method("POST")
-     * @Template("PuertoUDESFormatosBundle:Carga:new.html.twig")
+     * @Template("PuertoUDESUsuariosBundle:Grupo:new.html.twig")
      */
     public function createAction(Request $request)
     {
-        $entity = new Carga();
+        $entity = new Grupo();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
@@ -155,7 +142,7 @@ class CargaController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('carga__show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('Grupo__show', array('id' => $entity->getId())));
         }
 
         return array(
@@ -165,16 +152,16 @@ class CargaController extends Controller
     }
 
     /**
-    * Creates a form to create a Carga entity.
+    * Creates a form to create a Grupo entity.
     *
-    * @param Carga $entity The entity
+    * @param Grupo $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createCreateForm(Carga $entity)
+    private function createCreateForm(Grupo $entity)
     {
-        $form = $this->createForm(new CargaType(), $entity, array(
-            'action' => $this->generateUrl('carga__create'),
+        $form = $this->createForm(new GrupoType(), $entity, array(
+            'action' => $this->generateUrl('Grupo__create'),
             'method' => 'POST',
         ));
 
@@ -184,15 +171,16 @@ class CargaController extends Controller
     }
 
     /**
-     * Displays a form to create a new Carga entity.
+     * Displays a form to create a new Grupo entity.
      *
-     * @Route("/new", name="carga__new")
+     * @Route("/new", name="grupo__new")
+     * @Route("/new", name="Grupo__new")
      * @Method("GET")
      * @Template()
      */
     public function newAction()
     {
-        $entity = new Carga();
+        $entity = new Grupo();
         $form   = $this->createCreateForm($entity);
 
         $template = 'new';
@@ -202,7 +190,7 @@ class CargaController extends Controller
         );
         if($this->getRequest()->isXmlHttpRequest()){
             return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => 'Agregar Nueva Carga',
+                'title' => 'Agregar Nuevo Grupo',
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -210,9 +198,10 @@ class CargaController extends Controller
     }
 
     /**
-     * Finds and displays a Carga entity.
+     * Finds and displays a Grupo entity.
      *
-     * @Route("/{id}", name="carga__show")
+     * @Route("/{id}", name="Grupo__show")
+     * @Route("/{id}", name="grupo__show")
      * @Method("GET")
      * @Template()
      */
@@ -220,10 +209,10 @@ class CargaController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('PuertoUDESFormatosBundle:Carga')->find($id);
+        $entity = $em->getRepository('PuertoUDESUsuariosBundle:Grupo')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Carga entity.');
+            throw $this->createNotFoundException('Unable to find Grupo entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -235,17 +224,17 @@ class CargaController extends Controller
         );
         if($this->getRequest()->isXmlHttpRequest()){
             return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => 'Carga '.(empty($entity->getNaturalezaCarga()->getNombre())?'en '.$entity->getFormato()->getNombre():$entity->getNaturalezaCarga()->getNombre()),
-                'body'  => $this->renderView('PuertoUDESFormatosBundle:Carga:_'.$template.'.html.twig', $parametros),
+                'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
+                'body'  => $this->renderView('PuertoUDESUsuariosBundle:Grupo:_'.$template.'.html.twig', $parametros),
             ));
         }
         return $parametros;
     }
 
     /**
-     * Displays a form to edit an existing Carga entity.
+     * Displays a form to edit an existing Grupo entity.
      *
-     * @Route("/{id}/edit", name="carga__edit")
+     * @Route("/{id}/edit", name="grupo__edit")
      * @Method("GET")
      * @Template()
      */
@@ -253,10 +242,10 @@ class CargaController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('PuertoUDESFormatosBundle:Carga')->find($id);
+        $entity = $em->getRepository('PuertoUDESUsuariosBundle:Grupo')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Carga entity.');
+            throw $this->createNotFoundException('Unable to find Grupo entity.');
         }
 
         $editForm = $this->createEditForm($entity);
@@ -270,7 +259,7 @@ class CargaController extends Controller
         );
         if($this->getRequest()->isXmlHttpRequest()){
             return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => 'Carga '.(empty($entity->getNaturalezaCarga()->getNombre())?'en '.$entity->getFormato()->getNombre():$entity->getNaturalezaCarga()->getNombre()),
+                'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -278,16 +267,16 @@ class CargaController extends Controller
     }
 
     /**
-    * Creates a form to edit a Carga entity.
+    * Creates a form to edit a Grupo entity.
     *
-    * @param Carga $entity The entity
+    * @param Grupo $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createEditForm(Carga $entity)
+    private function createEditForm(Grupo $entity)
     {
-        $form = $this->createForm(new CargaType(), $entity, array(
-            'action' => $this->generateUrl('carga__update', array('id' => $entity->getId())),
+        $form = $this->createForm(new GrupoType(), $entity, array(
+            'action' => $this->generateUrl('Grupo__update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
@@ -296,20 +285,21 @@ class CargaController extends Controller
         return $form;
     }
     /**
-     * Edits an existing Carga entity.
+     * Edits an existing Grupo entity.
      *
-     * @Route("/{id}", name="carga__update")
+     * @Route("/{id}", name="grupo__update")
+     * @Route("/{id}", name="Grupo__update")
      * @Method("PUT")
-     * @Template("PuertoUDESFormatosBundle:Carga:edit.html.twig")
+     * @Template("PuertoUDESUsuariosBundle:Grupo:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('PuertoUDESFormatosBundle:Carga')->find($id);
+        $entity = $em->getRepository('PuertoUDESUsuariosBundle:Grupo')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Carga entity.');
+            throw $this->createNotFoundException('Unable to find Grupo entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -318,8 +308,14 @@ class CargaController extends Controller
 
         if ($editForm->isValid()) {
             $em->flush();
-
-            return $this->redirect($this->generateUrl('carga__edit', array('id' => $id)));
+            if($request->isXmlHttpRequest()){
+                return $this->renderView('PuertoUDESUsuariosBundle:Grupo:edit.html.twig',array(
+                    'entity'      => $entity,
+                    'edit_form'   => $editForm->createView(),
+                    'delete_form' => $deleteForm->createView(),
+                ));
+            }
+            return $this->redirect($this->generateUrl('grupo__edit', array('id' => $id)));
         }
 
         return array(
@@ -329,9 +325,10 @@ class CargaController extends Controller
         );
     }
     /**
-     * Deletes a Carga entity.
+     * Deletes a Grupo entity.
      *
-     * @Route("/{id}", name="carga__delete")
+     * @Route("/{id}", name="grupo__delete")
+     * @Route("/{id}", name="Grupo__delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -341,21 +338,21 @@ class CargaController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('PuertoUDESFormatosBundle:Carga')->find($id);
+            $entity = $em->getRepository('PuertoUDESUsuariosBundle:Grupo')->find($id);
 
             if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Carga entity.');
+                throw $this->createNotFoundException('Unable to find Grupo entity.');
             }
 
             $em->remove($entity);
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('carga_'));
+        return $this->redirect($this->generateUrl('Grupo_'));
     }
 
     /**
-     * Creates a form to delete a Carga entity by id.
+     * Creates a form to delete a Grupo entity by id.
      *
      * @param mixed $id The entity id
      *
@@ -364,7 +361,7 @@ class CargaController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('carga__delete', array('id' => $id)))
+            ->setAction($this->generateUrl('Grupo__delete', array('id' => $id)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
@@ -384,10 +381,10 @@ class CargaController extends Controller
     /**
      * get Repositorio
      * 
-     * @return CargaRepository  CargaRepository de PuertoUDES
+     * @return GrupoRepository  GrupoRepository de PuertoUDES
      */
     public function getRepositorio() {
-        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESFormatosBundle:Carga');
+        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESUsuariosBundle:Grupo');
     }
     
     public function getHeadFiltro($form, $route){
@@ -395,26 +392,18 @@ class CargaController extends Controller
             array(
                 'col'=>array(
                     array(
+                        'dato'    =>   'Nombre',
+                        'class' =>  'text-center',
+                    ),
+                    array(
+                        'dato'    =>   'Descripcion',
+                        'label'     =>  'Descripción',
+                        'class' =>  'text-center',
+                    ),
+                    array(
                         'dato'    =>   'canonical',
-                        'label'    =>   'Naturaleza de la Carga',
-                        'join'    =>   'naturalezaCarga',
-                        'class' =>  'text-center',
-                    ),
-                    array(
-                        'dato'    =>   'numero',
-                        'label'    =>   'Número del Formato',
-                        'join'    =>   'formato',
-                        'class' =>  'text-center',
-                    ),
-                    array(
-                        'dato'    =>   'nombre',
-                        'label'    =>   'Lugar',
-                        'join'    =>   'lugar',
-                        'class' =>  'text-center',
-                    ),
-                    array(
-                        'dato'    =>   'Num Precintos',
-                        'label'    =>   'Numero de Precintos',
+                        'join'    =>   'docente',
+                        'label'    =>   'Docente',
                         'class' =>  'text-center',
                     ),
                     array(
@@ -422,14 +411,14 @@ class CargaController extends Controller
                         'class' =>  'text-center',
                         'acciones'=>    array(
                             array(
-                                'url'   => 'carga__edit',
+                                'url'   => 'grupo__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
                                 'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
-                                'url'   => 'carga__delete',
+                                'url'   => 'grupo__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
                                 'class'  => 'carga-modal',

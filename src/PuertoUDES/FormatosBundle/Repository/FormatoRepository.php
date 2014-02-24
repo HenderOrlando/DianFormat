@@ -13,12 +13,17 @@ class FormatoRepository extends EntityRepository
             ->getResult();
     }
     
-    public function getAll($query = false, $querybuilder = false)
+    public function getAll($query = false, $querybuilder = false, $id_usuario = null)
     {
         $q = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a')
             ->from('PuertoUDESFormatosBundle:Formato', 'a');
+        if(!is_null($id_usuario)){
+            $q
+                ->join('a.usuarios', 'fu')
+                ->andWhere('fu.usuario = '.$id_usuario);
+        }
         if(is_bool($querybuilder) && $querybuilder)
             $rta = $q;
         elseif(is_bool($query) && $query)
@@ -28,12 +33,12 @@ class FormatoRepository extends EntityRepository
         return $rta;
     }
     
-    public function getMci($completo = null, $query = false, $querybuilder = false){
-        return $this->getByAbreviacion('mci', $completo, $query, $querybuilder);
+    public function getMci($completo = null, $query = false, $querybuilder = false, $id_usuario = null){
+        return $this->getByAbreviacion('mci', $completo, $query, $querybuilder, $id_usuario);
     }
     
-    public function getCpic($completo = null, $query = false, $querybuilder = false){
-        return $this->getByAbreviacion('cpic', $completo, $query, $querybuilder);
+    public function getCpic($completo = null, $query = false, $querybuilder = false, $id_usuario = null){
+        return $this->getByAbreviacion('cpic', $completo, $query, $querybuilder, $id_usuario);
     }
     
     public function countFormatos($campo = 'id'){
@@ -43,7 +48,7 @@ class FormatoRepository extends EntityRepository
                 ->getSingleScalarResult();
     }
     
-    public function getByAbreviacion($abreviacion = null, $completo = null, $query = false, $querybuilder = false){
+    public function getByAbreviacion($abreviacion = null, $completo = null, $query = false, $querybuilder = false, $id_usuario = null){
         $rta = null;
         if(is_string($abreviacion)){
             $r = $this->getEntityManager()
@@ -63,7 +68,7 @@ class FormatoRepository extends EntityRepository
         }elseif(!is_numeric($abreviacion)){
             $abreviacion = false;
         }
-        $q =  $this->getAll(false, true);
+        $q =  $this->getAll(false, true, $id_usuario);
         if($abreviacion !== false){
             if(!is_null($completo) && !is_bool($completo)){
                 $q->andWhere('a.completo='.$completo);

@@ -36,7 +36,11 @@ class FormatoController extends Controller
         $limit = 5;
         $utils = $this->getUtils();
         if(is_null($config)){
-            $qb = $this->getRepositorio()->getAll(false, true);
+            if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+                $qb = $this->getRepositorio()->getAll(false, true);
+            }else{
+                $qb = $this->getRepositorio()->getAll(false, true, $this->getUser()->getUsuario()->getId());
+            }
         }else{
             $title = $config['title'];
             $entity = $config['entity'];
@@ -94,6 +98,11 @@ class FormatoController extends Controller
      */
     public function cpicAction(Request $request)
     {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getCpic(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getCpic(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
         return $this->indexAction($request, array(
             'title'     =>  'Carta de Porte Internacional por Carretera',
             'entity'    =>  'Formato',
@@ -101,7 +110,7 @@ class FormatoController extends Controller
             'abrevia'   =>  'cpic',
             'route'     =>  'formato__cpic',
             'limit'     =>  5,
-            'qb'        =>  $this->getRepositorio()->getCpic(null, false, true),
+            'qb'        =>  $qb,
         ));
     }
     /**
@@ -113,6 +122,11 @@ class FormatoController extends Controller
      */
     public function mciAction(Request $request)
     {
+        if($this->getUser()->hasRole('ROLE_ADMIN')){
+            $qb = $this->getRepositorio()->getMci(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getMci(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
         return $this->indexAction($request, array(
             'title'     =>  'Manifiesto de Carga Internacional',
             'entity'    =>  'Formato',
@@ -120,7 +134,7 @@ class FormatoController extends Controller
             'abrevia'   =>  'mci',
             'route'     =>  'formato__mci',
             'limit'     =>  5,
-            'qb'        =>  $this->getRepositorio()->getMci(null, false, true),
+            'qb'        =>  $qb,
         ));
     }
     
@@ -141,6 +155,16 @@ class FormatoController extends Controller
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
+            $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->findOneBy(array('canonical' => 'autor'));
+            if($rol){
+                $fu = new \PuertoUDES\FormatosBundle\Entity\FormatoUsuario();
+                $fu
+                    ->setFormato($entity)
+                    ->setUsuario($this->getUser()->getUsuario())
+                    ->setRol($rol)
+                ;
+                $em->persist($fu);
+            }
             $em->flush();
 
             return $this->redirect($this->generateUrl('formato__edit', array('id' => $entity->getId())));
@@ -649,7 +673,7 @@ class FormatoController extends Controller
         if($this->getRequest()->isXmlHttpRequest()){
             return JsonResponse::create(array(
                 'title' => $entity->getNombre(),
-                'body'  => $this->renderView('PuertoUDESUsuariosBundle:Formato:_'.$template.'.html.twig', $parametros),
+                'body'  => $this->renderView('PuertoUDESFormatosBundle:Formato:_'.$template.'.html.twig', $parametros),
             ));
         }
         return $parametros;
@@ -779,12 +803,18 @@ class FormatoController extends Controller
                         'dato'    =>   'Descripcion',
                         'class' =>  'text-center',
                     ),
+                    array(
+                        'dato'  =>   'canonical',
+                        'label' =>   'Autor',
+                        'join'  =>   'autor',
+                        'class' =>  'text-center',
+                    ),
                 )
             ),
         );
         if(is_bool($tipo) && $tipo){
             $filas[0]['col'][] = array(
-                'dato'    =>   'canonical',
+                'dato'    =>   'nombre',
                 'label'    =>   'Tipo de Formato',
                 'join'    =>   'tipo',
                 'class' =>  'text-center',

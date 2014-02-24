@@ -72,8 +72,6 @@ fos_user:
     db_driver: orm
     firewall_name: main
     user_class: PuertoUDES\FosUsuarioBundle\Entity\FosUser
-    group:
-        group_class: PuertoUDES\FosUsuarioBundle\Entity\FosGrupo
     registration:
         confirmation:
             enabled:    true

@@ -29,7 +29,7 @@ class UsuarioController extends Controller
      */
     public function indexAction(Request $request, $config = null)
     {
-        $title = 'Usuarios de Formatos';
+        $title = 'Usuarios';
         $entity = 'Usuario';
         $bundle = 'Common';
         $route = 'usuario_';
@@ -61,9 +61,13 @@ class UsuarioController extends Controller
 //        $qb = $qb->getQuery();
         $paginacion = $utils->getPaginacion($entity, $bundle, $limit, $route, $qb);
 //        $paginacion['form_filter'] = $form;
+        $new_route = $this->generateUrl('usuario__new_',array('rol' => $title, 'id' => $this->getUser()->getId()));
+        if($title === 'Usuarios'){
+            $new_route = $this->generateUrl('usuario__new',array('rol' => $title, 'id' => $this->getUser()->getId()));
+        }
         $botones = array(
             array(
-                'url'   => $this->generateUrl('usuario__new'),
+                'url'   => $new_route,
                 'type'  => 'primary',
                 'class'  => 'carga-modal',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
@@ -119,26 +123,41 @@ class UsuarioController extends Controller
     /**
      * Creates a new Usuario entity.
      *
+     * @Route("/{id}/rol/{rol}", name="usuario__create_")
      * @Route("/{id}/", name="usuario__create")
      * @Method("POST")
      * @Template("PuertoUDESUsuariosBundle:Usuario:new.html.twig")
      */
-    public function createAction(Request $request, $id)
+    public function createAction(Request $request, $id, $rol = 'Usuarios')
     {
         $entity = new Usuario();
-        $form = $this->createCreateForm($entity);
+        $form = $this->createCreateForm($entity, $id, $rol);
         $form->handleRequest($request);
 
+        
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $user = $em->getRepository('PuertoUDESFosUsuarioBundle:FosUser')->find($id);
-            if($user){
-                $em->persist($entity);
-                $em->flush();
-                $user->setUsuario($entity);
-                $em->persist($user);
-                $em->flush();
-            }
+//            $user = $em->getRepository('PuertoUDESFosUsuarioBundle:FosUser')->find($id);
+//            if(!$user){
+                $userManager = $this->container->get('fos_user.user_manager');
+                $user = $userManager->createUser();
+//                
+//                $encoder_service = $this->get('security.encoder_factory');
+//                $encoder = $encoder_service->getEncoder($user);
+//                $encoded_pass = $encoder->encodePassword($entity->getDocId(), $user->getSalt());
+                
+                $user->setUsername($entity->getDocId());
+                $user->setEnabled(true);
+                $user->setPlainPassword($entity->getDocId());
+                $user->setEmail(str_replace('-', '_', $entity->getCanonical()).'@example.com');
+                
+                $userManager->updateUser($user,false);
+//            }
+            $em->persist($entity);
+            $em->flush();
+            $user->setUsuario($entity);
+            $em->persist($user);
+            $em->flush();
             
 
             return $this->redirect($this->generateUrl('usuario__show', array('id' => $entity->getId())));
@@ -157,10 +176,31 @@ class UsuarioController extends Controller
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createCreateForm(Usuario $entity, $id = -1)
+    private function createCreateForm(Usuario $entity, $id = -1, $rol = null)
     {
-        $form = $this->createForm(new UsuarioType($this->getUser()), $entity, array(
-            'action' => $this->generateUrl('usuario__create',array('id' => $id)),
+        $name_rol = $rol;
+        switch ($rol) {
+            case 'Docentes':
+                $rol = 'docente';
+                break;
+            case 'Estudiantes':
+                $rol = 'estudiante';
+                break;
+            default:
+                $rol = 'usuario';
+                break;
+        }
+        if($rol !== 'Usuario'){
+            $em = $this->getDoctrine()->getManager();
+            $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
+                ->andWhere("r.canonical LIKE '%".$rol."%' OR r.nombre LIKE '%".$name_rol."%'")
+                ->andWhere("r.aplicableA LIKE '%Usuario%'")
+                ->getQuery()->getOneOrNullResult();
+        }else{
+            $rol = null;
+        }
+        $form = $this->createForm(new UsuarioType($this->getUser(), $rol), $entity, array(
+            'action' => $this->generateUrl('usuario__create_',array('id' => $id, 'rol' => $rol->getNombre())),
             'method' => 'POST',
         ));
 
@@ -172,17 +212,18 @@ class UsuarioController extends Controller
     /**
      * Displays a form to create a new Usuario entity.
      *
+     * @Route("/new/{id}/rol/{rol}", name="usuario__new_", defaults={"id":"-1"})
      * @Route("/new/{id}/", name="usuario__new", defaults={"id":"-1"})
      * @Method("GET")
      * @Template()
      */
-    public function newAction($id)
+    public function newAction($id, $rol = 'Usuarios')
     {
         $entity = new Usuario();
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository('PuertoUDESFosUsuarioBundle:FosUser')->find($id);
         if($user){
-            $form   = $this->createCreateForm($entity, $id);
+            $form   = $this->createCreateForm($entity, $id, $rol);
         }else{
             return $this->redirect($this->generateUrl('fos_user_registration_register'));
         }
@@ -194,7 +235,7 @@ class UsuarioController extends Controller
         );
         if($this->getRequest()->isXmlHttpRequest()){
             return JsonResponse::create(array(
-                'title' => 'Agregar Nuevo Usuario',
+                'title' => 'Agregar Nuevos '.$rol,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -205,6 +246,7 @@ class UsuarioController extends Controller
      * Finds and displays a Usuario entity.
      *
      * @Route("/{id}", name="usuario__show")
+     * @Route("/{id}/rol/{rol}/", name="usuario__show_")
      * @Method("GET")
      * @Template()
      */
@@ -286,7 +328,17 @@ class UsuarioController extends Controller
     */
     private function createEditForm(Usuario $entity)
     {
-        $form = $this->createForm(new UsuarioType($this->getUser()), $entity, array(
+        if($entity->hasRol('Estudiante')){
+            $rol = 'Estudiante';
+            $em = $this->getDoctrine()->getManager();
+            $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
+                ->andWhere("r.canonical LIKE '%".$rol."%' OR r.nombre LIKE '%".$rol."%'")
+                ->andWhere("r.aplicableA LIKE '%Usuario%'")
+                ->getQuery()->getOneOrNullResult();
+        }else{
+            $rol = null;
+        }
+        $form = $this->createForm(new UsuarioType($this->getUser(), $rol), $entity, array(
             'action' => $this->generateUrl('usuario__update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));

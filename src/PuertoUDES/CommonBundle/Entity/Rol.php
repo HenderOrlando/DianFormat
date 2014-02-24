@@ -10,12 +10,12 @@ use Doctrine\ORM\Mapping AS ORM;
 class Rol extends \PuertoUDES\CommonBundle\Entity\Objeto
 {
     /** 
-     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="rol")
+     * @ORM\OneToMany(targetEntity="\PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="rol")
      */
     private $usuariosFormatos;
     
     /** 
-     * @ORM\ManyToMany(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario", mappedBy="roles")
+     * @ORM\ManyToMany(targetEntity="\PuertoUDES\UsuariosBundle\Entity\Usuario", mappedBy="roles")
      */
     private $usuarios;
     
@@ -25,7 +25,7 @@ class Rol extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $aplicableA;
         
     /** 
-     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Gasto", mappedBy="rolUsuario")
+     * @ORM\OneToMany(targetEntity="\PuertoUDES\FormatosBundle\Entity\Gasto", mappedBy="rolUsuario")
      */
     private $gastos;
     
@@ -159,5 +159,9 @@ class Rol extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getGastos()
     {
         return $this->gastos;
+    }
+    
+    public function is($rol){
+        return $this->getCanonical() === parent::normaliza($rol);
     }
 }

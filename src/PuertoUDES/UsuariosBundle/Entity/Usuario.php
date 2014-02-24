@@ -32,28 +32,28 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $docId;
 
     /**
-     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Tipo")
+     * @ORM\ManyToOne(targetEntity="\PuertoUDES\CommonBundle\Entity\Tipo")
      * @ORM\JoinColumn(name="tipo_doc_id", referencedColumnName="id")
      */
     private $tipoDocId;
 
     /** 
-     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Gasto", mappedBy="usuario")
+     * @ORM\OneToMany(targetEntity="\PuertoUDES\FormatosBundle\Entity\Gasto", mappedBy="usuario")
      */
     private $gastos;
 
     /**
-     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Entidad", mappedBy="usuario", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="\PuertoUDES\UsuariosBundle\Entity\Entidad", mappedBy="usuario", cascade={"persist", "remove"})
      */
     private $entidad;
 
     /**
-     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Conductor", mappedBy="usuario", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="\PuertoUDES\UsuariosBundle\Entity\Conductor", mappedBy="usuario", cascade={"persist", "remove"})
      */
     private $conductor;
     
     /** 
-     * @ORM\ManyToMany(targetEntity="PuertoUDES\CommonBundle\Entity\Rol", inversedBy="usuarios")
+     * @ORM\ManyToMany(targetEntity="\PuertoUDES\CommonBundle\Entity\Rol", inversedBy="usuarios")
      * @ORM\JoinTable(
      *     name="rol_usuario", 
      *     joinColumns={@ORM\JoinColumn(name="usuario_id", referencedColumnName="id", nullable=false)}, 
@@ -67,13 +67,18 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $formatos;
     
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", mappedBy="autor")
+     */
+    private $formatos_autor;
+    
     /**
-     * @ORM\OneToMany(targetEntity="PuertoUDES\FosUsuarioBundle\Entity\FosGrupo", mappedBy="docente")
+     * @ORM\OneToMany(targetEntity="PuertoUDES\UsuariosBundle\Entity\Grupo", mappedBy="docente")
      */
     protected $gruposDocente;
     
     /**
-     * @ORM\ManyToOne(targetEntity="PuertoUDES\FosUsuarioBundle\Entity\FosGrupo", inversedBy="usuarios")
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Grupo", inversedBy="usuarios")
      * @ORM\JoinColumn(name="grupo_id", referencedColumnName="id", nullable=true)
      */
     protected $grupo;
@@ -145,7 +150,9 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     public function setTelefono($telefono)
     {
-        $this->telefono = $telefono;
+        if (is_numeric($telefono)) {
+            $this->telefono = $telefono;
+        }
     
         return $this;
     }
@@ -163,20 +170,22 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     /**
      * Set docId
      *
-     * @param integer $docId
+     * @param string $docId
      * @return Usuario
      */
     public function setDocId($docId)
     {
-        $this->docId = $docId;
-    
+        if (is_numeric($docId)) {
+            $this->docId = $docId;
+        }
+
         return $this;
     }
 
     /**
      * Get docId
      *
-     * @return integer 
+     * @return string 
      */
     public function getDocId()
     {
@@ -273,6 +282,39 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
 
     /**
+     * Add formatosAutor
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\FormatoUsuario $formatos
+     * @return Usuario
+     */
+    public function addFormatoAutor(\PuertoUDES\FormatosBundle\Entity\Formato $formato)
+    {
+        $this->formatos_autor[] = $formato;
+    
+        return $this;
+    }
+
+    /**
+     * Remove formatosAutor
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $formatosAutor
+     */
+    public function removeFormatoAutor(\PuertoUDES\FormatosBundle\Entity\Formato $formatosAutor)
+    {
+        $this->formatos_autor->removeElement($formatosAutor);
+    }
+
+    /**
+     * Get formatosAutor
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getFormatosAutor()
+    {
+        return $this->formatos_autor;
+    }
+
+    /**
      * Add roles
      *
      * @param \PuertoUDES\CommonBundle\Entity\Rol $roles
@@ -303,6 +345,18 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    /**
+     * Has rol
+     *
+     * @return boolean
+     */
+    public function hasRol($rol_name)
+    {
+        return $this->roles->exists(function ($key, \PuertoUDES\CommonBundle\Entity\Rol $rol) use ($rol_name) {
+            return $rol->getNombre() === $rol_name || $rol->getCanonical() === parent::normaliza($rol_name);
+        });
     }
 
     /**
@@ -509,6 +563,29 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getPais()
     {
         return $this->conductor->getPais();
+    }
+
+    /**
+     * Set grupo
+     *
+     * @param \PuertoUDES\UsuariosBundle\Entity\Grupo $grupo
+     * @return Conductor
+     */
+    public function setGrupo(\PuertoUDES\UsuariosBundle\Entity\Grupo $grupo)
+    {
+        $this->grupo = $grupo;
+    
+        return $this;
+    }
+
+    /**
+     * Get grupo
+     *
+     * @return \PuertoUDES\UsuariosBundle\Entity\Grupo 
+     */
+    public function getGrupo()
+    {
+        return $this->grupo;
     }
     
     

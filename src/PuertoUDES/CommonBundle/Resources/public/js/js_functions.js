@@ -2,6 +2,28 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+function _ajax_request(url, data, callback, type, method) {
+    if (jQuery.isFunction(data)) {
+        callback = data;
+        data = {};
+    }
+    return jQuery.ajax({
+        type: method,
+        url: url,
+        data: data,
+        success: callback,
+        dataType: type
+        });
+}
+
+jQuery.extend({
+    put: function(url, data, callback, type) {
+        return _ajax_request(url, data, callback, type, 'PUT');
+    },
+    delete_: function(url, data, callback, type) {
+        return _ajax_request(url, data, callback, type, 'DELETE');
+    }
+});
 (function ($) {
     "use strict";
     
@@ -216,30 +238,38 @@
         if(typeof id === 'undefined'){
             id = 'body';
         }
-        var metodo = $(id).find('input[name="_method"]').attr('value');
-        if(metodo !== 'PUT')
-            metodo = 'POST';
-        $(id).find('form').on('submit', function(e){
-            e.preventDefault();
-            e.stopPropagation();
+        $(id).find('form').each(function(){
             var este = $(this);
-            $.ajax({
-                type: metodo,
-                url: este.attr('action'),
-                data: este.serializeArray(),
-                dataType: "json",
-                cache: false
-            }).done(function( response ) {
-                $('#mTitle').html(response.title);
-                $('#mBody').html(response.body);
-                if(response.datos)
-                    validaDataName(response.datos);
-                arreglaAjax();
-                formAjax('#mBody');
-            }).fail(function() {
-                console.log( "error" );
-            }).always(function() {
-                console.log( "complete" );
+            este.on('submit', function(e){
+                var metodo = este.find('input[name="_method"]').attr('value');
+                var data = este.serializeArray();
+                console.log(metodo)
+                if(typeof metodo === 'undefined')
+                    metodo = 'POST';
+//                if(metodo === 'PUT' || metodo === 'DELETE'){
+//                    data._method = metodo;
+//                    metodo = 'POST';
+//                }
+                e.preventDefault();
+                e.stopPropagation();
+                $.ajax({
+                    type: metodo,
+                    url: este.attr('action'),
+                    data: data,
+                    dataType: "json",
+                    cache: false
+                }).done(function( response ) {
+                    $('#mTitle').html(response.title);
+                    $('#mBody').html(response.body);
+                    if(response.datos)
+                        validaDataName(response.datos);
+                    arreglaAjax();
+                    formAjax('#mBody');
+                }).fail(function() {
+                    console.log( "error formAjax" );
+                }).always(function() {
+                    console.log( "complete" );
+                });
             });
         });
     }

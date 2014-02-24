@@ -40,9 +40,15 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $observaciones;
     
     /** 
-     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="formato")
+     * @ORM\OneToMany(targetEntity="\PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="formato")
      */
     private $usuarios;
+    
+    /** 
+     * @ORM\ManyToOne(targetEntity="\PuertoUDES\UsuariosBundle\Entity\Usuario", inversedBy="formatos_autor")
+     * @ORM\JoinColumn(name="autor", referencedColumnName="id", nullable=true)
+     */
+    private $autor;
     
     private $notificados;
     private $consignatarios;
@@ -216,6 +222,29 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getInstrucciones()
     {
         return $this->instrucciones;
+    }
+    
+    /**
+     * Set Autor
+     *
+     * @param \PuertoUDES\UsuariosBundle\Entity\Usuario $autor
+     * @return Objeto
+     */
+    public function setAutor($autor)
+    {
+        $this->autor = $autor;
+    
+        return $this;
+    }
+
+    /**
+     * Get autor
+     *
+     * @return \PuertoUDES\UsuariosBundle\Entity\Usuario
+     */
+    public function getAutor()
+    {
+        return $this->autor;
     }
     
     /**

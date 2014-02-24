@@ -105,6 +105,7 @@
                                             </li>
                                         </ul>
                                     </li>
+                                    {% if is_granted('ROLE_ADMIN') %}
                                     <li>
                                       <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                             Usuarios
@@ -115,7 +116,7 @@
                                                 <a href="{{ path('usuario_',{'id':app.user.id}) }}">Usuarios</a>
                                                 <a href="{{ path('usuario__docentes',{'id':app.user.id}) }}">Docentes</a>
                                                 <a href="{{ path('usuario__estudiantes',{'id':app.user.id}) }}">Estudiantes</a>
-                                                <a href="{{ path('fos_user_group_list',{'id':app.user.id}) }}">Grupos</a>
+                                                <a href="{{ path('grupo_',{'id':app.user.id}) }}">Grupos</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -140,6 +141,7 @@
                                             </li>
                                         </ul>
                                     </li>
+                                    {% endif %}
                                     <li>
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                             {{ app.user.username }}
@@ -161,7 +163,9 @@
                                 </ul>
                             {% else %}
                             <div class="navbar-form navbar-right">
-                                {% render controller("FOSUserBundle:Security:login") %}
+                                {% block login %}
+                                    {% render controller("FOSUserBundle:Security:login") %}
+                                {% endblock login %}
                             </div>
                             {% endif %}
                     </div><!-- /.navbar-collapse -->

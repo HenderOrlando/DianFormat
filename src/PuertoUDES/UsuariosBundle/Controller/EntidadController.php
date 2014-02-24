@@ -196,6 +196,7 @@ class EntidadController extends Controller
                         }else{
                             
                         }
+//                        $u->addRol($rol);
                         $em->flush();
                         $datos['success']['msgs']['Formato'] = array(
                             'msg' => 'Entidad '.($role == 'notificar'?'a notificar':str_replace('tario', 'taria', $role)).' <strong>"'.$entidad->getNombre().'"</strong> agregada.',
