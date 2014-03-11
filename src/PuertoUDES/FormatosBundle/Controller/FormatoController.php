@@ -36,7 +36,7 @@ class FormatoController extends Controller
         $limit = 5;
         $utils = $this->getUtils();
         if(is_null($config)){
-            if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
                 $qb = $this->getRepositorio()->getAll(false, true);
             }else{
                 $qb = $this->getRepositorio()->getAll(false, true, $this->getUser()->getUsuario()->getId());
@@ -98,7 +98,7 @@ class FormatoController extends Controller
      */
     public function cpicAction(Request $request)
     {
-        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
             $qb = $this->getRepositorio()->getCpic(null, false, true);
         }else{
             $qb = $this->getRepositorio()->getCpic(null, false, true, $this->getUser()->getUsuario()->getId());
@@ -122,7 +122,7 @@ class FormatoController extends Controller
      */
     public function mciAction(Request $request)
     {
-        if($this->getUser()->hasRole('ROLE_ADMIN')){
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
             $qb = $this->getRepositorio()->getMci(null, false, true);
         }else{
             $qb = $this->getRepositorio()->getMci(null, false, true, $this->getUser()->getUsuario()->getId());
@@ -475,6 +475,7 @@ class FormatoController extends Controller
                             ->createQueryBuilder('b')
                             ->orWhere("b.clase LIKE '%".$clase."%'")
                             ->orWhere("b.marca LIKE '%".$marca."%'")
+                            ->setMaxResults(1)
                             ->getQuery()->getOneOrNullResult();
                     if(!$bulto){
                         $bulto = new \PuertoUDES\CommonBundle\Entity\Bulto();

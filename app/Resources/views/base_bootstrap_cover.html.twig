@@ -8,6 +8,7 @@
             'bundles/puertoudescommon/css/bootstrap-theme.min.css'
             'bundles/puertoudescommon/xeditable/bootstrap-editable/css/bootstrap-editable.css'
             'bundles/puertoudescommon/css/bootstrap-typeahead-theme.css'
+            'bundles/puertoudescommon/css/cover.css'
             'bundles/puertoudescommon/css/datepicker.css'
             'bundles/puertoudescommon/css/index.css'
         filter='cssrewrite' %}
@@ -18,8 +19,15 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        <div class="container">
-            <header>
+        <div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+          <div class="masthead clearfix">
+            <div class="inner">
+              <header>
                 {% block navbar -%}
                 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
                   <!-- Brand and toggle get grouped for better mobile display -->
@@ -172,17 +180,73 @@
                 </nav>
                 {% endblock %}
             </header>
-            <section id="body">
-            {% block body -%}
-                
-            {% endblock %}
-            </section>
-            <footer>
-            {% block footer -%}
-                
-            {% endblock %}
-            </footer>
+            </div>
+          </div>
+
+          <div class="inner cover">
+              {% block body %}
+            <div id="carousel" class="carousel slide" data-ride="carousel">
+                <!-- Indicators -->
+                <ol class="carousel-indicators">
+                  <li data-target="#carousel" data-slide-to="0" class="active"></li>
+                  <li data-target="#carousel" data-slide-to="1"></li>
+                  <li data-target="#carousel" data-slide-to="2"></li>
+                  <li data-target="#carousel" data-slide-to="3"></li>
+                </ol>
+
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner">
+                  <div class="item active">
+                    <img src="{{ asset('bundles/puertoudescommon/images/logo.jpg') }}" alt="PuertoUDES">
+                    <div class="carousel-caption">
+                      
+                    </div>
+                  </div>
+                  <div class="item">
+                    <img src="{{ asset('bundles/puertoudescommon/images/puerto_terrestre1.jpg') }}" alt="Características">
+                    <div class="carousel-caption">
+                        <h1>Características</h1>
+                        <p></p>
+                    </div>
+                  </div>
+                  <div class="item">
+                    <img src="{{ asset('bundles/puertoudescommon/images/puerto_terrestre.jpg') }}" alt="Que puedes hacer?">
+                    <div class="carousel-caption">
+                        <h1>Que Puedes Hacer</h1>
+                        <p></p>
+                    </div>
+                  </div>
+                  <div class="item">
+                    <img src="{{ asset('bundles/puertoudescommon/images/puerto_terrestre2.jpg') }}" alt="Acerca de">
+                    <div class="carousel-caption">
+                        <h1>Acerca de</h1>
+                        <p></p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Controls -->
+                <a class="left carousel-control" href="#carousel" data-slide="prev">
+                  <span class="glyphicon glyphicon-chevron-left"></span>
+                </a>
+                <a class="right carousel-control" href="#carousel" data-slide="next">
+                  <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+              </div>
+              {% endblock %}
+          </div>
+
+          {#<div class="mastfoot">
+            <div class="inner">
+              <p>Cover template for <a href="http://getbootstrap.com">Bootstrap</a>, by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+            </div>
+          </div>#}
+
         </div>
+
+      </div>
+
+    </div>
         <section id="componentes">
             <div id="mensajes"></div>
             <div id="javascripts">

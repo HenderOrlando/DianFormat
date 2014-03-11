@@ -561,7 +561,8 @@ class EntidadController extends Controller
                                 ->setFormato($formato)
                                 ->setUsuario($entidad->getUsuario());
                             $em->persist($fu);
-                            $u->addRol('ROLE_'.strtoupper($rol->getCanonical()));
+//                            $u->addRol('ROLE_'.strtoupper($rol->getCanonical()));
+                            $u->addRol($rol);
                         }
                         $formato->setTransportista($entidad);
                         $em->persist($formato);

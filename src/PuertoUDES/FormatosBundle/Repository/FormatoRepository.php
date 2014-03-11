@@ -19,7 +19,7 @@ class FormatoRepository extends EntityRepository
             ->createQueryBuilder()
             ->select('a')
             ->from('PuertoUDESFormatosBundle:Formato', 'a');
-        if(!is_null($id_usuario)){
+        if(is_numeric($id_usuario)){
             $q
                 ->join('a.usuarios', 'fu')
                 ->andWhere('fu.usuario = '.$id_usuario);
