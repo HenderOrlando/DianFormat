@@ -12,7 +12,7 @@ class Grupo extends \PuertoUDES\CommonBundle\Entity\Objeto
 {
      
      /**
-      * @ORM\OneToMany(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario", mappedBy="grupo", cascade={"persist"})
+      * @ORM\OneToMany(targetEntity="\PuertoUDES\UsuariosBundle\Entity\Usuario", mappedBy="grupo", cascade={"all"})
       */
     protected $usuarios;
      

@@ -12,6 +12,10 @@ $(document).on('ready',function(){
     botonGuardarXEditable();
     botonEliminarXEditable();
     loadModal();
+    $('.index-carousel').click(function(e){
+        e.preventDefault();
+        $('#carousel').carousel($(this).parent().index()+1);
+    });
 //    $('.table-responsive > table').find('.btn-group-vertical a:not(.no-ajax)').addClass('carga-modal');
 //    $('.table-responsive > table').find('.btn-group-vertical a:not(.no-ajax)').addClass('carga-modal');
     $('body').on('click','.carga-modal', function(e){

@@ -5,9 +5,11 @@
 {% if app.user and is_granted("IS_AUTHENTICATED_REMEMBERED") %}
     <div class="col-lg-6 col-md-6 col-sm-12">
         <h3>Manifiestos de Carga Internacional</h3>
+        {{ render(controller('PuertoUDESFormatosBundle:Formato:mciAjax')) }}
     </div>
     <div class="col-lg-6 col-md-6 col-sm-12">
         <h3>Carta de Porte Internacional por Carretera</h3>
+        {{ render(controller('PuertoUDESFormatosBundle:Formato:cpicAjax')) }}
     </div>
 {% endif %}
     

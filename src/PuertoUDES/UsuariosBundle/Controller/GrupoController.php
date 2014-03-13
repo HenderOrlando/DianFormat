@@ -287,8 +287,8 @@ class GrupoController extends Controller
     /**
      * Edits an existing Grupo entity.
      *
-     * @Route("/{id}", name="grupo__update")
-     * @Route("/{id}", name="Grupo__update")
+     * @Route("/Update/{id}", name="grupo__update")
+     * @Route("/Update/{id}", name="Grupo__update")
      * @Method("PUT")
      * @Template("PuertoUDESUsuariosBundle:Grupo:edit.html.twig")
      */
@@ -305,24 +305,36 @@ class GrupoController extends Controller
         $deleteForm = $this->createDeleteForm($id);
         $editForm = $this->createEditForm($entity);
         $editForm->handleRequest($request);
-
         if ($editForm->isValid()) {
-            $em->flush();
-            if($request->isXmlHttpRequest()){
-                return $this->renderView('PuertoUDESUsuariosBundle:Grupo:edit.html.twig',array(
-                    'entity'      => $entity,
-                    'edit_form'   => $editForm->createView(),
-                    'delete_form' => $deleteForm->createView(),
-                ));
+            $usuarios_old = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->findBy(array('grupo'    =>  $entity));
+            $usuario = new Usuario();
+            foreach($usuarios_old as $usuario){
+                $usuario->setGrupo();
+                $em->persist($usuario);
             }
-            return $this->redirect($this->generateUrl('grupo__edit', array('id' => $id)));
+            foreach($entity->getUsuarios() as $usuario){
+                $usuario->setGrupo($entity);
+                $em->persist($usuario);
+            }
+            $em->persist($entity);
+            $em->flush();
+            if(!$request->isXmlHttpRequest()){
+                return $this->redirect($this->generateUrl('grupo__edit', array('id' => $id)));
+            }
         }
-
-        return array(
+        $parametros = array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
+        if($request->isXmlHttpRequest()){
+            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+                'title' => 'Actualizado '.(empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre()),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_edit.html.twig',$parametros),
+            ));
+        }
+
+        return $parametros;
     }
     /**
      * Deletes a Grupo entity.

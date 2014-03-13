@@ -24,16 +24,20 @@ class FormatoController extends Controller
      * Lists all Formato entities.
      *
      * @Route("/", name="formato_")
+     * @Route("/{maxResult}/", name="formato_maxResult")
      * @Method({"GET"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
-    public function indexAction(Request $request, $config = null)
+    public function indexAction(Request $request, $config = null, $maxResult = false)
     {
         $title = 'Formatos';
         $entity = 'Formato';
         $bundle = 'Formato';
         $route = 'formato_';
         $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
         $utils = $this->getUtils();
         if(is_null($config)){
             if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
@@ -84,7 +88,7 @@ class FormatoController extends Controller
             'botones'       =>  $botones,
             'datos_form'       =>  $data,
         );
-        if($request->isXmlHttpRequest() || $request->get('ajax',false)){
+        if($request->isXmlHttpRequest() || $request->get('ajax',false) || (isset($config['ajax']) && $config['ajax'])){
             return $this->render('PuertoUDESCommonBundle:Plantilla:_menu.html.twig', $datos);
         }
         return $datos;
@@ -93,15 +97,20 @@ class FormatoController extends Controller
      * Lists all Formato entities.
      *
      * @Route("/CPIC/", name="formato__cpic")
+     * @Route("/CPIC/{maxResult}/", name="formato__cpic_maxResult")
      * @Method("GET")
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
-    public function cpicAction(Request $request)
+    public function cpicAction(Request $request, $maxResult = false)
     {
         if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
             $qb = $this->getRepositorio()->getCpic(null, false, true);
         }else{
             $qb = $this->getRepositorio()->getCpic(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
         }
         return $this->indexAction($request, array(
             'title'     =>  'Carta de Porte Internacional por Carretera',
@@ -109,23 +118,50 @@ class FormatoController extends Controller
             'bundle'    =>  'Common',
             'abrevia'   =>  'cpic',
             'route'     =>  'formato__cpic',
-            'limit'     =>  5,
+            'limit'     =>  $limit,
             'qb'        =>  $qb,
+        ));
+    }
+    public function cpicAjaxAction(Request $request, $maxResult = false)
+    {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getCpic(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getCpic(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
+        return $this->indexAction($request, array(
+            'title'     =>  '',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'cpic',
+            'route'     =>  'formato__cpic',
+            'limit'     =>  $limit,
+            'qb'        =>  $qb,
+            'ajax'      =>  true,
         ));
     }
     /**
      * Lists all Formato entities.
      *
      * @Route("/MCI/", name="formato__mci")
+     * @Route("/MCI/maxResult/", name="formato__mci_maxResult")
      * @Method("GET")
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
-    public function mciAction(Request $request)
+    public function mciAction(Request $request, $maxResult = false)
     {
         if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
             $qb = $this->getRepositorio()->getMci(null, false, true);
         }else{
             $qb = $this->getRepositorio()->getMci(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
         }
         return $this->indexAction($request, array(
             'title'     =>  'Manifiesto de Carga Internacional',
@@ -135,6 +171,28 @@ class FormatoController extends Controller
             'route'     =>  'formato__mci',
             'limit'     =>  5,
             'qb'        =>  $qb,
+        ));
+    }
+    public function mciAjaxAction(Request $request, $maxResult = false)
+    {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getMci(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getMci(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
+        return $this->indexAction($request, array(
+            'title'     =>  '',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'mci',
+            'route'     =>  'formato__mci',
+            'limit'     =>  5,
+            'qb'        =>  $qb,
+            'ajax'      =>  true,
         ));
     }
     

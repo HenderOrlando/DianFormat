@@ -323,8 +323,9 @@ class IndexController extends Controller implements PaginatorAwareInterface
             $request->query->get('pagina', 1),
             $limit
         );
-        if(!is_null($route) && !empty($route))
+        if(!is_null($route) && !empty($route)){
             $pagination->setUsedRoute($route);
+        }
         return array(
             'pag'           => $pagination,
             'form_filter'   => $form

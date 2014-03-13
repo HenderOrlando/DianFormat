@@ -571,7 +571,7 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @param \PuertoUDES\UsuariosBundle\Entity\Grupo $grupo
      * @return Conductor
      */
-    public function setGrupo(\PuertoUDES\UsuariosBundle\Entity\Grupo $grupo)
+    public function setGrupo(\PuertoUDES\UsuariosBundle\Entity\Grupo $grupo = null)
     {
         $this->grupo = $grupo;
     

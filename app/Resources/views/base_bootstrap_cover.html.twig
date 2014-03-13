@@ -38,7 +38,10 @@
                           <span class="icon-bar"></span>
                           <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="#">Puerto UDES</a>
+                        <a class="navbar-brand" href="{{ url('index_') }}">
+                            Puerto UDES
+                            <img class="icon" style="width: 30px;" src="{{ asset('bundles/puertoudescommon/images/logo_icon.png') }}" alt="PuertoUDES">
+                        </a>
                     </div>
 
                   <!-- Collect the nav links, forms, and other content for toggling -->
@@ -48,10 +51,10 @@
                             <li><a href="#">Ayuda</a></li>
                         {% else %}
                             {#<li><a href="#">Que es?</a></li>#}
-                            <li><a href="#">Características</a></li>
-                            <li><a href="#">Para que sirve?</a></li>
+                            <li><a class="index-carousel" href="#">Características</a></li>
+                            <li><a class="index-carousel" href="#">Para que sirve?</a></li>
                             {#<li><a href="#">Cómo usarlo</a></li>#}
-                            <li><a href="#">Acerca de</a></li>
+                            <li><a class="index-carousel" href="#">Acerca de</a></li>
                         {% endif %}
                         </ul>
                         {#<ul class="nav navbar-nav navbar-right">
@@ -185,7 +188,7 @@
 
           <div class="inner cover">
               {% block body %}
-            <div id="carousel" class="carousel slide" data-ride="carousel">
+            <div id="carousel" class="carousel slide" data-ride="carousel" data-interval="false">
                 <!-- Indicators -->
                 <ol class="carousel-indicators">
                   <li data-target="#carousel" data-slide-to="0" class="active"></li>
@@ -197,30 +200,34 @@
                 <!-- Wrapper for slides -->
                 <div class="carousel-inner">
                   <div class="item active">
-                    <img src="{{ asset('bundles/puertoudescommon/images/logo.jpg') }}" alt="PuertoUDES">
+                    <img src="{{ asset('bundles/puertoudescommon/images/logo.jpeg') }}" alt="PuertoUDES">
                     <div class="carousel-caption">
-                      
+                        <h1>Puerto UDES</h1>
+                        <span>Administración de Formatos para Puertos Terrestres de la DIAN</span>
                     </div>
                   </div>
                   <div class="item">
-                    <img src="{{ asset('bundles/puertoudescommon/images/puerto_terrestre1.jpg') }}" alt="Características">
+                    <img src="{{ asset('bundles/puertoudescommon/images/puerto_terrestre1.jpeg') }}" alt="Características">
                     <div class="carousel-caption">
                         <h1>Características</h1>
-                        <p></p>
+                        <span class="left">Administración digital de los formatos de la DIAN</span>
+                        <span class="right">Organización de la información de los formatos</span>
                     </div>
                   </div>
                   <div class="item">
-                    <img src="{{ asset('bundles/puertoudescommon/images/puerto_terrestre.jpg') }}" alt="Que puedes hacer?">
+                    <img src="{{ asset('bundles/puertoudescommon/images/puerto_terrestre.jpeg') }}" alt="Que puedes hacer?">
                     <div class="carousel-caption">
                         <h1>Que Puedes Hacer</h1>
-                        <p></p>
+                        <span class="left">Conocer quien ha hecho el formato y cuando</span>
+                        <span class="right">Encontrar fácilmente la información almacenada</span>
                     </div>
                   </div>
                   <div class="item">
-                    <img src="{{ asset('bundles/puertoudescommon/images/puerto_terrestre2.jpg') }}" alt="Acerca de">
+                    <img src="{{ asset('bundles/puertoudescommon/images/puerto_terrestre2.jpeg') }}" alt="Acerca de">
                     <div class="carousel-caption">
                         <h1>Acerca de</h1>
-                        <p></p>
+                        {#<span class="left"></span>
+                        <span class="right"></span>#}
                     </div>
                   </div>
                 </div>
