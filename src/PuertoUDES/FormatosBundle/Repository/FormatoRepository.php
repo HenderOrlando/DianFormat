@@ -69,10 +69,10 @@ class FormatoRepository extends EntityRepository
             $abreviacion = false;
         }
         $q =  $this->getAll(false, true, $id_usuario);
+        if(!is_null($completo) && is_bool($completo)){
+            $q->andWhere('a.completo='.$completo);
+        }
         if($abreviacion !== false){
-            if(!is_null($completo) && !is_bool($completo)){
-                $q->andWhere('a.completo='.$completo);
-            }
             $q->andWhere('a.tipo='.$abreviacion);
         }
 //        $q->groupBy('a.usuario');

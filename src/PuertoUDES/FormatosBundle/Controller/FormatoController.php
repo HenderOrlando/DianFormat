@@ -24,7 +24,7 @@ class FormatoController extends Controller
      * Lists all Formato entities.
      *
      * @Route("/", name="formato_")
-     * @Route("/{maxResult}/", name="formato_maxResult")
+     * @Route("/Formatos/{maxResult}/", name="formato_maxResult")
      * @Method({"GET"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */

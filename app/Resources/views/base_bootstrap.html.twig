@@ -9,13 +9,14 @@
             'bundles/puertoudescommon/xeditable/bootstrap-editable/css/bootstrap-editable.css'
             'bundles/puertoudescommon/css/bootstrap-typeahead-theme.css'
             'bundles/puertoudescommon/css/datepicker.css'
+            'bundles/puertoudescommon/js/select2-3.4.5/select2.css'
             'bundles/puertoudescommon/css/index.css'
         filter='cssrewrite' %}
             <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
             
         {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <link rel="icon" type="image/x-icon" href="{{ asset('bundles/puertoudescommon/images/logo_icon.png') }}" />
     </head>
     <body>
         <div class="container">
@@ -40,7 +41,7 @@
                     <div class="collapse navbar-collapse navbar-ex1-collapse">
                         <ul class="nav navbar-nav">
                         {% if app.user and is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                            <li><a href="#">Ayuda</a></li>
+                            {#<li><a href="#">Ayuda</a></li>#}
                         {% else %}
                             {#<li><a href="#">Que es?</a></li>#}
                             <li><a href="#">Características</a></li>
@@ -198,6 +199,8 @@
                     '@PuertoUDESCommonBundle/Resources/public/js/bootstrap-datepicker.es.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/bootstrap-datepicker.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/typeahead.min.js'
+                    '@PuertoUDESCommonBundle/Resources/public/js/select2-3.4.5/select2.min.js'
+                    '@PuertoUDESCommonBundle/Resources/public/js/select2-3.4.5/select2_locale_es.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/index.js'
                  %}
                     <script type="text/javascript" src="{{ asset_url }}"></script>

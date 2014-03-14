@@ -55,10 +55,10 @@
                     name:           "padre",
                     pk:             formato.id,
                     datos:          {tipo: formato.tipo.abreviacion|upper},
-                    originalTitle:  "Padre del Formato " ~ formato.tipo.abreviacion|upper,
+                    originalTitle:  "MCI al que se asocia el formato " ~ formato.tipo.abreviacion|upper,
                     entityName:     "formato",
                     bundleName:     "formatos" ,
-                    emptyText:      "Padre" ~ formato.tipo.abreviacion|upper,
+                    emptyText:      "MCI",
                     required:       "Vacio,Numeros",
                     valor:          formato.padre is defined and formato.padre is not empty?formato.padre.nombre:'',
                 }) %}

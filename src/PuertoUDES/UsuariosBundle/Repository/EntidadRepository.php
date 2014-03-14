@@ -53,7 +53,7 @@ class EntidadRepository extends EntityRepository
                     ->from('PuertoUDESCommonBundle:Rol', 'r')
                     ->setMaxResults(1)
                     ->andWhere("r.canonical LIKE '%".$rol."%'")
-                    ->andWhere("r.aplicableA LIKE '%formatousuario%'");
+                    ->andWhere("r.aplicableA LIKE '%usuario%'");
             $rol = $r->getQuery()->getOneOrNullResult();
             if(isset($rol['id']))
                 $rol = $rol['id'];

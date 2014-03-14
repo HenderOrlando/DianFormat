@@ -1,5 +1,8 @@
-{% extends '::base_bootstrap.html.twig' %}
-
+{% set extension = '::base_bootstrap_cover.html.twig' %}
+{% if app.user  %}
+    {% set extension = '::base_bootstrap.html.twig' %}
+{% endif %}
+{% extends extension %}
 {% block body -%}
 {{ parent() }}
 {% if app.user and is_granted("IS_AUTHENTICATED_REMEMBERED") %}

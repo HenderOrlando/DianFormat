@@ -507,3 +507,9 @@ table>tbody>tr>td.border-r{
 .tooltip{
     z-index: 99999999999999;
 }
+.modal .select2-container{
+    width: 100%;
+}
+.modal .form-group{
+    width: 100%;
+}

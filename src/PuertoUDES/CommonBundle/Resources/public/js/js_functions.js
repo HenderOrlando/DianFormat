@@ -170,7 +170,7 @@ jQuery.extend({
                         container:  'body',
                     });
         });
-        $('input:not([type="checkbox"]), textarea, select').each(function(){
+        $('input:not([type="checkbox"]), textarea').each(function(){
             if(typeof $(this).parent().attr('id') !== 'undefined'){
                 if($(this).parent().attr('id').indexOf('time') || $(this).parent().attr('id').indexOf('date')){
                     $(this).parent().parent().addClass('form-inline');
@@ -263,8 +263,7 @@ jQuery.extend({
                     $('#mBody').html(response.body);
                     if(response.datos)
                         validaDataName(response.datos);
-                    arreglaAjax();
-                    formAjax('#mBody');
+                    armarModal(response);
                 }).fail(function() {
                     console.log( "error formAjax" );
                 }).always(function() {
@@ -644,6 +643,7 @@ jQuery.extend({
             if(typeof response.ajaxForm === 'undefined'){
                 formAjax('#mBody');
             }
+            $('select').select2();
             modal.modal('show');
             modal.on('hidden.bs.modal', function (e) {
                 cleanModal();
