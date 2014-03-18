@@ -17,7 +17,7 @@ class FosUser extends BaseUser
     protected $id;
     
     /**
-     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario")
+     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario", cascade="all")
      */
     protected $usuario;
 

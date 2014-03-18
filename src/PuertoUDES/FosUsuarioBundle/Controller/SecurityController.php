@@ -17,11 +17,13 @@ use FOS\UserBundle\Controller\SecurityController as BaseController;
 
 class SecurityController extends BaseController
 {
-    public function loginAction(Request $request)
+    public function loginAction(Request $request, $ajax = false)
     {
         /** @var $session \Symfony\Component\HttpFoundation\Session\Session */
         $session = $request->getSession();
-
+        if(!$ajax){
+            $ajax = $request->get('ajax',false);
+        }
         // get the error if any (works with forward and redirect -- see below)
         if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
             $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
@@ -47,6 +49,7 @@ class SecurityController extends BaseController
             'last_username' => $lastUsername,
             'error'         => $error,
             'csrf_token'    => $csrfToken,
+            'ajax'          => $ajax,
         ));
     }
 
@@ -58,9 +61,12 @@ class SecurityController extends BaseController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function renderLogin(array $data)
-    {
-        $template = sprintf('PuertoUDESFosUsuarioBundle:Security:login.html.%s', $this->container->getParameter('fos_user.template.engine'));
+    protected function renderLogin(array $data){
+        $template_name = 'PuertoUDESFosUsuarioBundle:Security:login.html.%s';
+        if(isset($data['ajax']) && $data['ajax']){
+            $template_name = 'PuertoUDESFosUsuarioBundle:Security:_login.html.%s';
+        }
+        $template = sprintf($template_name, $this->container->getParameter('fos_user.template.engine'));
 
         return $this->container->get('templating')->renderResponse($template, $data);
     }

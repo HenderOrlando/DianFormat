@@ -287,18 +287,19 @@ class UsuarioController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+//        $fos = $em->getRepository('PuertoUDESFosUsuarioBundle:FosUser')->find($id);
         $entity = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->find($id);
 
         if (!$entity) {
-            $entity = $em->getRepository('PuertoUDESFosUsuarioBundle:FosUser')->find($id);
-            if (!$entity || !$entity->getUsuario()) {
+//            $entity = $em->getRepository('PuertoUDESFosUsuarioBundle:FosUser')->find($id);
+//            if (!$entity || !$entity->getUsuario()) {
                 return $this->redirect($this->generateUrl('usuario__new', array(
-                    'id'    =>  $this->getRequest()->get('id',-1)
+                    'id'    =>  $id
                 )));
-            //throw $this->createNotFoundException('Unable to find Usuario entity.');
-            }else{
-                $entity = $entity->getUsuario();
-            }
+//            //throw $this->createNotFoundException('Unable to find Usuario entity.');
+//            }else{
+//                $entity = $entity->getUsuario();
+//            }
         }
 
         $editForm = $this->createEditForm($entity);
@@ -394,13 +395,43 @@ class UsuarioController extends Controller
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $entity = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->find($id);
-
+            $fos = $em->getRepository('PuertoUDESFosUsuarioBundle:FosUser')->findOneBy(array('usuario' => $entity));
+            $msg = "El usuario ".$entity->getNombre()." fué borrado.";
+            $titulo = "Borrado";
             if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Usuario entity.');
+                $msg = 'El usuario no ha sido encontrado';
             }
-
-            $em->remove($entity);
-            $em->flush();
+            if($entity->canDelete()){
+                if($entity){
+                    $em->remove($entity);
+                }
+                if($fos){
+                    $em->remove($fos);
+                }
+                $em->flush();
+            }else{
+                $titulo = 'Inhabilitado';
+                if($fos){
+                    $fos->setEnabled(false);
+                }
+                $msg = "El usuario ".$entity->getNombre()." no puede borrarse. Es posible que tenga formatos asociados a él. En su lugar se inhabilitó, por tanto no podrá iniciar sesión.";
+                $msgs = $entity->whyCanDelete();
+                if(!empty($msg)){
+                    $msg .= '<ul>';
+                    foreach($msgs as $msg_){
+                        $msg .= '<li>'.$msg_.'</li>';
+                    }
+                    $msg .= '</ul>';
+                }
+            }
+            
+        }
+        
+        if($request->isXmlHttpRequest()){
+            return JsonResponse::create(array(
+                'title' => "Usuario ".$titulo,
+                'body'  => $msg,
+            ));
         }
 
         return $this->redirect($this->generateUrl('usuario_'));

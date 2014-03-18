@@ -1,8 +1,7 @@
-{% extends "PuertoUDESFosUsuarioBundle::_layout.html.twig" %}
-
 {% trans_default_domain 'PuertoUDESFosUsuarioBundle' %}
 
-{% block fos_user_content %}
+{%- block login -%}
+
     {% if error %}
         {% include 'PuertoUDESCommonBundle:Plantilla:_alert.html.twig' with {
             tipo:   'danger',
@@ -34,4 +33,5 @@
 
         <input class="btn btn-success" type="submit" id="_submit" name="_submit" value="Entrar" />
     </form>
-{% endblock fos_user_content %}
+    
+{% endblock %}

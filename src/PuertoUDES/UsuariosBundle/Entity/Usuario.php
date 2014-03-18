@@ -93,6 +93,7 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->gastos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->entidad = null;
         $this->conductor = null;
+        $this->grupo = null;
         $this->grupoDocente = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
@@ -689,5 +690,29 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
             $a = explode('\\', $a);
         }
         return $a;
+    }
+    
+    public function canDelete(){
+        return is_null($this->getEntidad()) && is_null($this->getConductor()) && $this->getFormatos()->isEmpty() && is_null($this->getGrupo()) && $this->gruposDocente->isEmpty();
+    }
+    
+    public function whyCanDelete(){
+        $msgs = array();
+        if(!is_null($this->getEntidad())){
+           $msgs['entidad'] = 'Es una Entidad';
+        }
+        if(!is_null($this->getConductor())){
+           $msgs['conductor'] = 'Es un Conductor';
+        }
+        if(!$this->getFormatos()->isEmpty()){
+           $msgs['formatos'] = 'Tiene '.$this->getFormatos()->count().' Formato'.($this->getFormatos()->count() !== 1?'s':'').' Asociados';
+        }
+        if(!is_null($this->getGrupo())){
+           $msgs['grupos'] = 'Se encuantra en el grupo '.$this->getGrupo()->getNombre().' a cargo del docente '.$this->getGrupo()->getDocente();
+        }
+        if(!$this->gruposDocente->isEmpty()){
+           $msgs['gruposDocente'] = 'Tiene a cargo '.$this->gruposDocente->count().' grupo'.($this->gruposDocente->count() !== 1?'s':'');
+        }
+        return $msgs;
     }
 }

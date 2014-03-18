@@ -160,7 +160,7 @@
                                         </a>
                                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                             <li>
-                                                <a href="{{ path('usuario__edit',{'id':app.user.id}) }}">Editar Perfil</a>
+                                                <a href="{{ path('usuario__edit',{'id':app.user.usuario.id}) }}">Editar Perfil</a>
                                                 <a href="{{ path('fos_user_profile_edit',{'id':app.user.id}) }}">Editar Cuenta</a>
                                                 <a href="{{ path('fos_user_change_password',{'id':app.user.id}) }}">Cambiar Clave</a>
                                             </li>
@@ -175,7 +175,7 @@
                             {% else %}
                             <div class="navbar-form navbar-right">
                                 {% block login %}
-                                    {% render controller("FOSUserBundle:Security:login") %}
+                                    {% render controller("FOSUserBundle:Security:login", {ajax: true}) %}
                                 {% endblock login %}
                             </div>
                             {% endif %}
