@@ -41,7 +41,7 @@
                     <div class="collapse navbar-collapse navbar-ex1-collapse">
                         <ul class="nav navbar-nav">
                         {% if app.user and is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                            {#<li><a href="#">Ayuda</a></li>#}
+                            <li><a href="{{ asset('bundles/puertoudescommon/doc/manual-de-usuario.pdf') }}">Ayuda</a></li>
                         {% else %}
                             {#<li><a href="#">Que es?</a></li>#}
                             <li><a href="#">Características</a></li>
