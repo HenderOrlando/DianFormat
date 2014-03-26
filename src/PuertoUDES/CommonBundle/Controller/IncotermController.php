@@ -173,7 +173,7 @@ class IncotermController extends Controller
             'form' => $form->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+            return JsonResponse::create(array(
                 'title' => 'Agregar Nueva Mercancía',
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
@@ -206,8 +206,9 @@ class IncotermController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
+            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            return JsonResponse::create(array(
+                'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Incoterm:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -241,8 +242,9 @@ class IncotermController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
+            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            return JsonResponse::create(array(
+                'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }

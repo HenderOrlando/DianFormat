@@ -212,7 +212,7 @@ class ContenedorController extends Controller
             'form' => $form->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+            return JsonResponse::create(array(
                 'title' => 'Agregar Nuevo Contenedor',
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
@@ -245,8 +245,9 @@ class ContenedorController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => empty($entity->getNumero())?$entity->getSigla():$entity->getNumero(),
+            $title = empty($entity->getNumero())?$entity->getSigla():$entity->getNumero();
+            return JsonResponse::create(array(
+                'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Contenedor:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -280,8 +281,9 @@ class ContenedorController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => empty($entity->getNumero())?$entity->getSigla():$entity->getNumero(),
+            $title = empty($entity->getNumero())?$entity->getSigla():$entity->getNumero();
+            return JsonResponse::create(array(
+                'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }

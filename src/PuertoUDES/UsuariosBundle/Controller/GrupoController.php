@@ -189,7 +189,7 @@ class GrupoController extends Controller
             'form' => $form->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+            return JsonResponse::create(array(
                 'title' => 'Agregar Nuevo Grupo',
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
@@ -223,8 +223,9 @@ class GrupoController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
+            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            return JsonResponse::create(array(
+                'title' => $title,
                 'body'  => $this->renderView('PuertoUDESUsuariosBundle:Grupo:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -258,8 +259,9 @@ class GrupoController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
+            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            return JsonResponse::create(array(
+                'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -328,8 +330,9 @@ class GrupoController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($request->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => 'Actualizado '.(empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre()),
+            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            return JsonResponse::create(array(
+                'title' => 'Actualizado '.$title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_edit.html.twig',$parametros),
             ));
         }

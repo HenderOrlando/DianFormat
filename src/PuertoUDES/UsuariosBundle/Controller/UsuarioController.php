@@ -190,17 +190,19 @@ class UsuarioController extends Controller
                 $rol = 'usuario';
                 break;
         }
-        if($rol !== 'Usuario'){
+        if($rol !== 'usuario'){
             $em = $this->getDoctrine()->getManager();
             $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
                 ->andWhere("r.canonical LIKE '%".$rol."%' OR r.nombre LIKE '%".$name_rol."%'")
                 ->andWhere("r.aplicableA LIKE '%Usuario%'")
                 ->getQuery()->getOneOrNullResult();
+            $rolName = $rol->getNombre();
         }else{
+            $rolName = $rol;
             $rol = null;
         }
         $form = $this->createForm(new UsuarioType($this->getUser(), $rol), $entity, array(
-            'action' => $this->generateUrl('usuario__create_',array('id' => $id, 'rol' => $rol->getNombre())),
+            'action' => $this->generateUrl('usuario__create_',array('id' => $id, 'rol' => $rolName)),
             'method' => 'POST',
         ));
 

@@ -9,7 +9,8 @@
             'bundles/puertoudescommon/xeditable/bootstrap-editable/css/bootstrap-editable.css'
             'bundles/puertoudescommon/css/bootstrap-typeahead-theme.css'
             'bundles/puertoudescommon/css/datepicker.css'
-            'bundles/puertoudescommon/js/select2-3.4.5/select2.css'
+            'bundles/puertoudescommon/js/select2-3.4.6/select2.css'
+            'bundles/puertoudescommon/js/select2-3.4.6/select2-bootstrap.css'
             'bundles/puertoudescommon/css/index.css'
         filter='cssrewrite' %}
             <link rel="stylesheet" href="{{ asset_url }}" />
@@ -41,7 +42,18 @@
                     <div class="collapse navbar-collapse navbar-ex1-collapse">
                         <ul class="nav navbar-nav">
                         {% if app.user and is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                            <li><a href="{{ asset('bundles/puertoudescommon/doc/manual-de-usuario.pdf') }}">Ayuda</a></li>
+                            <li>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    Ayuda
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <li>
+                                        <a href="{{ asset('bundles/puertoudescommon/doc/manual-de-usuario.pdf') }}">Manual</a>
+                                        <a href="{{ asset('bundles/puertoudescommon/doc/videotutorial.mp4') }}">Video-tutorial</a>
+                                    </li>
+                                </ul>
+                            </li>
                         {% else %}
                             {#<li><a href="#">Que es?</a></li>#}
                             <li><a href="#">Características</a></li>
@@ -199,8 +211,8 @@
                     '@PuertoUDESCommonBundle/Resources/public/js/bootstrap-datepicker.es.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/bootstrap-datepicker.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/typeahead.min.js'
-                    '@PuertoUDESCommonBundle/Resources/public/js/select2-3.4.5/select2.min.js'
-                    '@PuertoUDESCommonBundle/Resources/public/js/select2-3.4.5/select2_locale_es.js'
+                    '@PuertoUDESCommonBundle/Resources/public/js/select2-3.4.6/select2.min.js'
+                    '@PuertoUDESCommonBundle/Resources/public/js/select2-3.4.6/select2_locale_es.js'
                     '@PuertoUDESCommonBundle/Resources/public/js/index.js'
                  %}
                     <script type="text/javascript" src="{{ asset_url }}"></script>

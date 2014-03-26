@@ -283,7 +283,7 @@ class VehiculoController extends Controller
             'form' => $form->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+            return JsonResponse::create(array(
                 'title' => 'Agregar Nuevo Vehiculo',
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
@@ -316,8 +316,9 @@ class VehiculoController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => empty($entity->getPlaca())?$entity->getMarca():$entity->getPlaca(),
+            $title = empty($entity->getPlaca())?$entity->getMarca():$entity->getPlaca();
+            return JsonResponse::create(array(
+                'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Vehiculo:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -351,8 +352,9 @@ class VehiculoController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => empty($entity->getPlaca())?$entity->getMarca():$entity->getPlaca(),
+            $title = empty($entity->getPlaca())?$entity->getMarca():$entity->getPlaca();
+            return JsonResponse::create(array(
+                'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }

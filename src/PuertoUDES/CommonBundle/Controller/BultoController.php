@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\CommonBundle\Entity\Bulto;
 use PuertoUDES\CommonBundle\Form\BultoType;
@@ -144,7 +145,7 @@ class BultoController extends Controller
             'form' => $form->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+            return JsonResponse::create(array(
                 'title' => 'Agregar Nuevo Bulto',
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
@@ -177,8 +178,9 @@ class BultoController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => empty($entity->getMarca())?$entity->getClase():$entity->getMarca(),
+            $title = empty($entity->getMarca())?$entity->getClase():$entity->getMarca();
+            return JsonResponse::create(array(
+                'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Bulto:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -212,8 +214,9 @@ class BultoController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => empty($entity->getMarca())?$entity->getClase():$entity->getMarca(),
+            $title = empty($entity->getMarca())?$entity->getClase():$entity->getMarca();
+            return JsonResponse::create(array(
+                'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }
