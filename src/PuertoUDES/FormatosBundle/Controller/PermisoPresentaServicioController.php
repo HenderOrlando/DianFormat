@@ -101,7 +101,7 @@ class PermisoPresentaServicioController extends Controller
         }else{
             $datos['errors']['Entidad'] = 'Formato o Entidad no válidas.';
         }
-        return \Symfony\Component\HttpFoundation\JsonResponse::create($datos);
+        return JsonResponse::create($datos);
     }
 
     /**
@@ -229,7 +229,7 @@ class PermisoPresentaServicioController extends Controller
             'form' => $form->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
+            return JsonResponse::create(array(
                 'title' => 'Agregar Nuevo Permiso de Presentación de Servicios',
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
@@ -262,8 +262,9 @@ class PermisoPresentaServicioController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
+            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            return JsonResponse::create(array(
+                'title' => $title,
                 'body'  => $this->renderView('PuertoUDESFormatosBundle:PermisoPresentaServicio:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -297,8 +298,9 @@ class PermisoPresentaServicioController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            return \Symfony\Component\HttpFoundation\JsonResponse::create(array(
-                'title' => empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre(),
+            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            return JsonResponse::create(array(
+                'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }
