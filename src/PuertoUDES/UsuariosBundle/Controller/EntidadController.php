@@ -89,13 +89,35 @@ class EntidadController extends Controller
     }
     /**
      * Displays a form to create a new Formato entity.
+     * 
+     * @Route("/Agregar/{rol}/a/REMESA-{fila}/{numero}/", name="entidad_add_remesa_ajax_")
+     * @Route("/Agregar/{rol}/a/REMESA/{numero}/", name="entidad_add_remesa_ajax")
+     * @Method({"POST","PUT"})
+     * @Template("PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig")
+    **/
+    public function addEntidadRemesaAjaxAction(Request $request){
+        return $this->addEntidadCpicAjaxAction($request, 'remesa');
+    }
+    /**
+     * Displays a form to create a new Formato entity.
+     * 
+     * @Route("/Agregar/{rol}/a/DTAI-{fila}/{numero}/", name="entidad_add_dtai_ajax_")
+     * @Route("/Agregar/{rol}/a/DTAI/{numero}/", name="entidad_add_dtai_ajax")
+     * @Method({"POST","PUT"})
+     * @Template("PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig")
+    **/
+    public function addEntidadDtaiAjaxAction(Request $request){
+        return $this->addEntidadCpicAjaxAction($request, 'dtai');
+    }
+    /**
+     * Displays a form to create a new Formato entity.
      *
      * @Route("/Agregar/{rol}/a/CPIC-{fila}/{numero}/", name="entidad_add_cpic_ajax_")
      * @Route("/Agregar/{rol}/a/CPIC/{numero}/", name="entidad_add_cpic_ajax")
      * @Method({"POST","PUT"})
      * @Template("PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig")
      */
-    public function addEntidadCpicAjaxAction(Request $request){
+    public function addEntidadCpicAjaxAction(Request $request, $abreviacion = 'cpic'){
         $filas = $request->get('filas', 0);
         $role = $request->get('rol',NULL);
         $numero = $request->get('numero',NULL);
@@ -104,11 +126,11 @@ class EntidadController extends Controller
         $direccion = $request->get('direccion','');
         $lugar = $request->get('lugar',NULL);
         $em = $this->getDoctrine()->getManager();
-        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic'));
+        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $abreviacion));
         $entidad = null;
         $datos = array();
-        if($tipo_mci){
-            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_mci->getId(), 'numero' => $numero));
+        if($tipo){
+            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(), 'numero' => $numero));
             if($formato){
                 if($docId && $nombre){
                     $entidad = $this->getRepositorio()->createQueryBuilder('e')

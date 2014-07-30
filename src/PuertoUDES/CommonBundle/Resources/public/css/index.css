@@ -138,6 +138,7 @@ form.in,
 /******************** FORMATOS-MCI ********************/
 .hoja_carta_formato{
     /*height: 27.9cm;*/
+    min-height: 27.9cm;
     width: 21.6cm;
     margin: 0 auto;
     box-shadow: 0 0 15px -4px;

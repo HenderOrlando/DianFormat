@@ -65,12 +65,47 @@ class AduanaController extends Controller
     /**
      * Displays a form to create a new Formato entity.
      *
+     * @Route("/Agregar/{tipo}/a/DTAI-{fila}/{numero}/", name="aduana_add_remesa_ajax_")
+     * @Route("/Agregar/{tipo}/a/DTAI/{numero}/", name="aduana_add_remesa_ajax")
+     * @Method({"POST","PUT"})
+     * @Template("PuertoUDESCommonBundle:Aduana:_addAduanaRemesaAjax.html.twig")
+     */
+    public function addAduanaRemesaAjaxAction(Request $request){
+        return $this->addAduanaMciAjaxAction($request, 'remesa');
+    }
+
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Agregar/{tipo}/a/DTAI-{fila}/{numero}/", name="aduana_add_dtai_ajax_")
+     * @Route("/Agregar/{tipo}/a/DTAI/{numero}/", name="aduana_add_dtai_ajax")
+     * @Method({"POST","PUT"})
+     * @Template("PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig")
+     */
+    public function addAduanaDtaiAjaxAction(Request $request){
+        return $this->addAduanaMciAjaxAction($request, 'dtai');
+    }
+
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Agregar/{tipo}/a/DI-{fila}/{numero}/", name="aduana_add_di_ajax_")
+     * @Route("/Agregar/{tipo}/a/DI/{numero}/", name="aduana_add_di_ajax")
+     * @Method({"POST","PUT"})
+     * @Template("PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig")
+     */
+    public function addAduanaDiAjaxAction(Request $request){
+        return $this->addAduanaMciAjaxAction($request, 'dtai');
+    }
+    /**
+     * Displays a form to create a new Formato entity.
+     *
      * @Route("/Agregar/{tipo}/a/MCI-{fila}/{numero}/", name="aduana_add_mci_ajax_")
      * @Route("/Agregar/{tipo}/a/MCI/{numero}/", name="aduana_add_mci_ajax")
      * @Method({"POST","PUT"})
      * @Template("PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig")
      */
-    public function addAduanaMciAjaxAction(Request $request){
+    public function addAduanaMciAjaxAction(Request $request, $abreviacion = 'mci'){
         $filas = $request->get('filas', 0);
         $tipo = $request->get('tipo',NULL);
         $numero = $request->get('numero',NULL);
@@ -79,7 +114,7 @@ class AduanaController extends Controller
         $llave = $request->get('pk',NULL);
         $lugar = $request->get('lugar',NULL);
         $em = $this->getDoctrine()->getManager();
-        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'mci'));
+        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $abreviacion));
         $aduana = null;
         $datos = array();
         if($tipo_mci){

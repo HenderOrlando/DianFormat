@@ -1,0 +1,1012 @@
+
+<div class="hoja_carta_formato print">
+    <div class="margen">
+        {% set col_w = formato.id is not defined or formato.id is empty?10:12 %}
+        {% if formato.id is not defined or formato.id is empty %}
+        <div class="row">
+            <div>
+                <div class="text-right pull-right hidden-print">
+                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                        buttonset: 'horizontal',
+                        class: 'animate in hidden-print',
+                        botones  : [
+                            {
+                                'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                'type'  :   'primary',
+                                'class' :   'guardar formato-crear animate',
+                                'url'   :   url('formato_save_ajax',{tipo: formato.tipo.abreviacion|upper}),
+                            },
+                            {
+                                'class' :   'reset formato-crear animate',
+                                'type'  :   'warning',
+                                'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                            },
+                        ],
+                        sizing: 'mediano',
+                    } %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="text-center hidden-print">
+            {% set dataWith = {
+                id:             "formato_nombre",
+                clase:          "formato-crear",
+                placement:      "bottom",
+                name:           "nombre",
+                pk:             formato.id,
+                datos:          {tipo: formato.tipo.abreviacion|upper},
+                originalTitle:  "Nombre del Formato",
+                entityName:     "formato",
+                bundleName:     "formatos" ,
+                emptyText:      "Nombre del Formato " ~ formato.tipo.abreviacion|upper,
+                placeholder:    "Nombre del Formato " ~ formato.tipo.abreviacion|upper, 
+                required:       "NoVacio,NumerosLetras",
+                valor:          formato.nombre,
+            } %}
+            <h4>
+                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
+            </h4>
+            {#<h5>
+                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                    id:             "formato_padre",
+                    clase:          "formato-crear",
+                    placement:      "bottom",
+                    name:           "padre",
+                    pk:             formato.id,
+                    datos:          {tipo: formato.tipo.abreviacion|upper},
+                    originalTitle:  "MCI al que se asocia el formato " ~ formato.tipo.abreviacion|upper,
+                    entityName:     "formato",
+                    bundleName:     "formatos" ,
+                    emptyText:      "MCI",
+                    required:       "Vacio,Numeros",
+                    valor:          formato.padre is defined and formato.padre is not empty?formato.padre.nombre:'',
+                }) %}
+            </h5>#}
+        </div>
+        <div class="text-justify hidden-print">
+            <p>
+                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                    id:             "formato_descripcion",
+                    clase:          "formato-crear",
+                    name:           "descripcion",
+                    type:           "textarea",
+                    emptyText:      "Descripcion del Formato " ~ formato.tipo.abreviacion|upper,
+                    placeholder:    "Descripcion del Formato " ~ formato.tipo.abreviacion|upper, 
+                    required:       "NoVacio,NumerosLetrasConectores",
+                    valor:          formato.descripcion,
+                }) %}
+            </p>
+        </div>
+        <table class="table table-bordered table-striped">
+            <tbody>
+                <tr class="">
+                    <td rowspan="2" colspan="6" class="logo text-center">
+                        <img src="{{- asset("bundles/puertoudescommon/images/comunidad_andina.jpeg")-}}" alt="Comunidad Andina">
+                    </td>
+                    <td colspan="6" class="text-center title">
+                        {{- formato.tipo.nombre|title ~ ' (' ~ formato.tipo.abreviacion|upper ~ ')' -}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-center">
+                        N° 
+                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                            id:             "numero_formato",
+                            clase:          "formato-crear",
+                            name:           "numero",
+                            originalTitle:  "Digite Número",
+                            emptyText:      "Número de" ~ formato.tipo.abreviacion|upper,
+                            placeholder:    "Número " ~ formato.tipo.abreviacion|upper, 
+                            required:       "NoVacio,Numeros",
+                            valor:          formato.numero,
+                        }) %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                {#<div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                                    'type'  :   'primary',
+                                                    'class' :   'entidad-crear animate guardar ' ~ (formato.transportista is not defined or formato.transportista.id is not defined?'in':'out'),
+                                                    'url'   :   url('entidad_save_transportista_ajax',{
+                                                                    tipo: formato.tipo.abreviacion|upper,
+                                                                    numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                                }),
+                                                },
+                                                {
+                                                    'class' :   'reset entidad-crear animate',
+                                                    'type'  :   'warning',
+                                                    'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>#}
+                                1- Denominación o razón social del transportista autorizado
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                {% set pk = formato.transportista is defined and formato.transportista.usuario is defined?formato.transportista.usuario.id:' ' %}
+                                {% set dataWith = {
+                                    id:             "entidad_razon_social",
+                                    clase:          "entidad-crear",
+                                    name:           "nombre",
+                                    pk:             pk,
+                                    datos:          {tipo: formato.tipo.abreviacion|upper},
+                                    originalTitle:  "Nombre o Razón Social del Transportista",
+                                    entityName:     "usuario",
+                                    bundleName:     "usuarios" ,
+                                    emptyText:      "Razón Social",
+                                    required:       "Vacio,LetrasConectores",
+                                    valor:          pk != ' '?formato.transportista.nombre:'',
+                                } %}
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
+                            </div>
+                            <div class="col-lg-12">
+                                NIT. 
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "entidad_nit",
+                                    clase:          "entidad-crear",
+                                    name:           "doc_id",
+                                    originalTitle:  "NIT del Transportista",
+                                    emptyText:      "NIT",
+                                    required:       "NoVacio,NumerosConectores",
+                                    valor:          pk != ' '?formato.transportista.docId:'',
+                                }) %}
+                            </div>
+                            <div class="col-lg-12">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "entidad_direccion",
+                                    clase:          "entidad-crear",
+                                    name:           "direccion",
+                                    originalTitle:  "Dirección del Transportista",
+                                    emptyText:      "Dirección",
+                                    required:       "Vacio,NumerosLetrasConectores",
+                                    valor:          pk != ' '?formato.transportista.direccion:'',
+                                }) %} - Telfs. 
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "entidad_telefono",
+                                    clase:          "entidad-crear",
+                                    name:           "telefono",
+                                    originalTitle:  "Teléfono del Transportista",
+                                    emptyText:      "Teléfono",
+                                    required:       "Vacio,NumerosConectores",
+                                    valor:          pk != ' '?formato.transportista.telefono:'',
+                                }) %} - 
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "entidad_lugar",
+                                    clase:          "entidad-crear",
+                                    name:           "lugar",
+                                    originalTitle:  "Lugar del Transportista",
+                                    emptyText:      "Lugar",
+                                    required:       "Vacio,LetrasConectores",
+                                    valor:          pk != ' '?formato.transportista.lugar:'',
+                                }) %}
+                            </div>
+                        </div>
+                    </td>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in hidden-print',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                    'type'  :   'success',
+                                                    'class' :   'animate agregar aduanas-cruce',
+                                                    'url'   :   url('aduana_add_dtai_ajax',{
+                                                                    tipo:    'destino',
+                                                                    numero: formato.numero,
+                                                                }),
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>
+                                8- País y aduana de destino
+                            </div>
+                            <div id="pais-aduana-destino">
+                                {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                    {% for ad in formato.aduanasDestino %}
+                                        {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                aduana:         ad,
+                                                tipo:            'destino',
+                                                fila:           loop.index0,
+                                            })
+                                        }}
+                                    {% else %}
+                                        {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:            'destino',
+                                                fila:           0,
+                                            }) 
+                                        }}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in hidden-print',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                    'type'  :   'success',
+                                                    'class' :   'animate agregar remitentes',
+                                                    'url'   :   url('entidad_add_dtai_ajax',{
+                                                                    rol:    'declarante',
+                                                                    numero: formato.numero,
+                                                                }),
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>
+                                2- Nombre y Dirección del Declarante
+                            </div>
+                        </div>
+                        <div id="declarante">
+                            {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                {% for declarante in formato.declarantes %}
+                                    {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
+                                            abreviacion:    formato.tipo.abreviacion|upper,
+                                            numero:         formato.numero,
+                                            entidad:        declarante,
+                                            rol:            'declarante',
+                                            fila:           loop.index0,
+                                        }) 
+                                    }}
+                                {% else %}
+                                    {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                        {{ render(controller('PuertoUDESUsuariosBundle:Entidad:addEntidadDtaiAjax',{
+                                                numero:         formato.numero,
+                                                rol:            'declarante',
+                                                fila:           0,
+                                            }))
+                                        }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                9- País de Orígen de las Mercancías
+                                {% set aduanaPartida = formato.aduanasPartida is not empty?(formato.aduanasPartida|first).aduana:formato.aduanasPartida %}
+                            </div>
+                        </div>
+                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             'pais_origen_mercancia',
+                                    name:           'pais',
+                                    originalTitle:  "País de Origen de la Mercancía",
+                                    emptyText:      "País",
+                                    required:       "NoVacio,Letras",
+                                    valor:          aduanaPartida is not empty and aduanaPartida.lugar is defined and aduanaPartida.lugar.pais is defined?aduanaPartida.lugar.pais:' ',
+                                    prefetch:       url('list_typeahead_paises_', {'name': 'nombre'}),
+                                }) %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in hidden-print',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                    'type'  :   'success',
+                                                    'class' :   'animate agregar remitentes',
+                                                    'url'   :   url('entidad_add_dtai_ajax',{
+                                                                    rol:    'remitente',
+                                                                    numero: formato.numero,
+                                                                }),
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>
+                                3- Nombre y Dirección del Remitente
+                            </div>
+                        </div>
+                        <div id="remitentes">
+                            {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                {% for remitente in formato.remitentes %}
+                                    {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
+                                            abreviacion:    formato.tipo.abreviacion|upper,
+                                            numero:         formato.numero,
+                                            entidad:        remitente,
+                                            rol:            'remitente',
+                                            fila:           loop.index0,
+                                        }) 
+                                    }}
+                                {% else %}
+                                    {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                        {{ render(controller('PuertoUDESUsuariosBundle:Entidad:addEntidadDtaiAjax',{
+                                                numero:         formato.numero,
+                                                rol:            'remitente',
+                                                fila:           0,
+                                            }))
+                                        }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td colspan="6" class="text-center">
+                        {% set vh = formato.conductores is not empty?(formato.conductores|first).vehiculo:formato.conductores %}
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in hidden-print',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                    'type'  :   'success',
+                                                    'class' :   'animate agregar placa-pais-vehiculo',
+                                                    'url'   :   url('entidad_add_dtai_ajax',{
+                                                                    rol:    'remitente',
+                                                                    numero: formato.numero,
+                                                                }),
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>
+                                10- Placa y país de matrícula de los vehículos habilitados
+                            </div>
+                        </div>
+                        <div id="placa-pais-vehiculo" class="col-lg-12 col-md-12">
+                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                id:             'vehiculo_placa',
+                                name:           'placa',
+                                originalTitle:  "Placa del Vehiculo",
+                                emptyText:      "Placa",
+                                required:       "NoVacio,NumerosLetrasConectores",
+                                valor:          vh is not empty and vh.placa is defined?vh.placa:' ',
+                                prefetch:       url('list_typeahead_vehiculos_',{name: 'placa'}),
+                            }) %} - 
+                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                id:             'vehiculo_pais',
+                                name:           'pais',
+                                originalTitle:  "País del Vehiculo",
+                                emptyText:      "País",
+                                required:       "NoVacio,Letras",
+                                valor:          vh is not empty and vh.pais is defined?vh.pais:' ',
+                                prefetch:       url('list_typeahead_vehiculos_',{name: 'pais'}),
+                            }) %}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in hidden-print',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                    'type'  :   'success',
+                                                    'class' :   'animate agregar destinatarios',
+                                                    'url'   :   url('entidad_add_dtai_ajax',{
+                                                                    rol:    'destinatario',
+                                                                    numero: formato.numero,
+                                                                }),
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>
+                                4- Nombre y Dirección del Destinatario
+                            </div>
+                        </div>
+                        <div id="destinatarios">
+                            {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                {% for destinatario in formato.destinatarios %}
+                                    {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
+                                            abreviacion:    formato.tipo.abreviacion|upper,
+                                            numero:         formato.numero,
+                                            entidad:        destinatario,
+                                            rol:            'destinatario',
+                                            fila:           loop.index0,
+                                        }) 
+                                    }}
+                                {% else %}
+                                    {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                        {{ render(controller('PuertoUDESUsuariosBundle:Entidad:addEntidadDtaiAjax',{
+                                                numero:         formato.numero,
+                                                rol:            'destinatario',
+                                                fila:           0,
+                                            }))
+                                        }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                11- Placa y país de matrícula o registro de las unidades de carga
+                                {% set unidadCarga = formato.cargas is not empty?(formato.cargas|first).unidadCargas is not empty?(formato.cargas|first).unidadCargas|first:(formato.cargas|first).unidadCargas %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             'unidadCarga_placa',
+                                    name:           'placa',
+                                    originalTitle:  "Placa de la Unidad de Carga",
+                                    emptyText:      "Placa",
+                                    required:       "NoVacio,NumerosLetras",
+                                    valor:          unidadCarga is not empty and unidadCarga.placa is defined? unidadCarga.placa:' ',
+                                    prefetch:       url('list_typeahead_unidades_carga_',{name: 'placa'}),
+                                }) %} - 
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             'unidadCarga_pais',
+                                    name:           'pais',
+                                    originalTitle:  "País de la Unidad de Carga",
+                                    emptyText:      "País",
+                                    required:       "NoVacio,Letras",
+                                    valor:          unidadCarga is not empty and unidadCarga.pais is defined? unidadCarga.pais:' ',
+                                    prefetch:       url('list_typeahead_unidades_carga_',{name: 'pais'}),
+                                }) %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in hidden-print',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                    'type'  :   'success',
+                                                    'class' :   'animate agregar consignatarios',
+                                                    'url'   :   url('entidad_add_dtai_ajax',{
+                                                                    rol:    'consignatario',
+                                                                    numero: formato.numero,
+                                                                }),
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>
+                                5- Nombre y Dirección del Consignatario
+                            </div>
+                        </div>
+                        <div id="consignatarios">
+                            {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                {% for consignatario in formato.consignatarios %}
+                                    {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
+                                            abreviacion:    formato.tipo.abreviacion|upper,
+                                            numero:         formato.numero,
+                                            entidad:        consignatario,
+                                            rol:            'consignatario',
+                                            fila:           loop.index0,
+                                        }) 
+                                    }}
+                                {% else %}
+                                    {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                        {{ render(controller('PuertoUDESUsuariosBundle:Entidad:addEntidadDtaiAjax',{
+                                                numero:         formato.numero,
+                                                rol:            'consignatario',
+                                                fila:           0,
+                                            }))
+                                        }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in hidden-print',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                    'type'  :   'success',
+                                                    'class' :   'animate agregar consignatarios',
+                                                    'url'   :   url('entidad_add_dtai_ajax',{
+                                                                    rol:    'consignatario',
+                                                                    numero: formato.numero,
+                                                                }),
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>
+                                12- Número(s) de (los) Manifiesto(s) de Carga Internacional
+                            </div>
+                        </div>
+                        {# 
+                            OJO!!!
+                            Los formatos hijos son los MCI y éste es el formato padre. 
+                        #}
+                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                            id:             "formato_padre",
+                            clase:          "formato-crear",
+                            placement:      "bottom",
+                            name:           "padre",
+                            pk:             formato.id,
+                            datos:          {tipo: formato.tipo.abreviacion|upper},
+                            originalTitle:  "MCI que se asocia al formato " ~ formato.tipo.abreviacion|upper,
+                            entityName:     "formato",
+                            bundleName:     "formatos" ,
+                            emptyText:      "Asociar MCI",
+                            required:       "Vacio,Numeros",
+                            valor:          formato.padre is defined and formato.padre is not empty?formato.padre.nombre:'',
+                        }) %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                6- Aduana de Carga
+                            </div>
+                        </div>
+                        {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                            {% for ap in formato.aduanasPartida %}
+                                {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                        abreviacion:    formato.tipo.abreviacion|upper,
+                                        numero:         formato.numero,
+                                        aduana:         ap,
+                                        tipo:            'destino',
+                                        fila:           loop.index0,
+                                    })
+                                }}
+                            {% else %}
+                                {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                        abreviacion:    formato.tipo.abreviacion|upper,
+                                        numero:         formato.numero,
+                                        tipo:            'destino',
+                                        fila:           0,
+                                    }) 
+                                }}
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in hidden-print',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                    'type'  :   'success',
+                                                    'class' :   'animate agregar consignatarios',
+                                                    'url'   :   url('entidad_add_dtai_ajax',{
+                                                                    rol:    'consignatario',
+                                                                    numero: formato.numero,
+                                                                }),
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>
+                                13- Número de Identificación de los contenedores y su capacidad (Indicar si son 20 o 40 pies u otra)
+                                {% set carga = formato.cargas is not empty?formato.cargas|first:formato.cargas %}
+                                {% set dataWith = {
+                                        id:             'carga_lugar_carga',
+                                        clase:          'carga-crear',
+                                        placement:      'top',
+                                        name:           'lugarCarga',
+                                        pk:             carga is not empty and carga.id is defined?carga.id:' ',
+                                        originalTitle:  "Lugar de la Carga",
+                                        emptyText:      "Lugar",
+                                        entityName:     "carga",
+                                        bundleName:     "formatos" ,
+                                        required:       "NoVacio,LetrasConectores",
+                                        valor:          carga.lugarCarga is defined?carga.lugarCarga:' ',
+                                        prefetch:       url('list_typeahead_cargas_',{name: 'lugarCarga'})
+                                    } %}
+                            </div>
+                        </div>
+                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                            id:             'contenedor_numero',
+                            clase:          'contenedor-crear',
+                            placement:      'top',
+                            name:           'numero',
+                            pk:             ' ',
+                            originalTitle:  "Número de Identificación del Contenedor de la Carga",
+                            emptyText:      "Número del Contenedor",
+                            entityName:     "contenedor",
+                            bundleName:     "common" ,
+                            prefetch:       false,
+                            required:       "NoVacio,NumerosLetrasConectores",
+                            valor:          formato.getContenedorHijos is not null?formato.getContenedorHijos.numero:' ',
+                        }) %}
+                            {#valor:          carga.numContenedores is defined?carga.numContenedores:' ',#}
+                         - 
+                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                            id:             'contenedor_capacidad',
+                            clase:          'contenedor-crear',
+                            placement:      'top',
+                            name:           'capacidad',
+                            pk:             ' ',
+                            originalTitle:  "Capacidad del Contenedor de la Carga",
+                            emptyText:      "Capacidad del Contenedor",
+                            entityName:     "contenedor",
+                            bundleName:     "common" ,
+                            prefetch:       false,
+                            required:       "Vacio,NumerosConectores",
+                            valor:          formato.getContenedorHijos is not null?formato.getContenedorHijos.capacidad:' ',
+                        }) %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                7- Aduana de Partida
+                            </div>
+                        </div>
+                        {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                            {% for ap in formato.aduanasPartida %}
+                                {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                        abreviacion:    formato.tipo.abreviacion|upper,
+                                        numero:         formato.numero,
+                                        aduana:         ap,
+                                        tipo:            'destino',
+                                        fila:           loop.index0,
+                                    })
+                                }}
+                            {% else %}
+                                {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                        abreviacion:    formato.tipo.abreviacion|upper,
+                                        numero:         formato.numero,
+                                        tipo:            'destino',
+                                        fila:           0,
+                                    }) 
+                                }}
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                    <td colspan="6" class="text-center">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                <div>
+                                    <div class="text-right pull-right btns-action-right">
+                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                            'buttonset': 'horizontal',
+                                            'class': 'animate in hidden-print',
+                                            'botones'  : [
+                                                {
+                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                    'type'  :   'success',
+                                                    'class' :   'animate agregar consignatarios',
+                                                    'url'   :   url('entidad_add_dtai_ajax',{
+                                                                    rol:    'consignatario',
+                                                                    numero: formato.numero,
+                                                                }),
+                                                },
+                                            ],
+                                            'sizing': 'pequeño',
+                                        } %}
+                                    </div>
+                                </div>
+                                14- Número(s) de (los) Precinto(s) Aduanero(s)
+                            </div>
+                        </div>
+                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                            id:             'carga_numPrecintos',
+                            name:           'numPrecintos',
+                            originalTitle:  "Número de Precintos de la Carga",
+                            emptyText:      "Número de Precintos",
+                            required:       "NoVacio,Numeros",
+                            valor:          carga.numPrecintos is defined?(carga.numPrecintos>=0?carga.numPrecintos:''):' ',
+                            type:           'number',
+                        }) %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="12">
+                        <table class="table table-bordered table-striped" id="cpics">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                15- Carta de Porte N°
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th colspan="4" rowspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                16- Descripción de las mercancías
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th rowspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                17- Catidad de los bultos
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th rowspan="2" colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                18- Clase y marca de los bultos
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                19- Peso en Kilogramos
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th rowspan="2" colspan="2" class="text-center">
+                                        <div class="row">
+                                            <div class="enunciado col-lg-12 col-md-12">
+                                                20- Volumen en m3 u otra unidad de medida
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center">
+                                            Bruto
+                                    </th>
+                                    <th class="text-center">
+                                            Neto
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set precioMercancias = 0 %}
+                                {% set tipoMoneda = ' ' %}
+                                {% set incoterm = ' ' %}
+                                {% set pesoBruto = 0 %}
+                                {% set pesoNeto = 0 %}
+                                {% set volumen = 0 %}
+                                {% set volumenOtro = 0 %}
+                                {% for fp in formato.hijos %}
+                                    {% for fh in fp.hijos %}
+                                        {{ include('PuertoUDESFormatosBundle:Formato:_addCpicAjax.html.twig',{
+                                                fila:       loop.index0,
+                                                formato:    fh,
+                                                numero:     formato.numero
+                                            }) 
+                                        }}
+                                        {#% for cmf in fh.contenedoresMercancias%}
+                                            {% set pesoBruto = pesoBruto + (cmf.pesoBruto is defined and cmf.pesoBruto is not empty?cmf.pesoBruto:0) %}
+                                            {% set pesoNeto = pesoNeto + (cmf.pesoNeto is defined and cmf.pesoNeto is not empty?cmf.pesoNeto:0) %}
+                                            {% set volumen = volumen + (cmf.volumen is defined and cmf.volumen is not empty?cmf.volumen:0) %}
+                                            {% set volumenOtro = volumenOtro + (cmf.volumenOtro is defined and cmf.volumenOtro is not empty?cmf.volumenOtro:0) %}
+                                        {% endfor %}
+                                        {% set precioMercancias = precioMercancias + fh.gastoMercancias is defined and fh.gastoMercancias is not empty and fh.gastoMercancias.valor is defined?fh.gastoMercancias.valor:0 %}
+                                        {% set tipoMoneda = fh.gastoMercancias is defined and fh.gastoMercancias is not empty and fh.gastoMercancias.moneda is defined?fh.gastoMercancias.moneda.abreviacion|upper:0 %#}
+                                        {% set incoterm = fh.incoterm is defined and fh.incoterm is not empty and fh.incoterm.sigla is defined?fh.incoterm.sigla|upper:0 %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="text-center no-border-right">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-9 col-md-9">
+                                                21- Precio de las mercancías (INCOTERMS 2010) y tipo de monedas
+                                            </div>
+                                            <div class="col-lg-3 col-md-3">
+                                                <span class="imita">
+                                                    {{ incoterm }} {{ formato.getGastoTotalMercancias }} {{ formato.getTipoMoneda is not null?formato.getTipoMoneda.abreviacion|upper:'' }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td colspan="3" class="text-center no-border-right">
+                                        <div class="row">
+                                            <div class="enunciado text-left col-lg-9 col-md-9">
+                                                <div>
+                                                    <div class="text-right pull-right btns-action-right">
+                                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                                            'buttonset': 'horizontal',
+                                                            'class': 'animate in hidden-print',
+                                                            'botones'  : [
+                                                                {
+                                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
+                                                                    'type'  :   'success',
+                                                                    'class' :   'animate agregar aduanas-cruce',
+                                                                    'url'   :   url('aduana_add_dtai_ajax',{
+                                                                                    tipo:    'cruce-de-frontera',
+                                                                                    numero: formato.numero,
+                                                                                }),
+                                                                },
+                                                            ],
+                                                            'sizing': 'pequeño',
+                                                        } %}
+                                                    </div>
+                                                </div>
+                                                <div class="enunciado text-left col-lg-12 col-md-12">
+                                                    37- Aduana(s) de Cruce de Frontera
+                                                </div>
+                                            </div>
+                                            <div id="aduanas-cruce">
+                                                {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                                    {% for ac in formato.aduanasCruce %}
+                                                        {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                                numero:         formato.numero,
+                                                                aduana:         ac,
+                                                                tipo:            'cruce-de-frontera',
+                                                                fila:           loop.index0,
+                                                            })
+                                                        }}
+                                                    {% else %}
+                                                        {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                                numero:         formato.numero,
+                                                                tipo:            'cruce-de-frontera',
+                                                                fila:           0,
+                                                            }) 
+                                                        }}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center no-border-left text-midle">
+                                            TOTAL
+                                    </td>
+                                    <td class="text-center text-midle">
+                                        <span id="cpic_total_peso_bruto" class="imita" data-name="totalPesoBruto">{{ formato.getTotalPesoBruto }}</span>
+                                    </td>
+                                    <td class="text-center text-midle">
+                                        <span id="cpic_total_peso_neto" class="imita" data-name="totalPesoNeto">{{ formato.getTotalPesoNeto }}</span>
+                                    </td>
+                                    <td class="text-center text-midle" colspan="2">
+                                        <span id="cpic_total_volumen" class="imita" data-name="totalVolumen"> {{ formato.getTotalVolumen }} </span> <br/>
+                                        <span id="cpic_total_volumenOtro" class="imita" data-name="totalVolumenOtro"> {{ formato.getTotalVolumenOtro }} </span>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="4" colspan="6">
+                        <div class="row">
+                            <div class="enunciado col-lg-12 col-md-12">
+                                <br/>
+                                <p>
+                                El suscrito se obliga a cumplir en ésta Operación de Tránsito Aduanero Internacional, con las disposiciones de las normas que conforman el ordenamiento jurídico de la Comunidad Andina.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                23- Firma y Sello del Declarante
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                24- Observaciones de la Aduana de Partida
+                            </div>
+                        </div>
+                        <div class="row">
+                            {% set dataWith = {
+                                clase:      "observaciones",
+                                entityName: "formato",
+                                bundleName: "formatos" ,
+                                type:           "textarea",
+                                required:   "Vacio,LetrasNumerosConectores",
+                                pk:         formato.id is defined and formato.id is not empty?formato.id:' ',
+                                datos:      {
+                                    numero: formato.numero,
+                                    tipo: formato.tipo,
+                                },
+                            } %}
+                            <div class="col-lg-12 col-md-12">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "formato_observaciones",
+                                    name:           "observaciones",
+                                    originalTitle:  "Observaciones de la Aduana de Partida",
+                                    emptyText:      "Observaciones",
+                                    valor:          formato.observaciones is defined and formato.observaciones is not empty?formato.observaciones:' ',
+                                }) %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center grande">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                25- Documentos Anexos
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "volumen_otro_contenedor_mercancia_formato",
+                                    name:           "volumenOtro",
+                                    originalTitle:  "Documentos Anexos",
+                                    emptyText:      "documentos anexos",
+                                    valor:          pk is not empty?'':'',
+                                }) %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center grande">
+                        <div class="row">
+                            <div class="enunciado text-left col-lg-12 col-md-12">
+                                26- Firma y sello de la autoridad que interviene en la Aduana de Partida
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>    
+    </div>
+</div>

@@ -54,6 +54,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $consignatarios;
     private $remitentes;
     private $destinatarios;
+    private $declarantes;
 
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato", mappedBy="formato")
@@ -163,6 +164,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->consignatarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->remitentes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->declarantes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->datosMercancias = new \Doctrine\Common\Collections\ArrayCollection();
         $this->condiciones = new \Doctrine\Common\Collections\ArrayCollection();
         $this->totalPesoBruto = $this->totalPesoNeto = $this->totalVolumen = $this->totalVolumenOtro = $this->gastoTotalDestinatario = $this->gastoTotalRemitente = $this->gastoTotalMercancias = 0;
@@ -725,6 +727,19 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
 
     /**
+     * Get declarates
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDeclarantes()
+    {
+        if(empty($this->declarantes)){
+            $this->loadUsuariosTipo();
+        }
+        return $this->declarantes;
+    }
+
+    /**
      * Get remitentes
      * 
      * @return \Doctrine\Common\Collections\Collection 
@@ -1188,6 +1203,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->consignatarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->remitentes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->declarantes = new \Doctrine\Common\Collections\ArrayCollection();
         foreach($this->usuarios as $u){
             switch(strtolower($u->getRol()->getNombre())){
                 case 'notificado':
@@ -1201,6 +1217,9 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                     break;
                 case 'remitente':
                     $this->remitentes->add($u->getUsuario()->getEntidad());
+                    break;
+                case 'declarantes':
+                    $this->declarantes->add($u->getUsuario()->getEntidad());
                     break;
             }
         }

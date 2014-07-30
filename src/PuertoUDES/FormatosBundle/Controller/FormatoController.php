@@ -93,6 +93,211 @@ class FormatoController extends Controller
         }
         return $datos;
     }
+    
+    /**
+     * Lists all Formato entities.
+     *
+     * @Route("/CACF/", name="formato__cacf")
+     * @Route("/CACF/{maxResult}/", name="formato__cacf_maxResult")
+     * @Method("GET")
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function cacfAction(Request $request, $maxResult = false)
+    {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getCacfs(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getCacfs(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
+        return $this->indexAction($request, array(
+            'title'     =>  'Declaración de Impuesto Aduanero Internacional',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'cacf',
+            'route'     =>  'formato__cacf',
+            'limit'     =>  $limit,
+            'qb'        =>  $qb,
+        ));
+    }
+    public function cacfAjaxAction(Request $request, $maxResult = false)
+    {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getCpic(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getCpic(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
+        return $this->indexAction($request, array(
+            'title'     =>  '',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'cacf',
+            'route'     =>  'formato__cacf',
+            'limit'     =>  $limit,
+            'qb'        =>  $qb,
+            'ajax'      =>  true,
+        ));
+    }
+    /**
+     * Lists all Formato entities.
+     *
+     * @Route("/REMESA/", name="formato__remesa")
+     * @Route("/REMESA/{maxResult}/", name="formato__remesa_maxResult")
+     * @Method("GET")
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function remesaAction(Request $request, $maxResult = false)
+    {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getRemesas(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getRemesas(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
+        return $this->indexAction($request, array(
+            'title'     =>  'Declaración de Impuesto Aduanero Internacional',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'remesa',
+            'route'     =>  'formato__remesa',
+            'limit'     =>  $limit,
+            'qb'        =>  $qb,
+        ));
+    }
+    public function remesaAjaxAction(Request $request, $maxResult = false)
+    {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getCpic(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getCpic(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
+        return $this->indexAction($request, array(
+            'title'     =>  '',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'remesa',
+            'route'     =>  'formato__remesa',
+            'limit'     =>  $limit,
+            'qb'        =>  $qb,
+            'ajax'      =>  true,
+        ));
+    }
+    /**
+     * Lists all Formato entities.
+     *
+     * @Route("/DI/", name="formato__di")
+     * @Route("/DI/{maxResult}/", name="formato__di_maxResult")
+     * @Method("GET")
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function diAction(Request $request, $maxResult = false)
+    {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getDi(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getDi(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
+        return $this->indexAction($request, array(
+            'title'     =>  'Declaración de Impuesto Aduanero Internacional',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'di',
+            'route'     =>  'formato__di',
+            'limit'     =>  $limit,
+            'qb'        =>  $qb,
+        ));
+    }
+    public function diAjaxAction(Request $request, $maxResult = false)
+    {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getCpic(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getCpic(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
+        return $this->indexAction($request, array(
+            'title'     =>  '',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'di',
+            'route'     =>  'formato__di',
+            'limit'     =>  $limit,
+            'qb'        =>  $qb,
+            'ajax'      =>  true,
+        ));
+    }
+    /**
+     * Lists all Formato entities.
+     *
+     * @Route("/DTAI/", name="formato__dtai")
+     * @Route("/DTAI/{maxResult}/", name="formato__dtai_maxResult")
+     * @Method("GET")
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function dtaiAction(Request $request, $maxResult = false)
+    {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getDtai(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getDtai(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
+        return $this->indexAction($request, array(
+            'title'     =>  'Declaración de Impuesto Aduanero Internacional',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'dtai',
+            'route'     =>  'formato__dtai',
+            'limit'     =>  $limit,
+            'qb'        =>  $qb,
+        ));
+    }
+    public function dtaiAjaxAction(Request $request, $maxResult = false)
+    {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getCpic(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getCpic(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
+        return $this->indexAction($request, array(
+            'title'     =>  '',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'dtai',
+            'route'     =>  'formato__dtai',
+            'limit'     =>  $limit,
+            'qb'        =>  $qb,
+            'ajax'      =>  true,
+        ));
+    }
     /**
      * Lists all Formato entities.
      *

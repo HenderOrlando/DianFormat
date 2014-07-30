@@ -41,6 +41,26 @@ class FormatoRepository extends EntityRepository
         return $this->getByAbreviacion('cpic', $completo, $query, $querybuilder, $id_usuario);
     }
     
+    public function getDtai($completo = null, $query = false, $querybuilder = false, $id_usuario = null){
+        return $this->getByAbreviacion('dtai', $completo, $query, $querybuilder, $id_usuario);
+    }
+    
+    public function getDi($completo = null, $query = false, $querybuilder = false, $id_usuario = null){
+        return $this->getByAbreviacion('di', $completo, $query, $querybuilder, $id_usuario);
+    }
+    
+    public function getRemesas($completo = null, $query = false, $querybuilder = false, $id_usuario = null){
+        return $this->getByAbreviacion('remesa', $completo, $query, $querybuilder, $id_usuario);
+    }
+    
+    public function getCacfs($completo = null, $query = false, $querybuilder = false, $id_usuario = null){
+        return $this->getByAbreviacion('cacf', $completo, $query, $querybuilder, $id_usuario);
+    }
+    
+    public function getFacturas($completo = null, $query = false, $querybuilder = false, $id_usuario = null){
+        return $this->getByAbreviacion('factura', $completo, $query, $querybuilder, $id_usuario);
+    }
+    
     public function countFormatos($campo = 'id'){
         return $this->createQueryBuilder('f')
                 ->select('COUNT(f.'.$campo.')')

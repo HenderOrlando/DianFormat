@@ -99,8 +99,12 @@
                                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                             <li>
                                                 <a href="{{ path('formato_',{'id':app.user.id}) }}">Formatos</a>
+                                                <a href="{{ path('formato__remesa',{'id':app.user.id}) }}">Remesa</a>
+                                                <a href="{{ path('formato__di',{'id':app.user.id}) }}">Declaración de Importación</a>
                                                 <a href="{{ path('formato__mci',{'id':app.user.id}) }}">Manifiesto de Carga Internacional</a>
+                                                <a href="{{ path('formato__cacf',{'id':app.user.id}) }}">Control de Aduana de Cruce de Frontera</a>
                                                 <a href="{{ path('formato__cpic',{'id':app.user.id}) }}">Carta de Porte Internacional por Carretera</a>
+                                                <a href="{{ path('formato__dtai',{'id':app.user.id}) }}">Declaración de Tránsito Aduanero Internacional</a>
                                             </li>
                                         </ul>
                                     </li>

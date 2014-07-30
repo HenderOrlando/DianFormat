@@ -19,7 +19,7 @@ fila        Número de la fila de la aduana
                         'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
                         'type'  :   'primary',
                         'class' :   'aduana' ~ fila ~ '-' ~ tipo ~'-crear animate guardar ' ~ (pk == ' '?'in':'out'),
-                        'url'   :   url('aduana_add_mci_ajax_',{
+                        'url'   :   url('aduana_add_' ~ abreviacion|lower ~'_ajax_',{
                                         numero: numero,
                                         tipo: tipo,
                                         fila: fila,
