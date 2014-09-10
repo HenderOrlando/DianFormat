@@ -97,6 +97,58 @@ class FormatoController extends Controller
     /**
      * Lists all Formato entities.
      *
+     * @Route("/FACTURA/", name="formato__factura")
+     * @Route("/FACTURA/{maxResult}/", name="formato__factura_maxResult")
+     * @Method("GET")
+     * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
+     */
+    public function facturaAction(Request $request, $maxResult = false)
+    {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getFacturas(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getFacturas(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
+        return $this->indexAction($request, array(
+            'title'     =>  'Factura',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'factura',
+            'route'     =>  'formato__factura',
+            'limit'     =>  $limit,
+            'qb'        =>  $qb,
+        ));
+    }
+    public function facturaAjaxAction(Request $request, $maxResult = false)
+    {
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $qb = $this->getRepositorio()->getFacturas(null, false, true);
+        }else{
+            $qb = $this->getRepositorio()->getFacturas(null, false, true, $this->getUser()->getUsuario()->getId());
+        }
+        $limit = 5;
+        if(is_int($maxResult)){
+            $limit = $maxResult;
+        }
+        return $this->indexAction($request, array(
+            'title'     =>  'Factura',
+            'entity'    =>  'Formato',
+            'bundle'    =>  'Common',
+            'abrevia'   =>  'factura',
+            'route'     =>  'formato__factura',
+            'limit'     =>  $limit,
+            'qb'        =>  $qb,
+            'ajax'      =>  true,
+        ));
+    }
+    
+    /**
+     * Lists all Formato entities.
+     *
      * @Route("/CACF/", name="formato__cacf")
      * @Route("/CACF/{maxResult}/", name="formato__cacf_maxResult")
      * @Method("GET")
@@ -114,7 +166,7 @@ class FormatoController extends Controller
             $limit = $maxResult;
         }
         return $this->indexAction($request, array(
-            'title'     =>  'Declaración de Impuesto Aduanero Internacional',
+            'title'     =>  'Control de Aduana de Cruce de Frontera',
             'entity'    =>  'Formato',
             'bundle'    =>  'Common',
             'abrevia'   =>  'cacf',
@@ -126,16 +178,16 @@ class FormatoController extends Controller
     public function cacfAjaxAction(Request $request, $maxResult = false)
     {
         if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
-            $qb = $this->getRepositorio()->getCpic(null, false, true);
+            $qb = $this->getRepositorio()->getCacfs(null, false, true);
         }else{
-            $qb = $this->getRepositorio()->getCpic(null, false, true, $this->getUser()->getUsuario()->getId());
+            $qb = $this->getRepositorio()->getCacfs(null, false, true, $this->getUser()->getUsuario()->getId());
         }
         $limit = 5;
         if(is_int($maxResult)){
             $limit = $maxResult;
         }
         return $this->indexAction($request, array(
-            'title'     =>  '',
+            'title'     =>  'Control de Aduana de Cruce de Frontera',
             'entity'    =>  'Formato',
             'bundle'    =>  'Common',
             'abrevia'   =>  'cacf',
@@ -165,7 +217,7 @@ class FormatoController extends Controller
             $limit = $maxResult;
         }
         return $this->indexAction($request, array(
-            'title'     =>  'Declaración de Impuesto Aduanero Internacional',
+            'title'     =>  'Remesas',
             'entity'    =>  'Formato',
             'bundle'    =>  'Common',
             'abrevia'   =>  'remesa',
@@ -177,16 +229,16 @@ class FormatoController extends Controller
     public function remesaAjaxAction(Request $request, $maxResult = false)
     {
         if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
-            $qb = $this->getRepositorio()->getCpic(null, false, true);
+            $qb = $this->getRepositorio()->getRemesas(null, false, true);
         }else{
-            $qb = $this->getRepositorio()->getCpic(null, false, true, $this->getUser()->getUsuario()->getId());
+            $qb = $this->getRepositorio()->getRemesas(null, false, true, $this->getUser()->getUsuario()->getId());
         }
         $limit = 5;
         if(is_int($maxResult)){
             $limit = $maxResult;
         }
         return $this->indexAction($request, array(
-            'title'     =>  '',
+            'title'     =>  'Remesas',
             'entity'    =>  'Formato',
             'bundle'    =>  'Common',
             'abrevia'   =>  'remesa',
@@ -216,7 +268,7 @@ class FormatoController extends Controller
             $limit = $maxResult;
         }
         return $this->indexAction($request, array(
-            'title'     =>  'Declaración de Impuesto Aduanero Internacional',
+            'title'     =>  'Declaración de Importación',
             'entity'    =>  'Formato',
             'bundle'    =>  'Common',
             'abrevia'   =>  'di',
@@ -228,16 +280,16 @@ class FormatoController extends Controller
     public function diAjaxAction(Request $request, $maxResult = false)
     {
         if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
-            $qb = $this->getRepositorio()->getCpic(null, false, true);
+            $qb = $this->getRepositorio()->getDi(null, false, true);
         }else{
-            $qb = $this->getRepositorio()->getCpic(null, false, true, $this->getUser()->getUsuario()->getId());
+            $qb = $this->getRepositorio()->getDi(null, false, true, $this->getUser()->getUsuario()->getId());
         }
         $limit = 5;
         if(is_int($maxResult)){
             $limit = $maxResult;
         }
         return $this->indexAction($request, array(
-            'title'     =>  '',
+            'title'     =>  'Declaración de Importación',
             'entity'    =>  'Formato',
             'bundle'    =>  'Common',
             'abrevia'   =>  'di',
@@ -267,7 +319,7 @@ class FormatoController extends Controller
             $limit = $maxResult;
         }
         return $this->indexAction($request, array(
-            'title'     =>  'Declaración de Impuesto Aduanero Internacional',
+            'title'     =>  'Declaración de Tránsito Aduanero Internacional',
             'entity'    =>  'Formato',
             'bundle'    =>  'Common',
             'abrevia'   =>  'dtai',
@@ -279,16 +331,16 @@ class FormatoController extends Controller
     public function dtaiAjaxAction(Request $request, $maxResult = false)
     {
         if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
-            $qb = $this->getRepositorio()->getCpic(null, false, true);
+            $qb = $this->getRepositorio()->getDtai(null, false, true);
         }else{
-            $qb = $this->getRepositorio()->getCpic(null, false, true, $this->getUser()->getUsuario()->getId());
+            $qb = $this->getRepositorio()->getDtai(null, false, true, $this->getUser()->getUsuario()->getId());
         }
         $limit = 5;
         if(is_int($maxResult)){
             $limit = $maxResult;
         }
         return $this->indexAction($request, array(
-            'title'     =>  '',
+            'title'     =>  'Declaración de Tránsito Aduanero Internacional',
             'entity'    =>  'Formato',
             'bundle'    =>  'Common',
             'abrevia'   =>  'dtai',
@@ -339,7 +391,7 @@ class FormatoController extends Controller
             $limit = $maxResult;
         }
         return $this->indexAction($request, array(
-            'title'     =>  '',
+            'title'     =>  'Carta de Porte Internacional por Carretera',
             'entity'    =>  'Formato',
             'bundle'    =>  'Common',
             'abrevia'   =>  'cpic',
@@ -390,7 +442,7 @@ class FormatoController extends Controller
             $limit = $maxResult;
         }
         return $this->indexAction($request, array(
-            'title'     =>  '',
+            'title'     =>  'Manifiesto de Carga Internacional',
             'entity'    =>  'Formato',
             'bundle'    =>  'Common',
             'abrevia'   =>  'mci',
@@ -858,9 +910,9 @@ class FormatoController extends Controller
             );
             $entity->setNombre($tipo->getNombre().' '.$numero);
         }
-//        else{
-//            throw $this->createNotFoundException('No encontrado el Tipo de Formato.');
-//        }
+        else{
+            throw $this->createNotFoundException('No encontrado el Tipo de Formato.');
+        }
         $form   = $this->createCreateForm($entity);
 
         $datos['form'] = $form->createView();

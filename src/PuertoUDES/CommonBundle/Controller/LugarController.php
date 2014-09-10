@@ -206,7 +206,8 @@ class LugarController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            //$title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+			$title = 'Lugar';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Lugar:_'.$template.'.html.twig', $parametros),
@@ -242,7 +243,8 @@ class LugarController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            //$title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+			$title = 'Lugar';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),

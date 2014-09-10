@@ -238,13 +238,13 @@
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
                                     id:             "numero_formato",
                                     clase:          "formato-crear",
-                                    name:           "fechaCreado",
+                                    name:           "noFactura",
                                     originalTitle:  "Número de Factura",
                                     emptyText:      "No. Factura",
                                     placeholder:    "No. Factura", 
                                     required:       "Vacio,Numeros",
                                     type:           "number",
-                                    valor:          ' ',
+                                    valor:          '',
                                 }) %}
                             </div>
                             <div class="enunciado text-left col-lg-12 col-md-12">
@@ -252,13 +252,13 @@
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
                                     id:             "numero_formato",
                                     clase:          "formato-crear",
-                                    name:           "fechaCreado",
+                                    name:           "noCarta",
                                     originalTitle:  "Número de Carta",
                                     emptyText:      "No. Carta",
                                     placeholder:    "No. Carta", 
                                     required:       "Vacio,Numeros",
                                     type:           "number",
-                                    valor:          ' ',
+                                    valor:          '',
                                 }) %}
                             </div>
                             <div class="enunciado text-left col-lg-12 col-md-12">
@@ -266,13 +266,13 @@
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
                                     id:             "numero_formato",
                                     clase:          "formato-crear",
-                                    name:           "fechaCreado",
+                                    name:           "noManifiesto",
                                     originalTitle:  "Número de Manifiesto",
                                     emptyText:      "No. Manifiesto",
                                     placeholder:    "No. Manifiesto", 
                                     required:       "Vacio,Numeros",
                                     type:           "number",
-                                    valor:          ' ',
+                                    valor:          '',
                                 }) %}
                             </div>
                         </div>
@@ -280,21 +280,43 @@
                     <td colspan="3" class="text-center">
                         <div class="row">
                             <div class="enunciado text-left col-lg-12 col-md-12">
-                                Por Conducto
+                                Por Conducto 
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "por-conducto",
+                                    clase:          "por-conducto",
+                                    name:           "porConducto",
+                                    originalTitle:  "Por Conducto",
+                                    emptyText:      "Por Conducto",
+                                    placeholder:    "Por Conducto", 
+                                    required:       "Vacio,Numeros",
+                                    type:           "number",
+                                    valor:          '',
+                                }) %}
                             </div>
                         </div>
                     </td>
                     <td colspan="3" class="text-center">
                         <div class="row">
                             <div class="enunciado text-left col-lg-12 col-md-12">
-                                Fletes
+                                Fletes 
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             "flete",
+                                    clase:          "flete",
+                                    name:           "flete",
+                                    originalTitle:  "Fletes",
+                                    emptyText:      "Fletes",
+                                    placeholder:    "Fletes", 
+                                    required:       "Vacio,Numeros",
+                                    type:           "number",
+                                    valor:          '',
+                                }) %}
                             </div>
                         </div>
                     </td>
                     <td colspan="3" class="text-center">
                         <div class="row">
                             <div class="enunciado text-left col-lg-12 col-md-12">
-                                Destino
+                                Destino 
                             </div>
                             <div id="destino">
                                 {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
@@ -446,8 +468,9 @@
                                                                 'label' :   '<span class="glyphicon glyphicon-plus"></span>',
                                                                 'type'  :   'success',
                                                                 'class' :   'animate agregar contenedores-mercancias-formato',
-                                                                'url'   :   url('contenedorMercanciaFormato_add_cpic_ajax',{
+                                                                'url'   :   url('contenedorMercanciaFormato_add_tipo_ajax',{
                                                                                 numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                                                str_tipo: formato.tipo.abreviacion,
                                                                             }),
                                                             },
                                                         ],

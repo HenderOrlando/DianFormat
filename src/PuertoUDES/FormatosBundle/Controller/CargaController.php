@@ -234,7 +234,8 @@ class CargaController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getNaturalezaCarga()->getNombre())?'en '.$entity->getFormato()->getNombre():$entity->getNaturalezaCarga()->getNombre();
+            //$title = empty($entity->getNaturalezaCarga()->getNombre())?'en '.$entity->getFormato()->getNombre():$entity->getNaturalezaCarga()->getNombre();
+			$title = '';
             return JsonResponse::create(array(
                 'title' => 'Carga '.$title,
                 'body'  => $this->renderView('PuertoUDESFormatosBundle:Carga:_'.$template.'.html.twig', $parametros),
@@ -270,7 +271,8 @@ class CargaController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getNaturalezaCarga()->getNombre())?'en '.$entity->getFormato()->getNombre():$entity->getNaturalezaCarga()->getNombre();
+            //$title = empty($entity->getNaturalezaCarga()->getNombre())?'en '.$entity->getFormato()->getNombre():$entity->getNaturalezaCarga()->getNombre();
+			$title = '';
             return JsonResponse::create(array(
                 'title' => 'Carga '.$title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),

@@ -25,18 +25,20 @@ cm          Contenedor Mercancia a mostrar
                                 'class' :   'reset contenedor-mercancia' ~ fila ~ '-crear animate pull-right',
                                 'type'  :   'warning',
                                 'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                                'url'   :   url('contenedorMercanciaFormato_reset_cpic_ajax_',{
+                                'url'   :   url('contenedorMercanciaFormato_reset_tipo_ajax_',{
                                                 numero: formato.numero,
                                                 pk: pk,
                                                 fila: fila,
+                                                str_tipo: formato.tipo.abreviacion,
                                             }),
                             },
                             {
                                 'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
                                 'type'  :   'primary',
                                 'class' :   'guardar contenedor-mercancia' ~ fila ~ '-crear animate pull-right animate ' ~ (pk != ' '?'out':'in'),
-                                'url'   :   url('contenedorMercanciaFormato_add_cpic_ajax',{
+                                'url'   :   url('contenedorMercanciaFormato_add_tipo_ajax',{
                                                 numero: formato.numero,
+                                                str_tipo: formato.tipo.abreviacion,
                                             }),
                             },
                             {

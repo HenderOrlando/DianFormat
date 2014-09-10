@@ -45,6 +45,7 @@ required        Lista de requisitos (validaciones en el cliente) para enviar los
 {% set name = name is defined and name is not empty? name : ' ' %}
 {% set type = type is defined and type is not empty? type : 'text' %}
 {% set pk = pk is defined and pk is not empty? pk : ' ' %}
+{% set mode = mode is defined and mode is not empty? mode : 'popup' %}
 {% set entityName = entityName is defined and entityName is not empty? entityName : '' %}
 {% set bundleName = bundleName is defined and bundleName is not empty? bundleName : '' %}
 {% set datos = datos is defined and datos is not empty? datos : {tipo: entityName} %}
@@ -64,6 +65,7 @@ required        Lista de requisitos (validaciones en el cliente) para enviar los
     data-name="{{- name -}}" 
     data-type="{{- type -}}" 
     data-pk="{{- pk -}}"
+    data-mode="{{- mode -}}"
     data-url="{{- url -}}" 
     data-original-title="{{- originalTitle -}}" 
     data-entity-name="{{- entityName -}}"
@@ -76,4 +78,6 @@ required        Lista de requisitos (validaciones en el cliente) para enviar los
     data-placeholder="{{- placeholder -}}" 
     {{ prefetch is not empty? 'data-prefetch=' ~ prefetch:'' }}
     {{ multiple is defined and 'typeahead' in type? 'data-multiple=' ~ multiple:'' }}
-    data-required="{{- required -}}">{% if valor is not null and valor is not empty and 'fecha' in name %}{{- valor |date('d-M-Y') -}}{% else %}{{- valor|nl2br -}}{% endif %}</a>
+    data-required="{{- required -}}">
+    {% if valor is not null and valor is not empty and 'fecha' in name %}{{- valor |date('d-M-Y') -}}{% else %}{{- valor|nl2br -}}{% endif %}
+</a>

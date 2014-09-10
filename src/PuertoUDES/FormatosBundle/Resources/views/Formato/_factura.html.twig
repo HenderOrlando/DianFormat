@@ -1,0 +1,266 @@
+
+
+<div class="hoja_carta_formato print">
+    <div class="margen">
+        <div class="row row-fluid">
+            <div class="col-xs-8">
+                <div class="row row-fluid">
+                    <div class="col-xs-6 border-right">
+                        <div>
+                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                id:             "entidad",
+                                clase:          "entidad-factura",
+                                placement:      "bottom",
+                                name:           "nombre",
+                                pk:             '',
+                                datos:          {},
+                                type:           "text",
+                                originalTitle:  "Empresa",
+                                entityName:     "entidad",
+                                bundleName:     "common" ,
+                                emptyText:      "Empresa",
+                                placeholder:    "Empresa", 
+                                required:       "NoVacio,NumerosLetras",
+                                valor:    "", 
+                            } %}
+                        </div>
+                        <div>
+                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                id:             "entidad",
+                                clase:          "entidad-factura",
+                                placement:      "bottom",
+                                name:           "direccion",
+                                pk:             '',
+                                datos:          {},
+                                type:           "text",
+                                originalTitle:  "Empresa",
+                                entityName:     "entidad",
+                                bundleName:     "common" ,
+                                emptyText:      "Dirección",
+                                placeholder:    "Dirección", 
+                                required:       "NoVacio,NumerosLetras",
+                                valor:    "", 
+                            } %}
+                        </div>
+                        <div>
+                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                id:             "entidad",
+                                clase:          "entidad-factura",
+                                placement:      "bottom",
+                                name:           "telefono",
+                                pk:             '',
+                                datos:          {},
+                                type:           "textarea",
+                                originalTitle:  "Empresa",
+                                entityName:     "entidad",
+                                bundleName:     "common" ,
+                                emptyText:      "Teléfono",
+                                placeholder:    "Teléfono", 
+                                required:       "NoVacio,Numeros",
+                                valor:    "", 
+                            } %}
+                        </div>
+                    </div>
+                    <div class="col-xs-6 border-left">
+                        <div>
+                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                id:             "entidad",
+                                clase:          "entidad-factura",
+                                placement:      "bottom",
+                                name:           "nombre",
+                                pk:             '',
+                                datos:          {},
+                                type:           "textarea",
+                                originalTitle:  "Cliente",
+                                entityName:     "entidad",
+                                bundleName:     "common" ,
+                                emptyText:      "Cliente",
+                                placeholder:    "Cliente", 
+                                required:       "NoVacio,NumerosLetras",
+                                valor:    "", 
+                            } %}
+                        </div>
+                        <div>
+                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                id:             "entidad",
+                                clase:          "entidad-factura",
+                                placement:      "bottom",
+                                name:           "nit",
+                                pk:             '',
+                                datos:          {},
+                                type:           "text",
+                                originalTitle:  "NIT",
+                                entityName:     "entidad",
+                                bundleName:     "common" ,
+                                emptyText:      "NIT",
+                                placeholder:    "NIT", 
+                                required:       "NoVacio,Numeros",
+                                valor:    "", 
+                            } %}
+                        </div>
+                        <div>
+                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                id:             "entidad",
+                                clase:          "entidad-factura",
+                                placement:      "bottom",
+                                name:           "direccion",
+                                pk:             '',
+                                datos:          {},
+                                type:           "textarea",
+                                originalTitle:  "Dirección",
+                                entityName:     "entidad",
+                                bundleName:     "common" ,
+                                emptyText:      "Dirección",
+                                placeholder:    "Dirección", 
+                                required:       "NoVacio,NumerosLetras",
+                                valor:    "", 
+                            } %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 text-right">
+                {% if formato.id is not defined or formato.id is empty %}
+                    <div class="row">
+                        <div>
+                            <div class="text-right pull-right hidden-print">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                    buttonset: 'horizontal',
+                                    class: 'animate in hidden-print',
+                                    botones  : [
+                                        {
+                                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                            'type'  :   'primary',
+                                            'class' :   'guardar formato-crear animate',
+                                            'url'   :   url('formato_save_ajax',{tipo: formato.tipo.abreviacion|upper}),
+                                        },
+                                        {
+                                            'class' :   'reset formato-crear animate',
+                                            'type'  :   'warning',
+                                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                        },
+                                    ],
+                                    sizing: 'mediano',
+                                } %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                <h4>
+                    Factura No. 
+                    {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                        id:             "entidad",
+                        clase:          "formato-crear",
+                        placement:      "bottom",
+                        name:           "numero",
+                        pk:             formato.id,
+                        datos:          {},
+                        type:           "text",
+                        originalTitle:  "Factura No.",
+                        entityName:     "entidad",
+                        bundleName:     "common" ,
+                        emptyText:      "No.",
+                        placeholder:    "No.", 
+                        required:       "NoVacio,Numeros",
+                        valor:    formato.numero, 
+                    } %}
+                </h4>
+                <h5>
+                    <div>
+                        {% set dataWith = {
+                            id:             "formato_nombre",
+                            clase:          "formato-crear",
+                            placement:      "bottom",
+                            name:           "id",
+                            pk:             formato.id,
+                            datos:          {tipo: formato.tipo.abreviacion|upper},
+                            type:           "date",
+                            originalTitle:  "Fecha",
+                            entityName:     "formato",
+                            bundleName:     "formatos" ,
+                            emptyText:      "Fecha",
+                            placeholder:    "Fecha", 
+                            required:       "NoVacio,NumerosLetras",
+                            valor:          formato.fechaCreado | date('d-M-y'),
+                        } %}
+                        <div>
+                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
+                        </div>
+                    </div>
+                </h5>
+            </div>
+        </div>
+        <div class="row row-fluid">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr class="">
+                        <th class="text-center">
+                            Cantidad
+                        </th>
+                        <th class="text-center">
+                            Descripción
+                        </th>
+                        <th class="text-center">
+                            Precio Unitario
+                        </th>
+                        <th class="text-center col-xs-1">
+                            Precio Total
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="">
+                        <td class="text-left">
+                            
+                        </td>
+                        <td class="text-left">
+                            
+                        </td>
+                        <td class="text-left">
+                            
+                        </td>
+                        <td class="text-left">
+                            
+                        </td>
+                    </tr>
+                </tbody>
+                <tfooter>
+                    <tr>
+                        <th rowspan="3" colspan="3" class="text-left">
+                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                placement:      "top",
+                                pk:             formato.id,
+                                datos:          {tipo: formato.tipo.abreviacion|upper},
+                                entityName:     "formato",
+                                bundleName:     "formatos" ,
+                                id:             "formato_descripcion",
+                                clase:          "formato-crear",
+                                mode:           "inline",
+                                name:           "descripcion",
+                                type:           "textarea",
+                                originalTitle:  "Descripción",
+                                emptyText:      "Descripción",
+                                placeholder:    "Descripción",
+                                required:       "NoVacio,NumerosLetrasConectores",
+                                valor:          formato.descripcion,
+                            }) %}
+                        </th>
+                        <th>
+                            Subtotal
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            IVA
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            Total
+                        </th>
+                    </tr>
+                </tfooter>
+            </table>
+        </div>
+    </div>
+</div>

@@ -348,7 +348,8 @@ class ConductorController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            //$title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+			$title = 'Conductor';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESUsuariosBundle:Conductor:_'.$template.'.html.twig', $parametros),
@@ -384,7 +385,8 @@ class ConductorController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            //$title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+			$title = 'Conductor';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),

@@ -312,8 +312,8 @@ class ContenedorMercanciaFormatoController extends Controller
     /**
      * Displays a form to create a new Condicion entity.
      *
-     * @Route("/Agregar/a/CPIC/{numero}/", name="contenedorMercanciaFormato_add_cpic_ajax")
-     * @Route("/{pk}/en/CPIC-{numero}/{fila}/", name="contenedorMercanciaFormato_add_cpic_ajax_")
+     * @Route("/Agregar/a/{str_tipo}/{numero}/", name="contenedorMercanciaFormato_add_tipo_ajax")
+     * @Route("/{pk}/en/{str_tipo}-{numero}/{fila}/", name="contenedorMercanciaFormato_add_tipo_ajax_")
      * @Method({"POST","PUT"})
      * @Template("PuertoUDESFormatosBundle:Formato:_addContenedorMercanciaAjax.html.twig")
      */
@@ -326,11 +326,12 @@ class ContenedorMercanciaFormatoController extends Controller
         $marca = $request->get('marca',NULL);
         $descripcion = $request->get('descripcion',NULL);
         $em = $this->getDoctrine()->getManager();
-        $tipo_cpic = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic', 'aplicableA' => 'Formato'));
+        $str_tipo = $request->get('str_tipo','cpic');
+        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $str_tipo, 'aplicableA' => 'Formato'));
         $cm = null;
         $datos = array();
-        if($tipo_cpic){
-            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_cpic->getId(), 'numero' => $numero));
+        if($tipo){
+            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(), 'numero' => $numero));
             if($formato){
                 if(is_numeric($cantidad) && is_string($clase) && is_string($marca) && is_string($descripcion)){
                     if($pk < 0)
@@ -408,6 +409,8 @@ class ContenedorMercanciaFormatoController extends Controller
      *
      * @Route("/Reset/a/CPIC/{numero}/", name="contenedorMercanciaFormato_reset_cpic_ajax")
      * @Route("/{pk}/en/CPIC-{numero}/{fila}/", name="contenedorMercanciaFormato_reset_cpic_ajax_")
+     * @Route("/Reset/a/{str_tipo}/{numero}/", name="contenedorMercanciaFormato_reset_tipo_ajax")
+     * @Route("/{pk}/en/{str_tipo}-{numero}/{fila}/", name="contenedorMercanciaFormato_reset_tipo_ajax_")
      * @Method({"DELETE"})
      * @Template("")
      */
@@ -416,11 +419,13 @@ class ContenedorMercanciaFormatoController extends Controller
         $pk = $request->get('pk', -1);
         $numero = $request->get('numero',NULL);
         $em = $this->getDoctrine()->getManager();
-        $tipo_cpic = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic', 'aplicableA' => 'Formato'));
+        $str_tipo = $request->get('str_tipo','');
+        
+        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic', 'aplicableA' => 'Formato'));
         $cm = null;
         $datos = array();
-        if($tipo_cpic){
-            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_cpic->getId(), 'numero' => $numero));
+        if($tipo){
+            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(), 'numero' => $numero));
             if($formato){
                 if(is_numeric($pk) && $pk >= 0){
                     $cm = $this->getRepositorio()->find($pk);

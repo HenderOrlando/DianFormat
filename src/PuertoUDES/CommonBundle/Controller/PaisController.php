@@ -205,7 +205,8 @@ class PaisController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            //$title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+			$title = 'País';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Pais:_'.$template.'.html.twig', $parametros),
@@ -241,7 +242,8 @@ class PaisController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            //$title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+			$title = 'País';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),

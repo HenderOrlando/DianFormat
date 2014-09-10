@@ -262,7 +262,8 @@ class PermisoPresentaServicioController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            //$title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+			$title = 'Permiso para Presenta Servicio';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESFormatosBundle:PermisoPresentaServicio:_'.$template.'.html.twig', $parametros),
@@ -298,7 +299,8 @@ class PermisoPresentaServicioController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            //$title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+			$title = 'Permiso para Presentar Servicios';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),

@@ -478,17 +478,33 @@ table tbody tr th .row:focus > div .btns-action-right{
     border-right: none;
     border-right-color: transparent;
 }
+.border-right{
+    border-right: 1px solid;
+    border-right-color: #ccc;
+}
 .no-border-left{
     border-left: none;
     border-left-color: transparent;
+}
+.border-left{
+    border-left: 1px solid;
+    border-left-color: #ccc;
 }
 .no-border-top{
     border-top: none !important;
     border-top-color: transparent;
 }
+.border-top{
+    border-top: 1px solid;
+    border-top-color: #ccc;
+}
 .no-border-bottom{
     border-bottom: none !important;
     border-bottom-color: transparent;
+}
+.border-bottom{
+    border-bottom: 1px solid;
+    border-bottom-color: #ccc;
 }
 .text-midle{
     vertical-align: middle !important;
@@ -513,4 +529,34 @@ table>tbody>tr>td.border-r{
 }
 .modal .form-group{
     width: 100%;
+}
+/******************** FORMATOS-CACF ********************/
+.cacf{
+  margin-top: 10px;
+}
+
+.cacf h5{
+  height: 30px;
+}
+
+.cacf > .col-xs-12:last-child{
+  border: 1px solid #000;
+  padding: 5px;
+  min-height: 80px;
+}
+
+.cacf > .col-xs-12:last-child > .col-xs-12{
+  min-height: 15px
+}
+#cacf-0-1.cacf > .col-xs-12:last-child{
+    float: none;
+    width: 100%;
+    display: block;
+}
+#cacf-0-1.cacf > .col-xs-12:last-child > .col-xs-6.col-xs-6{
+    display: inline-block;
+    width: 50%;
+    margin-left: -5px;
+    float: none;
+    vertical-align: top;
 }

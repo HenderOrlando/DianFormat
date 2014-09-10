@@ -1,0 +1,107 @@
+{#
+Variables
+    num     Número o posición del formato
+    salida  Si es de salida
+    partida Si es de partida
+    destino Si es de destino
+#}
+{% set dataCacf = {
+    id:             "observaciones",
+    clase:          "observaciones-cacf",
+    placement:      "top",
+    name:           "observacion",
+    pk:             '',
+    datos:          {},
+    mode:           "inline",
+    type:           "textarea",
+    originalTitle:  "Observaciones",
+    entityName:     "aduana",
+    bundleName:     "common" ,
+    emptyText:      "Observaciones",
+    placeholder:    "Observaciones", 
+    required:       "NoVacio,NumerosLetras",
+    valor:    "", 
+} %}
+
+{% set numeracion = ['','Primer','Segundo','Tercer','Cuarto','Quinto','Sexto','Séptimo','Octavo','Noveno','Décimo',] %}
+<div class="col-xs-{{- partida is defined and partida?12:6 -}}">
+    <div class="row row-fluid cacf" id="cacf-{{- num -}}-{{-salida is defined and salida?1:0-}}">
+        <div class="col-xs-12 text-center">
+            <h5>
+                {{- partida is not defined or not partida?
+                    (destino is not defined or not destino?
+                        numeracion[num] ~ ' País en Tránsito'
+                        :(salida is defined and salida?
+                            'Aduana Destino'
+                            :'País de Destino'))
+                    :'País de partida' }}
+                {% if salida is defined and salida and destino is defined and destino %}
+                    
+                {% else %}
+                    - Aduana de Cruce de Frontera a la {{ salida is not defined or not salida?'Entrada':'Salida' | title -}}
+                {% endif %}
+            </h5>
+        </div>
+        <div class="col-xs-12">
+            <div class="col-xs-{{- partida is defined and partida?6:12 -}}">
+                {% if destino is not defined or not destino %}
+                    <div class="col-xs-12">
+                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataCacf %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-xs-{{- partida is defined and partida?6:12 -}}">
+                {% if salida is defined and salida and destino is defined and destino %}
+                    
+                {% else %}
+                    <div class="col-xs-12">
+                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataCacf|merge({
+                            id:             "estado_prescintos_cacf",
+                            clase:          "estado-prescintos",
+                            name:           "estado-prescintos",
+                            emptyText:      "Estado e Identificación de los Prescintos",
+                            placeholder:    "Estado e Identificación de los Prescintos",
+                            required:       "NoVacio,NumerosLetrasConectores",
+                            valor:    "",
+                        }) %}
+                    </div>
+                    <div class="col-xs-12">
+                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataCacf|merge({
+                            id:             "estado_unidad_carga_cacf",
+                            clase:          "estado-unidad-carga",
+                            name:           "estado-unidad-carga",
+                            emptyText:      "Estado de la Unidad de Carga",
+                            placeholder:    "Estado de la Unidad de Carga", 
+                            required:       "NoVacio,NumerosLetrasConectores",
+                            valor:    "", 
+                        }) %}
+                    </div>
+                {% endif %}
+                <div class="col-xs-12">
+                    {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataCacf|merge({
+                            id:             "firma_y_sello_aduana_cacf",
+                            clase:          "firma-y-sello-aduana",
+                            name:           "firma-y-sello-aduana",
+                            emptyText:      "Firma y Sello de la Aduana " ~ partida is not defined or not partida?('de Cruce de Frontera a la ' ~ (salida is defined and salida?'Salida':'Entrada')):'',
+                            placeholder:    "Firma y Sello de la Aduana " ~ partida is not defined or not partida?('de Cruce de Frontera a la ' ~ (salida is defined and salida?'Salida':'Entrada')):'', 
+                            required:       "NoVacio,NumerosLetrasConectores",
+                            valor:    "", 
+                        }) %}
+                </div>
+                <div class="col-xs-12">
+                    {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataCacf|merge({
+                            id:             "fecha",
+                            clase:          "fecha",
+                            type:           'date',
+                            name:           "fecha",
+                            emptyText:      "Fecha",
+                            placeholder:    "Fecha", 
+                            required:       "NoVacio,NumerosLetrasConectores",
+                            mode:           "popup",
+                            valor:          "today", 
+                        }) %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

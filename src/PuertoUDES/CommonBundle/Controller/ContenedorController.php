@@ -245,7 +245,8 @@ class ContenedorController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getNumero())?$entity->getSigla():$entity->getNumero();
+            //$title = empty($entity->getNumero())?$entity->getSigla():$entity->getNumero();
+			$title = 'Contenedor';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Contenedor:_'.$template.'.html.twig', $parametros),
@@ -281,7 +282,8 @@ class ContenedorController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getNumero())?$entity->getSigla():$entity->getNumero();
+            //$title = empty($entity->getNumero())?$entity->getSigla():$entity->getNumero();
+			$title = 'Contenedor';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),

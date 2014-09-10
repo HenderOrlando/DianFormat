@@ -199,26 +199,6 @@
                     <td colspan="6" class="text-center">
                         <div class="row">
                             <div class="enunciado text-left col-lg-12 col-md-12">
-                                <div>
-                                    <div class="text-right pull-right btns-action-right">
-                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                                            'buttonset': 'horizontal',
-                                            'class': 'animate in hidden-print',
-                                            'botones'  : [
-                                                {
-                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
-                                                    'type'  :   'success',
-                                                    'class' :   'animate agregar aduanas-cruce',
-                                                    'url'   :   url('aduana_add_dtai_ajax',{
-                                                                    tipo:    'destino',
-                                                                    numero: formato.numero,
-                                                                }),
-                                                },
-                                            ],
-                                            'sizing': 'pequeño',
-                                        } %}
-                                    </div>
-                                </div>
                                 8- País y aduana de destino
                             </div>
                             <div id="pais-aduana-destino">
@@ -259,7 +239,7 @@
                                                 {
                                                     'label' :   '<span class="glyphicon glyphicon-plus"></span>',
                                                     'type'  :   'success',
-                                                    'class' :   'animate agregar remitentes',
+                                                    'class' :   'animate agregar declarantes',
                                                     'url'   :   url('entidad_add_dtai_ajax',{
                                                                     rol:    'declarante',
                                                                     numero: formato.numero,
@@ -273,7 +253,7 @@
                                 2- Nombre y Dirección del Declarante
                             </div>
                         </div>
-                        <div id="declarante">
+                        <div id="declarantes">
                             {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
                                 {% for declarante in formato.declarantes %}
                                     {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
@@ -310,7 +290,7 @@
                                     originalTitle:  "País de Origen de la Mercancía",
                                     emptyText:      "País",
                                     required:       "NoVacio,Letras",
-                                    valor:          aduanaPartida is not empty and aduanaPartida.lugar is defined and aduanaPartida.lugar.pais is defined?aduanaPartida.lugar.pais:' ',
+                                    valor:          aduanaPartida is not empty and aduanaPartida.lugar is defined and aduanaPartida.lugar.pais is defined?aduanaPartida.lugar.pais:'',
                                     prefetch:       url('list_typeahead_paises_', {'name': 'nombre'}),
                                 }) %}
                     </td>
@@ -988,7 +968,7 @@
                             <div class="col-lg-12 col-md-12">
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
                                     id:             "volumen_otro_contenedor_mercancia_formato",
-                                    name:           "volumenOtro",
+                                    name:           "instrucciones",
                                     originalTitle:  "Documentos Anexos",
                                     emptyText:      "documentos anexos",
                                     valor:          pk is not empty?'':'',

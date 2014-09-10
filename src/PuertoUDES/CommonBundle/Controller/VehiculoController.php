@@ -316,7 +316,8 @@ class VehiculoController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getPlaca())?$entity->getMarca():$entity->getPlaca();
+            //$title = empty($entity->getPlaca())?$entity->getMarca():$entity->getPlaca();
+			$title = 'Vehiculo';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Vehiculo:_'.$template.'.html.twig', $parametros),
@@ -352,7 +353,8 @@ class VehiculoController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            $title = empty($entity->getPlaca())?$entity->getMarca():$entity->getPlaca();
+            //$title = empty($entity->getPlaca())?$entity->getMarca():$entity->getPlaca();
+			$title = 'Vehiculo';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
