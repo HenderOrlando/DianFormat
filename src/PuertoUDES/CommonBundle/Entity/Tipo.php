@@ -386,4 +386,13 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->datosMercancias;
     }
+    
+    public function getTokens($explode = true){
+        $a = parent::getTokens(FALSE)
+            .'\\'.$this->getAbreviacion();
+        if(is_bool($explode) && $explode){
+            $a = explode('\\', $a);
+        }
+        return $a;
+    }
 }

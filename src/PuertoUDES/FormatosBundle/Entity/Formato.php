@@ -19,6 +19,11 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\Column(type="integer", nullable=false, name="numero")
      */
     private $numero;
+
+    /** 
+     * @ORM\Column(type="integer", nullable=true, name="flete")
+     */
+    private $flete;
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\CommonBundle\Entity\Documento", mappedBy="formato")
      */
@@ -28,6 +33,11 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoConductor", mappedBy="formato")
      */
     private $conductores;
+    
+    /** 
+     * @ORM\Column(type="text", nullable=true, name="porConducto")
+     */
+    private $porConducto;
     
     /** 
      * @ORM\Column(type="text", nullable=true, name="instrucciones")
@@ -55,6 +65,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $remitentes;
     private $destinatarios;
     private $declarantes;
+    private $transportistas;
 
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato", mappedBy="formato")
@@ -107,6 +118,15 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $gastoMercancias;
     private $gastosAPagarRemitente;
     private $gastosAPagarDestinatario;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato")
+     * @ORM\JoinTable(name="formatosHermanos",
+     *      joinColumns={@ORM\JoinColumn(name="formato_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="hermano_id", referencedColumnName="id")}
+     *  )
+     */
+    private $hermanos;
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", inversedBy="hijos")
@@ -165,9 +185,15 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->remitentes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->declarantes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->transportistas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->datosMercancias = new \Doctrine\Common\Collections\ArrayCollection();
         $this->condiciones = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->hermanos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->totalPesoBruto = $this->totalPesoNeto = $this->totalVolumen = $this->totalVolumenOtro = $this->gastoTotalDestinatario = $this->gastoTotalRemitente = $this->gastoTotalMercancias = 0;
+    }
+    
+    public function getFullNombre(){
+        return 'No. '.$this->getNumero().' - '.$this->getNombre();
     }
     
     /**
@@ -224,6 +250,29 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getInstrucciones()
     {
         return $this->instrucciones;
+    }
+    
+    /**
+     * Set porConducto
+     *
+     * @param string $porConducto
+     * @return Objeto
+     */
+    public function setPorConducto($porConducto)
+    {
+        $this->porConducto = $porConducto;
+    
+        return $this;
+    }
+
+    /**
+     * Get porConducto
+     *
+     * @return string 
+     */
+    public function getPorConducto()
+    {
+        return $this->porConducto;
     }
     
     /**
@@ -303,6 +352,28 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function setNumero($numero)
     {
         $this->numero = $numero;
+        return $this;
+    }
+    
+    /**
+     * Get flete
+     *
+     * @return integer
+     */
+    public function getFlete()
+    {
+        return $this->flete;
+    }
+    
+    /**
+     * Set flete
+     *
+     * @param integer $flete
+     * @return Formato
+     */
+    public function setFlete($flete)
+    {
+        $this->flete = $flete;
         return $this;
     }
     
@@ -731,6 +802,19 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      * 
      * @return \Doctrine\Common\Collections\Collection 
      */
+    public function getTransportistas()
+    {
+        if(empty($this->tranportistas)){
+            $this->loadUsuariosTipo();
+        }
+        return $this->transportistas;
+    }
+    
+    /**
+     * Get declarates
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
     public function getDeclarantes()
     {
         if(empty($this->declarantes)){
@@ -785,16 +869,86 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getConductor($auxiliar = false)
     {
         if(is_string($auxiliar)){
-            if(strtolower($auxiliar) == 'auxiliar')
+            if(strtolower($auxiliar) == 'auxiliar'){
                 $auxiliar = true;
-            else
+            }
+            else{
                 $auxiliar = false;
+            }
         }
-        foreach($this->conductores as $c)
-            if(($c->getEsAuxiliar() && $auxiliar) || (!$c->getEsAuxiliar() && !$auxiliar))
+        foreach($this->conductores as $c){
+            if(($c->getEsAuxiliar() && $auxiliar) || (!$c->getEsAuxiliar() && !$auxiliar)){
                 return $c->getConductor();
+            }
+        }
         return null;
     }
+    
+    /**
+     * Add hermanos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $hermanos
+     * @return Formato
+     */
+    public function addHermano(\PuertoUDES\FormatosBundle\Entity\Formato $hermanos)
+    {
+        $this->hermanos[] = $hermanos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove hermanos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $hermanos
+     */
+    public function removeHermano(\PuertoUDES\FormatosBundle\Entity\Formato $hermanos)
+    {
+        $this->hermanos->removeElement($hermanos);
+    }
+
+    /**
+     * Get hermanos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getHermanos()
+    {
+        return $this->hermanos;
+    }
+
+    /**
+     * Get hermano
+     * 
+     * @param type $tipo    String del tipo de hermano a buscar
+     * @param type $len     Número de hermanos a retornar en caso de encontrar más de 1
+     * @param type $id      Id del hermano a retornar
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getHermano($tipo, $id = -1, $len = 1)
+    {
+        $tipo = strtolower($tipo);
+        $count = 0;
+        $a = $this->getHermanos()->filter(function(Formato $hermano) use ($tipo, $id, $count, $len){
+            $id_ = true;
+            if($id >= 0){
+                $id_ = $hermano->getId() === $id;
+            }
+            if($hermano->getTipo()->getAbreviacion() === $tipo && $id_){
+                $count++;
+            }
+            return $hermano->getTipo()->getAbreviacion() === $tipo && $id_;
+        });
+        $hermano = null;
+        if($a->count() > 1){
+            $hermano = $a;
+        }elseif($a->count() === 1){
+            $hermano = $a->first();
+        }
+        return $hermano;
+    }
+        
     /**
      * Add hijos
      *
@@ -1131,6 +1285,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
         
     public function json($json = true, 
+            $tipo = false,
             $padre = false, 
             $gastos = false, 
             $cargas = false, 
@@ -1141,12 +1296,17 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             $hijos = false){
         $a = array_merge(parent::json(false),
             array(
-                'transportista' => method_exists($this->getTransportista(), 'json')?$this->getTransportista()->json(false):null,
-                'tipo'          =>  $this->getTipo()->json(false),
+                'transportista' =>  method_exists($this->getTransportista(), 'json')?$this->getTransportista()->json(false):null,
                 'numero'        =>  $this->getNumero(),
                 'completo'      =>  $this->getCompleto(),
+                'fullNombre'    =>  $this->getFullNombre()
             )
         );
+        if(is_bool($tipo) && $tipo){
+            $a = array_merge($a, array(
+                'tipo' => $this->getTipo()->json(false)
+            ));
+        }
         if(is_bool($padre) && $padre){
             $a = array_merge($a, array(
                 'padre' => $this->getPadre()->json(false)
@@ -1197,6 +1357,22 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         }
         return $a;
     }
+    
+    public function getTokens($explode = true){
+        $a = parent::getTokens(FALSE)
+            .'\\'.$this->getNumero()
+            .'\\'.$this->getObservaciones();
+        if($this->getTipo()){
+            $a .= '\\'.$this->getTipo()->getTokens(false);
+        }
+        if($this->getAutor()){
+            $a .= '\\'.$this->getAutor()->getTokens(false);
+        }
+        if(is_bool($explode) && $explode){
+            $a = explode('\\', $a);
+        }
+        return $a;
+    }
 
     private function loadUsuariosTipo() {
         $this->notificados = new \Doctrine\Common\Collections\ArrayCollection();
@@ -1204,6 +1380,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->remitentes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->declarantes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->transportistas = new \Doctrine\Common\Collections\ArrayCollection();
         foreach($this->usuarios as $u){
             switch(strtolower($u->getRol()->getNombre())){
                 case 'notificado':
@@ -1218,8 +1395,11 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                 case 'remitente':
                     $this->remitentes->add($u->getUsuario()->getEntidad());
                     break;
-                case 'declarantes':
+                case 'declarante':
                     $this->declarantes->add($u->getUsuario()->getEntidad());
+                    break;
+                case 'transportista':
+                    $this->transportistas->add($u->getUsuario()->getEntidad());
                     break;
             }
         }

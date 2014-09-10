@@ -160,12 +160,12 @@ class ConductorController extends Controller
             if($formato){
                 $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($tipo)));
                 if($tipo->getId() === $formato->getTipo()->getId()){
-                    if($doc_id && $nombre && $numLicencia){
-                        $conductor = $this->getRepositorio()->createQueryBuilder('e')
-                            ->leftJoin('e.usuario', 'u')
-                            ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
-                            ->andWhere("u.docId= '".$doc_id."'")
-                            ->getQuery()->getOneOrNullResult();
+                    $conductor = $this->getRepositorio()->createQueryBuilder('e')
+                        ->leftJoin('e.usuario', 'u')
+                        ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
+                        ->andWhere("u.docId= '".$doc_id."'")
+                        ->getQuery()->getOneOrNullResult();
+                    if($conductor || $doc_id && $nombre && $numLicencia){
                         if(!$conductor){
                             $u = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->createQueryBuilder('u')
                                 ->andWhere("u.canonical='".$nombre."' OR u.nombre='".$nombre."'")
@@ -179,21 +179,23 @@ class ConductorController extends Controller
                                 $em->persist($u);
                             }
                             $conductor = new Conductor();
-                            $conductor->setNumLibretaTripulante($numLibreta)
-                                    ->setNumLicencia($numLicencia)
+                            $conductor->setNumLibretaTripulante($numLibreta?$numLibreta:0)
+                                    ->setNumLicencia($numLicencia?$numLicencia:0)
                                     ->setUsuario($u->setConductor($conductor));
                             
-                            $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
-                                    ->createQueryBuilder('p')
-                                    ->andWhere("p.canonical LIKE '%".$nacionalidad."%' OR p.nombre LIKE '%".$nacionalidad."%' OR p.nacionalidad LIKE '%".$nacionalidad."%'")
-                                    ->getQuery()->getOneOrNullResult();
-                            if(!$pais){
-                                $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
-                                $pais->setNombre($nacionalidad)
-                                    ->setNacionalidad($nacionalidad);
-                                $em->persist($pais);
+                            if($nacionalidad){
+                                $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
+                                        ->createQueryBuilder('p')
+                                        ->andWhere("p.canonical LIKE '%".$nacionalidad."%' OR p.nombre LIKE '%".$nacionalidad."%' OR p.nacionalidad LIKE '%".$nacionalidad."%'")
+                                        ->getQuery()->getOneOrNullResult();
+                                if(!$pais){
+                                    $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
+                                    $pais->setNombre($nacionalidad)
+                                        ->setNacionalidad($nacionalidad);
+                                    $em->persist($pais);
+                                }
+                                $conductor->setPais($pais);
                             }
-                            $conductor->setPais($pais);
                             $em->persist($conductor);
                         }
                         $fc = $em->getRepository('PuertoUDESFormatosBundle:FormatoConductor')

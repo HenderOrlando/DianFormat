@@ -21,6 +21,7 @@ fila        Número de la fila de la entidad
                             'type'  :   'primary',
                             'class' :   'entidad' ~ fila ~ '-' ~ rol ~'-crear animate guardar ' ~ (pk == ' '?'in':'out'),
                             'url'   :   url('entidad_add_cpic_ajax_',{
+                                            abreviacion: abreviacion,
                                             numero: numero,
                                             rol: rol,
                                             fila: fila,

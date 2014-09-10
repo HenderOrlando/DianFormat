@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\FormatosBundle\Entity\Formato;
 use PuertoUDES\FormatosBundle\Form\FormatoType;
@@ -20,6 +21,68 @@ use PuertoUDES\FormatosBundle\Form\FormatoType;
 class FormatoController extends Controller
 {
 
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Lista/de-{abreviacion}/para/{name}/", name="list_typeahead_formatos_")
+     * @Template("PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig")
+     */
+    public function listTypeaheadAction(Request $request){
+        $list = array();
+        $entities = array();
+        $name = $request->get('name','');
+        $abreviacion = $request->get('abreviacion','');
+        $em = $this->getDoctrine()->getManager();
+        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $abreviacion));
+        if($this->getUser()->hasRole('ROLE_ADMIN') || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getUsuario()->hasRol('Docente')){
+            $usr = null;
+        }else{
+            $usr = $this->getUser()->getUsuario()->getId();
+        }
+        if($tipo){
+            switch(strtolower($abreviacion)){
+                case 'cacf':
+                    $entities = $this->getRepositorio()->getCacfs(null, true, false, $usr);
+                    break;
+                case 'cpic':
+                    $entities = $this->getRepositorio()->getCpic(null, true, false, $usr);
+                    break;
+                case 'di':
+                    $entities = $this->getRepositorio()->getDi(null, true, false, $usr);
+                    break;
+                case 'dtai':
+                    $entities = $this->getRepositorio()->getDtai(null, true, false, $usr);
+                    break;
+                case 'factura':
+                    $entities = $this->getRepositorio()->getFacturas(null, true, false, $usr);
+                    break;
+                case 'mci':
+                    $entities = $this->getRepositorio()->getMci(null, true, false, $usr);
+                    break;
+                case 'remesa':
+                    $entities = $this->getRepositorio()->getRemesas(null, true, false, $usr);
+                    break;
+                default:
+                    $entities = $this->getRepositorio()->findAll();
+                    break;
+            }
+            $entities = $entities->execute();
+            $propertyPath = new PropertyAccessor();
+            foreach($entities as $formato){
+                $value = $propertyPath->getValue($formato,$name);
+                if(is_null($value))
+                    $value = '';
+                elseif(is_object($value))
+                    $value = $value->__toString();
+                $list[] = array(
+                    'value' =>  $value,
+                    'tokens'=>  $formato->getTokens(),
+                    'datos' =>  $formato->json(false, true)
+                );
+            }
+        }
+        return JsonResponse::create($list);
+    }
     /**
      * Lists all Formato entities.
      *
@@ -694,7 +757,31 @@ class FormatoController extends Controller
                         $valores['datos'] = $obj->json(false);
                     }else{
                         if(!method_exists($obj, $get)){
-                            $valores['msgs'][] = array('msg' => 'Formato: Error obteniendo datos de '.$nombre.'.', 'tipo' => 'danger');
+                            $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $nombre));
+                            $formato = null;
+                            if($tipo){
+                                switch($nombre){
+                                    case 'factura':
+                                        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(),'numero' => $valor));
+                                        break;
+                                    case 'cpic':
+                                        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(),'numero' => $valor));
+                                        break;
+                                    case 'mci':
+                                        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(),'numero' => $valor));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            if($formato){
+                                $obj->addHermano($formato);
+                                $em->persist($obj);
+                                $em->flush();
+                                $valores['msgs'][] = array('msg' => 'Formato : Asociado '.$formato->getTipo()->getAbreviacion().' al '.$obj->getTipo()->getAbreviacion(), 'tipo' => 'success');
+                            }else{
+                                $valores['msgs'][] = array('msg' => 'Formato: Error obteniendo datos de '.$nombre.'.', 'tipo' => 'danger');
+                            }
                         }else{
                             $valores['msgs'][] = array('msg' => 'Formato: El campo '.$nombre.' que tenía era el mismo.', 'tipo' => 'info');
                         }

@@ -112,8 +112,8 @@ class EntidadController extends Controller
     /**
      * Displays a form to create a new Formato entity.
      *
-     * @Route("/Agregar/{rol}/a/CPIC-{fila}/{numero}/", name="entidad_add_cpic_ajax_")
-     * @Route("/Agregar/{rol}/a/CPIC/{numero}/", name="entidad_add_cpic_ajax")
+     * @Route("/Agregar/{rol}/a/{abreviacion}-{fila}/{numero}/", name="entidad_add_cpic_ajax_", defaults={"abreviacion"="CPIC"})
+     * @Route("/Agregar/{rol}/a/{abreviacion}/{numero}/", name="entidad_add_cpic_ajax", defaults={"abreviacion"="CPIC"})
      * @Method({"POST","PUT"})
      * @Template("PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig")
      */
@@ -206,6 +206,7 @@ class EntidadController extends Controller
 //                        $em->persist($rol);
                     }else{
                         $fu = $em->getRepository('PuertoUDESFormatosBundle:FormatoUsuario')->createQueryBuilder('fu')
+                                ->andWhere("fu.formato=".$formato->getId())
                                 ->andWhere("fu.usuario=".$u->getId())
                                 ->andWhere("fu.rol=".$rol->getid())
                                 ->getQuery()->getOneOrNullResult();

@@ -36,9 +36,9 @@
                 name:           "nombre",
                 pk:             formato.id,
                 datos:          {tipo: formato.tipo.abreviacion|upper},
-                originalTitle:  "Nombre del Formato",
                 entityName:     "formato",
                 bundleName:     "formatos" ,
+                originalTitle:  "Nombre del Formato",
                 emptyText:      "Nombre del Formato " ~ formato.tipo.abreviacion|upper,
                 placeholder:    "Nombre del Formato " ~ formato.tipo.abreviacion|upper, 
                 required:       "NoVacio,NumerosLetras",
@@ -47,22 +47,6 @@
             <h4>
                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
             </h4>
-            {#<h5>
-                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                    id:             "formato_padre",
-                    clase:          "formato-crear",
-                    placement:      "bottom",
-                    name:           "padre",
-                    pk:             formato.id,
-                    datos:          {tipo: formato.tipo.abreviacion|upper},
-                    originalTitle:  "MCI al que se asocia el formato " ~ formato.tipo.abreviacion|upper,
-                    entityName:     "formato",
-                    bundleName:     "formatos" ,
-                    emptyText:      "MCI",
-                    required:       "Vacio,Numeros",
-                    valor:          formato.padre is defined and formato.padre is not empty?formato.padre.nombre:'',
-                }) %}
-            </h5>#}
         </div>
         <div class="text-justify hidden-print">
             <p>
@@ -235,44 +219,56 @@
                         <div class="row">
                             <div class="enunciado text-left col-lg-12 col-md-12">
                                 No. Factura 
+                                {% set formato1 = formato.getHermano('factura') %}
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                                    id:             "numero_formato",
-                                    clase:          "formato-crear",
-                                    name:           "noFactura",
+                                    id:             "numero_factura",
+                                    clase:          "add-factura",
+                                    name:           "factura",
                                     originalTitle:  "Número de Factura",
                                     emptyText:      "No. Factura",
                                     placeholder:    "No. Factura", 
                                     required:       "Vacio,Numeros",
-                                    type:           "number",
-                                    valor:          '',
+                                    type:           'typeaheadjs',
+                                    prefetch:       url('list_typeahead_formatos_',{name: 'numero', abreviacion: 'factura'}),
+                                    pk:             formato.id,
+                                    datos:          {tipo: formato.tipo.abreviacion|upper},
+                                    valor:          formato1.numero is defined?formato1.numero:'',
                                 }) %}
                             </div>
                             <div class="enunciado text-left col-lg-12 col-md-12">
                                 No. Carta
+                                {% set formato1 = formato.getHermano('cpic') %}
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
                                     id:             "numero_formato",
                                     clase:          "formato-crear",
-                                    name:           "noCarta",
+                                    name:           "cpic",
                                     originalTitle:  "Número de Carta",
                                     emptyText:      "No. Carta",
                                     placeholder:    "No. Carta", 
                                     required:       "Vacio,Numeros",
-                                    type:           "number",
-                                    valor:          '',
+                                    type:           'typeaheadjs',
+                                    prefetch:       url('list_typeahead_formatos_',{name: 'numero', abreviacion: 'cpic'}),
+                                    pk:             formato.id,
+                                    datos:          {tipo: formato.tipo.abreviacion|upper},
+                                    valor:          formato1.numero is defined?formato1.numero:'',
                                 }) %}
                             </div>
                             <div class="enunciado text-left col-lg-12 col-md-12">
                                 No. Manifiesto
+                                {% set formato1 = formato.getHermano('mci') %}
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
                                     id:             "numero_formato",
                                     clase:          "formato-crear",
-                                    name:           "noManifiesto",
+                                    name:           "mci",
                                     originalTitle:  "Número de Manifiesto",
                                     emptyText:      "No. Manifiesto",
                                     placeholder:    "No. Manifiesto", 
                                     required:       "Vacio,Numeros",
-                                    type:           "number",
-                                    valor:          '',
+                                    type:           'typeaheadjs',
+                                    prefetch:       url('list_typeahead_formatos_',{name: 'numero', abreviacion: 'mci'}),
+                                    pk:             formato.id,
+                                    datos:          {tipo: formato.tipo.abreviacion|upper},
+                                    valor:          formato1.numero is defined?formato1.numero:'',
                                 }) %}
                             </div>
                         </div>
@@ -285,12 +281,16 @@
                                     id:             "por-conducto",
                                     clase:          "por-conducto",
                                     name:           "porConducto",
+                                    pk:             formato.id,
+                                    datos:          {tipo: formato.tipo.abreviacion|upper},
+                                    entityName:     "formato",
+                                    bundleName:     "formatos" ,
                                     originalTitle:  "Por Conducto",
                                     emptyText:      "Por Conducto",
                                     placeholder:    "Por Conducto", 
-                                    required:       "Vacio,Numeros",
-                                    type:           "number",
-                                    valor:          '',
+                                    required:       "Vacio,Letras",
+                                    type:           "text",
+                                    valor:          formato.porConducto is defined?formato.porConducto:'',
                                 }) %}
                             </div>
                         </div>
@@ -303,12 +303,16 @@
                                     id:             "flete",
                                     clase:          "flete",
                                     name:           "flete",
+                                    pk:             formato.id,
+                                    datos:          {tipo: formato.tipo.abreviacion|upper},
+                                    entityName:     "formato",
+                                    bundleName:     "formatos" ,
                                     originalTitle:  "Fletes",
                                     emptyText:      "Fletes",
                                     placeholder:    "Fletes", 
                                     required:       "Vacio,Numeros",
                                     type:           "number",
-                                    valor:          '',
+                                    valor:          formato.flete is defined?formato.flete:'',
                                 }) %}
                             </div>
                         </div>
@@ -369,13 +373,13 @@
                                 sizing: 'pequeño',
                             } %}
                         </div>
-                        <div class="text-left title">
+                        <div class="text-left title pull-left">
                             Datos del Conductor
                         </div>
                         {% set c1 = formato.conductores is not empty?formato.getConductor('principal'):formato.conductores %}
                         {% set dataWith = {
                             id:             'conductor_principal_nombre',
-                            clase:          'conductor_auxiliar_crear',
+                            clase:          'conductor-principal-crear',
                             placement:      'top',
                             name:           'nombre',
                             pk:             c1 is not empty and c1.id is defined?c1.id:' ',
@@ -421,33 +425,62 @@
                         </div>
                     </td>
                     <td colspan="3">
-                        Placa del Vehiculo
-                        {% set vh = formato.conductores is not empty?(formato.conductores|first).vehiculo:formato.conductores %}
-                        {% set dataWith = {
-                            id:             'vehiculo_marca',
-                            clase:          'vehiculo-crear',
-                            placement:      'top',
-                            name:           'marca',
-                            pk:             vh is defined and vh.id is defined?vh.id:' ',
-                            originalTitle:  "Marca del Vehiculo",
-                            emptyText:      "Marca",
-                            entityName:     "vehiculo",
-                            bundleName:     "common" ,
-                            required:       "NoVacio,NumerosLetras",
-                            valor:          vh is not empty and vh.marca is defined?vh.marca:' ',
-                            prefetch:       url('list_typeahead_vehiculos_',{name: 'marca'}),
-                            type:           'typeaheadjs',
-                        } %}
-                        <div class="col-xs-12">
-                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                                id:             'vehiculo_placa',
-                                name:           'placa',
-                                originalTitle:  "Placa del Vehiculo",
-                                emptyText:      "Placa",
-                                required:       "NoVacio,NumerosLetrasConectores",
-                                valor:          vh is not empty and vh.placa is defined?vh.placa:' ',
-                                prefetch:       url('list_typeahead_vehiculos_',{name: 'placa'}),
-                            }) %}
+                        <div class="row">
+                            <div>
+                                <div class="text-right pull-left btns-action-left">
+                                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                        'buttonset': 'horizontal',
+                                        'class': 'animate in',
+                                        'botones'  : [
+                                            {
+                                                'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                                'type'  :   'primary',
+                                                'class' :   'vehiculo-crear animate guardar in',
+                                                'url'   :   url('vehiculo_save_ajax',{
+                                                                tipo: formato.tipo.abreviacion|upper,
+                                                                numero: formato.numero is defined and formato.numero is not empty?formato.numero:-1,
+                                                            }),
+                                            },
+                                            {
+                                                'class' :   'reset vehiculo-crear animate',
+                                                'type'  :   'warning',
+                                                'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                            },
+                                        ],
+                                        'sizing': 'pequeño',
+                                    } %}
+                                </div>
+                            </div>
+                            {% set vh = formato.conductores is not empty?formato.conductores.first.vehiculo:formato.conductores %}
+                            {% set dataWith = {
+                                id:             'vehiculo_marca',
+                                clase:          'vehiculo-crear',
+                                placement:      'top',
+                                name:           'marca',
+                                pk:             vh is defined and vh.id is defined?vh.id:' ',
+                                originalTitle:  "Marca del Vehiculo",
+                                emptyText:      "Marca",
+                                entityName:     "vehiculo",
+                                bundleName:     "common" ,
+                                required:       "NoVacio,NumerosLetras",
+                                valor:          vh is not empty and vh.marca is defined?vh.marca:' ',
+                                prefetch:       url('list_typeahead_vehiculos_',{name: 'marca'}),
+                                type:           'typeaheadjs',
+                            } %}
+                            <div class="col-xs-12 text-left">
+                                Placa del Vehiculo
+                            </div>
+                            <div class="col-xs-12">
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                    id:             'vehiculo_placa',
+                                    name:           'placa',
+                                    originalTitle:  "Placa del Vehiculo",
+                                    emptyText:      "Placa",
+                                    required:       "NoVacio,NumerosLetrasConectores",
+                                    valor:          vh is not empty and vh.placa is defined?vh.placa:' ',
+                                    prefetch:       url('list_typeahead_vehiculos_',{name: 'placa'}),
+                                }) %}
+                            </div>
                         </div>
                     </td>
                 </tr>
@@ -519,39 +552,19 @@
                     <td colspan="12">
                         <div class="row">
                             <div class="enunciado text-left col-lg-12 col-md-12">
-                                {#<div>
-                                    <div class="text-right pull-right btns-action-right">
-                                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                                            'buttonset': 'horizontal',
-                                            'class': 'animate in hidden-print',
-                                            'botones'  : [
-                                                {
-                                                    'label' :   '<span class="glyphicon glyphicon-plus"></span>',
-                                                    'type'  :   'success',
-                                                    'class' :   'animate agregar transportistas',
-                                                    'url'   :   url('entidad_add_remesa_ajax',{
-                                                                    rol:    'destinatario',
-                                                                    numero: formato.numero,
-                                                                }),
-                                                },
-                                            ],
-                                            'sizing': 'pequeño',
-                                        } %}
-                                    </div>
-                                </div>#}
                                 El Transportador
                             </div>
                         </div>
                         <div id="transportistas">
                             {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
-                                {% if formato.transportista %}
+                                {% for transportista in formato.transportistas %}
                                     {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
                                             abreviacion:    formato.tipo.abreviacion|upper,
                                             numero:         formato.numero,
-                                            entidad:        formato.transportista,
+                                            entidad:        transportista,
                                             rol:            'transportista',
                                             fila:           loop.index0,
-                                        }) 
+                                        })
                                     }}
                                 {% else %}
                                     {{ render(controller('PuertoUDESUsuariosBundle:Entidad:addEntidadRemesaAjax',{
@@ -560,7 +573,7 @@
                                             fila:           0,
                                         }))
                                     }}
-                                {% endif %}
+                                {% endfor %}
                             {% endif %}
                         </div>
                     </td>

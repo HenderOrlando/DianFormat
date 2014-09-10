@@ -404,6 +404,11 @@ jQuery.extend({
                                 ret += '<p>'+entidad[este.attr('data-name')]+'</p>';
                             return ret;
                         }
+                        else if(item.datos.tipo){
+                            var formato = item.datos, 
+                                ret = '<h5>' + formato.tipo.nombre + '</h5> <h6>' + formato.fullNombre + '</h6>';
+                            return ret;
+                        }
                         else if(este.attr('data-name') === 'moneda'){
                             var moneda = item.datos, 
                                 ret = '<h5>' + moneda.abreviacion + '</h5> <h6>' + moneda.nombre + '</h6>';

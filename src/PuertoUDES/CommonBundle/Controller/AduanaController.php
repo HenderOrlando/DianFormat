@@ -65,10 +65,10 @@ class AduanaController extends Controller
     /**
      * Displays a form to create a new Formato entity.
      *
-     * @Route("/Agregar/{tipo}/a/DTAI-{fila}/{numero}/", name="aduana_add_remesa_ajax_")
-     * @Route("/Agregar/{tipo}/a/DTAI/{numero}/", name="aduana_add_remesa_ajax")
+     * @Route("/Agregar/{tipo}/a/REMESA-{fila}/{numero}/", name="aduana_add_remesa_ajax_")
+     * @Route("/Agregar/{tipo}/a/REMESA/{numero}/", name="aduana_add_remesa_ajax")
      * @Method({"POST","PUT"})
-     * @Template("PuertoUDESCommonBundle:Aduana:_addAduanaRemesaAjax.html.twig")
+     * @Template("PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig")
      */
     public function addAduanaRemesaAjaxAction(Request $request){
         return $this->addAduanaMciAjaxAction($request, 'remesa');
@@ -102,6 +102,8 @@ class AduanaController extends Controller
      *
      * @Route("/Agregar/{tipo}/a/MCI-{fila}/{numero}/", name="aduana_add_mci_ajax_")
      * @Route("/Agregar/{tipo}/a/MCI/{numero}/", name="aduana_add_mci_ajax")
+     * @Route("/Agregar/{tipo}/a/{abreviacion}-{fila}/{numero}/", name="aduana_add_abreviacion_ajax_")
+     * @Route("/Agregar/{tipo}/a/{abreviacion}/{numero}/", name="aduana_add_abreviacion_ajax")
      * @Method({"POST","PUT"})
      * @Template("PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig")
      */
@@ -182,6 +184,7 @@ class AduanaController extends Controller
                         }else{
                             $fa = null;
                         }
+                        
                         if(!$fa){
                             $fa = new \PuertoUDES\FormatosBundle\Entity\FormatoAduana();
                             $fa->setAduana($aduana)
