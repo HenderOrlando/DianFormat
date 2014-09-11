@@ -6,13 +6,16 @@ gasto       Información del Gasto con el "tipo"
 table       Si se define devuelve una fila <tr></tr> de los contrario devuelve <div class="row">
 tipo        Concepto del gasto. 
                 Los conceptos Básicos son:  mercancia, valorFlete, seguro, suplementario
+clase       Si se le agrega una clase diferente a los campos
 #}
 {% set rolUsuario = (rolUsuario is defined and rolUsuario is not null and rolUsuario is not empty?rolUsuario:'') %}
 {% set tipo = tipo|lower|replace({' ':'_'}) %}
+{% set buttons = clase is defined and clase is not empty?false:true %}
+{% set clase = clase is defined and clase is not empty?clase:"gasto-" ~ (tipo|replace({'_':'-'})) ~ '-' ~ (rolUsuario is not empty?rolUsuario:'') ~ "-crear" %}
 {% set gasto= gasto is defined and gasto is not empty?gasto:null %}
 {% set pk = gasto is not null and gasto.id is not empty?gasto.id:' ' %}
 {% set dataWith = {
-    clase:          "gasto-" ~ (tipo|replace({'_':'-'})) ~ '-' ~ (rolUsuario is not empty?rolUsuario:'') ~ "-crear",
+    clase:          clase,
     id:             "gasto_" ~ tipo ~"_ _",
     name:           "",
     originalTitle:  " " ~ tipo | title ,
@@ -20,7 +23,7 @@ tipo        Concepto del gasto.
     required:       "",
     valor:          '',
     pk:             pk,
-    datos:          {tipo: abreviacion|upper},
+    datos:          {tipo: abreviacion|upper, concepto: tipo},
     entityName:     "gasto",
     bundleName:     "formatos" ,
 } %}
@@ -28,45 +31,54 @@ tipo        Concepto del gasto.
 {% if table is defined %}
     <td colspan="2" class="text-center">
         <div class="row">
-            <div class="col-lg-12 col-md-12">
-                <div>
-                    <div class="text-right pull-left btns-action-left fuera top">
-                        {% set url_ = 'gasto_add_cpic_ajax' %}
-                        {% set urlDatos = {
-                            numero: numero,
-                            concepto: tipo|title,
-                        } %}
-                        {% if rolUsuario is not empty %}
-                            {% set urlDatos = urlDatos|merge({
-                                'rolUsuario': rolUsuario|title,
-                            }) %}
-                            {% set url_ = url_ ~ '_' %}
-                        {% endif %}
-                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                            'buttonset': 'vertical',
-                            'class': 'animate in',
-                            'botones'  : [
-                                {
-                                    'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
-                                    'type'  :   'primary',
-                                    'class' :   'gasto-' ~ tipo|replace({'_':'-'}) ~ '-' ~ (rolUsuario is not empty?rolUsuario:'') ~ '-crear animate guardar ' ~ (pk == ' '?'in':'out'),
-                                    'url'   :   url(url_,urlDatos),
-                                },
-                                {
-                                    'class' :   'reset gasto-' ~ tipo|replace({'_':'-'}) ~ '-' ~ (rolUsuario is not empty?rolUsuario:'') ~ '-crear animate',
-                                    'type'  :   'warning',
-                                    'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                                    'url'   :   url('gasto_add_cpic_ajax_reset',{
-                                        abreviacion:    abreviacion,
-                                        numero:         numero,
-                                    }),
-                                },
-                            ],
-                            'sizing': 'pequeño',
-                        } %}
+            {% if buttons %}
+                <div class="col-lg-12 col-md-12">
+                    <div>
+                        <div class="text-right pull-left btns-action-left fuera top">
+                            {% set url_ = 'gasto_add_cpic_ajax' %}
+                            {% set urlDatos = {
+                                numero: numero,
+                                concepto: tipo|title,
+                                abreviacion:    abreviacion,
+                            } %}
+                            {% if rolUsuario is not empty %}
+                                {% set urlDatos = urlDatos|merge({
+                                    'rolUsuario': rolUsuario|title,
+                                }) %}
+                                {% set url_ = url_ ~ '_' %}
+                            {% endif %}
+                            {% if mercancia is not empty %}
+                                {% set urlDatos = urlDatos|merge({
+                                    'mercancia': mercancia.id,
+                                }) %}
+                                {% set url_ = url_ ~ '_' %}
+                            {% endif %}
+                            {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                                'buttonset': 'vertical',
+                                'class': 'animate in',
+                                'botones'  : [
+                                    {
+                                        'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                        'type'  :   'primary',
+                                        'class' :   clase ~ ' animate guardar ' ~ (pk == ' '?'in':'out'),
+                                        'url'   :   url(url_,urlDatos),
+                                    },
+                                    {
+                                        'class' :   'reset ' ~ clase ~ ' animate',
+                                        'type'  :   'warning',
+                                        'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                        'url'   :   url('gasto_add_cpic_ajax_reset',{
+                                            abreviacion:    abreviacion,
+                                            numero:         numero,
+                                        }),
+                                    },
+                                ],
+                                'sizing': 'pequeño',
+                            } %}
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
             <div class="col-lg-12 col-md-12 text-right">
                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
                     id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_monto_",
@@ -98,43 +110,45 @@ tipo        Concepto del gasto.
 {% else %}
     <div class="row" id="gasto-{{ tipo }}-crear">
         <div class="col-lg-12">
-            <div>
-                <div class="text-right pull-left fuera btns-action-left">
-                    {% set url_ = 'gasto_add_cpic_ajax' %}
-                    {% set urlDatos = {
-                        numero: numero,
-                        concepto: tipo|title,
-                    } %}
-                    {% if rolUsuario is not empty %}
-                        {% set urlDatos = urlDatos|merge({
-                            'rolUsuario': rolUsuario,
-                        }) %}
-                        {% set url_ = url_ ~ '_' %}
-                    {% endif %}
-                    {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                        'buttonset': 'horizontal',
-                        'class': 'animate in',
-                        'botones'  : [
-                            {
-                                'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
-                                'type'  :   'primary',
-                                'class' :   'gasto-' ~ tipo|replace({'_':'-'}) ~ '-' ~ (rolUsuario is not empty?rolUsuario:'') ~'-crear animate guardar ' ~ (pk == ' '?'in':'out'),
-                                'url'   :   url(url_,urlDatos),
-                            },
-                            {
-                                'class' :   'reset gasto-' ~ tipo|replace({'_':'-'}) ~ '-' ~ (rolUsuario is not empty?rolUsuario:'') ~ '-crear animate',
-                                'type'  :   'warning',
-                                'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                                'url'   :   url('gasto_add_cpic_ajax_reset',{
-                                        abreviacion:    abreviacion,
-                                        numero:         numero,
-                                    }),
-                            },
-                        ],
-                        'sizing': 'pequeño',
-                    } %}
+            {% if buttons %}
+                <div>
+                    <div class="text-right pull-left fuera btns-action-left">
+                        {% set url_ = 'gasto_add_cpic_ajax' %}
+                        {% set urlDatos = {
+                            numero: numero,
+                            concepto: tipo|title,
+                        } %}
+                        {% if rolUsuario is not empty %}
+                            {% set urlDatos = urlDatos|merge({
+                                'rolUsuario': rolUsuario,
+                            }) %}
+                            {% set url_ = url_ ~ '_' %}
+                        {% endif %}
+                        {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                            'buttonset': 'horizontal',
+                            'class': 'animate in',
+                            'botones'  : [
+                                {
+                                    'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                                    'type'  :   'primary',
+                                    'class' :   clase ~ ' animate guardar ' ~ (pk == ' '?'in':'out'),
+                                    'url'   :   url(url_,urlDatos),
+                                },
+                                {
+                                    'class' :   'reset ' ~ clase ~ ' animate',
+                                    'type'  :   'warning',
+                                    'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                                    'url'   :   url('gasto_add_cpic_ajax_reset',{
+                                            abreviacion:    abreviacion,
+                                            numero:         numero,
+                                        }),
+                                },
+                            ],
+                            'sizing': 'pequeño',
+                        } %}
+                    </div>
                 </div>
-            </div>
+            {% endif %}
             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
                 id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_monto_",
                 name:           "valor",

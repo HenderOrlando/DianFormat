@@ -40,6 +40,12 @@ class Gasto
     private $formato;
 
     /** 
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Mercancia", inversedBy="gastos")
+     * @ORM\JoinColumn(name="mercancia", referencedColumnName="id", nullable=true)
+     */
+    private $mercancia;
+
+    /** 
      * @ORM\Column(type="decimal", nullable=false, name="valor", precision=10, scale=4)
      */
     private $valor;
@@ -179,6 +185,29 @@ class Gasto
     public function getUsuario()
     {
         return $this->usuario;
+    }
+
+    /**
+     * Set mercancia
+     *
+     * @param \PuertoUDES\MercanciasBundle\Entity\Mercancia $mercancia
+     * @return Gasto
+     */
+    public function setMercancia(\PuertoUDES\MercanciasBundle\Entity\Mercancia $mercancia)
+    {
+        $mercancia->addGasto($this);
+        $this->mercancia = $mercancia;
+        return $this;
+    }
+
+    /**
+     * Get mercancia
+     *
+     * @return \PuertoUDES\MercanciasBundle\Entity\Mercancia 
+     */
+    public function getMercancia()
+    {
+        return $this->mercancia;
     }
 
     /**

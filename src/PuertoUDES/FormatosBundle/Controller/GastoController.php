@@ -250,22 +250,23 @@ class GastoController extends Controller
     /**
      * Displays a form to create a new Condicion entity.
      *
-     * @Route("/{concepto}/Agregar/a/CPIC-{fila}/{numero}/", name="gasto_add_cpic_ajax")
-     * @Route("/{concepto}/Agregar/a/CPIC/{numero}/", name="gasto_add_cpic_ajax")
-     * @Route("/{concepto}/Agregar/a/CPIC-{fila}/{numero}/para/{rolUsuario}/", name="gasto_add_cpic_ajax_")
-     * @Route("/{concepto}/Agregar/a/CPIC/{numero}/para/{rolUsuario}/", name="gasto_add_cpic_ajax_")
+     * @Route("/{concepto}/Agregar/a/{abreviacion}-{fila}/{numero}/", name="gasto_add_cpic_ajax", defaults={"abreviacion": "CPIC"})
+     * @Route("/{concepto}/Agregar/a/{abreviacion}/{numero}/", name="gasto_add_cpic_ajax", defaults={"abreviacion": "CPIC"})
+     * @Route("/{concepto}/Agregar/a/{abreviacion}-{fila}/{numero}/para/{rolUsuario}/", name="gasto_add_cpic_ajax_", defaults={"abreviacion": "CPIC"})
+     * @Route("/{concepto}/Agregar/a/{abreviacion}/{numero}/para/{rolUsuario}/", name="gasto_add_cpic_ajax_", defaults={"abreviacion": "CPIC"})
      * @Method({"POST","PUT"})
      * @Template("PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig")
      */
-    public function addGastosCpicAjaxAction(Request $request){
+    public function addGastosCpicAjaxAction(Request $request, $abreviacion = 'CPIC'){
         $filas = $request->get('filas', 0);
         $numero = $request->get('numero', 0);
         $concepto = $request->get('concepto',NULL);
         $valor = $request->get('valor',NULL);
         $moneda = $request->get('moneda',NULL);
         $rolUsuario = $request->get('rolUsuario',NULL);
+        $mercancia = $request->get('mercancia',NULL);
         $em = $this->getDoctrine()->getManager();
-        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic', 'aplicableA' => 'Formato'));
+        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($abreviacion), 'aplicableA' => 'Formato'));
         $gasto = null;
         $datos = array();
         if($tipo_mci){
@@ -300,6 +301,16 @@ class GastoController extends Controller
                             $usuario = $formato->getUsuarios($rolUsuario->getCanonical());
                             if(!empty($usuario) && isset($usuario[0]) && is_a($usuario[0]->getUsuario(),'PuertoUDES\UsuariosBundle\Entity\Usuario'))
                                 $usuario = $usuario[0]->getUsuario();
+                        }
+                    }
+                    if($mercancia){
+                        $mercancia = $em->getRepository('PuertoUDESCommonBundle:Mercancia')->find($mercancia);
+                        if(!$mercancia){
+                            $datos['errors']['Formato'] = 'Datos inválidos. Mercancía no encontrada.';
+                            //Rol no existe
+                            $error = true;
+                        }else{
+                            
                         }
                     }
                     if($moneda){

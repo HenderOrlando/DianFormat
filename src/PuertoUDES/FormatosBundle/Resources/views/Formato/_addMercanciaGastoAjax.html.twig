@@ -1,20 +1,20 @@
 {#
 fila        Número de la Fila
 formato     Formato CPIC a mostrar
-cm          Contenedor Mercancia a mostrar
+m           Mercancia a mostrar
 #}
 {% set pk = cm.id is defined?cm.id:' ' %}
 {% set dataWith = {
-    entityName:     "contenedorMercanciaFormato",
+    entityName:     "Gasto",
     bundleName:     "formatos" ,
     required:       "NoVacio,Numeros",
     pk:             pk,
 } %}
 <tr id="contenedor-mercancia{{ fila }}" class="{{ fila is odd?'even':'odd' }}">
-    <td colspan="2" class="text-center valor-contenedor-mercancia">
+    <td class="text-center valor-contenedor-mercancia">
         <div class="row">
             <div>
-                <div id="opciones-contenedor-mercancia{{ fila }}" class="opciones-filas opciones-conenedor-mercancia no-quitar {{ formato.tipo.abreviacion == 'cpic'?'text-right pull-left btns-action-left':'text-left pull-right btns-action-right' }} {{ formato.id is not empty?'mas':'' }}">
+                <div id="opciones-contenedor-mercancia{{ fila }}" class="opciones-filas opciones-conenedor-mercancia no-quitar text-left pull-right btns-action-right {{ formato.id is not empty?'mas':'' }}">
                     {% set botons = [
                             {
                                 'class' :   'eliminar contenedor-mercancia' ~ fila ~ ' animate pull-right',
@@ -25,20 +25,22 @@ cm          Contenedor Mercancia a mostrar
                                 'class' :   'reset contenedor-mercancia' ~ fila ~ '-crear animate pull-right',
                                 'type'  :   'warning',
                                 'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                                'url'   :   url('contenedorMercanciaFormato_reset_tipo_ajax_',{
+                                'url'   :   url('mercanciaGastoFormato_reset_tipo_ajax_',{
                                                 numero: formato.numero,
                                                 pk: pk,
                                                 fila: fila,
                                                 str_tipo: formato.tipo.abreviacion,
+                                                concepto: 'Mercancia',
                                             }),
                             },
                             {
                                 'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
                                 'type'  :   'primary',
                                 'class' :   'guardar contenedor-mercancia' ~ fila ~ '-crear animate pull-right animate ' ~ (pk != ' '?'out':'in'),
-                                'url'   :   url('contenedorMercanciaFormato_add_tipo_ajax',{
+                                'url'   :   url('mercanciaGastoFormato_add_tipo_ajax',{
                                                 numero: formato.numero,
                                                 str_tipo: formato.tipo.abreviacion,
+                                                concepto: 'Mercancia',
                                             }),
                             },
                             {
@@ -63,7 +65,7 @@ cm          Contenedor Mercancia a mostrar
                     id:             "num_bultos_contenedor_mercancia_formato",
                     clase:          'contenedor-mercancia' ~ fila ~ '-crear',
                     name:           "numBultos",
-                    originalTitle:  "Cantidad de Bultos",
+                    originalTitle:  "Cantidad de Mercancía",
                     emptyText:  "Cantidad",
                     valor:          pk != ' '?cm.numBultos:'',
                 }) %}  
@@ -72,33 +74,16 @@ cm          Contenedor Mercancia a mostrar
                     clase:          'contenedor-mercancia' ~ fila ~ '-crear',
                     name:           "clase",
                     required:       "NoVacio,Letras",
-                    originalTitle:  "Clase de Bultos",
-                    emptyText:      "Clase",
+                    originalTitle:  "Unidad de Cantidad de la Mercancía",
+                    emptyText:      "Unidad",
                     valor:          pk != ' '?cm.bulto.clase:'',
-                    prefetch:       url('list_typeahead_contenedorMercanciaFormato_',{ 'name' : 'clase' }),
+                    prefetch:       url('list_typeahead_contenedorMercanciaFormato_',{ 'name' : 'unidad' }),
                     type:           'typeaheadjs'
-                }) %}
+                }) %}{# cantidad bultos = cantidad mercancía ; clase bultos = unidad mercancía #}
             </div>
         </div>
     </td>
-    <td colspan="1" class="text-center">
-        <div class="row">
-            <div class="col-lg-12 col-md-12 text-center">
-                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                    id:             "clase_bultos_contenedor_mercancia_formato",
-                    clase:          'contenedor-mercancia' ~ fila ~ '-crear',
-                    name:           "marca",
-                    required:       "NoVacio,Letras",
-                    originalTitle:  "Marca de los Bultos",
-                    emptyText:      "Marca",
-                    valor:          pk != ' ' and cm.bulto is defined?cm.bulto.marca:'',
-                    prefetch:       url('list_typeahead_contenedorMercanciaFormato_',{ 'name' : 'marca' }),
-                    type:           'typeaheadjs'
-                }) %}
-            </div>
-        </div>
-    </td>
-    <td colspan="5" class="text-center">
+    <td class="text-center">
         <div class="row">
             <div class="col-lg-10 col-md-10 text-justify col-md-offset-1 col-lg-offset-1">
                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
@@ -115,9 +100,37 @@ cm          Contenedor Mercancia a mostrar
             </div>
         </div>
     </td>
-</tr>
-{#<tr class="{{ fila is odd?'even':'odd' }}">
-    <td colspan="8" class="animate out">
-        ok
+    <td class="text-center">
+        <div class="row">
+            <div class="col-lg-10 col-md-10 text-justify col-md-offset-1 col-lg-offset-1">
+                {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                    {% set datosGasto = {
+                        abreviacion:    formato.tipo.abreviacion|upper,
+                        numero:         formato.numero,
+                        tipo:           'Mercancia',
+                        clase:          'contenedor-mercancia' ~ fila ~ '-crear',
+                    } %}
+                    {% if formato.getGastoContenedoresMercancias is defined and formato.getGastoContenedoresMercancias is not empty %}
+                        {% set g = formato.getGastoContenedorMercancia(cm.mercancia) %}
+                        {% if g is defined and g is not null %}
+                            {% set datosGasto = datosGasto|merge({
+                                    gasto:            g,
+                                })
+                            %}
+                        {% endif %}
+                    {% endif %}
+                    {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                {% endif %}
+            </div>
+        </div>
     </td>
-</tr>#}
+    <td class="text-center">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 text-right">
+                <span class="imita" id="precio-total-factura" data-name="gastoTotal">
+                    {{- formato.gastoTotal -}}
+                </span>
+            </div>
+        </div>
+    </td>
+</tr>

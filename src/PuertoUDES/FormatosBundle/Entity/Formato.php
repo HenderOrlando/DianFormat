@@ -66,6 +66,8 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $destinatarios;
     private $declarantes;
     private $transportistas;
+    private $clientes;
+    private $empresas;
 
     /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\DatosMercanciasFormato", mappedBy="formato")
@@ -116,8 +118,10 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $gastos;
     
     private $gastoMercancias;
+    private $gastosAPagar;
     private $gastosAPagarRemitente;
     private $gastosAPagarDestinatario;
+    private $gastoContenedoresMercancias;
 
     /**
      * @ORM\ManyToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato")
@@ -156,8 +160,9 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $totalVolumen;
     private $totalVolumenOtro;
     
-    private $gastoTotalMercancias;
+    private $gastoTotal;
     private $gastoTotalRemitente;
+    private $gastoTotalMercancias;
     private $gastoTotalDestinatario;
     
     /** 
@@ -186,10 +191,12 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->declarantes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->transportistas = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->clientes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->empresas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->datosMercancias = new \Doctrine\Common\Collections\ArrayCollection();
         $this->condiciones = new \Doctrine\Common\Collections\ArrayCollection();
         $this->hermanos = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->totalPesoBruto = $this->totalPesoNeto = $this->totalVolumen = $this->totalVolumenOtro = $this->gastoTotalDestinatario = $this->gastoTotalRemitente = $this->gastoTotalMercancias = 0;
+        $this->totalPesoBruto = $this->totalPesoNeto = $this->totalVolumen = $this->totalVolumenOtro = $this->gastoTotalDestinatario = $this->gastoTotal = $this->gastoTotalRemitente = $this->gastoTotalMercancias = 0;
     }
     
     public function getFullNombre(){
@@ -681,6 +688,18 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         }
         return $this->gastosAPagarRemitente;
     }
+    /**
+     * Get gastosAPagar
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosAPagar()
+    {
+        if(empty($this->gastosAPagar)){
+            $this->loadGastos();
+        }
+        return $this->gastosAPagar;
+    }
     
     /**
      * Get existGastosAPagarRemitente
@@ -714,6 +733,32 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             $this->gastoMercancias = $gm;
         }
         return $this->gastoMercancias;
+    }
+    /**
+     * Get gastosContenedoresMercancias
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastoContenedoresMercancias()
+    {
+        if(count($this->gastoContenedoresMercancias) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastoContenedoresMercancias;
+    }
+    /**
+     * Get getGastoContenedoresMercancia
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastoContenedorMercancia(\PuertoUDES\CommonBundle\Entity\Mercancia $mercancia)
+    {
+        foreach($this->getGastoContenedoresMercancias() as $g){
+            if(!is_null($g->getMercancia()) && $g->getMercancia()->getId() == $mercancia->getId()){
+                return $g;
+            }
+        }
+        return null;
     }
     
     /**
@@ -798,16 +843,42 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
 
     /**
-     * Get declarates
+     * Get transportistas
      * 
      * @return \Doctrine\Common\Collections\Collection 
      */
     public function getTransportistas()
     {
-        if(empty($this->tranportistas)){
+        if(empty($this->transportistas)){
             $this->loadUsuariosTipo();
         }
         return $this->transportistas;
+    }
+
+    /**
+     * Get empresas
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getEmpresas()
+    {
+        if(empty($this->empresas)){
+            $this->loadUsuariosTipo();
+        }
+        return $this->empresas;
+    }
+
+    /**
+     * Get clientes
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getClientes()
+    {
+        if(empty($this->clientes)){
+            $this->loadUsuariosTipo();
+        }
+        return $this->clientes;
     }
     
     /**
@@ -1233,6 +1304,13 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         return $this->totalVolumenOtro;
     }
     /**/
+    public function getGastoTotal(){
+        if($this->gastoTotal == 0){
+            $this->loadGastos();
+        }
+        return $this->gastoTotal;
+    }
+    /**/
     public function getGastoTotalRemitente(){
         if($this->gastoTotalRemitente == 0){
             $this->loadGastos();
@@ -1381,6 +1459,8 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->declarantes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->transportistas = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->clientes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->empresas = new \Doctrine\Common\Collections\ArrayCollection();
         foreach($this->usuarios as $u){
             switch(strtolower($u->getRol()->getNombre())){
                 case 'notificado':
@@ -1400,6 +1480,12 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                     break;
                 case 'transportista':
                     $this->transportistas->add($u->getUsuario()->getEntidad());
+                    break;
+                case 'cliente':
+                    $this->clientes->add($u->getUsuario()->getEntidad());
+                    break;
+                case 'empresa':
+                    $this->empresas->add($u->getUsuario()->getEntidad());
                     break;
             }
         }
@@ -1444,14 +1530,18 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
     
     private function loadGastos() {
+        $this->gastoContenedoresMercancias = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosAPagarDestinatario = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosAPagarRemitente = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastoMercancias = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->gastoTotalRemitente = 0;
-        $this->gastoTotalDestinatario = 0;
-        $this->gastoTotalMercancias = 0;
+        $this->gastosAPagar = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastoTotal = $this->gastoTotalRemitente = $this->gastoTotalDestinatario = $this->gastoTotalMercancias = 0;
         foreach($this->gastos as $g){
-            if(is_null($g->getRolUsuario())){
+            if(!is_null($g->getMercancia())){
+                $this->gastosAPagar->add($g);
+                $this->gastoContenedoresMercancias->add($g);
+                $this->gastoTotal += $g->getValor();
+            }elseif(is_null($g->getRolUsuario())){
                 $this->gastoMercancias->add($g);
                 $this->gastoTotalMercancias += $g->getValor();
             }else{
@@ -1463,6 +1553,8 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                     case 'destinatario':
                         $this->gastosAPagarDestinatario->add($g);
                         $this->gastoTotalDestinatario += $g->getValor();
+                        break;
+                    default:
                         break;
                 }
             }

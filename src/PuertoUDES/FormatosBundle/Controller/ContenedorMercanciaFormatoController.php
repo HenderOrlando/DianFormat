@@ -35,6 +35,9 @@ class ContenedorMercanciaFormatoController extends Controller
         $name = $request->get('name','');
         $em = $this->getDoctrine()->getManager();
         switch(strtolower($name)){
+            case 'unidad':
+                $entities = $em->getRepository('PuertoUDESCommonBundle:Bulto')->findUnidades();
+                break;
             case 'marca':
             case 'clase':
                 $entities = $em->getRepository('PuertoUDESCommonBundle:Bulto')->findAll();
@@ -49,10 +52,12 @@ class ContenedorMercanciaFormatoController extends Controller
         $propertyPath = new PropertyAccessor();
         foreach($entities as $cmf){
             $value = $propertyPath->getValue($cmf,$name);
-            if(is_null($value))
+            if(is_null($value)){
                 $value = '';
-            elseif(is_object($value))
+            }
+            elseif(is_object($value)){
                 $value = $value->__toString();
+            }
             $list[] = array(
                 'value' =>  $value,
                 'tokens'=>  $cmf->getTokens(),
@@ -307,6 +312,259 @@ class ContenedorMercanciaFormatoController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+    
+    /**
+     * Displays a form to create a new Condicion entity.
+     *
+     * @Route("/Agregar-Gasto/a/{str_tipo}/{numero}/", name="mercanciaGastoFormato_add_tipo_ajax")
+     * @Route("/Gasto-{pk}/en/{str_tipo}-{numero}/{fila}/", name="mercanciaGastoFormato_add_tipo_ajax_")
+     * @Method({"POST","PUT"})
+     * @Template("PuertoUDESFormatosBundle:Formato:_addMercanciaGastoAjax.html.twig")
+     */
+    public function addMercanciaGastoFormatoAjaxAction(Request $request){
+        
+        // Falta agregar el tratamiento de los datos para el gasto
+        
+        $filas = $request->get('filas', 0);
+        $pk = $request->get('pk', -1);
+        $numero = $request->get('numero',NULL);
+        $cantidad = $request->get('numBultos',NULL);
+        $clase = $request->get('clase',NULL);
+        $marca = $request->get('marca',NULL);
+        $descripcion = $request->get('descripcion',NULL);
+        $concepto = $request->get('concepto',NULL);
+        $valor = $request->get('valor',NULL);
+        $moneda = $request->get('moneda',NULL);
+        $rolUsuario = $request->get('rolUsuario',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $str_tipo = $request->get('str_tipo','cpic');
+        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $str_tipo, 'aplicableA' => 'Formato'));
+        $cm = null;
+        $datos = array();
+        if($tipo){
+            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(), 'numero' => $numero));
+            if($formato){
+                if(is_numeric($cantidad) && is_string($clase) && is_string($descripcion)){
+                    if($pk < 0)
+                        $cm = NULL;
+                    else
+                        $cm = $this->getRepositorio()->find($pk);
+                        
+//                    $cm = $this->getRepositorio()->createQueryBuilder('cm')
+//                        ->innerJoin("cm.mercancia",'m')
+//                        ->andWhere("cm.formato=".$formato->getId())
+//                        ->andWhere("cm.numBultos=".$cantidad)
+//                        ->andWhere("m.descripcion LIKE '%".$descripcion."%'")
+//                        ->getQuery()->getOneOrNullResult();
+                    if(!$cm){
+                        $cm = new ContenedorMercanciaFormato();
+                        $cm->setFormato($formato);
+//                        $em->persist($cm);
+                    }
+                    $cm ->setNumBultos($cantidad);
+                    $mercancia = $em->getRepository('PuertoUDESCommonBundle:Mercancia')->createQueryBuilder('m')
+                        ->andWhere("m.descripcion LIKE '%".$descripcion."%'")
+                        ->getQuery()->getOneOrNullResult();
+                    if(!$mercancia){
+                        $mercancia = new Mercancia();
+                        $mercancia->setDescripcion($descripcion)
+                            ->addContenedoresFormato($cm);
+//                            $em->persist($mercancia);
+                    }
+                    $cm->setMercancia($mercancia);
+                    $bulto = $em->getRepository('PuertoUDESCommonBundle:Bulto')->createQueryBuilder('b')
+                        ->andWhere("b.clase LIKE '%".$clase."%'")
+                        ->andWhere("b.marca IS NULL")
+                        ->getQuery()->getOneOrNullResult();
+                    if(!$bulto){
+                        $bulto = new Bulto();
+                        $bulto->setClase($clase)
+                            ->addContenedorMercanciaFormato($cm);
+//                        $em->persist($bulto);
+                    }
+                    $cm ->setBulto($bulto);
+                    // Gasto
+                    $error = false;
+                    if($concepto && !is_null($valor)){
+                        $tipoGasto = $em->getRepository('PuertoUDESCommonBundle:Tipo')->createQueryBuilder('t')
+                                ->andWhere("t.canonical LIKE '%".$concepto."%' OR t.nombre LIKE '%".$concepto."%' OR t.abreviacion LIKE '%".$concepto."%'")
+                                ->andWhere("t.aplicableA LIKE '%gasto%'")
+                                ->getQuery()->getOneOrNullResult();
+                        if(!$tipoGasto){
+                            $tipoGasto = new \PuertoUDES\CommonBundle\Entity\Tipo();
+                            $tipoGasto
+                                    ->setAplicableA('Gasto')
+                                    ->setNombre(str_replace('-',' ',str_replace('_', ' ', $concepto)))
+                                    ->setAbreviacion(str_replace('-',' ',str_replace('_', ' ', $concepto)));
+                            $em->persist($tipoGasto);
+                            $em->flush();
+                        }
+                        $usuario = null;
+                        if($rolUsuario){
+                            $rolUsuario = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
+                                    ->andWhere("r.canonical LIKE '%".$rolUsuario."%' OR r.nombre LIKE '%".$rolUsuario."%'")
+                                    ->andWhere("r.aplicableA LIKE '%formatoUsuario%'")
+                                    ->getQuery()->getOneOrNullResult();
+                            if(!$rolUsuario){
+                                $datos['errors']['Formato'] = 'Datos inválidos. Rol de Usuario no encontrado.';
+                                //Rol no existe
+    //                            $error = true;
+                            }else{
+                                $usuario = $formato->getUsuarios($rolUsuario->getCanonical());
+                                if(!empty($usuario) && isset($usuario[0]) && is_a($usuario[0]->getUsuario(),'PuertoUDES\UsuariosBundle\Entity\Usuario'))
+                                    $usuario = $usuario[0]->getUsuario();
+                            }
+                        }
+                        if($moneda){
+                            $moneda = $em->getRepository('PuertoUDESCommonBundle:Moneda')->createQueryBuilder('m')
+                                    ->andWhere("m.canonical LIKE '%".$moneda."%' OR m.nombre LIKE '%".$moneda."%' OR m.abreviacion LIKE '%".$moneda."%'")
+                                    ->getQuery()->getOneOrNullResult();
+                            if(!$moneda){
+                                $datos['errors']['Formato'] = 'Datos inválidos. Moneda no encontrada.';
+                                //Moneda no existe
+                                $error = true;
+                            }
+                        }
+                        if(!$error){
+                            $q = $em->getRepository('PuertoUDESFormatosBundle:Gasto')->createQueryBuilder('g')
+                                ->innerJoin('g.concepto', 't')
+                                ->andWhere("g.formato =".$formato->getId())
+                                ->andWhere("t.canonical LIKE '%".$concepto."%' OR t.nombre LIKE '%".$concepto."%' OR t.abreviacion LIKE '%".$concepto."%'")
+                                ->andWhere("t.id = ".$tipoGasto->getId());
+                            if($rolUsuario){
+                                $q->andWhere('g.rolUsuario='.$rolUsuario->getId());
+                            }
+                            $gasto = $q->getQuery()->getOneOrNullResult();
+                            if(!$gasto){
+                                $gasto = new \PuertoUDES\FormatosBundle\Entity\Gasto();
+                                $gasto
+                                        ->setValor($valor)
+                                        ->setFormato($formato)
+                                        ->setConcepto($tipoGasto);
+                                $em->persist($gasto);
+                            }
+                            $gasto->setMercancia($mercancia);
+                            $tipoGasto->addGasto($gasto);
+                            $formato->addGasto($gasto);
+                            if($usuario && is_a($usuario, 'PuertoUDES\UsuariosBundle\Entity\Usuario')){
+                                $gasto->setUsuario($usuario);
+                                $em->persist($gasto);
+                                $usuario->addGasto($gasto);
+                                $em->persist($usuario);
+                            }
+                            if($moneda){
+                                $gasto->setMoneda($moneda);
+                                $em->persist($gasto);
+                                $moneda->addGasto($gasto);
+                                $em->persist($moneda);
+                            }
+                            if($rolUsuario){
+                                $gasto->setRolUsuario($rolUsuario);
+                                $em->persist($gasto);
+                                $rolUsuario->addGasto($gasto);
+                                $em->persist($rolUsuario);
+                            }
+                        }
+                    }else{
+                        $error = true;
+                    }
+                    
+                    if(!$error){
+                        $em->persist($tipoGasto);
+                        $em->persist($formato);
+                        $em->persist($bulto);
+                        $em->persist($mercancia);
+                        $em->persist($cm);
+                        $em->flush();
+                        $datos = array(
+//                            'errors'   =>  array('msgs' => array('Contenedor Mercancía' => array('msg' => 'Información guardada','tipo' => 'success'))),
+                            'success'   =>  array('msgs' => array('Contenedor Mercancía' => array('msg' => 'Información guardada','tipo' => 'success'))),
+                            'datos'     =>  array(
+                                    'pesoBruto'     =>  $cm->getFormato()->getTotalPesoBruto(),
+                                    'pesoNeto'      =>  $cm->getFormato()->getTotalPesoNeto(),
+                                    'volumen'       =>  $cm->getFormato()->getTotalVolumen(),
+                                    'volumenOtro'   =>  $cm->getFormato()->getTotalVolumenOtro(),
+                                ),
+                            'url'       =>  $this->generateUrl('contenedorMercanciaFormato__edit', array('id' => $cm->getId())),
+                            'id'        =>  $cm->getId(),
+                        );
+                    }else{
+                        $datos['errors']['Mercancia Factura'] = 'Parece hay errores en el '.$formato->getTipo()->getAbreviacion();
+                    }
+                    
+                }else{
+                    if($request->isXmlHttpRequest() && $request->getMethod() != 'POST'){
+                        $datos['errors']['Contenedor Mercancia'] = 'Datos incompletos, Son necesarios Precio, Moneda, Cantidad, Unidad y Descripción de las Mercancias';
+                    }
+                }
+                return JsonResponse::create($datos);
+            }else{
+                $datos['errors']['Contenedor Mercancias'] = 'Datos no válidos';
+                return JsonResponse::create($datos);
+            }
+        }
+        return array(
+            'fila'         =>  $filas,
+            'formato'      =>  $formato,
+            'cm'           =>  $cm,
+        );
+    }
+    
+    /**
+     * Displays a form to create a new Condicion entity.
+     *
+     * @Route("/Reset-Gasto/a/CPIC/{numero}/", name="mercanciaGastoFormato_reset_cpic_ajax")
+     * @Route("/Gasto-{pk}/en/CPIC-{numero}/{fila}/", name="mercanciaGastoFormato_reset_cpic_ajax_")
+     * @Route("/Reset-Gasto/a/{str_tipo}/{numero}/", name="mercanciaGastoFormato_reset_tipo_ajax")
+     * @Route("/Gasto-{pk}/en/{str_tipo}-{numero}/{fila}/", name="mercanciaGastoFormato_reset_tipo_ajax_")
+     * @Method({"DELETE"})
+     * @Template("")
+     */
+    public function resetMercanciaGastoFormatoCpicAjaxAction(Request $request){
+        $filas = $request->get('filas', 0);
+        $pk = $request->get('pk', -1);
+        $numero = $request->get('numero',NULL);
+        $em = $this->getDoctrine()->getManager();
+        $str_tipo = $request->get('str_tipo','');
+        
+        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic', 'aplicableA' => 'Formato'));
+        $cm = null;
+        $datos = array();
+        if($tipo){
+            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(), 'numero' => $numero));
+            if($formato){
+                if(is_numeric($pk) && $pk >= 0){
+                    $cm = $this->getRepositorio()->find($pk);
+                    if($cm){
+                        $em->remove($cm);
+                        $em->flush();
+                    }
+                    $success = array('msgs' => array('Contenedor Mercancía' => array('msg' => 'Mercancía "'.$cm->getMercancia()->__toString().'" removida del Formato','tipo' => 'success')));
+                }
+                else{
+                    $success = array('msgs' => array('Contenedor Mercancía' => array('msg' => 'Datos No Válidos!!','tipo' => 'danger')));
+                }
+                $datos = array(
+                    'success'   =>  $success,
+                    'datos'     =>  array(
+                            'pesoBruto'     =>  $formato->getTotalPesoBruto(),
+                            'pesoNeto'      =>  $formato->getTotalPesoNeto(),
+                            'volumen'       =>  $formato->getTotalVolumen(),
+                            'volumenOtro'   =>  $formato->getTotalVolumenOtro(),
+                        ),
+                );
+                return JsonResponse::create($datos);
+            }else{
+                $datos['errors']['Contenedor Mercancias'] = 'Datos no válidos';
+                return JsonResponse::create($datos);
+            }
+        }
+        return array(
+            'fila'         =>  $filas,
+            'formato'      =>  $formato,
+            'cm'           =>  $cm,
+        );
     }
     
     /**

@@ -142,7 +142,8 @@ form.in,
     width: 21.6cm;
     margin: 0 auto;
     box-shadow: 0 0 15px -4px;
-    font-size: 9px;
+    font-size: 105%;
+    /*font-size: 9px;*/
 }
 
 .hoja_carta_formato > .margen {
@@ -249,6 +250,15 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
     vertical-align: middle;
     text-align: center;
 }
+.opciones-filas.btns-action-right.opciones-conenedor-mercancia{
+    right: -316%;
+}
+.opciones-filas.btns-action-right{
+    right: -830%;
+    top: 0;
+    left: auto;
+    width: auto;
+}
 .opciones-filas,
 #cpics .opciones-filas-cpic{
     position: absolute;
@@ -272,6 +282,10 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
 .title > div{
     position: relative;
     margin-right: -7.5px;
+}
+#cliente .btns-action-right,
+#empresa .btns-action-right{
+    top: -20px;
 }
  .btns-action-right{
     position: absolute;
@@ -385,6 +399,10 @@ table tr td.border-none{
     left: 0;
 }
 
+.row-view-buttons.row:hover > div .btns-action-right,
+.row-view-buttons.row:focus > div .btns-action-right,
+.row-view-buttons.row:hover > div .btns-action-left,
+.row-view-buttons.row:focus > div .btns-action-left,
 table tbody tr td .row:hover > div .btns-action-left,
 table tbody tr td .row:focus > div .btns-action-left,
 table tbody tr th .row:hover > div .btns-action-left,
@@ -473,6 +491,14 @@ table tbody tr th .row:focus > div .btns-action-right{
 .table tbody>tr>td:not(.title), 
 .table tfoot>tr>td:not(.title){
     padding-top: 0;
+}
+.table.row-padding{
+    margin-top: 10px;
+}
+table.table.row-padding thead tr > td,
+table.table.row-padding tbody tr > td,
+table.table.row-padding tfoot tr > td{
+    padding: 10px;
 }
 .no-border-right{
     border-right: none;

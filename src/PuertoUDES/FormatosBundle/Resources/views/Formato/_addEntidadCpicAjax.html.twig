@@ -7,51 +7,52 @@ fila        Número de la fila de la entidad
 #}
 {% set rol = rol|lower %}
 {% set usuario = entidad is defined and entidad is not empty and entidad.usuario is not empty?entidad.usuario:null %}
-<div class="row" id="entidad{{fila ~ '-' ~ rol}}-crear">
+<div class="row {{abreviacion == 'factura'?'row-view-buttons':'row-view-buttons'}}" id="entidad{{fila ~ '-' ~ rol}}-crear">
     {% set pk = usuario is not null and usuario.id is not empty?usuario.id:' ' %}
-    <div class="col-lg-12">
-        <div>
-            <div class="text-right pull-left btns-action-left">
-                {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
-                    'buttonset': 'horizontal',
-                    'class': 'animate in',
-                    'botones'  : [
-                        {
-                            'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
-                            'type'  :   'primary',
-                            'class' :   'entidad' ~ fila ~ '-' ~ rol ~'-crear animate guardar ' ~ (pk == ' '?'in':'out'),
-                            'url'   :   url('entidad_add_cpic_ajax_',{
-                                            abreviacion: abreviacion,
-                                            numero: numero,
-                                            rol: rol,
-                                            fila: fila,
-                                        }),
-                        },
-                        {
-                            'class' :   'eliminar  entidad' ~ fila ~ '-' ~ rol ~'-crear animate',
-                            'type'  :   'danger',
-                            'label' :   '<span class="glyphicon glyphicon-trash"></span>',
-                        },
-                        {
-                            'class' :   'reset entidad' ~ fila ~ '-' ~ rol ~'-crear animate',
-                            'type'  :   'warning',
-                            'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
-                            'url'   :   url('entidad_add_cpic_ajax_reset_',{
-                                            numero: numero,
-                                            rol: rol,
-                                            fila: fila,
-                                            abreviacion: abreviacion|upper,
-                                        }),
-                        },
-                    ],
-                    'sizing': 'pequeño',
-                } %}
-            </div>
+    <div>
+        <div class="{{ abreviacion == 'factura'?'text-left pull-right btns-action-right':'text-right pull-left btns-action-left' }}">
+            {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
+                'buttonset': 'horizontal',
+                'class': 'animate in',
+                'botones'  : [
+                    {
+                        'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
+                        'type'  :   'primary',
+                        'class' :   'entidad' ~ fila ~ '-' ~ rol ~'-crear animate guardar ' ~ (pk == ' '?'in':'out'),
+                        'url'   :   url('entidad_add_cpic_ajax_',{
+                                        abreviacion: abreviacion,
+                                        numero: numero,
+                                        rol: rol,
+                                        fila: fila,
+                                    }),
+                    },
+                    {
+                        'class' :   'eliminar  entidad' ~ fila ~ '-' ~ rol ~'-crear animate',
+                        'type'  :   'danger',
+                        'label' :   '<span class="glyphicon glyphicon-trash"></span>',
+                    },
+                    {
+                        'class' :   'reset entidad' ~ fila ~ '-' ~ rol ~'-crear animate',
+                        'type'  :   'warning',
+                        'label' :   '<span class="glyphicon glyphicon-refresh"></span>',
+                        'url'   :   url('entidad_add_cpic_ajax_reset_',{
+                                        numero: numero,
+                                        rol: rol,
+                                        fila: fila,
+                                        abreviacion: abreviacion|upper,
+                                    }),
+                    },
+                ],
+                'sizing': 'pequeño',
+            } %}
         </div>
+    </div>
+    <div class="col-lg-12">
         {% set dataWith = {
             id:             "entidad_" ~ rol ~"_ _" ~ fila,
             clase:          "entidad" ~ fila ~ "-"~ rol ~ "-crear",
             name:           "",
+            placement:      abreviacion == 'factura'?"bottom":'top',
             pk:             pk,
             datos:          {tipo: abreviacion|upper},
             originalTitle:  " " ~ rol | title ,
@@ -66,17 +67,17 @@ fila        Número de la fila de la entidad
             id:             "entidad_" ~ rol ~"_razon_social_" ~ fila,
             name:           "nombre",
             originalTitle:  "Nombre o Razón Social " ~ rol | title ,
-            emptyText:      "Nombre o Razón Social",
+            emptyText:      "Nombre o Razón Social " ~ rol | title,
             required:       "NoVacio,LetrasNumerosConectores",
             valor:          pk != ' '?usuario.nombre:'',
             prefetch:       url('list_typeahead_entidades_',{name: 'nombre'}),
-        }) %}- 
-        NIT. 
+        }) %}
+        {{ abreviacion == 'factura'?'<br/>':' - NIT. ' }}
         {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
             id:             "entidad_" ~ rol ~"_nit_" ~ fila,
             name:           "docId",
             originalTitle:  "NIT " ~ rol | title ,
-            emptyText:      "NIT",
+            emptyText:      "NIT " ~ rol | title,
             required:       "NoVacio,NumerosConectores",
             valor:          pk != ' '?usuario.docId:'',
             prefetch:       url('list_typeahead_entidades_',{name: 'docId'}),
@@ -87,17 +88,18 @@ fila        Número de la fila de la entidad
             id:             "entidad_" ~ rol ~"_direccion_" ~ fila,
             name:           "direccion",
             originalTitle:  "Dirección " ~ rol | title ,
-            emptyText:      "Dirección",
+            emptyText:      "Dirección " ~ rol | title,
             required:       "Vacio,NumerosLetrasConectores",
             valor:          pk != ' '?usuario.direccion:'',
             prefetch:       url('list_typeahead_entidades_',{name: 'direccion'}),
-        }) %} - 
+        }) %}
+        {{ abreviacion == 'factura'?'<br/>':' - ' }} 
          {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
             id:             "entidad_" ~ rol ~"_lugar_" ~ fila,
             name:           "lugar",
             pk:             usuario is not null and usuario.entidad is defined and usuario.entidad.id is not empty?usuario.entidad.id:' ',
             originalTitle:  "Lugar " ~ rol | title ,
-            emptyText:      "Lugar",
+            emptyText:      "Lugar " ~ rol | title,
             required:       "Vacio,LetrasConectores",
             valor:          usuario is not null and usuario.entidad.lugar is defined ?usuario.entidad.lugar:'',
             prefetch:       url('list_typeahead_entidades_',{name: 'lugar'}),
