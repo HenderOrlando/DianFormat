@@ -1,5 +1,6 @@
 <?php
 namespace PuertoUDES\CommonBundle\Entity;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping AS ORM;
 
 /** 
@@ -100,4 +101,5 @@ class Mercancia extends \PuertoUDES\CommonBundle\Entity\Objeto
             return $this->getDescripcion ();
         return $parent;
     }
+    
 }

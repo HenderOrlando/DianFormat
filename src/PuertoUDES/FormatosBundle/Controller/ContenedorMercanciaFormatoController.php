@@ -342,6 +342,7 @@ class ContenedorMercanciaFormatoController extends Controller
         $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $str_tipo, 'aplicableA' => 'Formato'));
         $cm = null;
         $datos = array();
+        
         if($tipo){
             $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(), 'numero' => $numero));
             if($formato){
@@ -494,11 +495,14 @@ class ContenedorMercanciaFormatoController extends Controller
                     }
                     
                 }else{
-                    if($request->isXmlHttpRequest() && $request->getMethod() != 'POST'){
+                    $datos['errors'] = $filas;
+                    if(!$filas && $request->isXmlHttpRequest() && $request->getMethod() != 'POST'){
                         $datos['errors']['Contenedor Mercancia'] = 'Datos incompletos, Son necesarios Precio, Moneda, Cantidad, Unidad y Descripción de las Mercancias';
                     }
                 }
-                return JsonResponse::create($datos);
+                if(!$filas){
+                    return JsonResponse::create($datos);
+                }
             }else{
                 $datos['errors']['Contenedor Mercancias'] = 'Datos no válidos';
                 return JsonResponse::create($datos);

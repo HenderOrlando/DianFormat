@@ -28,6 +28,12 @@ class Pais extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\OneToMany(targetEntity="PuertoUDES\UsuariosBundle\Entity\Conductor", mappedBy="pais")
      */
     private $conductores;
+    
+    /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", mappedBy="tipo")
+     */
+    private $formatos;
+    
     /**
      * Constructor
      */
@@ -36,6 +42,7 @@ class Pais extends \PuertoUDES\CommonBundle\Entity\Objeto
         parent::__construct();
         $this->lugares = new \Doctrine\Common\Collections\ArrayCollection();
         $this->objetos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->formatos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->conductores = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
@@ -183,4 +190,38 @@ class Pais extends \PuertoUDES\CommonBundle\Entity\Objeto
         }
         return $a;
     }
+    
+    /**
+     * Add formatos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $formatos
+     * @return Tipo
+     */
+    public function addFormato(\PuertoUDES\FormatosBundle\Entity\Formato $formatos)
+    {
+        $this->formatos[] = $formatos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove formatos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $formatos
+     */
+    public function removeFormato(\PuertoUDES\FormatosBundle\Entity\Formato $formatos)
+    {
+        $this->formatos->removeElement($formatos);
+    }
+
+    /**
+     * Get formatos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getFormatos()
+    {
+        return $this->formatos;
+    }
+
 }

@@ -91,10 +91,10 @@ class MercanciaController extends Controller
     public function createAction(Request $request)
     {
         $entity = new Mercancia();
-        $form = $this->createCreateForm($entity);
+        $form = $this->createCreateForm($entity, true);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isValid() && !(empty($entity->getNombre()) || is_null($entity->getNombre()) || $entity->getNombre() == ' ')) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -131,7 +131,7 @@ class MercanciaController extends Controller
      * Displays a form to create a new Mercancia entity.
      *
      * @Route("/new", name="mercancia__new")
-     * @Method("GET")
+     * @Method({"GET"})
      * @Template()
      */
     public function newAction()

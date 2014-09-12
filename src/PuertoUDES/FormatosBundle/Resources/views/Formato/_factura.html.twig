@@ -5,7 +5,11 @@
         <div class="row row-fluid">
             <div class="col-xs-8">
                 <div class="row row-fluid">
-                    <div id="empresa" class="col-xs-6 border-right">
+                    <div class="col-xs-6 border-right text-center">
+                        <img class="icon" style="width: 100px;" src="{{ asset('bundles/puertoudescommon/images/logo_icon.png') }}" alt="PuertoUDES">
+                    </div>
+                    <div id="empresa" class="col-xs-6">
+                        <div class="enunciado">Empresa</div>
                         {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
                             {% for empresa in formato.empresas %}
                                 {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
@@ -29,7 +33,10 @@
                             {% endfor %}
                         {% endif %}
                     </div>
-                    <div id="cliente" class="col-xs-6 border-left">
+                </div>
+                <div class="row row-fluid">
+                    <div id="cliente" class="col-xs-12">
+                        <div class="enunciado">Cliente</div>
                         {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
                             {% for cliente in formato.clientes %}
                                 {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
@@ -152,7 +159,7 @@
                                         } %}
                                     </div>
                                 </div>
-                                <div class="enunciado text-center col-lg-12 col-md-12">
+                                <div class="text-center col-lg-12 col-md-12">
                                     Cantidad
                                 </div>
                             </div>

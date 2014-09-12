@@ -15,7 +15,9 @@ class MercanciaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nombre')
+            ->add('nombre', null, array(
+                'required'   =>  true,
+            ))
             ->add('descripcion')
         ;
     }

@@ -730,6 +730,20 @@ class FormatoController extends Controller
                     }else{
                         $valores['msgs'][] = array('msg' => 'Formato: El campo '.$nombre.' ya tenía éste valor.', 'tipo' => 'info');
                     }
+                }elseif(strpos($nombre, 'pais') !== false){
+                    $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')->createQueryBuilder('p')
+                        ->andWhere('p.canonical LIKE \'%'.$valor.'%\' OR p.nombre LIKE \'%'.$valor.'%\'')
+                        ->getQuery()->getOneOrNullResult();
+                    if(!$pais){
+                        $pais = new \PuertoUDES\CommonBundle\Entity\Pais();
+                        $pais->setNombre($valor);
+                        $pais->setNacionalidad($valor);
+                        $em->persist($pais);
+                        $em->persist($obj);
+                    }
+                    $obj->$set($pais);
+                    $em->flush();
+                    $valores['datos'] = $obj->json(false);
                 }elseif(strpos($nombre, 'moneda') !== false){
                     $moneda = $em->getRepository('PuertoUDESCommonBundle:Moneda')
                         ->createQueryBuilder('m')
@@ -758,22 +772,23 @@ class FormatoController extends Controller
                     }else{
                         if(!method_exists($obj, $get)){
                             $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $nombre));
-                            $formato = null;
-                            if($tipo){
-                                switch($nombre){
-                                    case 'factura':
-                                        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(),'numero' => $valor));
-                                        break;
-                                    case 'cpic':
-                                        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(),'numero' => $valor));
-                                        break;
-                                    case 'mci':
-                                        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(),'numero' => $valor));
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
+                            $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(),'numero' => $valor));
+//                            $formato = null;
+//                            if($tipo){
+//                                switch($nombre){
+//                                    case 'factura':
+//                                        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(),'numero' => $valor));
+//                                        break;
+//                                    case 'cpic':
+//                                        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(),'numero' => $valor));
+//                                        break;
+//                                    case 'mci':
+//                                        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(),'numero' => $valor));
+//                                        break;
+//                                    default:
+//                                        break;
+//                                }
+//                            }
                             if($formato){
                                 $obj->addHermano($formato);
                                 $em->persist($obj);

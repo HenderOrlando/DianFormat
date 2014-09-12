@@ -4,6 +4,9 @@
     {% if only_form is defined %}
         {{ form(edit_form) }}
     {% elseif entity.tipo is defined and entity.tipo.abreviacion is defined %}
+<a class="btn btn-primary" href="{{- app.request.headers.get('referer') -}}">
+    Volver
+</a>
         {#
         Valida que únicamente sean los formatos construidos. MCI, CPIC y DTAI
         {% if 'mci' in entity.tipo.abreviacion or 'cpic' in entity.tipo.abreviacion or 'dtai' in entity.tipo.abreviacion%}

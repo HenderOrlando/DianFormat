@@ -110,7 +110,7 @@ m           Mercancia a mostrar
                         tipo:           'Mercancia',
                         clase:          'contenedor-mercancia' ~ fila ~ '-crear',
                     } %}
-                    {% if formato.getGastoContenedoresMercancias is defined and formato.getGastoContenedoresMercancias is not empty %}
+                    {% if cm.mercancia is defined and cm.mercancia is not null and formato.getGastoContenedoresMercancias is defined and formato.getGastoContenedoresMercancias is not empty %}
                         {% set g = formato.getGastoContenedorMercancia(cm.mercancia) %}
                         {% if g is defined and g is not null %}
                             {% set datosGasto = datosGasto|merge({

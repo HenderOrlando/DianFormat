@@ -148,6 +148,12 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\JoinColumn(name="tipo", referencedColumnName="id", nullable=false)
      */
     private $tipo;
+
+    /** 
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Pais", inversedBy="formatos")
+     * @ORM\JoinColumn(name="pais", referencedColumnName="id", nullable=true)
+     */
+    private $pais;
     
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Incoterm", inversedBy="formatos")
@@ -1228,6 +1234,29 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                     return $g;
         }
         return null;
+    }
+
+    /**
+     * Set pais
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Pais $pais
+     * @return Formato
+     */
+    public function setPais(\PuertoUDES\CommonBundle\Entity\Pais $pais)
+    {
+        $this->pais = $pais;
+    
+        return $this;
+    }
+
+    /**
+     * Get pais
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Pais 
+     */
+    public function getPais()
+    {
+        return $this->pais;
     }
 
     /**

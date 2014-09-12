@@ -2,6 +2,7 @@
 <div class="hoja_carta_formato print">
     <div class="margen">
         {% set col_w = formato.id is not defined or formato.id is empty?10:12 %}
+        {% set pk = formato.id %}
         {% if formato.id is not defined or formato.id is empty %}
         <div class="row">
             <div>
@@ -136,64 +137,28 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-lg-12">
-                                {% set pk = formato.transportista is defined and formato.transportista.usuario is defined?formato.transportista.usuario.id:' ' %}
-                                {% set dataWith = {
-                                    id:             "entidad_razon_social",
-                                    clase:          "entidad-crear",
-                                    name:           "nombre",
-                                    pk:             pk,
-                                    datos:          {tipo: formato.tipo.abreviacion|upper},
-                                    originalTitle:  "Nombre o Razón Social del Transportista",
-                                    entityName:     "usuario",
-                                    bundleName:     "usuarios" ,
-                                    emptyText:      "Razón Social",
-                                    required:       "Vacio,LetrasConectores",
-                                    valor:          pk != ' '?formato.transportista.nombre:'',
-                                } %}
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
-                            </div>
-                            <div class="col-lg-12">
-                                NIT. 
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                                    id:             "entidad_nit",
-                                    clase:          "entidad-crear",
-                                    name:           "doc_id",
-                                    originalTitle:  "NIT del Transportista",
-                                    emptyText:      "NIT",
-                                    required:       "NoVacio,NumerosConectores",
-                                    valor:          pk != ' '?formato.transportista.docId:'',
-                                }) %}
-                            </div>
-                            <div class="col-lg-12">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                                    id:             "entidad_direccion",
-                                    clase:          "entidad-crear",
-                                    name:           "direccion",
-                                    originalTitle:  "Dirección del Transportista",
-                                    emptyText:      "Dirección",
-                                    required:       "Vacio,NumerosLetrasConectores",
-                                    valor:          pk != ' '?formato.transportista.direccion:'',
-                                }) %} - Telfs. 
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                                    id:             "entidad_telefono",
-                                    clase:          "entidad-crear",
-                                    name:           "telefono",
-                                    originalTitle:  "Teléfono del Transportista",
-                                    emptyText:      "Teléfono",
-                                    required:       "Vacio,NumerosConectores",
-                                    valor:          pk != ' '?formato.transportista.telefono:'',
-                                }) %} - 
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                                    id:             "entidad_lugar",
-                                    clase:          "entidad-crear",
-                                    name:           "lugar",
-                                    originalTitle:  "Lugar del Transportista",
-                                    emptyText:      "Lugar",
-                                    required:       "Vacio,LetrasConectores",
-                                    valor:          pk != ' '?formato.transportista.lugar:'',
-                                }) %}
-                            </div>
+                            {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                {% for cliente in formato.clientes %}
+                                    {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
+                                            abreviacion:    formato.tipo.abreviacion|upper,
+                                            numero:         formato.numero,
+                                            entidad:        cliente,
+                                            rol:            'transportista',
+                                            fila:           loop.index0,
+                                        }) 
+                                    }}
+                                {% else %}
+                                    {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                                        {{ render(controller('PuertoUDESUsuariosBundle:Entidad:addEntidadCpicAjax',{
+                                                abreviacion:    formato.tipo.abreviacion,
+                                                numero:         formato.numero,
+                                                rol:            'transportista',
+                                                fila:           0,
+                                            }))
+                                        }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
                         </div>
                     </td>
                     <td colspan="6" class="text-center">
@@ -290,8 +255,9 @@
                                     originalTitle:  "País de Origen de la Mercancía",
                                     emptyText:      "País",
                                     required:       "NoVacio,Letras",
-                                    valor:          aduanaPartida is not empty and aduanaPartida.lugar is defined and aduanaPartida.lugar.pais is defined?aduanaPartida.lugar.pais:'',
+                                    valor:          formato.pais is defined?formato.pais:'',
                                     prefetch:       url('list_typeahead_paises_', {'name': 'nombre'}),
+                                    type:           'typeaheadjs'
                                 }) %}
                     </td>
                 </tr>
@@ -331,7 +297,7 @@
                                             entidad:        remitente,
                                             rol:            'remitente',
                                             fila:           loop.index0,
-                                        }) 
+                                        })
                                     }}
                                 {% else %}
                                     {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
@@ -374,6 +340,21 @@
                             </div>
                         </div>
                         <div id="placa-pais-vehiculo" class="col-lg-12 col-md-12">
+                            {% set dataWith = {
+                                id:             'vehiculo_marca',
+                                clase:          'vehiculo-crear',
+                                placement:      'top',
+                                name:           'marca',
+                                pk:             vh is defined and vh.id is defined?vh.id:' ',
+                                originalTitle:  "Marca del Vehiculo",
+                                emptyText:      "Marca",
+                                entityName:     "vehiculo",
+                                bundleName:     "common" ,
+                                required:       "NoVacio,NumerosLetras",
+                                valor:          vh is not empty and vh.marca is defined?vh.marca:' ',
+                                prefetch:       url('list_typeahead_vehiculos_',{name: 'marca'}),
+                                type:           'typeaheadjs',
+                            } %}
                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
                                 id:             'vehiculo_placa',
                                 name:           'placa',

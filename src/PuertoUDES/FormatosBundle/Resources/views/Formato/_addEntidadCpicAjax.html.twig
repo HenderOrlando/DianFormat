@@ -7,10 +7,10 @@ fila        Número de la fila de la entidad
 #}
 {% set rol = rol|lower %}
 {% set usuario = entidad is defined and entidad is not empty and entidad.usuario is not empty?entidad.usuario:null %}
-<div class="row {{abreviacion == 'factura'?'row-view-buttons':'row-view-buttons'}}" id="entidad{{fila ~ '-' ~ rol}}-crear">
+<div class="row {{abreviacion|lower == 'factura'?'row-view-buttons':'row-view-buttons'}}" id="entidad{{fila ~ '-' ~ rol}}-crear">
     {% set pk = usuario is not null and usuario.id is not empty?usuario.id:' ' %}
     <div>
-        <div class="{{ abreviacion == 'factura'?'text-left pull-right btns-action-right':'text-right pull-left btns-action-left' }}">
+        <div class="{{ abreviacion|lower == 'factura'?'text-left pull-right btns-action-right':'text-right pull-left btns-action-left' }}">
             {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                 'buttonset': 'horizontal',
                 'class': 'animate in',
@@ -52,7 +52,7 @@ fila        Número de la fila de la entidad
             id:             "entidad_" ~ rol ~"_ _" ~ fila,
             clase:          "entidad" ~ fila ~ "-"~ rol ~ "-crear",
             name:           "",
-            placement:      abreviacion == 'factura'?"bottom":'top',
+            placement:      abreviacion|lower == 'factura'?"bottom":'top',
             pk:             pk,
             datos:          {tipo: abreviacion|upper},
             originalTitle:  " " ~ rol | title ,
@@ -62,6 +62,7 @@ fila        Número de la fila de la entidad
             required:       "",
             valor:          '',
             type:           'typeaheadjs',
+            prefetch:       url('list_typeahead_entidades_',{name: 'id'}),
         } %}
         {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
             id:             "entidad_" ~ rol ~"_razon_social_" ~ fila,
@@ -72,7 +73,7 @@ fila        Número de la fila de la entidad
             valor:          pk != ' '?usuario.nombre:'',
             prefetch:       url('list_typeahead_entidades_',{name: 'nombre'}),
         }) %}
-        {{ abreviacion == 'factura'?'<br/>':' - NIT. ' }}
+        {{ abreviacion|lower == 'factura'?'<br/>':' - NIT. ' }}
         {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
             id:             "entidad_" ~ rol ~"_nit_" ~ fila,
             name:           "docId",
@@ -93,7 +94,7 @@ fila        Número de la fila de la entidad
             valor:          pk != ' '?usuario.direccion:'',
             prefetch:       url('list_typeahead_entidades_',{name: 'direccion'}),
         }) %}
-        {{ abreviacion == 'factura'?'<br/>':' - ' }} 
+        {{ abreviacion|lower == 'factura'?'<br/>':' - ' }} 
          {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
             id:             "entidad_" ~ rol ~"_lugar_" ~ fila,
             name:           "lugar",

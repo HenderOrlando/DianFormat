@@ -175,7 +175,7 @@ class AduanaController extends Controller
                             ->getQuery()->getOneOrNullResult();
                     if($nivel){
                         if($existe_aduana){
-                            $fa = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(
+                            $fa = $em->getRepository('PuertoUDESFormatosBundle:FormatoAduana')->findOneBy(
                                 array(
                                     'nivel' => $nivel,
                                     'aduana' => $aduana,
