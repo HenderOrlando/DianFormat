@@ -225,12 +225,12 @@ jQuery.extend({
                 });
             });
         }else{
-            $('label').each(function(){
-                id = $(this).attr('for');
-                if($('input#'+id+':not([type="checkbox"]), textarea#'+id).length){
-                    $(this).hide();
-                }
-            });
+//            $('label').each(function(){
+//                id = $(this).attr('for');
+//                if($('input#'+id+':not([type="checkbox"]), textarea#'+id).length){
+//                    $(this).hide();
+//                }
+//            });
         };
     }
     
