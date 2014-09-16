@@ -156,7 +156,8 @@ form.in,
     text-align: left;
 }
 .logo img{
-    height: 45px;
+    /*height: 45px;*/
+    height: 5.5em;
 }
 .title{
     padding: 5px;
@@ -585,4 +586,7 @@ table>tbody>tr>td.border-r{
     margin-left: -5px;
     float: none;
     vertical-align: top;
+}
+.carousel-inner {
+    width: 90%;
 }

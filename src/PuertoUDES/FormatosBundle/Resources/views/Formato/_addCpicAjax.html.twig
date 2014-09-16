@@ -27,10 +27,11 @@ numero      Número del Manifiesto de Carga
                                     'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
                                     'type'  :   'primary',
                                     'class' :   'guardar cpic' ~ fila ~ loop.index0 ~ '-crear animate pull-right ' ~ (formato.id is not empty?'out':'in'),
-                                    'url'   :   url('formato_add_cpic_ajax',{
+                                    'url'   :   url('formato_abreviacion_add_cpic_ajax',{
                                                     numero_mci: numero,
+                                                    abreviacion: abreviacion|upper,
                                                     save: true,
-                                                }),
+                                                })
                                 },
                             ] %}
                         {% if formato.id is not empty %}
@@ -279,10 +280,11 @@ numero      Número del Manifiesto de Carga
                                     'label' :   '<span class="glyphicon glyphicon-floppy-save"></span>',
                                     'type'  :   'primary',
                                     'class' :   'guardar cpic' ~ fila ~ '-crear animate pull-right ' ~ (formato.id is not empty?'out':'in'),
-                                    'url'   :   url('formato_add_cpic_ajax',{
+                                    'url'   :   url('formato_abreviacion_add_cpic_ajax',{
                                                     numero_mci: numero,
+                                                    abreviacion: abreviacion|upper,
                                                     save: true,
-                                                }),
+                                                })
                                 },
                             ] %}
                         {% if formato.id is not empty %}

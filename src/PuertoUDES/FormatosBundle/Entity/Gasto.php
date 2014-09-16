@@ -193,7 +193,7 @@ class Gasto
      * @param \PuertoUDES\MercanciasBundle\Entity\Mercancia $mercancia
      * @return Gasto
      */
-    public function setMercancia(\PuertoUDES\MercanciasBundle\Entity\Mercancia $mercancia)
+    public function setMercancia(\PuertoUDES\CommonBundle\Entity\Mercancia $mercancia)
     {
         $mercancia->addGasto($this);
         $this->mercancia = $mercancia;

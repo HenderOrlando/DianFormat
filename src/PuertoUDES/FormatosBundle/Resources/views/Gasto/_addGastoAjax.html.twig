@@ -47,7 +47,7 @@ clase       Si se le agrega una clase diferente a los campos
                                 }) %}
                                 {% set url_ = url_ ~ '_' %}
                             {% endif %}
-                            {% if mercancia is not empty %}
+                            {% if mercancia is defined and mercancia is not empty %}
                                 {% set urlDatos = urlDatos|merge({
                                     'mercancia': mercancia.id,
                                 }) %}

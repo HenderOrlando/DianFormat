@@ -350,7 +350,7 @@ class Entidad
     /**
      * Get nombre
      *
-     * @return integer 
+     * @return string 
      */
     public function getNombre()
     {

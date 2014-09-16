@@ -10,7 +10,19 @@
                     </div>
                     <div id="empresa" class="col-xs-6">
                         <div class="enunciado">Empresa</div>
-                        {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                        <span class="imita">
+                            PuertoUDES
+                        </span><br/>
+                        <span class="imita">
+                            123456789-0
+                        </span><br/>
+                        <span class="imita">
+                            Av. 4 Esquina Calle 10N
+                        </span><br/>
+                        <span class="imita">
+                            Cúcuta, Colombia
+                        </span>
+                        {#% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
                             {% for empresa in formato.empresas %}
                                 {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
                                         abreviacion:    formato.tipo.abreviacion|upper,
@@ -31,7 +43,7 @@
                                     }}
                                 {% endif %}
                             {% endfor %}
-                        {% endif %}
+                        {% endif %#}
                     </div>
                 </div>
                 <div class="row row-fluid">
@@ -167,7 +179,7 @@
                         <th class="text-center title">
                             Descripción
                         </th>
-                        <th class="text-center title">
+                        <th class="text-center title col-xs-1">
                             Precio Unitario
                         </th>
                         <th class="text-center title col-xs-1">
@@ -192,7 +204,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td rowspan="3" colspan="3" class="text-left">
+                        <td rowspan="4" colspan="2" class="text-left">
                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
                                 placement:      "top",
                                 pk:             formato.id,
@@ -211,18 +223,37 @@
                                 valor:          formato.descripcion,
                             }) %}
                         </td>
+                    </tr>
+                    <tr>
                         <th>
-                            Subtotal
+                            Peso Bruto Total (Kg): 
+                            <span id="factura_total_peso_bruto" class="imita pull-right" data-name="totalPesoBruto">{{ formato.getTotalPesoBruto }}</span>
+                        </th>
+                        <th>
+                            Subtotal: 
+                            <span id="factura_subtotal" class="imita pull-right" data-name="subtotal">{{ formato.getGastoTotal }}</span>
+                            {{' ' ~ formato.getTipoMoneda }}
                         </th>
                     </tr>
                     <tr>
                         <th>
-                            IVA
+                            Peso Neto Total (Kg): 
+                            <span id="factura_total_peso_neto" class="imita pull-right" data-name="totalPesoNeto">{{ formato.getTotalPesoNeto }}</span>
+                        </th>
+                        <th>
+                            IVA: 
+                            <span id="factura_iva" class="imita pull-right" data-name="iva">16%{#{ formato.getIva }#}</span>
                         </th>
                     </tr>
                     <tr>
+                        <th>
+                            Volumen Total (m<sup>3</sup>):
+                            <span id="factura_total_peso_bruto" class="imita pull-right" data-name="totalPesoBruto">{{ formato.getTotalVolumen }}</span>
+                        </th>
                         <th>
                             Total
+                            <span id="factura_subtotal" class="imita pull-right" data-name="total">{{ formato.getGastoTotal * 1.16 }}</span>
+                            {{' ' ~ formato.getTipoMoneda }}
                         </th>
                     </tr>
                 </tfoot>

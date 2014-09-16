@@ -381,9 +381,9 @@ jQuery.extend({
             }
         };
         if(este.attr('data-type') === 'typeaheadjs'){
-            var prefetch = typeof este.attr('data-prefetch') !== 'undefined'?este.attr('data-prefetch').replace('"',''):{},
+            var prefetch = typeof este.attr('data-prefetch') !== 'undefined'?este.attr('data-prefetch').replace(/"/g,''):{},
                 datosTypeahead = {
-                    name: este.attr('data-entity-name') + '_' + este.attr('data-name'),
+                    name: este.attr('data-entity-name') + '_' + este.attr('data-name') + (este.attr('data-name') === 'placa' || este.attr('data-name') === 'pais'?'_' + este.attr('id').replace(/"/g,''):''),
                     prefetch: {
                         url: prefetch,
                         ttl: '0'

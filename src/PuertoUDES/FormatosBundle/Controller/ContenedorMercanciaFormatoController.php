@@ -361,7 +361,7 @@ class ContenedorMercanciaFormatoController extends Controller
                     if(!$cm){
                         $cm = new ContenedorMercanciaFormato();
                         $cm->setFormato($formato);
-//                        $em->persist($cm);
+                        $em->persist($cm);
                     }
                     $cm ->setNumBultos($cantidad);
                     $mercancia = $em->getRepository('PuertoUDESCommonBundle:Mercancia')->createQueryBuilder('m')
@@ -371,7 +371,7 @@ class ContenedorMercanciaFormatoController extends Controller
                         $mercancia = new Mercancia();
                         $mercancia->setDescripcion($descripcion)
                             ->addContenedoresFormato($cm);
-//                            $em->persist($mercancia);
+                            $em->persist($mercancia);
                     }
                     $cm->setMercancia($mercancia);
                     $bulto = $em->getRepository('PuertoUDESCommonBundle:Bulto')->createQueryBuilder('b')
@@ -382,7 +382,7 @@ class ContenedorMercanciaFormatoController extends Controller
                         $bulto = new Bulto();
                         $bulto->setClase($clase)
                             ->addContenedorMercanciaFormato($cm);
-//                        $em->persist($bulto);
+                        $em->persist($bulto);
                     }
                     $cm ->setBulto($bulto);
                     // Gasto

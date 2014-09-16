@@ -128,7 +128,7 @@ m           Mercancia a mostrar
         <div class="row">
             <div class="col-lg-12 col-md-12 text-right">
                 <span class="imita" id="precio-total-factura" data-name="gastoTotal">
-                    {{- formato.gastoTotal -}}
+                    {{- formato.gastoTotal ~ ' ' ~ formato.getTipoMoneda -}}
                 </span>
             </div>
         </div>

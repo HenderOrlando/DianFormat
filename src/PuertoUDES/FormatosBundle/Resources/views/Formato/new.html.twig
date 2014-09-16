@@ -2,6 +2,11 @@
 
 {% block body -%}
     {% if form is defined %}
+        {% if error is defined and error %}
+            <div id="error-form" class="label-warning label">
+                {{ error }}
+            </div>
+        {% endif %}
         {{ form(form) }}
     {% elseif entity.tipo is defined and entity.tipo.abreviacion is defined %}
         {% include 'PuertoUDESFormatosBundle:Formato:_' ~ entity.tipo.abreviacion ~ '.html.twig' with {

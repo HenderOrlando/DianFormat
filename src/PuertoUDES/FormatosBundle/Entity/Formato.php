@@ -1,6 +1,7 @@
 <?php
 namespace PuertoUDES\FormatosBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\Criteria;
 
 /** 
@@ -1029,12 +1030,12 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     /**
      * Add hijos
      *
-     * @param \PuertoUDES\FormatosBundle\Entity\Formato $hijos
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $hijo
      * @return Formato
      */
-    public function addHijo(\PuertoUDES\FormatosBundle\Entity\Formato $hijos)
+    public function addHijo(\PuertoUDES\FormatosBundle\Entity\Formato $hijo)
     {
-        $this->hijos[] = $hijos;
+        $this->hijos[] = $hijo;
     
         return $this;
     }
@@ -1630,5 +1631,16 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->totalPesoNeto = $pesoNeto;
         $this->totalVolumen = $volumen;
         $this->totalVolumenOtro = $volumenOtro;
+    }
+    
+    public static function loadValidatorMetadata(\Symfony\Component\Validator\Mapping\ClassMetadata $metadata)
+    {
+        $metadata->addConstraint(new UniqueEntity(array(
+            'fields'  => [
+                'numero',
+                'tipo',
+            ],
+            'message' => 'Ya existe un Formato con el mismo número.',
+        )));
     }
 }

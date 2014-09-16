@@ -359,8 +359,6 @@ $(document).on('ready',function(){
         e.stopPropagation();
         var este = $(this);
         este.attr('disabled',true);
-        console.log(este.attr('href'))
-        console.log($('#cpics tbody tr').length)
         $.ajax({
             type: "POST",
             url: este.attr('href'),
@@ -368,7 +366,7 @@ $(document).on('ready',function(){
             dataType: "html",
             cache: false
         }).done(function( response ) {
-            console.log(response)
+//            console.log(response)
             $('#cpics tbody').append(response);
             arreglaAjax();
             agregarXEditable($('#cpics tbody').find('a.xeditable'));
@@ -380,7 +378,7 @@ $(document).on('ready',function(){
         }).fail(function() {
             console.log( "error" );
         }).always(function() {
-            console.log( "complete" );
+//            console.log( "complete" );
         });
     });
     $('a.agregar').on('click', function(e){

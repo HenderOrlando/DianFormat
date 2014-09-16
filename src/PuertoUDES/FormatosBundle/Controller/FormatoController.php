@@ -532,7 +532,6 @@ class FormatoController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
             $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->findOneBy(array('canonical' => 'autor'));
             if($rol){
                 $fu = new \PuertoUDES\FormatosBundle\Entity\FormatoUsuario();
@@ -541,8 +540,11 @@ class FormatoController extends Controller
                     ->setUsuario($this->getUser()->getUsuario())
                     ->setRol($rol)
                 ;
+                $entity->setAutor($this->getUser()->getUsuario());
                 $em->persist($fu);
             }
+            $em->persist($entity);
+            
             $em->flush();
 
             return $this->redirect($this->generateUrl('formato__edit', array('id' => $entity->getId())));
@@ -764,11 +766,36 @@ class FormatoController extends Controller
                     $valores['datos'] = $obj->json(false);
                 }else{
                     if(method_exists($obj, $get) && $obj->$get() != $valor){
-                        $obj->$set($valor);
-                        $em->persist($obj);
-                        $em->flush();
-                        $valores['msgs'][] = array('msg' => 'Formato: El campo '.$nombre.' fué actualizado.', 'tipo' => 'success');
-                        $valores['datos'] = $obj->json(false);
+                        if( $nombre === 'padre'){
+                            $tipo_ = strtolower($request->get('tipoPadre','mci'));
+                            $tipoPadre = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $tipo_));
+                            if($tipoPadre){
+                                $padre = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipoPadre->getId(),'numero' => $valor));
+                                if($padre){
+                                    $padre->addHijo($obj);
+                                    $obj->setPadre($padre);
+                                    $em->persist($padre);
+                                    $em->persist($obj);
+                                    $em->flush();
+                                    $valores['msgs'][] = array('msg' => 'Formato: El formato '.strtoupper($tipo_).' fué asociado.', 'tipo' => 'success');
+                                    $valores['datos'] = $obj->json(false);
+                                }else{
+                                    $valores['msgs'][] = array('msg' => 'Formato: El formato de '.strtoupper($tipo_).' no es válido.', 'tipo' => 'error');
+                                }
+                            }else{
+                                $valores['msgs'][] = array('msg' => 'Formato: El tipo de formato '.strtoupper($tipo_).' no es válido.', 'tipo' => 'error');
+                            }
+                        }else{
+                            $obj->$set($valor);
+                            $em->persist($obj);
+                            $em->flush();
+                            $valores['msgs'][] = array('msg' => 'Formato: El campo '.$nombre.' fué actualizado.', 'tipo' => 'success');
+                            $valores['datos'] = $obj->json(false);
+                        }
+//                        if($valor){
+//                        }else{
+//                            $valores['msgs'][] = array('msg' => 'Formato: El valor "'.$valor.'" no es válido.', 'tipo' => 'error');
+//                        }
                     }else{
                         if(!method_exists($obj, $get)){
                             $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $nombre));
@@ -811,6 +838,8 @@ class FormatoController extends Controller
                 $valores['datos'] = array_merge($valores['datos'],array(
                     'gastoRemitente' => $obj->getFormato()->getGastoTotalRemitente(),
                     'gastoDestinatario' => $obj->getFormato()->getGastoTotalDestinatario(),
+                    'total' => formato.getGastoTotal,
+                    'subtotal' => formato.getGastoTotal * 1.16,
                 ));
             }elseif($nombre == 'pesoBruto'){
                 $valores['datos'] = array_merge($valores['datos'],array(
@@ -823,6 +852,10 @@ class FormatoController extends Controller
             }elseif($nombre == 'volumen'){
                 $valores['datos'] = array_merge($valores['datos'],array(
                     'totalVolumen' => $obj->getFormato()->getTotalVolumen(),
+                ));
+            }elseif($nombre == 'volumenOtro'){
+                $valores['datos'] = array_merge($valores['datos'],array(
+                    'totalVolumenOtro' => $obj->getFormato()->getTotalVolumenOtro(),
                 ));
             }elseif($nombre == 'volumenOtro'){
                 $valores['datos'] = array_merge($valores['datos'],array(
@@ -843,19 +876,21 @@ class FormatoController extends Controller
     /**
      * Displays a form to create a new Formato entity.
      *
+     * @Route("/Agregar/CPIC/a/{abreviacion}/{numero_mci}/", name="formato_abreviacion_add_cpic_ajax")
      * @Route("/Agregar/CPIC/a/MCI/{numero_mci}/", name="formato_add_cpic_ajax")
      * @Method({"POST","PUT"})
      * @Template("PuertoUDESFormatosBundle:Formato:_addCpicAjax.html.twig")
      */
-    public function addCpicAjaxAction(Request $request){
+    public function addCpicAjaxAction(Request $request, $abreviacion = 'mci'){
         $filas = $request->get('filas', 0);
         $numero = $request->get('numero', -1);
         $numero_mci = $request->get('numero_mci', null);
         $em = $this->getDoctrine()->getManager();
-        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'mci'));
+        $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $abreviacion));
         if($tipo_mci){
             $formato_mci = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_mci->getId(), 'numero' => $numero_mci));
             if($formato_mci){
+                $abreviacion = $formato_mci->getTipo()->getAbreviacion();
                 $formato = new Formato();
                 $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic'));
                 $formato->setTipo($tipo);
@@ -866,78 +901,82 @@ class FormatoController extends Controller
                 }
                 $pesoBruto = $request->get('pesoBruto', null);
                 $pesoNeto = $request->get('pesoNeto', null);
-                if($numero > 0 && $pesoBruto >= $pesoNeto){
-                    $formato->setNumero($numero);
-                    $em->persist($formato);
-                    $formato_mci->addHijo($formato);
-                    $em->persist($formato_mci);
-                    
-                    $numBultos = $request->get('numBultos', null);
-                    $volumen = $request->get('volumen', null);
-                    $clase = $request->get('clase', null);
-                    $marca = $request->get('marca', null);
-                    $descripcion = $request->get('descripcion', null);
-                    
-                    $mercancia = $em->getRepository('PuertoUDESCommonBundle:Mercancia')
-                            ->createQueryBuilder('m')
-                            ->orWhere("m.descripcion LIKE '%".$descripcion."%'")
-                            ->getQuery()->getOneOrNullResult();
-                    if(!$mercancia){
-                        $mercancia = new \PuertoUDES\CommonBundle\Entity\Mercancia();
-                        $mercancia->setDescripcion($descripcion);
+                if($pesoBruto >= $pesoNeto){
+                    if($numero > 0){
+                        $formato->setNumero($numero);
+                        $em->persist($formato);
+                        $formato_mci->addHijo($formato);
+                        $em->persist($formato_mci);
+
+                        $numBultos = $request->get('numBultos', null);
+                        $volumen = $request->get('volumen', null);
+                        $clase = $request->get('clase', null);
+                        $marca = $request->get('marca', null);
+                        $descripcion = $request->get('descripcion', null);
+
+                        $mercancia = $em->getRepository('PuertoUDESCommonBundle:Mercancia')
+                                ->createQueryBuilder('m')
+                                ->orWhere("m.descripcion LIKE '%".$descripcion."%'")
+                                ->getQuery()->getOneOrNullResult();
+                        if(!$mercancia){
+                            $mercancia = new \PuertoUDES\CommonBundle\Entity\Mercancia();
+                            $mercancia->setDescripcion($descripcion);
+                            $em->persist($mercancia);
+                        }
+
+                        $bulto = $em->getRepository('PuertoUDESCommonBundle:Bulto')
+                                ->createQueryBuilder('b')
+                                ->orWhere("b.clase LIKE '%".$clase."%'")
+                                ->orWhere("b.marca LIKE '%".$marca."%'")
+                                ->setMaxResults(1)
+                                ->getQuery()->getOneOrNullResult();
+                        if(!$bulto){
+                            $bulto = new \PuertoUDES\CommonBundle\Entity\Bulto();
+                            $bulto->setClase($clase)
+                                  ->setMarca($marca);
+                            $em->persist($bulto);
+                        }
+                        $em->flush();
+
+                        $cmf = $em->getRepository('PuertoUDESFormatosBundle:ContenedorMercanciaFormato')
+                                ->createQueryBuilder('cmf')
+                                ->andWhere("cmf.mercancia = ".$mercancia->getId())
+                                ->andWhere("cmf.formato = ".$formato->getId())
+                                ->andWhere("cmf.bulto = ".$bulto->getId())
+                                ->getQuery()->getOneOrNullResult();
+                        if(!$cmf){
+                            $cmf = new \PuertoUDES\FormatosBundle\Entity\ContenedorMercanciaFormato();
+                            $cmf->setFormato($formato)
+                                ->setMercancia($mercancia)
+                                ->setBulto($bulto)
+                                ->setPesoBruto($pesoBruto)
+                                ->setPesoNeto($pesoNeto)
+                                ->setVolumen($volumen)
+                                ->setNumBultos($numBultos);
+                            $em->persist($cmf);
+                        }
+                        $mercancia->addContenedoresFormato($cmf);
+                        $bulto->addContenedorMercanciaFormato($cmf);
                         $em->persist($mercancia);
-                    }
-                    
-                    $bulto = $em->getRepository('PuertoUDESCommonBundle:Bulto')
-                            ->createQueryBuilder('b')
-                            ->orWhere("b.clase LIKE '%".$clase."%'")
-                            ->orWhere("b.marca LIKE '%".$marca."%'")
-                            ->setMaxResults(1)
-                            ->getQuery()->getOneOrNullResult();
-                    if(!$bulto){
-                        $bulto = new \PuertoUDES\CommonBundle\Entity\Bulto();
-                        $bulto->setClase($clase)
-                              ->setMarca($marca);
                         $em->persist($bulto);
+                        $em->flush();
+                        $datos['success']['msgs']['Formato'] = array(
+                            'msg' => 'Formato de número <strong>"'.$formato->getNumero().'"</strong> con nombre <strong>"'.$formato->getNombre().'"</strong> fué creado',
+                            'tipo' => 'success'
+                        );
+                        $datos['id'] = $formato->getId();
+                        return JsonResponse::create($datos);
                     }
-                    $em->flush();
-                    
-                    $cmf = $em->getRepository('PuertoUDESFormatosBundle:ContenedorMercanciaFormato')
-                            ->createQueryBuilder('cmf')
-                            ->andWhere("cmf.mercancia = ".$mercancia->getId())
-                            ->andWhere("cmf.formato = ".$formato->getId())
-                            ->andWhere("cmf.bulto = ".$bulto->getId())
-                            ->getQuery()->getOneOrNullResult();
-                    if(!$cmf){
-                        $cmf = new \PuertoUDES\FormatosBundle\Entity\ContenedorMercanciaFormato();
-                        $cmf->setFormato($formato)
-                            ->setMercancia($mercancia)
-                            ->setBulto($bulto)
-                            ->setPesoBruto($pesoBruto)
-                            ->setPesoNeto($pesoNeto)
-                            ->setVolumen($volumen)
-                            ->setNumBultos($numBultos);
-                        $em->persist($cmf);
-                    }
-                    $mercancia->addContenedoresFormato($cmf);
-                    $bulto->addContenedorMercanciaFormato($cmf);
-                    $em->persist($mercancia);
-                    $em->persist($bulto);
-                    $em->flush();
-                    $datos['success']['msgs']['Formato'] = array(
-                        'msg' => 'Formato de número <strong>"'.$formato->getNumero().'"</strong> con nombre <strong>"'.$formato->getNombre().'"</strong> fué creado',
-                        'tipo' => 'success'
-                    );
-                    $datos['id'] = $formato->getId();
-                    return JsonResponse::create($datos);
                 }else{
-                    
+                    $datos['errors']['Formato'] = 'El peso bruto ('.$pesoBruto.') debe ser mayor que el peso neto ('.$pesoNeto.') para ser guardado.';
+                    return JsonResponse::create($datos);
                 }
             }
         }
         return array(
             'fila' => $filas,
             'numero' => $numero_mci,
+            'abreviacion' => $abreviacion,
             'formato' => $formato,
         );
     }
@@ -1253,6 +1292,7 @@ class FormatoController extends Controller
                     'url'   => 'formato__delete',
                     'data_url'=> array('id'),
                     'type'  => 'danger',
+                    'class'  => 'carga-modal',
                     'label' => '<span class="glyphicon glyphicon-trash" ></span> Borrar',
                 ),
             )

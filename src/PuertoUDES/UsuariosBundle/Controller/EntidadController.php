@@ -146,7 +146,7 @@ class EntidadController extends Controller
                         if(!$u){
                             $u = new Usuario();
                             $u->setNombre($nombre)
-                              ->setDocId($docId)
+                              ->setDocId(intval($docId))
                               ->setDireccion($direccion);
                             $em->persist($u);
                             $em->flush();
@@ -735,7 +735,7 @@ class EntidadController extends Controller
      * Displays a form to edit an existing Entidad entity.
      *
      * @Route("/{id}/edit", name="entidad__edit")
-     * @Method("GET")
+     * @Method({"GET","PUT"})
      * @Template()
      */
     public function editAction($id)

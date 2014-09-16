@@ -1175,7 +1175,8 @@
                                         {{ include('PuertoUDESFormatosBundle:Formato:_addCpicAjax.html.twig',{
                                                 fila:       loop.index0,
                                                 formato:    fh,
-                                                numero:     formato.numero
+                                                numero:     formato.numero,
+                                                abreviacion:     formato.tipo.abreviacion,
                                             }) 
                                         }}
                                         {#% for cmf in fh.contenedoresMercancias%}
