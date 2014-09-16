@@ -51,7 +51,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $observaciones;
     
     /** 
-     * @ORM\OneToMany(targetEntity="\PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="formato")
+     * @ORM\OneToMany(targetEntity="\PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="formato", cascade={"all"})
      */
     private $usuarios;
     
