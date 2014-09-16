@@ -14,7 +14,7 @@ cm          Contenedor Mercancia a mostrar
     <td colspan="2" class="text-center valor-contenedor-mercancia">
         <div class="row">
             <div>
-                <div id="opciones-contenedor-mercancia{{ fila }}" class="opciones-filas opciones-conenedor-mercancia no-quitar {{ formato.tipo.abreviacion == 'cpic'?'text-right pull-left btns-action-left':'text-left pull-right btns-action-right' }} {{ formato.id is not empty?'mas':'' }}">
+                <div id="opciones-contenedor-mercancia{{ fila }}" class="opciones-filas opciones-conenedor-mercancia no-quitar {{ formato.tipo.abreviacion == 'cpic'?'text-right pull-left btns-action-left':'text-right pull-left btns-action-left' }} {{ formato.id is not empty?'mas':'' }}">
                     {% set botons = [
                             {
                                 'class' :   'eliminar contenedor-mercancia' ~ fila ~ ' animate pull-right',

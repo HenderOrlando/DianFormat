@@ -15,7 +15,7 @@ class Objeto
     private $id;
 
     /** 
-     * @ORM\Column(type="string", length=100, nullable=true, name="nombre")
+     * @ORM\Column(type="string", length=100, nullable=true, name="nombre", unique=true)
      */
     private $nombre;
 

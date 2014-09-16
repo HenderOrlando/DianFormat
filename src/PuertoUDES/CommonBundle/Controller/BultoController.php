@@ -118,11 +118,11 @@ class BultoController extends Controller
     private function createCreateForm(Bulto $entity)
     {
         $form = $this->createForm(new BultoType(), $entity, array(
-            'action' => $this->generateUrl('bulto__create'),
+            'action' => $this->generateUrl('bulto__create', array(), true),
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Create', 'attr' => array('data-reload' => $this->generateUrl('bulto_',array(),true))));
 
         return $form;
     }
@@ -235,14 +235,15 @@ class BultoController extends Controller
     private function createEditForm(Bulto $entity)
     {
         $form = $this->createForm(new BultoType(), $entity, array(
-            'action' => $this->generateUrl('bulto__update', array('id' => $entity->getId())),
+            'action' => $this->generateUrl('bulto__update', array('id' => $entity->getId()), true),
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Update', 'attr' => array('data-reload' => $this->generateUrl('bulto_',array(),true))));
 
         return $form;
     }
+    
     /**
      * Edits an existing Bulto entity.
      *
@@ -276,6 +277,7 @@ class BultoController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
     }
+    
     /**
      * Deletes a Bulto entity.
      *
@@ -297,6 +299,12 @@ class BultoController extends Controller
 
             $em->remove($entity);
             $em->flush();
+            if($request->isXmlHttpRequest()){
+                return JsonResponse::create(array(
+                    'title' => $entity->getNombre(),
+                    'body'  => 'El bulto "'.$entity->getNombre().'" fué eliminado con éxito.',
+                ));
+            }
         }
 
         return $this->redirect($this->generateUrl('bulto_'));
@@ -314,7 +322,7 @@ class BultoController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('bulto__delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
+            ->add('submit', 'submit', array('label' => 'Delete', 'attr' => array('data-reload' => $this->generateUrl('bulto_',array(),true))))
             ->getForm()
         ;
     }

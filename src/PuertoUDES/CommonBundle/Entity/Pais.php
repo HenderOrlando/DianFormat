@@ -30,7 +30,7 @@ class Pais extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $conductores;
     
     /** 
-     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", mappedBy="tipo")
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", mappedBy="pais")
      */
     private $formatos;
     

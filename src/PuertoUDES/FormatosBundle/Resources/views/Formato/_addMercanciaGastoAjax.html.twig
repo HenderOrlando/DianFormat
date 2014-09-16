@@ -14,7 +14,7 @@ m           Mercancia a mostrar
     <td class="text-center valor-contenedor-mercancia">
         <div class="row">
             <div>
-                <div id="opciones-contenedor-mercancia{{ fila }}" class="opciones-filas opciones-conenedor-mercancia no-quitar text-left pull-right btns-action-right {{ formato.id is not empty?'mas':'' }}">
+                <div id="opciones-contenedor-mercancia{{ fila }}" class="opciones-filas opciones-conenedor-mercancia no-quitar text-right pull-left btns-action-left {{ formato.id is not empty?'mas':'' }}">
                     {% set botons = [
                             {
                                 'class' :   'eliminar contenedor-mercancia' ~ fila ~ ' animate pull-right',

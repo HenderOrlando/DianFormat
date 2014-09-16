@@ -23,7 +23,7 @@ $(document).on('ready',function(){
             e.stopPropagation();
             var este = $(this);
             $.ajax({
-                type: "POST",
+                type: "GET",
                 url: este.attr('href'),
                 dataType: "json",
                 cache: false
@@ -31,7 +31,7 @@ $(document).on('ready',function(){
                 armarModal(response);
             }).fail(function() {
                 $.ajax({
-                    type: "GET",
+                    type: "POST",
                     url: este.attr('href'),
                     dataType: "json",
                     cache: false
@@ -40,10 +40,10 @@ $(document).on('ready',function(){
                 }).fail(function() {
                     console.log( "error" );
                 }).always(function() {
-                    console.log( "complete" );
+//                    console.log( "complete" );
                 });
             }).always(function() {
-                console.log( "complete" );
+//                console.log( "complete" );
             });
     });
     function agregarXEditable(xeditable){

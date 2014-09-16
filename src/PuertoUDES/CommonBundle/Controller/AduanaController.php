@@ -378,7 +378,7 @@ class AduanaController extends Controller
             'datos_form'       =>  $data,
         );
         if($request->isXmlHttpRequest() || $request->get('ajax',false)){
-            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+            return $this->render('PuertoUDESCommonBundle:Plantilla:_menu.html.twig', $datos);
         }
         return $datos;
     }
@@ -420,10 +420,10 @@ class AduanaController extends Controller
     {
         $form = $this->createForm(new AduanaType(), $entity, array(
             'action' => $this->generateUrl('aduana__create'),
-            'method' => 'POST',
+            'method' => 'POST'
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Create', 'attr' => array('data-reload' => $this->generateUrl('aduana_',array(),true))));
 
         return $form;
     }
@@ -540,10 +540,11 @@ class AduanaController extends Controller
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Update', 'attr' => array('data-reload' => $this->generateUrl('aduana_',array(),true))));
 
         return $form;
     }
+    
     /**
      * Edits an existing Aduana entity.
      *
@@ -598,6 +599,12 @@ class AduanaController extends Controller
 
             $em->remove($entity);
             $em->flush();
+            if($request->isXmlHttpRequest()){
+                return JsonResponse::create(array(
+                    'title' => $entity->getNombre(),
+                    'body'  => 'La Aduana "'.$entity->getNombre().'" fué eliminada con éxito.',
+                ));
+            }
         }
 
         return $this->redirect($this->generateUrl('aduana_'));
@@ -615,7 +622,7 @@ class AduanaController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('aduana__delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
+            ->add('submit', 'submit', array('label' => 'Delete', 'attr' => array('data-reload' => $this->generateUrl('aduana_',array(),true))))
             ->getForm()
         ;
     }
@@ -661,14 +668,14 @@ class AduanaController extends Controller
                         'class' =>  'text-center',
                         'acciones'=>    array(
                             array(
-                                'url'   => 'moneda__edit',
+                                'url'   => 'aduana__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
                                 'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
-                                'url'   => 'moneda__delete',
+                                'url'   => 'aduana__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
                                 'class'  => 'carga-modal',

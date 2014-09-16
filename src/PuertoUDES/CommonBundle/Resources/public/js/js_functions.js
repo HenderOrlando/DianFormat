@@ -243,31 +243,55 @@ jQuery.extend({
             este.on('submit', function(e){
                 var metodo = este.find('input[name="_method"]').attr('value');
                 var data = este.serializeArray();
-                console.log(metodo)
-                if(typeof metodo === 'undefined')
+//                console.log(metodo)
+                if(typeof metodo === 'undefined'){
+                    metodo = este.attr('method');
+                }
+                if(typeof metodo === 'undefined'){
+                    metodo = este.attr('method');
+                }
+                if(/*metodo === 'PUT' || */metodo === 'DELETE'){
+                    data._method = metodo;
                     metodo = 'POST';
-//                if(metodo === 'PUT' || metodo === 'DELETE'){
-//                    data._method = metodo;
-//                    metodo = 'POST';
-//                }
+                }
+                console.log(data)
                 e.preventDefault();
                 e.stopPropagation();
                 $.ajax({
                     type: metodo,
                     url: este.attr('action'),
-                    data: data,
+                    data: este.serialize(),
                     dataType: "json",
+                    processData: false,
                     cache: false
                 }).done(function( response ) {
                     $('#mTitle').html(response.title);
                     $('#mBody').html(response.body);
-                    if(response.datos)
+                    if(response.datos){
                         validaDataName(response.datos);
+                    }
                     armarModal(response);
+                    setTimeout(function(){
+                        var reload = este.find(':submit').attr('data-reload');
+                        if(reload){
+                            $.ajax({
+                                type: 'GET',
+                                url:  reload,
+                                dataType: "HTML",
+                                cache: false
+                            }).done(function( response ) {
+                                $('#body').html(response);
+                            }).fail(function() {
+                                console.log( "error RELOAD" );
+                            }).always(function() {
+    //                            console.log( "complete" );
+                            });
+                        }
+                    }, 500)
                 }).fail(function() {
                     console.log( "error formAjax" );
                 }).always(function() {
-                    console.log( "complete" );
+//                    console.log( "complete" );
                 });
             });
         });
@@ -624,7 +648,7 @@ jQuery.extend({
             if($('#mBody').find('btn').length > 0 || $('#mBody').find('input').length > 0){
                 $('#mBody').find('.btn, input:button, input:submit, input:reset, button').each(function(){
                     var este = $(this), btn = $('<div></div>').attr('class', este.attr('class')), action = 'guardar';
-                    console.log(este.text())
+//                    console.log(este.text())
                     if(este.text().toLowerCase().indexOf('delete') >= 0){
                         btn.text('Borrar');
                         action = 'borrar';

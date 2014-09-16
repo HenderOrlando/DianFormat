@@ -17,9 +17,14 @@ class Bulto
     private $id;
     
     /** 
-     * @ORM\Column(type="string", length=50, nullable=false, name="nombre")
+     * @ORM\Column(type="string", length=50, nullable=false, name="nombre", unique=true)
      */
     private $nombre;
+    
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=false, name="canonical", unique=true)
+     */
+    private $canonical;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
@@ -40,6 +45,7 @@ class Bulto
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\ContenedorMercanciaFormato", mappedBy="bulto")
      */
     private $contenedorMercanciaFormatos;
+    
     /**
      * Constructor
      */
@@ -84,6 +90,30 @@ class Bulto
     }
     
     
+    /**
+     * Set canonical
+     *
+     * @param string $canonical
+     * @return Objeto
+     */
+    public function setCanonical($canonical)
+    {
+        $this->canonical = $canonical;
+        $this->setNombre(ucfirst($canonical));
+    
+        return $this;
+    }
+
+    /**
+     * Get canonical
+     *
+     * @return string 
+     */
+    public function getCanonical()
+    {
+        return $this->canonical;
+    }
+        
     /**
      * Set nombre
      *
@@ -189,6 +219,16 @@ class Bulto
     public function getContenedorMercanciaFormatos()
     {
         return $this->contenedorMercanciaFormatos;
+    }
+    
+    /**/
+    protected function normaliza ($cadena){
+        $originales = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿŔŕ';
+        $modificadas = 'aaaaaaaceeeeiiiidnoooooouuuuybsaaaaaaaceeeeiiiidnoooooouuuyybyRr';
+        $cadena = utf8_decode($cadena);
+        $cadena = strtr($cadena, utf8_decode($originales), $modificadas);
+        $cadena = strtolower($cadena);
+        return str_replace(' ', '-', utf8_encode($cadena));
     }
     
     public function json($json = true, $contenedores = false){

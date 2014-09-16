@@ -17,7 +17,7 @@ class Contenedor
     private $id;
 
     /** 
-     * @ORM\Column(type="string", length=11, nullable=false, name="num")
+     * @ORM\Column(type="string", length=11, nullable=false, name="num", unique=true)
      */
     private $numero;
 

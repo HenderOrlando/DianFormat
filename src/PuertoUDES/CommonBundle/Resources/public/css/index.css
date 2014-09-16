@@ -292,12 +292,12 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
     position: absolute;
     right: 0;
     top: -11px;
-    display: none;
+    /*display: none;*///Usado para que aparezca cuando hace hover en el padre
 }
 .row .btns-action-left{
     position: absolute;
     z-index: 999;
-    display: none;
+    /*display: none;*///Usado para que aparezca cuando hace hover en el padre
 }
 .btns-action-left.no-quitar,
 .btns-action-right.no-quitar{
