@@ -25,7 +25,7 @@
                 {% block navbar -%}
                 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
                   <!-- Brand and toggle get grouped for better mobile display -->
-                    <div class="navbar-header">
+                    <div class="navbar-header" style=" z-index: 9;}; ">
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                           <span class="sr-only">Toggle navigation</span>
                           <span class="icon-bar"></span>
@@ -136,17 +136,18 @@
                                         </a>
                                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                             <li>
-                                                <a href="{{ path('rol_',{'id':app.user.id}) }}">Roles de Usuarios</a>
+                                                <a href="{{ path('bulto_',{'id':app.user.id}) }}">Bulto</a>
                                                 <a href="{{ path('pais_',{'id':app.user.id}) }}">Paises</a>
                                                 <a href="{{ path('lugar_',{'id':app.user.id}) }}">Lugares</a>
-                                                <a href="{{ path('bulto_',{'id':app.user.id}) }}">Bulto</a>
                                                 <a href="{{ path('moneda_',{'id':app.user.id}) }}">Monedas</a>
                                                 <a href="{{ path('aduana_',{'id':app.user.id}) }}">Aduanas</a>
-                                                <a href="{{ path('permisoPresentaServicio_',{'id':app.user.id}) }}">Permisos Presentación Servicio</a>
-                                                <a href="{{ path('tipo__tiposFormatos',{'id':app.user.id}) }}">Tipos de Formatos</a>
-                                                <a href="{{ path('tipo__licenciasConductor',{'id':app.user.id}) }}">Clases de Licencias de Conducción</a>
-                                                <a href="{{ path('tipo__nivelesAduana',{'id':app.user.id}) }}">Niveles de Aduanas</a>
                                                 <a href="{{ path('incoterm_',{'id':app.user.id}) }}">Incoterms</a>
+                                                <a href="{{ path('rol_',{'id':app.user.id}) }}">Roles de Usuarios</a>
+                                                <a href="{{ path('tipo__tiposFormatos',{'id':app.user.id}) }}">Tipos de Formatos</a>
+                                                <a href="{{ path('tipo__nivelesAduana',{'id':app.user.id}) }}">Niveles de Aduanas</a>
+                                                <a href="{{ path('unidad_',{'id':app.user.id}) }}">Unidades de Medida</a>
+                                                <a href="{{ path('permisoPresentaServicio_',{'id':app.user.id}) }}">Permisos Presentación Servicio</a>
+                                                <a href="{{ path('tipo__licenciasConductor',{'id':app.user.id}) }}">Clases de Licencias de Conducción</a>
                                             </li>
                                         </ul>
                                     </li>

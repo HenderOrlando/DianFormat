@@ -35,7 +35,7 @@ Ejemplo:
 {% set size_button  = '' %}
 {% set class_button = class is defined? class: '' %}
 {% set title_button = 'guardar' in class? 'Guardar': 'reset' in class? 'Reset': 'eliminar' in class? 'Eliminar': 'eye' in label? 'Ver': 'plus' in label? 'Agregar': 'span' not in label? label:'' %}
-{% set label_button = label is defined? label: '' %}
+{% set label_button = label is defined? ('plus' in label? 'Agregar':label): '' %}
 {% set view_button  = view  is defined?('block' in view|lower? btn ~ '-' ~ view|lower:'disabled="disabled"'): '' %}
 
     {% if sizing is defined and sizing is not empty %}

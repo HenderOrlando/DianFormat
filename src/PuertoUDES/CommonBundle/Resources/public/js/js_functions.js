@@ -260,9 +260,9 @@ jQuery.extend({
                 $.ajax({
                     type: metodo,
                     url: este.attr('action'),
-                    data: este.serialize(),
+                    data: data,
                     dataType: "json",
-                    processData: false,
+//                    processData: false,
                     cache: false
                 }).done(function( response ) {
                     $('#mTitle').html(response.title);
@@ -277,7 +277,6 @@ jQuery.extend({
                             $.ajax({
                                 type: 'GET',
                                 url:  reload,
-                                dataType: "HTML",
                                 cache: false
                             }).done(function( response ) {
                                 $('#body').html(response);
@@ -366,6 +365,7 @@ jQuery.extend({
                 if(response.status == 'error') 
                     return response.msg; //msg will be shown in editable form
                 var msgs = new Array(), ok = true;
+                
                 if(typeof response.value !== 'undefined'){
                     $(este).text(response.value);
                 }
@@ -637,7 +637,9 @@ jQuery.extend({
     function getClase(clase){
         return clase.replace(/btn|-primary|-default|xeditable|editable-open|editable-click|editable|agregar|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|\sout|out$|pull-right|pull-left|\s/g, '')
     }
-    
+    /*
+     * 
+     */
     function armarModal(response){
         cleanModal();
         if(typeof response.body !== 'undefined' && typeof response.title !== 'undefined'){

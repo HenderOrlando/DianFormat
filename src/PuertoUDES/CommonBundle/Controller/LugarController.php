@@ -52,7 +52,7 @@ class LugarController extends Controller
      * Lists all Lugar entities.
      *
      * @Route("/", name="lugar_")
-     * @Method({"GET"})
+     * @Method({"GET","PATCH"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexAction(Request $request, $config = null)
@@ -105,7 +105,7 @@ class LugarController extends Controller
             'datos_form'       =>  $data,
         );
         if($request->isXmlHttpRequest() || $request->get('ajax',false)){
-            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+            return $this->render('PuertoUDESCommonBundle:Plantilla:_menu.html.twig', $datos);
         }
         return $datos;
     }
@@ -150,7 +150,7 @@ class LugarController extends Controller
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Create', 'attr' => array('data-reload' => $this->generateUrl('lugar_',array(),true))));
 
         return $form;
     }
@@ -174,7 +174,7 @@ class LugarController extends Controller
         );
         if($this->getRequest()->isXmlHttpRequest()){
             return JsonResponse::create(array(
-                'title' => 'Agregar Nueva Mercancía',
+                'title' => 'Agregar Nuevo Lugar',
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -267,7 +267,7 @@ class LugarController extends Controller
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Update', 'attr' => array('data-reload' => $this->generateUrl('lugar_',array(),true))));
 
         return $form;
     }
@@ -325,6 +325,12 @@ class LugarController extends Controller
 
             $em->remove($entity);
             $em->flush();
+            if($request->isXmlHttpRequest()){
+                return JsonResponse::create(array(
+                    'title' => "Lugar Agregado",
+                    'body'  => 'El lugar fué eliminado',
+                ));
+            }
         }
 
         return $this->redirect($this->generateUrl('lugar_'));
@@ -342,7 +348,7 @@ class LugarController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('lugar__delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
+            ->add('submit', 'submit', array('label' => 'Delete', 'attr' => array('data-reload' => $this->generateUrl('lugar_',array(),true))))
             ->getForm()
         ;
     }

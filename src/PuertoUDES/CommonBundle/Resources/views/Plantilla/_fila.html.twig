@@ -21,8 +21,8 @@
 
 {# Filtros por columna #}
 {% if filtros is defined and filtros is not empty %}
-{{ form_start(filtros) }}
-        <tr {{ (head|first).class is defined and (head|first).class is not empty?'class=' ~ (head|first).class ~ '':'' }}>
+    <tr {{ (head|first).class is defined and (head|first).class is not empty?'class=' ~ (head|first).class ~ '':'' }}>
+        {{ form_start(filtros) }}
             {% for col in (head|first).col %}
                 <td {{ col.class is defined and col.class is not empty?'class=' ~ col.class:'' }} {{ col.rows is defined and col.rows is not empty?'rowspan=' ~ col.rows:''}} {{ col.cols is defined and col.cols is not empty?'colspan=' ~ col.cols:''}}>
                     {% if 'accion' in col.dato|lower %}
@@ -41,8 +41,8 @@
                     {% endif %}
                 </td>
             {% endfor %}
-        </tr>
-{{ form_end(filtros) }}
+        {{ form_end(filtros) }}
+    </tr>
 {# Filtros por columna #}
         
 {# TFOOT #}

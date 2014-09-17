@@ -7,6 +7,10 @@
 <a class="btn btn-primary" href="{{- app.request.headers.get('referer') -}}">
     Volver
 </a>
+
+<a class="btn btn-success pull-right" href="javascript:window.print();">
+    Imprimir
+</a>
         {#
         Valida que únicamente sean los formatos construidos. MCI, CPIC y DTAI
         {% if 'mci' in entity.tipo.abreviacion or 'cpic' in entity.tipo.abreviacion or 'dtai' in entity.tipo.abreviacion%}

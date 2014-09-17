@@ -35,9 +35,6 @@ class ContenedorMercanciaFormatoController extends Controller
         $name = $request->get('name','');
         $em = $this->getDoctrine()->getManager();
         switch(strtolower($name)){
-            case 'unidad':
-                $entities = $em->getRepository('PuertoUDESCommonBundle:Bulto')->findUnidades();
-                break;
             case 'marca':
             case 'clase':
                 $entities = $em->getRepository('PuertoUDESCommonBundle:Bulto')->findAll();

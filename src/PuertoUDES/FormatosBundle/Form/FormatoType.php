@@ -38,6 +38,8 @@ class FormatoType extends AbstractType
                 'label' => ' ',
                 'attr'  =>  array('class' => 'hide')
             ));
+        }else{
+            
         }
         $builder->add('tipo', 'entity', $info);
     }

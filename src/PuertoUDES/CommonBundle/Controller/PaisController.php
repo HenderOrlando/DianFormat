@@ -51,7 +51,7 @@ class PaisController extends Controller
      * Lists all Pais entities.
      *
      * @Route("/", name="pais_")
-     * @Method({"GET"})
+     * @Method({"GET","PATCH"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexAction(Request $request, $config = null)
@@ -101,10 +101,10 @@ class PaisController extends Controller
             'title'         =>  $title,
             'head'          =>  $head,
             'botones'       =>  $botones,
-            'datos_form'       =>  $data,
+            'datos_form'    =>  $data,
         );
         if($request->isXmlHttpRequest() || $request->get('ajax',false)){
-            return $this->render('FormatEasyCommonBundle:Pais:_menu.html.twig', $datos);
+            return $this->render('PuertoUDESCommonBundle:Plantilla:_menu.html.twig', $datos);
         }
         return $datos;
     }
@@ -149,7 +149,7 @@ class PaisController extends Controller
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Create', 'attr' => array('data-reload' => $this->generateUrl('pais_',array(),true))));
 
         return $form;
     }
@@ -173,7 +173,7 @@ class PaisController extends Controller
         );
         if($this->getRequest()->isXmlHttpRequest()){
             return JsonResponse::create(array(
-                'title' => 'Agregar Nueva Mercancía',
+                'title' => 'Agregar Nuevo País',
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -243,7 +243,7 @@ class PaisController extends Controller
         );
         if($this->getRequest()->isXmlHttpRequest()){
             //$title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
-			$title = 'País';
+            $title = 'País';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
@@ -266,7 +266,7 @@ class PaisController extends Controller
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Update', 'attr' => array('data-reload' => $this->generateUrl('pais_',array(),true))));
 
         return $form;
     }
@@ -324,6 +324,13 @@ class PaisController extends Controller
 
             $em->remove($entity);
             $em->flush();
+            
+            if($request->isXmlHttpRequest()){
+                return JsonResponse::create(array(
+                    'title' => "País Eliminado",
+                    'body'  => 'El país fué eliminado',
+                ));
+            }
         }
 
         return $this->redirect($this->generateUrl('pais_'));
@@ -341,7 +348,7 @@ class PaisController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('pais__delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
+            ->add('submit', 'submit', array('label' => 'Delete', 'attr' => array('data-reload' => $this->generateUrl('pais_',array(),true))))
             ->getForm()
         ;
     }

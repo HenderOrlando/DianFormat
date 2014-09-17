@@ -17,6 +17,7 @@ class MercanciaRepository extends EntityRepository
         $q = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a')
+            ->orderBy('a.descripcion')
             ->from('PuertoUDESCommonBundle:Mercancia', 'a');
         if(is_bool($querybuilder) && $querybuilder)
             $rta = $q;

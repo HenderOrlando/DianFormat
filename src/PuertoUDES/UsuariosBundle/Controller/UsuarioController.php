@@ -81,7 +81,7 @@ class UsuarioController extends Controller
             'datos_form'       =>  $data,
         );
         if($request->isXmlHttpRequest() || $request->get('ajax',false)){
-            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+            return $this->render('PuertoUDESCommonBundle:Plantilla:_menu.html.twig', $datos);
         }
         return $datos;
     }
@@ -90,6 +90,7 @@ class UsuarioController extends Controller
      * Creates a new Usuario entity.
      *
      * @Route("/estudiantes/", name="usuario__estudiantes")
+     * @Route("/estudiantes/", name="usuario__estudiante")
      * @Method({"GET"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
@@ -107,6 +108,7 @@ class UsuarioController extends Controller
      * Creates a new Usuario entity.
      *
      * @Route("/docentes/", name="usuario__docentes")
+     * @Route("/docentes/", name="usuario__docente")
      * @Method({"GET"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
@@ -162,11 +164,19 @@ class UsuarioController extends Controller
 
             return $this->redirect($this->generateUrl('usuario__show', array('id' => $entity->getId())));
         }
-
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+        $template = 'new';
+        $parametros = array(
+            'entity'    => $entity,
+            'form'      => $form->createView(),
         );
+        if($request->isXmlHttpRequest()){
+            return JsonResponse::create(array(
+                'title' => 'Agregar Nuevos '.$rol,
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
+            ));
+        }
+
+        return $parametros;
     }
 
     /**
@@ -178,25 +188,15 @@ class UsuarioController extends Controller
     */
     private function createCreateForm(Usuario $entity, $id = -1, $rol = null)
     {
-        $name_rol = $rol;
-        switch ($rol) {
-            case 'Docentes':
-                $rol = 'docente';
-                break;
-            case 'Estudiantes':
-                $rol = 'estudiante';
-                break;
-            default:
-                $rol = 'usuario';
-                break;
-        }
         if($rol !== 'usuario'){
             $em = $this->getDoctrine()->getManager();
             $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
-                ->andWhere("r.canonical LIKE '%".$rol."%' OR r.nombre LIKE '%".$name_rol."%'")
+                ->andWhere("r.canonical LIKE '%".$rol."%' OR r.nombre LIKE '%".$rol."%'")
                 ->andWhere("r.aplicableA LIKE '%Usuario%'")
                 ->getQuery()->getOneOrNullResult();
-            $rolName = $rol->getNombre();
+            if($rol){
+                $rolName = $rol->getCanonical();
+            }
         }else{
             $rolName = $rol;
             $rol = null;
@@ -206,7 +206,7 @@ class UsuarioController extends Controller
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'create', 'attr' => array('data-reload' => $this->generateUrl('usuario_'.($rolName !== 'usuario'?'_'.$rol->getCanonical():''),array(),true))));
 
         return $form;
     }
@@ -216,11 +216,19 @@ class UsuarioController extends Controller
      *
      * @Route("/new/{id}/rol/{rol}", name="usuario__new_", defaults={"id":"-1"})
      * @Route("/new/{id}/", name="usuario__new", defaults={"id":"-1"})
-     * @Method("GET")
+     * @Method({"GET","POST"})
      * @Template()
      */
-    public function newAction($id, $rol = 'Usuarios')
+    public function newAction($id, $rol = 'usuario')
     {
+        switch($rol){
+            case 'Estudiantes':
+                $rol = 'estudiante';
+                break;
+            case 'Docentes':
+                $rol = 'docente';
+                break;
+        }
         $entity = new Usuario();
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository('PuertoUDESFosUsuarioBundle:FosUser')->find($id);
@@ -237,7 +245,7 @@ class UsuarioController extends Controller
         );
         if($this->getRequest()->isXmlHttpRequest()){
             return JsonResponse::create(array(
-                'title' => 'Agregar Nuevos '.$rol,
+                'title' => 'Agregar Nuevo '.ucfirst($rol),
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -282,10 +290,11 @@ class UsuarioController extends Controller
      * Displays a form to edit an existing Usuario entity.
      *
      * @Route("/{id}/edit", name="usuario__edit")
+     * @Route("/{id}/edit/rol/{rolName}", name="usuario__edit_rolname")
      * @Method("GET")
      * @Template()
      */
-    public function editAction($id)
+    public function editAction($id, $rolName = 'usuario')
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -303,8 +312,8 @@ class UsuarioController extends Controller
 //                $entity = $entity->getUsuario();
 //            }
         }
-
-        $editForm = $this->createEditForm($entity);
+        
+        $editForm = $this->createEditForm($entity, $rolName);
         $deleteForm = $this->createDeleteForm($id);
 
         $parametros = array(
@@ -329,8 +338,14 @@ class UsuarioController extends Controller
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createEditForm(Usuario $entity)
+    private function createEditForm(Usuario $entity, $rolName = 'usuario')
     {
+        $url = '';
+        $datos = array('id' => $entity->getId());
+        if($rolName !== 'usuario'){
+            $datos['rolName'] = $rolName;
+            $url = '_rolname';
+        }
         if($entity->hasRol('Estudiante')){
             $rol = 'Estudiante';
             $em = $this->getDoctrine()->getManager();
@@ -342,11 +357,11 @@ class UsuarioController extends Controller
             $rol = null;
         }
         $form = $this->createForm(new UsuarioType($this->getUser(), $rol), $entity, array(
-            'action' => $this->generateUrl('usuario__update', array('id' => $entity->getId())),
+            'action' => $this->generateUrl('usuario__update'.$url, $datos),
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Update', 'attr' => array('data-reload' => $this->generateUrl('usuario_'.($rolName !== 'usuario'?'_'.$rolName:''),array(),true))));
 
         return $form;
     }
@@ -354,27 +369,35 @@ class UsuarioController extends Controller
      * Edits an existing Usuario entity.
      *
      * @Route("/{id}", name="usuario__update")
+     * @Route("/{id}/rol/{rolName}", name="usuario__update_rolname")
      * @Method("PUT")
      * @Template("PuertoUDESUsuariosBundle:Usuario:edit.html.twig")
      */
-    public function updateAction(Request $request, $id)
+    public function updateAction(Request $request, $id, $rolName = 'usuario')
     {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->find($id);
-
+        
+        $url = '';
+        $datos = array('id' => $entity->getId());
+        if($rolName !== 'usuario'){
+            $datos['rolName'] = $rolName;
+            $url = '_rolname';
+        }
+        
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Usuario entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($entity);
+        $deleteForm = $this->createDeleteForm($id, $rolName);
+        $editForm = $this->createEditForm($entity, $rolName);
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('usuario__edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('usuario__edit'.$url, $datos));
         }
 
         return array(
@@ -387,54 +410,63 @@ class UsuarioController extends Controller
      * Deletes a Usuario entity.
      *
      * @Route("/{id}", name="usuario__delete")
+     * @Route("/{id}/{rolName}", name="usuario__delete_rolname")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
     {
-        $form = $this->createDeleteForm($id);
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->find($id);
+        
+        $rol = $entity->getRoles()->first();
+        $rolName = $rol->getCanonical();
+        
+        $form = $this->createDeleteForm($id, $rolName);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('PuertoUDESUsuariosBundle:Usuario')->find($id);
             $fos = $em->getRepository('PuertoUDESFosUsuarioBundle:FosUser')->findOneBy(array('usuario' => $entity));
-            $msg = "El usuario ".$entity->getNombre()." fué borrado.";
-            $titulo = "Borrado";
+//            $msg = "El usuario ".$entity->getNombre()." fué borrado.";
+            $msg = "El usuario ".$entity->getNombre()." ha sido inhabilitado.";
+            $titulo = "Inhabilitado";
             if (!$entity) {
                 $msg = 'El usuario no ha sido encontrado';
-            }
-            if($entity->canDelete()){
-                if($entity){
-                    $em->remove($entity);
-                }
-                if($fos){
-                    $em->remove($fos);
-                }
-                $em->flush();
             }else{
-                $titulo = 'Inhabilitado';
-                if($fos){
-                    $fos->setEnabled(false);
-                }
-                $msg = "El usuario ".$entity->getNombre()." no puede borrarse. Es posible que tenga formatos asociados a él. En su lugar se inhabilitó, por tanto no podrá iniciar sesión.";
-                $msgs = $entity->whyCanDelete();
-                if(!empty($msg)){
-                    $msg .= '<ul>';
-                    foreach($msgs as $msg_){
-                        $msg .= '<li>'.$msg_.'</li>';
+                $fos->setEnabled(false);
+                if($entity->canDelete()){
+    //                if($entity){
+    //                    $em->remove($entity);
+    //                }
+    //                if($fos){
+    //                    $em->remove($fos);
+    //                }
+                    $em->flush();
+                }else{
+                    $msg = "Sitio(s) donde puede encontrarse:";
+    //                $titulo = 'Inhabilitado';
+    //                if($fos){
+    //                    $fos->setEnabled(false);
+    //                }
+    //                $msg = "El usuario ".$entity->getNombre()." no puede borrarse. Es posible que tenga formatos asociados a él. En su lugar se inhabilitó, por tanto no podrá iniciar sesión.";
+                    $msgs = $entity->whyCanDelete();
+                    if(!empty($msg)){
+                        $msg .= '<ul>';
+                        foreach($msgs as $msg_){
+                            $msg .= '<li>'.$msg_.'</li>';
+                        }
+                        $msg .= '</ul>';
                     }
-                    $msg .= '</ul>';
+                }
+                if($request->isXmlHttpRequest()){
+                    return JsonResponse::create(array(
+                        'title' => "Usuario ".$titulo,
+                        'body'  => $msg,
+                    ));
                 }
             }
             
         }
         
-        if($request->isXmlHttpRequest()){
-            return JsonResponse::create(array(
-                'title' => "Usuario ".$titulo,
-                'body'  => $msg,
-            ));
-        }
 
         return $this->redirect($this->generateUrl('usuario_'));
     }
@@ -446,12 +478,12 @@ class UsuarioController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createDeleteForm($id)
+    private function createDeleteForm($id, $rolName = 'usuario')
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('usuario__delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
+            ->add('submit', 'submit', array('label' => 'Delete', 'attr' => array('data-reload' => $this->generateUrl('usuario_'.($rolName !== 'usuario'?'_'.$rolName:''),array(),true))))
             ->getForm()
         ;
     }

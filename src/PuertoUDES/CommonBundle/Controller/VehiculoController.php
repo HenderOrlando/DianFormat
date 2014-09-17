@@ -162,7 +162,7 @@ class VehiculoController extends Controller
      * Lists all Vehiculo entities.
      *
      * @Route("/", name="vehiculo_")
-     * @Method({"GET"})
+     * @Method({"GET","PATCH"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexAction(Request $request, $config = null)

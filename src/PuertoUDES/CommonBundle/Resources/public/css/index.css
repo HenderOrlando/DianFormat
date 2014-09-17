@@ -290,7 +290,8 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
 }
  .btns-action-right{
     position: absolute;
-    right: 0;
+    /*right: 0;*/
+    right: -15px;
     top: -11px;
     /*display: none;*///Usado para que aparezca cuando hace hover en el padre
 }
@@ -313,7 +314,8 @@ p .editable-container.editable-inline .control-group.form-group .editable-input 
     right: -30px;
 }
 .btns-action-left.fuera{
-    left: -20px;
+    /*left: -20px;*/
+    left: -50px;
 }
 .btns-action-left.fuera.top{
     top: -10px;

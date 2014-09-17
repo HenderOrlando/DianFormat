@@ -8,98 +8,58 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use PuertoUDES\CommonBundle\Controller\IndexController;
-use PuertoUDES\CommonBundle\Entity\Contenedor;
-use PuertoUDES\CommonBundle\Form\ContenedorType;
+use PuertoUDES\CommonBundle\Entity\Unidad;
+use PuertoUDES\CommonBundle\Form\UnidadType;
 
 /**
- * Contenedor controller.
+ * Unidad controller.
  *
- * @Route("/Contenedor")
+ * @Route("/Unidad")
  */
-class ContenedorController extends Controller
+class UnidadController extends Controller
 {
 
     /**
-     * Displays a form to create a new Entidad entity.
+     * Displays a form to create a new Formato entity.
      *
-     * @Route("/Guardar/{tipo}/{numero_mci}/", name="contenedor_save_ajax")
-     * @Method({"POST","PUT"})
+     * @Route("/Lista/para/{name}/", name="list_typeahead_unidades_")
      * @Template()
      */
-    public function saveAjaxAction(Request $request){
-        $capacidad = $request->get('capacidad',NULL);
-        $numeroContenedor = $request->get('numero',NULL);
-        $numero = $request->get('numero_mci',NULL);
-        $em = $this->getDoctrine()->getManager();
-        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('numero' => $numero));
-        $datos = array(
-            'errors' => array(),
-        );
-        if($formato && is_numeric($capacidad)){
-            $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower('MCI')));
-            if($tipo->getId() === $formato->getTipo()->getId()){
-                $contenedor = $this->getRepositorio()->findOneBy(array('numero' => $numeroContenedor));
-                if(!$contenedor){
-                    $contenedor = new Contenedor();
-                    $contenedor
-                            ->setNumero($numeroContenedor)
-                            ->setCapacidad($capacidad)
-                            ->setSigla($numeroContenedor);
-                    $em->persist($contenedor);
-                    $em->flush();
-                }
-                $cmfs = $em->getRepository('PuertoUDESFormatosBundle:ContenedorMercanciaFormato')
-                    ->createQueryBuilder('cmf')
-                    ->join('cmf.formato', 'f')
-                    ->andWhere('f.padre = '.$formato->getId())
-                    ->getQuery()->execute();
-                if(empty($cmfs)){
-                    $cmf = new \PuertoUDES\FormatosBundle\Entity\ContenedorMercanciaFormato();
-                    $cmf
-                        ->setContenedor($contenedor)
-                        ->setFormato($formato);
-                    $em->persist($cmf);
-                    $formato->addContenedoresMercancia($cmf);
-                    $contenedor->addMercanciasFormato($cmf);
-                    $em->persist($formato);
-                }
-                foreach($cmfs as $cmf){
-                    $cmf->setContenedor($contenedor);
-                    $em->persist($cmf);
-                }
-                $em->flush();
-                $datos['id'] = $contenedor->getId();
-                $datos['valores'] = $contenedor->json(false);
-                $datos['success']['msgs']['Contenedor'] = array(
-                    'msg' => 'Contenedor de número <strong>"'.$contenedor->getNumero().'"</strong> fué agregado',
-                    'tipo' => 'success'
-                );
-            }else{
-                $datos['errors']['Unidad de Carga'] = 'Datos inválidos.';
-            }
-        }else{
-            if(!is_string($aniof) || strlen($aniof) != 4){
-                $datos['errors']['Unidad de Carga'] = 'El año de fabricación de la Unidad de Carga debe ser de 4 dígitos.';
-            }else
-                $datos['errors']['Unidad de Carga'] = 'El Formato "'.$tipo.'" no existe.';
+    public function listTypeaheadAction(Request $request){
+        $list = array();
+        $entities = $this->getRepositorio()->findAll();
+        $name = $request->get('name','');
+        $propertyPath = new PropertyAccessor();
+        foreach($entities as $unidad){
+            $value = $propertyPath->getValue($unidad,$name);
+            if(is_null($value))
+                $value = '';
+            elseif(is_object($value))
+                $value = $value->__toString();
+            $list[] = array(
+                'value' =>  $value,
+                'tokens'=>  $unidad->getTokens(),
+                'datos' =>  $unidad->json(false)
+            );
         }
-        return JsonResponse::create($datos);
+        return JsonResponse::create($list);
     }
     
     /**
-     * Lists all Contenedor entities.
+     * Lists all Unidad entities.
      *
-     * @Route("/", name="contenedor_")
+     * @Route("/", name="unidad_")
      * @Method({"GET","PATCH"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexAction(Request $request, $config = null)
     {
-        $title = 'Contenedores';
-        $entity = 'Contenedor';
+        $title = 'Unidades';
+        $entity = 'Unidad';
         $bundle = 'Common';
-        $route = 'contenedor_';
+        $route = 'unidad_';
         $limit = 5;
         $utils = $this->getUtils();
         if(is_null($config)){
@@ -130,7 +90,7 @@ class ContenedorController extends Controller
 //        $paginacion['form_filter'] = $form;
         $botones = array(
             array(
-                'url'   => $this->generateUrl('contenedor__new'),
+                'url'   => $this->generateUrl('unidad__new'),
                 'type'  => 'primary',
                 'class'  => 'carga-modal',
                 'label' => '<span class="glyphicon glyphicon-plus" ></span> Agregar',
@@ -141,23 +101,23 @@ class ContenedorController extends Controller
             'title'         =>  $title,
             'head'          =>  $head,
             'botones'       =>  $botones,
-            'datos_form'       =>  $data,
+            'datos_form'    =>  $data,
         );
         if($request->isXmlHttpRequest() || $request->get('ajax',false)){
-            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+            return $this->render('PuertoUDESCommonBundle:Plantilla:_menu.html.twig', $datos);
         }
         return $datos;
     }
     /**
-     * Creates a new Contenedor entity.
+     * Creates a new Unidad entity.
      *
-     * @Route("/", name="contenedor__create")
+     * @Route("/", name="unidad__create")
      * @Method("POST")
-     * @Template("PuertoUDESCommonBundle:Contenedor:new.html.twig")
+     * @Template("PuertoUDESCommonBundle:Unidad:new.html.twig")
      */
     public function createAction(Request $request)
     {
-        $entity = new Contenedor();
+        $entity = new Unidad();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
@@ -166,7 +126,7 @@ class ContenedorController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('contenedor__show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('unidad__show', array('id' => $entity->getId())));
         }
 
         return array(
@@ -176,34 +136,34 @@ class ContenedorController extends Controller
     }
 
     /**
-    * Creates a form to create a Contenedor entity.
+    * Creates a form to create a Unidad entity.
     *
-    * @param Contenedor $entity The entity
+    * @param Unidad $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createCreateForm(Contenedor $entity)
+    private function createCreateForm(Unidad $entity)
     {
-        $form = $this->createForm(new ContenedorType(), $entity, array(
-            'action' => $this->generateUrl('contenedor__create'),
+        $form = $this->createForm(new UnidadType(), $entity, array(
+            'action' => $this->generateUrl('unidad__create'),
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Create', 'attr' => array('data-reload' => $this->generateUrl('unidad_',array(),true))));
 
         return $form;
     }
 
     /**
-     * Displays a form to create a new Contenedor entity.
+     * Displays a form to create a new Unidad entity.
      *
-     * @Route("/new", name="contenedor__new")
+     * @Route("/new", name="unidad__new")
      * @Method("GET")
      * @Template()
      */
     public function newAction()
     {
-        $entity = new Contenedor();
+        $entity = new Unidad();
         $form   = $this->createCreateForm($entity);
 
         $template = 'new';
@@ -213,7 +173,7 @@ class ContenedorController extends Controller
         );
         if($this->getRequest()->isXmlHttpRequest()){
             return JsonResponse::create(array(
-                'title' => 'Agregar Nuevo Contenedor',
+                'title' => 'Agregar Nueva Unidad',
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
             ));
         }
@@ -221,9 +181,9 @@ class ContenedorController extends Controller
     }
 
     /**
-     * Finds and displays a Contenedor entity.
+     * Finds and displays a Unidad entity.
      *
-     * @Route("/{id}", name="contenedor__show")
+     * @Route("/{id}", name="unidad__show")
      * @Method("GET")
      * @Template()
      */
@@ -231,10 +191,10 @@ class ContenedorController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('PuertoUDESCommonBundle:Contenedor')->find($id);
+        $entity = $em->getRepository('PuertoUDESCommonBundle:Unidad')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Contenedor entity.');
+            throw $this->createNotFoundException('Unable to find Unidad entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -245,20 +205,20 @@ class ContenedorController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            //$title = empty($entity->getNumero())?$entity->getSigla():$entity->getNumero();
-			$title = 'Contenedor';
+            //$title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+			$title = 'Unidad';
             return JsonResponse::create(array(
                 'title' => $title,
-                'body'  => $this->renderView('PuertoUDESCommonBundle:Contenedor:_'.$template.'.html.twig', $parametros),
+                'body'  => $this->renderView('PuertoUDESCommonBundle:Unidad:_'.$template.'.html.twig', $parametros),
             ));
         }
         return $parametros;
     }
 
     /**
-     * Displays a form to edit an existing Contenedor entity.
+     * Displays a form to edit an existing Unidad entity.
      *
-     * @Route("/{id}/edit", name="contenedor__edit")
+     * @Route("/{id}/edit", name="unidad__edit")
      * @Method("GET")
      * @Template()
      */
@@ -266,10 +226,10 @@ class ContenedorController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('PuertoUDESCommonBundle:Contenedor')->find($id);
+        $entity = $em->getRepository('PuertoUDESCommonBundle:Unidad')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Contenedor entity.');
+            throw $this->createNotFoundException('Unable to find Unidad entity.');
         }
 
         $editForm = $this->createEditForm($entity);
@@ -282,8 +242,8 @@ class ContenedorController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
         if($this->getRequest()->isXmlHttpRequest()){
-            //$title = empty($entity->getNumero())?$entity->getSigla():$entity->getNumero();
-			$title = 'Contenedor';
+            //$title = empty($entity->getNombre())?$entity->getDescripcion():$entity->getNombre();
+            $title = 'Unidad';
             return JsonResponse::create(array(
                 'title' => $title,
                 'body'  => $this->renderView('PuertoUDESCommonBundle:Plantilla:_'.$template.'.html.twig', $parametros),
@@ -293,38 +253,38 @@ class ContenedorController extends Controller
     }
 
     /**
-    * Creates a form to edit a Contenedor entity.
+    * Creates a form to edit a Unidad entity.
     *
-    * @param Contenedor $entity The entity
+    * @param Unidad $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createEditForm(Contenedor $entity)
+    private function createEditForm(Unidad $entity)
     {
-        $form = $this->createForm(new ContenedorType(), $entity, array(
-            'action' => $this->generateUrl('contenedor__update', array('id' => $entity->getId())),
+        $form = $this->createForm(new UnidadType(), $entity, array(
+            'action' => $this->generateUrl('unidad__update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Update', 'attr' => array('data-reload' => $this->generateUrl('unidad_',array(),true))));
 
         return $form;
     }
     /**
-     * Edits an existing Contenedor entity.
+     * Edits an existing Unidad entity.
      *
-     * @Route("/{id}", name="contenedor__update")
+     * @Route("/{id}", name="unidad__update")
      * @Method("PUT")
-     * @Template("PuertoUDESCommonBundle:Contenedor:edit.html.twig")
+     * @Template("PuertoUDESCommonBundle:Unidad:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('PuertoUDESCommonBundle:Contenedor')->find($id);
+        $entity = $em->getRepository('PuertoUDESCommonBundle:Unidad')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Contenedor entity.');
+            throw $this->createNotFoundException('Unable to find Unidad entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -334,7 +294,7 @@ class ContenedorController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('contenedor__edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('unidad__edit', array('id' => $id)));
         }
 
         return array(
@@ -344,9 +304,9 @@ class ContenedorController extends Controller
         );
     }
     /**
-     * Deletes a Contenedor entity.
+     * Deletes a Unidad entity.
      *
-     * @Route("/{id}", name="contenedor__delete")
+     * @Route("/{id}", name="unidad__delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -356,21 +316,28 @@ class ContenedorController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('PuertoUDESCommonBundle:Contenedor')->find($id);
+            $entity = $em->getRepository('PuertoUDESCommonBundle:Unidad')->find($id);
 
             if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Contenedor entity.');
+                throw $this->createNotFoundException('Unable to find Unidad entity.');
             }
 
             $em->remove($entity);
             $em->flush();
+            
+            if($request->isXmlHttpRequest()){
+                return JsonResponse::create(array(
+                    'title' => "Unidad Agregado",
+                    'body'  => 'El país fué eliminado',
+                ));
+            }
         }
 
-        return $this->redirect($this->generateUrl('contenedor_'));
+        return $this->redirect($this->generateUrl('unidad_'));
     }
 
     /**
-     * Creates a form to delete a Contenedor entity by id.
+     * Creates a form to delete a Unidad entity by id.
      *
      * @param mixed $id The entity id
      *
@@ -379,9 +346,9 @@ class ContenedorController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('contenedor__delete', array('id' => $id)))
+            ->setAction($this->generateUrl('unidad__delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
+            ->add('submit', 'submit', array('label' => 'Delete', 'attr' => array('data-reload' => $this->generateUrl('unidad_',array(),true))))
             ->getForm()
         ;
     }
@@ -399,10 +366,10 @@ class ContenedorController extends Controller
     /**
      * get Repositorio
      * 
-     * @return ContenedorRepository  ContenedorRepository de PuertoUDES
+     * @return EntidadRepository  EntidadRepository de PuertoUDES
      */
     public function getRepositorio() {
-        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Contenedor');
+        return $this->getDoctrine()->getManager()->getRepository('PuertoUDESCommonBundle:Unidad');
     }
     
     public function getHeadFiltro($form, $route){
@@ -410,16 +377,15 @@ class ContenedorController extends Controller
             array(
                 'col'=>array(
                     array(
-                        'dato'    =>   'Numero',
+                        'dato'    =>   'Nombre',
                         'class' =>  'text-center',
                     ),
                     array(
-                        'dato'    =>   'Capacidad',
+                        'dato'    =>   'Descripcion',
                         'class' =>  'text-center',
                     ),
                     array(
-                        'dato'    =>   'Sigla',
-                        'label'    =>   'Sigla/Numero',
+                        'dato'    =>   'Abreviacion',
                         'class' =>  'text-center',
                     ),
                     array(
@@ -427,14 +393,14 @@ class ContenedorController extends Controller
                         'class' =>  'text-center',
                         'acciones'=>    array(
                             array(
-                                'url'   => 'contenedor__edit',
+                                'url'   => 'unidad__edit',
                                 'data_url'=> array('id'),
                                 'type'  => 'default',
                                 'class'  => 'carga-modal',
                                 'label' => '<span class="glyphicon glyphicon-pencil" ></span> Editar',
                             ),
                             array(
-                                'url'   => 'contenedor__delete',
+                                'url'   => 'unidad__delete',
                                 'data_url'=> array('id'),
                                 'type'  => 'danger',
                                 'class'  => 'carga-modal',

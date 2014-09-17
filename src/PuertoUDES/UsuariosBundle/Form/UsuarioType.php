@@ -30,7 +30,7 @@ class UsuarioType extends AbstractType
             ->add('docId')
 //            ->add('grupo')
         ;
-        if($this->user->hasRole('ROLE_SUPER_ADMIN') || $this->user->hasRole('ROLE_ADMIN') || $this->user->getUsuario()->hasRol('Docente') && isset($options['data']) && $options['data']->hasRol('Estudiante')){
+        if($this->user->hasRole('ROLE_SUPER_ADMIN') || $this->user->hasRole('ROLE_ADMIN') || $this->user->getUsuario()->hasRol('Docente') /*&& isset($options['data']) && $options['data']->hasRol('Estudiante')*/){
             $builder
                 ->add('grupo');
         }
@@ -49,7 +49,7 @@ class UsuarioType extends AbstractType
                         'class' =>  'hide'
                     ),
                 ));
-        }elseif($this->user->hasRole('ROLE_ADMIN')){
+        }elseif($this->user->hasRole('ROLE_SUPER_ADMIN') || $this->user->hasRole('ROLE_ADMIN')){
             $builder
                 ->add('roles');
         }

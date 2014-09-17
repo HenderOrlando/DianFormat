@@ -51,7 +51,7 @@ class MonedaController extends Controller
      * Lists all Moneda entities.
      *
      * @Route("/", name="moneda_")
-     * @Method({"GET"})
+     * @Method({"GET","PATCH"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexAction(Request $request, $config = null)
@@ -104,7 +104,7 @@ class MonedaController extends Controller
             'datos_form'       =>  $data,
         );
         if($request->isXmlHttpRequest() || $request->get('ajax',false)){
-            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+            return $this->render('PuertoUDESCommonBundle:Plantilla:_menu.html.twig', $datos);
         }
         return $datos;
     }
@@ -149,7 +149,7 @@ class MonedaController extends Controller
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Create', 'attr' => array('data-reload' => $this->generateUrl('moneda_',array(),true))));
 
         return $form;
     }
@@ -266,7 +266,7 @@ class MonedaController extends Controller
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Update', 'attr' => array('data-reload' => $this->generateUrl('moneda_',array(),true))));
 
         return $form;
     }
@@ -341,7 +341,7 @@ class MonedaController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('moneda__delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
+            ->add('submit', 'submit', array('label' => 'Delete', 'attr' => array('data-reload' => $this->generateUrl('moneda_',array(),true))))
             ->getForm()
         ;
     }

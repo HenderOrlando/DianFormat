@@ -24,7 +24,7 @@ class MercanciaController extends Controller
      * Lists all Mercancia entities.
      *
      * @Route("/", name="mercancia_")
-     * @Method({"GET"})
+     * @Method({"GET","PATCH"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexAction(Request $request, $config = null)
@@ -51,6 +51,8 @@ class MercanciaController extends Controller
         $head['filtros'] = $form->createView();
         $form->handleRequest($request);
         $data = array();
+//        print_r($form->getData());
+//        exit();
         if ($form->isValid()) {
            $data = $form->getData();
             $str_query = $utils->getQueryFilter($data, $head['fil'][0]['col'], $qb);
@@ -77,7 +79,7 @@ class MercanciaController extends Controller
             'datos_form'       =>  $data,
         );
         if($request->isXmlHttpRequest() || $request->get('ajax',false)){
-            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+            return $this->render('PuertoUDESCommonBundle:Plantilla:_menu.html.twig', $datos);
         }
         return $datos;
     }
@@ -122,7 +124,7 @@ class MercanciaController extends Controller
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Create', 'attr' => array('data-reload' => $this->generateUrl('mercancia_',array(),true))));
 
         return $form;
     }
@@ -239,7 +241,7 @@ class MercanciaController extends Controller
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Update', 'attr' => array('data-reload' => $this->generateUrl('mercancia_',array(),true))));
 
         return $form;
     }
@@ -314,7 +316,7 @@ class MercanciaController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('mercancia__delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
+            ->add('submit', 'submit', array('label' => 'Delete', 'attr' => array('data-reload' => $this->generateUrl('mercancia_',array(),true))))
             ->getForm()
         ;
     }

@@ -17,6 +17,7 @@ class TipoRepository extends EntityRepository
         $q = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a')
+            ->orderBy('a.nombre')
             ->from('PuertoUDESCommonBundle:Tipo', 'a');
         if(is_bool($querybuilder) && $querybuilder)
             $rta = $q;

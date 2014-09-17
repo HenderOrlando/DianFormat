@@ -17,6 +17,7 @@ class VehiculoRepository extends EntityRepository
         $q = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a')
+            ->orderBy('a.placa')
             ->from('PuertoUDESCommonBundle:Vehiculo', 'a');
         if(is_bool($querybuilder) && $querybuilder)
             $rta = $q;

@@ -16,6 +16,24 @@ $(document).on('ready',function(){
         e.preventDefault();
         $('#carousel').carousel($(this).parent().index()+1);
     });
+    var salir = 0;
+    $(window).on('beforeunload',function(e){
+        salir = 0;
+        $('.guardar').each(function(){
+            if($(this).hasClass('in')){
+                salir++;
+            }
+        });
+        if(salir){
+            return 'Si sales perderás la información no guardada.';
+//            armarModal({
+//                title: 'Datos no Guardados',
+//                body: 'Si sales perderás la información no guardada. Si está seguro da click en "Continuar" de lo contrario da click en "Cerrar".'
+//            });
+        }
+    });
+    if(salir){
+    }
 //    $('.table-responsive > table').find('.btn-group-vertical a:not(.no-ajax)').addClass('carga-modal');
 //    $('.table-responsive > table').find('.btn-group-vertical a:not(.no-ajax)').addClass('carga-modal');
     $('body').on('click','.carga-modal', function(e){

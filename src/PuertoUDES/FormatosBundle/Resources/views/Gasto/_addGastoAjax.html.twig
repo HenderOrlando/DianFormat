@@ -156,7 +156,7 @@ clase       Si se le agrega una clase diferente a los campos
                 emptyText:      "Monto",
                 required:       "NoVacio,NumerosConectores",
                 valor:          pk != ' '?gasto.valor|replace({'.':','}):'',
-            }) %} 
+            }) %} - 
             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
                 id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_moneda_",
                 name:           "moneda",

@@ -18,6 +18,7 @@ class AduanaRepository extends EntityRepository
         $q = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a')
+            ->orderBy('a.nombre')
             ->from('PuertoUDESCommonBundle:Aduana', 'a');
         if(is_bool($querybuilder) && $querybuilder)
             $rta = $q;

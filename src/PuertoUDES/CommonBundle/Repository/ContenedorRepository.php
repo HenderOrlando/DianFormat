@@ -18,6 +18,7 @@ class ContenedorRepository extends EntityRepository
         $q = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a')
+            ->orderBy('a.num')
             ->from('PuertoUDESCommonBundle:Contenedor', 'a');
         if(is_bool($querybuilder) && $querybuilder)
             $rta = $q;

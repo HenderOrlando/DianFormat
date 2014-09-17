@@ -2,25 +2,23 @@
 namespace PuertoUDES\CommonBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 
-class MonedaRepository extends EntityRepository
+class UnidadRepository extends EntityRepository
 {
     public function findAllOrderedByNombre()
     {
         return $this->getEntityManager()
             ->createQuery(
-                'SELECT u FROM PuertoUDESFormatosBundle:Moneda u ORDER BY u.nombre ASC'
+                'SELECT u FROM PuertoUDESFormatosBundle:Unidad u ORDER BY u.nombre ASC'
             )
             ->getResult();
     }
-    
     public function getAll($query = false, $querybuilder = false)
     {
         $q = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a')
-            ->addOrderBy('a.nombre')
-            ->addOrderBy('a.abreviacion')
-            ->from('PuertoUDESCommonBundle:Moneda', 'a');
+            ->orderBy('a.nombre')
+            ->from('PuertoUDESCommonBundle:Unidad', 'a');
         if(is_bool($querybuilder) && $querybuilder)
             $rta = $q;
         elseif(is_bool($query) && $query)

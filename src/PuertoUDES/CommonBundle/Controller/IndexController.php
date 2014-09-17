@@ -239,7 +239,7 @@ class IndexController extends Controller implements PaginatorAwareInterface
                     'data'  =>  $request->query->get('pagina', 1),
                 )
             )
-            ->setMethod('GET');
+            ->setMethod('PATCH');
         
         if(is_bool($formBuilder) && !$formBuilder){
             $form
@@ -297,12 +297,12 @@ class IndexController extends Controller implements PaginatorAwareInterface
            $qb = $em->createQueryBuilder();
            $qb->select('a');
            $qb->from('PuertoUDES'.$bundle.'Bundle:'.$entity, 'a');
-            
            if (array_key_exists("filtro", $data)){
-               $data['filtro'] = trim($data['filtro']);
+               $data['filtro'] = htmlentities(trim($data['filtro']));
                if (strlen($data['filtro'])>0)
                {
                     $qb
+                       ->orderBy('nombre', 'ASC')
                        ->orWhere($qb->expr()->like("a.nombre", "?1"))
                        ->orWhere($qb->expr()->like("a.canonical", "?1"))
                        ->orWhere($qb->expr()->like("a.descripcion", "?1"))
@@ -508,7 +508,7 @@ class IndexController extends Controller implements PaginatorAwareInterface
                 $data_bd = strtolower(substr($col['dato'], 0, 1)).substr($col['dato'], 1);
                 $data_bd = str_replace(' ','',$data_bd);
                 $data_bd = str_replace('-','',$data_bd);
-                $data[$col_name] = trim($data[$col_name]);
+                $data[$col_name] = $this->normaliza(trim($data[$col_name]), true);
                 if (strlen($data[$col_name])>0){
                     $letra = 'a';
                     if(isset($col['join']) && !empty($col['join'])){
@@ -598,12 +598,17 @@ class IndexController extends Controller implements PaginatorAwareInterface
     }
     
     /**/
-    public function normaliza ($cadena){
+    public function normaliza ($cadena, $especials = false){
         $originales = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿŔŕ';
         $modificadas = 'aaaaaaaceeeeiiiidnoooooouuuuybsaaaaaaaceeeeiiiidnoooooouuuyybyRr';
         $cadena = utf8_decode($cadena);
         $cadena = strtr($cadena, utf8_decode($originales), $modificadas);
         $cadena = strtolower($cadena);
+        if($especials){
+            $originales =  '|!"#$%&/()=?¡[]_:;°¬|@·~½¬{[]}\¸~¨`^·─,.-{}´+\'¿@ł€¶ŧ←↓→øþ~łĸŋđðßæ«»¢“”nµ<>|';
+            $modificadas = '                                                                            ';
+            $cadena = strtr($cadena, utf8_decode($originales), $modificadas);
+        }
         return str_replace(' ', '-', utf8_encode($cadena));
     }
     /**

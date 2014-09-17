@@ -13,6 +13,12 @@ class ContenedorMercanciaFormato extends \PuertoUDES\CommonBundle\Entity\ObjetoC
      * @ORM\Column(nullable=true, name="numero_bultos")
      */
     private $numBultos;
+    
+    /** 
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Unidad", inversedBy="contenedoresMercancias")
+     * @ORM\JoinColumn(name="unidadBultos", referencedColumnName="id", nullable=true)
+     */
+    private $unidadBultos;
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", inversedBy="contenedoresMercancias")
@@ -71,26 +77,45 @@ class ContenedorMercanciaFormato extends \PuertoUDES\CommonBundle\Entity\ObjetoC
     }
 
     /**
-     * Set formato
+     * Set unidadBultos
      *
-     * @param \PuertoUDES\FormatosBundle\Entity\Formato $formato
+     * @param \PuertoUDES\CommonBundle\Entity\Unidad $unidad
      * @return ContenedorMercanciaFormato
      */
-    public function setFormato(\PuertoUDES\FormatosBundle\Entity\Formato $formato)
+    public function setUnidadBultos(\PuertoUDES\CommonBundle\Entity\Unidad $unidad)
     {
-        $this->formato = $formato;
+        return $this->setUnidad($unidad);
+    }
+    /**
+     * Set unidad
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Unidad $unidad
+     * @return ContenedorMercanciaFormato
+     */
+    public function setUnidad(\PuertoUDES\CommonBundle\Entity\Unidad $unidad)
+    {
+        $this->unidadBultos = $unidad;
     
         return $this;
     }
 
     /**
-     * Get formato
+     * Get unidad
      *
-     * @return \PuertoUDES\FormatosBundle\Entity\Formato 
+     * @return \PuertoUDES\CommonBundle\Entity\Unidad 
      */
-    public function getFormato()
+    public function getUnidad()
     {
-        return $this->formato;
+        return $this->unidadBultos;
+    }
+    /**
+     * Get unidadBultos
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Unidad 
+     */
+    public function getUnidadBultos()
+    {
+        return $this->getUnidad();
     }
 
     /**

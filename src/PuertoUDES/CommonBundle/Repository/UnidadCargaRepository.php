@@ -18,6 +18,7 @@ class UnidadCargaRepository extends EntityRepository
         $q = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a')
+            ->orderBy('a.placa')
             ->from('PuertoUDESCommonBundle:UnidadCarga', 'a');
         if(is_bool($querybuilder) && $querybuilder)
             $rta = $q;

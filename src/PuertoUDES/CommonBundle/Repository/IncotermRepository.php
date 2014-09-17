@@ -17,6 +17,7 @@ class IncotermRepository extends EntityRepository
         $q = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a')
+            ->orderBy('a.sigla')
             ->from('PuertoUDESCommonBundle:Incoterm', 'a');
         if(is_bool($querybuilder) && $querybuilder)
             $rta = $q;

@@ -24,7 +24,7 @@ class BultoController extends Controller
      * Lists all Bulto entities.
      *
      * @Route("/", name="bulto_")
-     * @Method({"GET"})
+     * @Method({"GET","PATCH"})
      * @Template("PuertoUDESCommonBundle:Plantilla:menu.html.twig")
      */
     public function indexAction(Request $request, $config = null)
@@ -77,7 +77,7 @@ class BultoController extends Controller
             'datos_form'       =>  $data,
         );
         if($request->isXmlHttpRequest() || $request->get('ajax',false)){
-            return $this->render('FormatEasyCommonBundle:Plantilla:_menu.html.twig', $datos);
+            return $this->render('PuertoUDESCommonBundle:Plantilla:_menu.html.twig', $datos);
         }
         return $datos;
     }
@@ -349,6 +349,10 @@ class BultoController extends Controller
         $filas = array(
             array(
                 'col'=>array(
+                    array(
+                        'dato'    =>   'Nombre',
+                        'class' =>  'text-center',
+                    ),
                     array(
                         'dato'    =>   'Marca',
                         'class' =>  'text-center',
