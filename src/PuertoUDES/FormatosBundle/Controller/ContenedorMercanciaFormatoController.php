@@ -327,6 +327,7 @@ class ContenedorMercanciaFormatoController extends Controller
         $pk = $request->get('pk', -1);
         $numero = $request->get('numero',NULL);
         $cantidad = $request->get('numBultos',NULL);
+        $unidad = $request->get('unidadBultos',NULL);
         $clase = $request->get('clase',NULL);
         $marca = $request->get('marca',NULL);
         $descripcion = $request->get('descripcion',NULL);
@@ -343,7 +344,7 @@ class ContenedorMercanciaFormatoController extends Controller
         if($tipo){
             $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo->getId(), 'numero' => $numero));
             if($formato){
-                if(is_numeric($cantidad) && is_string($clase) && is_string($descripcion)){
+                if(is_numeric($cantidad) /*&& is_string($clase)*/ && is_string($descripcion)){
                     if($pk < 0)
                         $cm = NULL;
                     else
@@ -371,20 +372,23 @@ class ContenedorMercanciaFormatoController extends Controller
                             $em->persist($mercancia);
                     }
                     $cm->setMercancia($mercancia);
-                    $bulto = $em->getRepository('PuertoUDESCommonBundle:Bulto')->createQueryBuilder('b')
-                        ->andWhere("b.clase LIKE '%".$clase."%'")
-                        ->andWhere("b.marca IS NULL")
-                        ->getQuery()->getOneOrNullResult();
-                    if(!$bulto){
-                        $bulto = new Bulto();
-                        $bulto->setClase($clase)
-                            ->addContenedorMercanciaFormato($cm);
-                        $em->persist($bulto);
-                    }
-                    $cm ->setBulto($bulto);
                     // Gasto
                     $error = false;
                     if($concepto && !is_null($valor)){
+                        $unidad = $em->getRepository('PuertoUDESCommonBundle:Unidad')->createQueryBuilder('u')
+                            ->andWhere("u.nombre LIKE '%".$unidad."%' OR u.abreviacion LIKE '%".$unidad."%' OR u.canonical LIKE '%".$unidad."%' OR u.canonicalAbreviacion LIKE '%".$unidad."%'")
+                            ->getQuery()->getOneOrNullResult();
+                        if($unidad){
+
+                            $cm ->setUnidad($unidad);
+                        }else{
+    //                        $unidad = new Unidad();
+    //                        $unidad->setClase($clase)
+    //                            ->addContenedorMercanciaFormato($cm);
+    //                        $em->persist($unidad);
+                            $error = true;
+                            $datos['errors']['Formato'] = 'Datos inválidos. Moneda no encontrada.';
+                        }
                         $tipoGasto = $em->getRepository('PuertoUDESCommonBundle:Tipo')->createQueryBuilder('t')
                                 ->andWhere("t.canonical LIKE '%".$concepto."%' OR t.nombre LIKE '%".$concepto."%' OR t.abreviacion LIKE '%".$concepto."%'")
                                 ->andWhere("t.aplicableA LIKE '%gasto%'")
@@ -471,7 +475,7 @@ class ContenedorMercanciaFormatoController extends Controller
                     if(!$error){
                         $em->persist($tipoGasto);
                         $em->persist($formato);
-                        $em->persist($bulto);
+                        $em->persist($unidad);
                         $em->persist($mercancia);
                         $em->persist($cm);
                         $em->flush();
@@ -494,6 +498,7 @@ class ContenedorMercanciaFormatoController extends Controller
                 }else{
                     $datos['errors'] = $filas;
                     if(!$filas && $request->isXmlHttpRequest() && $request->getMethod() != 'POST'){
+                        $datos['errors'] = array();
                         $datos['errors']['Contenedor Mercancia'] = 'Datos incompletos, Son necesarios Precio, Moneda, Cantidad, Unidad y Descripción de las Mercancias';
                     }
                 }

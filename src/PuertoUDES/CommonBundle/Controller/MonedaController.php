@@ -324,6 +324,12 @@ class MonedaController extends Controller
 
             $em->remove($entity);
             $em->flush();
+            if($request->isXmlHttpRequest()){
+                return JsonResponse::create(array(
+                    'title' => $entity->getNombre(),
+                    'body'  => 'La Moneda "'.$entity->getNombre().'" fué eliminada con éxito.',
+                ));
+            }
         }
 
         return $this->redirect($this->generateUrl('moneda_'));

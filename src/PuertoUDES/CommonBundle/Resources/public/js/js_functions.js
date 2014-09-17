@@ -362,13 +362,27 @@ jQuery.extend({
                 return getParamsXEditable(params, este);
             },
             success: function(response, val) {
+                if(response.reload){
+                    console.log(response.reload)
+                    $('.'+getClase(este.attr('class'))).not('.btn').each(function(){
+                        var este1 = $(this);
+                        este1.attr('data-pk',response.id);
+                        este1.editable('option', 'pk', response.id);
+                        var val = response.reload;
+                        if(este1.attr('data-name') === 'lugar'){
+                            val = val.lugar.nombre+', '+val.lugar.pais.nombre;
+                        }else if(este1.attr('data-name') === 'docId'){
+                            val = val['doc_id'];
+                        }else{
+                            val = val[este1.attr('data-name')]
+                        }
+                        este1.editable('setValue', val);
+                    });
+                }
                 if(response.status == 'error') 
                     return response.msg; //msg will be shown in editable form
                 var msgs = new Array(), ok = true;
                 
-                if(typeof response.value !== 'undefined'){
-                    $(este).text(response.value);
-                }
                 //Mensajes
                 if(typeof response.msgs !== 'undefined'){
                     msgs = response.msgs;
@@ -398,6 +412,9 @@ jQuery.extend({
                         ok = false;
                 }
                 if(ok){
+                    if(typeof response.value !== 'undefined'){
+                        $(este).text(response.value);
+                    }
 //                    console.log(val);
 //                    console.log(datos);
                 }
@@ -635,7 +652,7 @@ jQuery.extend({
     }
     
     function getClase(clase){
-        return clase.replace(/btn|-primary|-default|xeditable|editable-open|editable-click|editable|agregar|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|\sout|out$|pull-right|pull-left|\s/g, '')
+        return clase.replace(/btn|-primary|-default|xeditable|editable-open|editable-click|editable|agregar|guardar|eliminar|reset|-warning|-danger|-success|animate|^in[^\S]|\sin[^\S]|in$|^out[^\S]|-empty|\sout|out$|pull-right|pull-left|\s/g, '')
     }
     /*
      * 

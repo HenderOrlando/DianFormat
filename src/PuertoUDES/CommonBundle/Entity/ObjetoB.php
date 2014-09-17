@@ -26,7 +26,7 @@ class ObjetoB
     private $anioFabrica;
 
     /** 
-     * @ORM\Column(type="string", length=11, nullable=false, name="placa")
+     * @ORM\Column(type="string", length=11, nullable=false, name="placa", unique=true)
      */
     private $placa;
 

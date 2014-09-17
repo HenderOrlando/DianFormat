@@ -99,7 +99,6 @@ class Bulto
     public function setCanonical($canonical)
     {
         $this->canonical = $canonical;
-        $this->setNombre(ucfirst($canonical));
     
         return $this;
     }

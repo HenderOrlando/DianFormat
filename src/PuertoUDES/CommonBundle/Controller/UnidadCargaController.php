@@ -421,6 +421,12 @@ class UnidadCargaController extends Controller
 
             $em->remove($entity);
             $em->flush();
+            if($request->isXmlHttpRequest()){
+                return JsonResponse::create(array(
+                    'title' => $entity->getPlaca(),
+                    'body'  => 'La Unidad de Carga "'.$entity->getPlaca().'" fué eliminada con éxito.',
+                ));
+            }
         }
 
         return $this->redirect($this->generateUrl('unidadCarga_'));

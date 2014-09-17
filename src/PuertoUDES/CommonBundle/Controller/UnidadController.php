@@ -327,8 +327,8 @@ class UnidadController extends Controller
             
             if($request->isXmlHttpRequest()){
                 return JsonResponse::create(array(
-                    'title' => "Unidad Agregado",
-                    'body'  => 'El país fué eliminado',
+                    'title' => "Unidad Agregada",
+                    'body'  => 'La unidad fué eliminado',
                 ));
             }
         }

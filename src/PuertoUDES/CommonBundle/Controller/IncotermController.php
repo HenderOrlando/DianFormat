@@ -325,6 +325,12 @@ class IncotermController extends Controller
 
             $em->remove($entity);
             $em->flush();
+            if($request->isXmlHttpRequest()){
+                return JsonResponse::create(array(
+                    'title' => $entity->getNombre(),
+                    'body'  => 'El término "'.$entity->getNombre().'" fué eliminado con éxito.',
+                ));
+            }
         }
 
         return $this->redirect($this->generateUrl('incoterm_'));

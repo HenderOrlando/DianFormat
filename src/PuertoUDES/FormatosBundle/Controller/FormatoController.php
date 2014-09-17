@@ -597,6 +597,7 @@ class FormatoController extends Controller
         $save = $request->get('save',NULL);
         $entity = $request->get('entity',NULL);
         $bundle = $request->get('bundle',NULL);
+        $reload = false;
         $em = $this->getDoctrine()->getManager();
         $valores = array();
         $obj = null;
@@ -766,6 +767,7 @@ class FormatoController extends Controller
                         $em->persist($moneda);
                         $em->flush();
                         $valores['datos'] = $obj->json(false);
+                        $valor = $obj->$get()->getAbreviacion();
                     }
                 }elseif(strpos($nombre, 'unidadBultos') !== false){
                     $unidad = $em->getRepository('PuertoUDESCommonBundle:Unidad')
@@ -787,6 +789,7 @@ class FormatoController extends Controller
                         $em->persist($unidad);
                         $em->flush();
                         $valores['datos'] = $obj->json(false);
+                        $valor = $obj->$get()->getAbreviacion();
                     }
                 }else{
                     if(method_exists($obj, $get) && $obj->$get() != $valor){
@@ -858,7 +861,37 @@ class FormatoController extends Controller
                     }
                 }
             }else{
-                $valores['msgs'][] = array('msg' => 'Formato: Llena los demás datos y pulsa el botón guardar.', 'tipo' => 'warning');
+                $ok = true;
+                if(strpos($nombre, 'unidadBultos') !== false){
+                    $unidad = $em->getRepository('PuertoUDESCommonBundle:Unidad')
+                        ->createQueryBuilder('u')
+                        ->andWhere('u.canonical LIKE \'%'.$valor.'%\' OR u.nombre LIKE \'%'.$valor.'%\' OR u.abreviacion LIKE \'%'.$valor.'%\'')
+                        ->getQuery()->getOneOrNullResult();
+                    if(!$unidad){
+                        $ok = false;
+                        $valores['msgs'][] = array('msg' => 'Formato: Unidad '.strtoupper($valor).' no encontrada.', 'tipo' => 'danger');
+                    }
+                }elseif(strpos($nombre, 'moneda') !== false){
+                    $unidad = $em->getRepository('PuertoUDESCommonBundle:Moneda')
+                        ->createQueryBuilder('u')
+                        ->andWhere('u.canonical LIKE \'%'.$valor.'%\' OR u.nombre LIKE \'%'.$valor.'%\' OR u.abreviacion LIKE \'%'.$valor.'%\'')
+                        ->getQuery()->getOneOrNullResult();
+                    if(!$unidad){
+                        $ok = false;
+                        $valores['msgs'][] = array('msg' => 'Formato: Moneda '.strtoupper($valor).' no encontrada.', 'tipo' => 'danger');
+                    }
+                }elseif($entity === 'usuario' && ($nombre === 'nombre' || $nombre === 'docId')){
+                    $obj = $this->getDoctrine()->getManager()->getRepository('PuertoUDESUsuariosBundle:Usuario')->findBy(array($nombre => $valor));
+                    if($obj && count($obj) === 1){
+                        $reload = $obj[0]->json(false);
+                        $llave = $obj[0]->getId();
+                    }else{
+                        
+                    }
+                }
+                if($ok){
+                    $valores['msgs'][] = array('msg' => 'Formato: Llena los demás datos y pulsa el botón guardar.', 'tipo' => 'warning');
+                }
             }
         }
         if(isset($valores['datos'])){
@@ -899,6 +932,7 @@ class FormatoController extends Controller
             'entity' =>    $entity,
             'bundle' =>    $bundle,
             'values' =>    $valores,
+            'reload' =>    $reload,
         ));
     }
     /**

@@ -676,6 +676,9 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
             'doc_id'        =>  $this->getDocId(),
             'apellido'        =>  $this->getApellido(),
         ));
+        if($this->getLugar()){
+            $a['lugar'] = $this->getLugar()->json(false);
+        }
         if(is_bool($json) && $json){
             return json_encode($a);
         }

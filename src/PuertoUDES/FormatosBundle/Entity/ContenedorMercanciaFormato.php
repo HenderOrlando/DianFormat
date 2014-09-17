@@ -40,7 +40,7 @@ class ContenedorMercanciaFormato extends \PuertoUDES\CommonBundle\Entity\ObjetoC
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Bulto", inversedBy="contenedorMercanciaFormatos")
-     * @ORM\JoinColumn(name="bulto", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="bulto", referencedColumnName="id", nullable=true)
      */
     private $bulto;
     
@@ -118,6 +118,29 @@ class ContenedorMercanciaFormato extends \PuertoUDES\CommonBundle\Entity\ObjetoC
         return $this->getUnidad();
     }
 
+    /**
+     * Get formato
+     *
+     * @return \PuertoUDES\FormatosBundle\Entity\Formato 
+     */
+    public function getFormato()
+    {
+        return $this->formato;
+    }
+    
+    /**
+     * Set formato
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $formato
+     * @return ContenedorMercanciaFormato
+     */
+    public function setFormato(\PuertoUDES\FormatosBundle\Entity\Formato $formato)
+    {
+        $this->formato = $formato;
+    
+        return $this;
+    }
+    
     /**
      * Set mercancia
      *

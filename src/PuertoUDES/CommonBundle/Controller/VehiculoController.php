@@ -430,11 +430,22 @@ class VehiculoController extends Controller
             $entity = $em->getRepository('PuertoUDESCommonBundle:Vehiculo')->find($id);
 
             if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Vehiculo entity.');
+                if($request->isXmlHttpRequest()){
+                    return JsonResponse::create(array(
+                        'title' => 'Eliminado!!',
+                        'body'  => 'El vehiculo ya fué eliminado.',
+                    ));
+                }
             }
 
             $em->remove($entity);
             $em->flush();
+            if($request->isXmlHttpRequest()){
+                return JsonResponse::create(array(
+                    'title' => $entity->getPlaca(),
+                    'body'  => 'El vehiculo "'.$entity->getPlaca().'" fué eliminado con éxito.',
+                ));
+            }
         }
 
         return $this->redirect($this->generateUrl('vehiculo_'));
