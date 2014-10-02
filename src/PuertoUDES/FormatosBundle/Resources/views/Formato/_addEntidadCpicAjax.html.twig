@@ -11,14 +11,6 @@ fila        Número de la fila de la entidad
     {% set pk = usuario is not null and usuario.id is not empty?usuario.id:' ' %}
     <div>
         <div class="{{ abreviacion|lower == 'factura'?'text-left pull-right btns-action-right':'text-right pull-left btns-action-left' }}">
-            {#
-            
-                    {
-                        'class' :   'eliminar  entidad' ~ fila ~ '-' ~ rol ~'-crear animate ' ~ (abreviacion == 'factura'?'out'),
-                        'type'  :   'danger',
-                        'label' :   '<span class="glyphicon glyphicon-trash"></span>',
-                    },
-            #}
             {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                 'buttonset': 'horizontal',
                 'class': 'animate in',
@@ -33,6 +25,11 @@ fila        Número de la fila de la entidad
                                         rol: rol,
                                         fila: fila,
                                     }),
+                    },
+                    {
+                        'class' :   'eliminar  entidad' ~ fila ~ '-' ~ rol ~'-crear animate ' ~ (abreviacion == 'factura'?'hide'),
+                        'type'  :   'danger',
+                        'label' :   '<span class="glyphicon glyphicon-trash"></span>',
                     },
                     {
                         'class' :   'reset entidad' ~ fila ~ '-' ~ rol ~'-crear animate',
