@@ -640,10 +640,12 @@ jQuery.extend({
                     });
                     d.text(val.toFixed(4));
                 }
-                else if(
-                    name.indexOf('peso') > -1 || (name.indexOf('volumen') > -1 && datos[name] > 0) ||
-                    name.indexOf('gastoRemitente') > -1 || name.indexOf('gastoDestinatario') > -1
-                ){
+                else 
+//                    if(
+//                    name.indexOf('peso') > -1 || (name.indexOf('volumen') > -1 && datos[name] > 0) ||
+//                    name.indexOf('gastoRemitente') > -1 || name.indexOf('gastoDestinatario') > -1
+//                )
+                {
                     val = datos[name];
                     d.text(val);
                 }

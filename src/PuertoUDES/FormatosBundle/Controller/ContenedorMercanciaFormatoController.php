@@ -324,6 +324,7 @@ class ContenedorMercanciaFormatoController extends Controller
         // Falta agregar el tratamiento de los datos para el gasto
         
         $filas = $request->get('filas', 0);
+        $fila = $request->get('fila', 0);
         $pk = $request->get('pk', -1);
         $numero = $request->get('numero',NULL);
         $cantidad = $request->get('numBultos',NULL);
@@ -490,6 +491,11 @@ class ContenedorMercanciaFormatoController extends Controller
                                     'pesoNeto'      =>  $cm->getFormato()->getTotalPesoNeto(),
                                     'volumen'       =>  $cm->getFormato()->getTotalVolumen(),
                                     'volumenOtro'   =>  $cm->getFormato()->getTotalVolumenOtro(),
+                                    'gastoRemitente' => $cm->getFormato()->getGastoTotalRemitente(),
+                                    'gastoDestinatario' => $cm->getFormato()->getGastoTotalDestinatario(),
+                                    'subtotal' => $cm->getFormato()->getGastoTotal(),
+                                    'total' => $cm->getFormato()->getGastoTotal() * 1.16,
+                                    'totalMercancia'.$fila => $gasto->getValor()*$cm->getNumBultos(),
                                 ),
                             'url'       =>  $this->generateUrl('contenedorMercanciaFormato__edit', array('id' => $cm->getId())),
                             'id'        =>  $cm->getId(),
@@ -509,7 +515,7 @@ class ContenedorMercanciaFormatoController extends Controller
                     return JsonResponse::create($datos);
                 }
             }else{
-                $datos['errors']['Contenedor Mercancias'] = 'Datos no válidos';
+                $datos['errors']['Contenedor Mercancias'] = 'Datos no válidos.';
                 return JsonResponse::create($datos);
             }
         }
@@ -537,7 +543,7 @@ class ContenedorMercanciaFormatoController extends Controller
         $em = $this->getDoctrine()->getManager();
         $str_tipo = $request->get('str_tipo','');
         
-        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => 'cpic', 'aplicableA' => 'Formato'));
+        $tipo = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => $str_tipo, 'aplicableA' => 'Formato'));
         $cm = null;
         $datos = array();
         if($tipo){
@@ -546,6 +552,13 @@ class ContenedorMercanciaFormatoController extends Controller
                 if(is_numeric($pk) && $pk >= 0){
                     $cm = $this->getRepositorio()->find($pk);
                     if($cm){
+                        $gasto = $formato->getGastoContenedorMercancia($cm->getMercancia());
+                        if($gasto){
+                            $em->remove($gasto);
+                            $datos = array(
+                                'success'   =>  array('msgs' => array('Contenedor Mercancía' => array('msg' => 'Mercancía eliminada','tipo' => 'success'))),
+                            );
+                        }
                         $em->remove($cm);
                         $em->flush();
                     }
@@ -561,6 +574,10 @@ class ContenedorMercanciaFormatoController extends Controller
                             'pesoNeto'      =>  $formato->getTotalPesoNeto(),
                             'volumen'       =>  $formato->getTotalVolumen(),
                             'volumenOtro'   =>  $formato->getTotalVolumenOtro(),
+                            'gastoRemitente' => $formato->getGastoTotalRemitente(),
+                            'gastoDestinatario' => $formato->getGastoTotalDestinatario(),
+                            'subtotal' => $formato->getGastoTotal(),
+                            'total' => $formato->getGastoTotal() * 1.16,
                         ),
                 );
                 return JsonResponse::create($datos);

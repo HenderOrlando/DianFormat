@@ -42,6 +42,7 @@ m           Mercancia a mostrar
                                                 numero: formato.numero,
                                                 str_tipo: formato.tipo.abreviacion,
                                                 concepto: 'Mercancia',
+                                                fila: fila,
                                             }),
                             },
                             {
@@ -136,7 +137,7 @@ m           Mercancia a mostrar
     <td class="text-center">
         <div class="row">
             <div class="col-lg-12 col-md-12 text-right">
-                <span class="imita" id="precio-total-factura" data-name="gastoTotal">
+                <span class="imita" id="precio-total-factura" data-name="totalMercancia{{fila}}">
                     {{- (cantidadUnidad*costoUnidad) ~ ' ' ~ formato.getTipoMoneda -}}
                 </span>
             </div>
