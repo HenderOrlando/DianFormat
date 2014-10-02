@@ -120,7 +120,7 @@ m           Mercancia a mostrar
                     {% set costoUnidad = 0 %}
                     {% if cm.mercancia is defined and cm.mercancia is not null and formato.getGastoContenedoresMercancias is defined and formato.getGastoContenedoresMercancias is not empty %}
                         {% set g = formato.getGastoContenedorMercancia(cm.mercancia) %}
-                        {% set costoUnidad = g.valor %}
+                        {% set costoUnidad = g.valor is defined?g.valor:0 %}
                         {% if g is defined and g is not null %}
                             {% set datosGasto = datosGasto|merge({
                                     gasto:            g,
