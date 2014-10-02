@@ -62,12 +62,14 @@ class SecurityController extends BaseController
      * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function renderLogin(array $data){
-        $template_name = 'PuertoUDESFosUsuarioBundle:Security:login.html.%s';
+//        $template_name = 'PuertoUDESFosUsuarioBundle:Security:login.html.%s';
+        $template_name = 'PuertoUDESFosUsuarioBundle:Security:login.html';
         if(isset($data['ajax']) && $data['ajax']){
-            $template_name = 'PuertoUDESFosUsuarioBundle:Security:_login.html.%s';
+//            $template_name = 'PuertoUDESFosUsuarioBundle:Security:_login.html.%s';
+            $template_name = 'PuertoUDESFosUsuarioBundle:Security:_login.html';
         }
-        $template = sprintf($template_name, $this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig');
-
+//        $template = sprintf($template_name, $this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig');
+        $template = $template_name.'.twig';
         return $this->container->get('templating')->renderResponse($template, $data);
     }
 

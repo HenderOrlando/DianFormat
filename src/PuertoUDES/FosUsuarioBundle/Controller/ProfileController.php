@@ -33,8 +33,9 @@ class ProfileController extends BaseProfileController
         if (!is_object($user) || !$user instanceof UserInterface) {
             throw new AccessDeniedException('This user does not have access to this section.');
         }
-
-        return $this->container->get('templating')->renderResponse('FOSUserBundle:Profile:show.html.'.($this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig'), array('user' => $user));
+//        $engine = $this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig';
+        $engine = 'twig';
+        return $this->container->get('templating')->renderResponse('FOSUserBundle:Profile:show.html.'.$engine, array('user' => $user));
     }
 
     /**
@@ -85,16 +86,17 @@ class ProfileController extends BaseProfileController
                 return $response;
             }
         }
-        
+        //        $engine = $this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig';
+        $engine = 'twig';
         $return = $this->container->get('templating')->renderResponse(
-            'PuertoUDESFosUsuarioBundle:Profile:edit.html.'.($this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig'),
+            'PuertoUDESFosUsuarioBundle:Profile:edit.html.'.$engine,
             array('form' => $form->createView())
         );
         if($request->isXmlHttpRequest()){
             $return = new JsonResponse(array(
                 'title' => 'Editando Perfil de '.$user->getUsername(),
                 'body'  => $this->container->get('templating')->render(
-                    'PuertoUDESFosUsuarioBundle:Profile:edit_content.html.'.($this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig'),
+                    'PuertoUDESFosUsuarioBundle:Profile:edit_content.html.'.$engine,
                     array('form' => $form->createView())
                 ),
             ));

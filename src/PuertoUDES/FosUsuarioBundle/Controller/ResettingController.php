@@ -137,7 +137,7 @@ class ResettingController extends BaseResettingController
             $return = new JsonResponse(array(
                 'title' => 'Editando Perfil de '.$user->getUsername(),
                 'body'  => $this->container->get('templating')->render(
-                    'PuertoUDESFosUsuarioBundle:Resetting:reset_content.html.'.($this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig'),
+                    'PuertoUDESFosUsuarioBundle:Resetting:reset_content.html.'.$this->getEngine(),
                     array('form' => $form->createView())
                 ),
             ));
@@ -167,6 +167,8 @@ class ResettingController extends BaseResettingController
 
     protected function getEngine()
     {
-        return $this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig';
+        //        $engine = $this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig';
+        $engine = 'twig';
+        return $engine;
     }
 }
