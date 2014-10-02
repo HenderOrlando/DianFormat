@@ -533,6 +533,7 @@ class FormatoController extends Controller
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->findOneBy(array('canonical' => 'autor'));
+            $entity->setNombre($entity->getNombre().' '.$entity->getNumero());
             if($rol){
                 $fu = new \PuertoUDES\FormatosBundle\Entity\FormatoUsuario();
                 $fu
