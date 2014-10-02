@@ -1286,6 +1286,27 @@ class FormatoController extends Controller
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Formato entity.');
             }
+            foreach($entity->getConductores() as $formatoConductor){
+                $em->remove($formatoConductor);
+            }
+            foreach($entity->getUsuarios() as $formatoUsuario){
+                $em->remove($formatoUsuario);
+            }
+            foreach($entity->getDatosMercancias() as $datosMercanciasFormatos){
+                $em->remove($datosMercanciasFormatos);
+            }
+            foreach($entity->getAduanas() as $formatoAduana){
+                $em->remove($formatoAduana);
+            }
+            foreach($entity->getAduanas() as $formatoAduana){
+                $em->remove($formatoAduana);
+            }
+            foreach($entity->getContenedoresMercancias() as $contenedorMercanciaFormato){
+                $em->remove($contenedorMercanciaFormato);
+            }
+            foreach($entity->getGastos() as $gasto){
+                $em->remove($gasto);
+            }
 
             $em->remove($entity);
             $em->flush();

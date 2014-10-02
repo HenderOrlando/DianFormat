@@ -263,6 +263,11 @@ class ContenedorMercanciaFormatoController extends Controller
                     'pesoNeto'      =>  $entity->getFormato()->getTotalPesoNeto(),
                     'volumen'       =>  $entity->getFormato()->getTotalVolumen(),
                     'volumenOtro'   =>  $entity->getFormato()->getTotalVolumenOtro(),
+                    'gastoRemitente' => $entity->getFormato()->getGastoTotalRemitente(),
+                    'gastoDestinatario' => $entity->getFormato()->getGastoTotalDestinatario(),
+                    'subtotal' => $entity->getFormato()->getGastoTotal(),
+                    'total' => $entity->getFormato()->getGastoTotal() * 1.16,
+//                    'totalMercancia'.$fila => $gasto->getValor()*$cm->getNumBultos(),
                 )),
             ));
         }
