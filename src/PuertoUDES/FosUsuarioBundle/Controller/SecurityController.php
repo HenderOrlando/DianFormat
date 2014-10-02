@@ -66,7 +66,7 @@ class SecurityController extends BaseController
         if(isset($data['ajax']) && $data['ajax']){
             $template_name = 'PuertoUDESFosUsuarioBundle:Security:_login.html.%s';
         }
-        $template = sprintf($template_name, $this->container->getParameter('fos_user.template.engine'));
+        $template = sprintf($template_name, $this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig');
 
         return $this->container->get('templating')->renderResponse($template, $data);
     }

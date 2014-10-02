@@ -34,7 +34,7 @@ class ProfileController extends BaseProfileController
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
-        return $this->container->get('templating')->renderResponse('FOSUserBundle:Profile:show.html.'.$this->container->getParameter('fos_user.template.engine'), array('user' => $user));
+        return $this->container->get('templating')->renderResponse('FOSUserBundle:Profile:show.html.'.($this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig'), array('user' => $user));
     }
 
     /**
@@ -87,14 +87,14 @@ class ProfileController extends BaseProfileController
         }
         
         $return = $this->container->get('templating')->renderResponse(
-            'PuertoUDESFosUsuarioBundle:Profile:edit.html.'.$this->container->getParameter('fos_user.template.engine'),
+            'PuertoUDESFosUsuarioBundle:Profile:edit.html.'.($this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig'),
             array('form' => $form->createView())
         );
         if($request->isXmlHttpRequest()){
             $return = new JsonResponse(array(
                 'title' => 'Editando Perfil de '.$user->getUsername(),
                 'body'  => $this->container->get('templating')->render(
-                    'PuertoUDESFosUsuarioBundle:Profile:edit_content.html.'.$this->container->getParameter('fos_user.template.engine'),
+                    'PuertoUDESFosUsuarioBundle:Profile:edit_content.html.'.($this->container->getParameter('fos_user.template.engine')?$this->container->getParameter('fos_user.template.engine'):'twig'),
                     array('form' => $form->createView())
                 ),
             ));
