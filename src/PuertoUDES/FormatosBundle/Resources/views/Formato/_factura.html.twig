@@ -1,4 +1,5 @@
 
+{% set pk = formato is defined and formato.id is not empty? formato.id:' '%}
 
 <div class="hoja_carta_formato print">
     <div class="margen">
@@ -44,33 +45,6 @@
                                 {% endif %}
                             {% endfor %}
                         {% endif %#}
-                    </div>
-                </div>
-                <div class="row row-fluid">
-                    <div id="cliente" class="col-xs-12">
-                        <div class="enunciado">Cliente</div>
-                        {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
-                            {% for cliente in formato.clientes %}
-                                {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
-                                        abreviacion:    formato.tipo.abreviacion|upper,
-                                        numero:         formato.numero,
-                                        entidad:        cliente,
-                                        rol:            'cliente',
-                                        fila:           loop.index0,
-                                    }) 
-                                }}
-                            {% else %}
-                                {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
-                                    {{ render(controller('PuertoUDESUsuariosBundle:Entidad:addEntidadCpicAjax',{
-                                            abreviacion:    formato.tipo.abreviacion,
-                                            numero:         formato.numero,
-                                            rol:            'cliente',
-                                            fila:           0,
-                                        }))
-                                    }}
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -121,28 +95,129 @@
                     } %}
                 </h4>
                 <h5>
-                    <div>
-                        {% set dataWith = {
-                            id:             "formato_nombre",
-                            clase:          "formato-crear",
-                            placement:      "bottom",
-                            name:           "id",
-                            pk:             formato.id,
-                            datos:          {tipo: formato.tipo.abreviacion|upper},
-                            type:           "date",
-                            originalTitle:  "Fecha",
-                            entityName:     "formato",
-                            bundleName:     "formatos" ,
-                            emptyText:      "Fecha",
-                            placeholder:    "Fecha", 
-                            required:       "NoVacio,NumerosLetras",
-                            valor:          formato.fechaCreado | date('d-M-y'),
-                        } %}
-                        <div>
-                            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
+                    <div class="row">
+                        <div class="col-xs-12">
+                            {% set dataWith = {
+                                id:             "formato_nombre",
+                                clase:          "formato-crear",
+                                placement:      "bottom",
+                                name:           "id",
+                                pk:             formato.id,
+                                datos:          {tipo: formato.tipo.abreviacion|upper},
+                                type:           "date",
+                                originalTitle:  "Fecha",
+                                entityName:     "formato",
+                                bundleName:     "formatos" ,
+                                emptyText:      "Fecha",
+                                placeholder:    "Fecha", 
+                                required:       "NoVacio,NumerosLetras",
+                                valor:          formato.fechaCreado | date('d-M-y'),
+                            } %}
+                            <div>
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
+                            </div>
                         </div>
                     </div>
                 </h5>
+                <h6>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            {% set dataWith = {
+                                clase:          "incoterm",
+                                entityName:     "formato",
+                                bundleName:     "formatos" ,
+                                required:       "NoVacio,Letras",
+                                pk:             pk,
+                                datos:          {
+                                                numero: formato.numero,
+                                                tipo: formato.tipo,
+                                            },
+                            } %}
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                                        id:             "incoterm_formato",
+                                        name:           "incoterm",
+                                        originalTitle:  "INCOTERM 2010",
+                                        emptyText:      "INCOTERM",
+                                        valor:          formato.incoterm is not empty?formato.incoterm:'',
+                                        prefetch:       url('list_typeahead_incoterms_',{name: 'sigla'}),
+                                        type:           'typeaheadjs',
+                                    }) %} 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h6>
+            </div>
+        </div>
+        <div class="row row-fluid">
+            <div id="cliente" class="col-xs-6">
+                <div class="enunciado">Cliente</div>
+                {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                    {% for cliente in formato.clientes %}
+                        {{ include('PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig',{
+                                abreviacion:    formato.tipo.abreviacion|upper,
+                                numero:         formato.numero,
+                                entidad:        cliente,
+                                rol:            'cliente',
+                                fila:           loop.index0,
+                            }) 
+                        }}
+                    {% else %}
+                        {% if formato.id is defined and formato.id is not empty and formato.numero is defined and formato.numero is not empty %}
+                            {{ render(controller('PuertoUDESUsuariosBundle:Entidad:addEntidadCpicAjax',{
+                                    abreviacion:    formato.tipo.abreviacion,
+                                    numero:         formato.numero,
+                                    rol:            'cliente',
+                                    fila:           0,
+                                }))
+                            }}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-xs-6">
+                <div class="row">
+                    <div class="col-xs-4">
+                        Lugar y País de Salida
+                    </div>
+                    <div class="col-xs-8">
+                        {% set carga = formato.cargas is not empty?formato.cargas|first:formato.cargas %}
+                        {% set dataWith = {
+                            id:             'carga_lugar_carga',
+                            clase:          'carga-crear',
+                            placement:      'top',
+                            name:           'lugarCarga',
+                            pk:             carga is not empty and carga.id is defined?carga.id:' ',
+                            originalTitle:  "Lugar de la Carga",
+                            emptyText:      "Lugar",
+                            entityName:     "carga",
+                            bundleName:     "formatos" ,
+                            required:       "NoVacio,LetrasConectores",
+                            valor:          carga.lugarCarga is defined?carga.lugarCarga:' ',
+                            prefetch:       url('list_typeahead_cargas_',{name: 'lugarCarga'})
+                        } %}
+                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        Lugar y País de Llegada
+                    </div>
+                    <div class="col-xs-8">
+                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
+                            id:             'carga_lugar_descarga',
+                            name:           'lugarDescarga',
+                            originalTitle:  "Lugar de la Descarga",
+                            emptyText:      "Lugar",
+                            required:       "NoVacio,LetrasConectores",
+                            valor:          carga.lugarDescarga is defined?carga.lugarDescarga:' ',
+                            type:           'typeaheadjs',
+                            prefetch:       url('list_typeahead_cargas_',{name: 'lugarDescarga'})
+                        }) %}
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row row-fluid">

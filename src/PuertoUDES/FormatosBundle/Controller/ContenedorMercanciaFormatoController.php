@@ -379,7 +379,6 @@ class ContenedorMercanciaFormatoController extends Controller
                             ->andWhere("u.nombre LIKE '%".$unidad."%' OR u.abreviacion LIKE '%".$unidad."%' OR u.canonical LIKE '%".$unidad."%' OR u.canonicalAbreviacion LIKE '%".$unidad."%'")
                             ->getQuery()->getOneOrNullResult();
                         if($unidad){
-
                             $cm ->setUnidad($unidad);
                         }else{
     //                        $unidad = new Unidad();
@@ -387,7 +386,7 @@ class ContenedorMercanciaFormatoController extends Controller
     //                            ->addContenedorMercanciaFormato($cm);
     //                        $em->persist($unidad);
                             $error = true;
-                            $datos['errors']['Formato'] = 'Datos inválidos. Moneda no encontrada.';
+                            $datos['errors']['Formato'] = 'Datos inválidos. Unidad no encontrada.';
                         }
                         $tipoGasto = $em->getRepository('PuertoUDESCommonBundle:Tipo')->createQueryBuilder('t')
                                 ->andWhere("t.canonical LIKE '%".$concepto."%' OR t.nombre LIKE '%".$concepto."%' OR t.abreviacion LIKE '%".$concepto."%'")
@@ -429,15 +428,19 @@ class ContenedorMercanciaFormatoController extends Controller
                             }
                         }
                         if(!$error){
-                            $q = $em->getRepository('PuertoUDESFormatosBundle:Gasto')->createQueryBuilder('g')
-                                ->innerJoin('g.concepto', 't')
-                                ->andWhere("g.formato =".$formato->getId())
-                                ->andWhere("t.canonical LIKE '%".$concepto."%' OR t.nombre LIKE '%".$concepto."%' OR t.abreviacion LIKE '%".$concepto."%'")
-                                ->andWhere("t.id = ".$tipoGasto->getId());
-                            if($rolUsuario){
-                                $q->andWhere('g.rolUsuario='.$rolUsuario->getId());
+                            $gasto = null;
+                            if($mercancia->getId()){
+                                $q = $em->getRepository('PuertoUDESFormatosBundle:Gasto')->createQueryBuilder('g')
+                                    ->innerJoin('g.concepto', 't')
+                                    ->andWhere("g.formato =".$formato->getId())
+                                    ->andWhere("t.canonical LIKE '%".$concepto."%' OR t.nombre LIKE '%".$concepto."%' OR t.abreviacion LIKE '%".$concepto."%'")
+                                    ->andWhere("g.mercancia = ".$mercancia->getId())
+                                    ->andWhere("t.id = ".$tipoGasto->getId());
+                                if($rolUsuario){
+                                    $q->andWhere('g.rolUsuario='.$rolUsuario->getId());
+                                }
+                                $gasto = $q->getQuery()->getOneOrNullResult();
                             }
-                            $gasto = $q->getQuery()->getOneOrNullResult();
                             if(!$gasto){
                                 $gasto = new \PuertoUDES\FormatosBundle\Entity\Gasto();
                                 $gasto

@@ -899,8 +899,8 @@ class FormatoController extends Controller
                 $valores['datos'] = array_merge($valores['datos'],array(
                     'gastoRemitente' => $obj->getFormato()->getGastoTotalRemitente(),
                     'gastoDestinatario' => $obj->getFormato()->getGastoTotalDestinatario(),
-                    'total' => formato.getGastoTotal,
-                    'subtotal' => formato.getGastoTotal * 1.16,
+                    'total' => $obj->getFormato().getGastoTotal,
+                    'subtotal' => $obj->getFormato().getGastoTotal * 1.16,
                 ));
             }elseif($nombre == 'pesoBruto'){
                 $valores['datos'] = array_merge($valores['datos'],array(

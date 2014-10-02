@@ -4,21 +4,20 @@
     {% if only_form is defined %}
         {{ form(edit_form) }}
     {% elseif entity.tipo is defined and entity.tipo.abreviacion is defined %}
-<a class="btn btn-primary" href="{{- app.request.headers.get('referer') -}}">
-    Volver
-</a>
+        <div class="page-content">
+            <div class="menu-hoja">
+                <a class="btn btn-primary" href="{{- app.request.headers.get('referer') -}}">
+                    Volver
+                </a>
 
-<a class="btn btn-success pull-right" href="javascript:window.print();">
-    Imprimir
-</a>
-        {#
-        Valida que únicamente sean los formatos construidos. MCI, CPIC y DTAI
-        {% if 'mci' in entity.tipo.abreviacion or 'cpic' in entity.tipo.abreviacion or 'dtai' in entity.tipo.abreviacion%}
-        #}
+                <a class="btn btn-success pull-right" href="javascript:window.print();">
+                    Imprimir
+                </a>
+            </div>
             {% include 'PuertoUDESFormatosBundle:Formato:_' ~ entity.tipo.abreviacion ~ '.html.twig' with {
                     formato: entity
                 } %}
-        {#% endif %#}
+        </div>
             
     {% else %}
         <h1>Formato edit</h1>

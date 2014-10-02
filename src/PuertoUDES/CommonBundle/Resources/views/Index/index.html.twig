@@ -6,7 +6,7 @@
 {% block body -%}
 {{ parent() }}
 {% if app.user and is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-    <div id="carousel" class="carousel slide" data-ride="carousel" data-interval="false">
+    <div id="carousel-sesion" class="carousel slide" data-ride="carousel" data-interval="false">
         <!-- Indicators -->
         <ol class="carousel-indicators">
           <li data-target="#carousel" data-slide-to="0" class="active"></li>

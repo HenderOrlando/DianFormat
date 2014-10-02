@@ -17,7 +17,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $completo;
 
     /** 
-     * @ORM\Column(type="integer", nullable=false, name="numero")
+     * @ORM\Column(type="string", length=40, nullable=false, name="numero")
      */
     private $numero;
 
@@ -228,8 +228,12 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      *
      * @return \DateTime 
      */
-    public function getFechaEmision()
+    public function getFechaEmision($format = null)
     {
+        $fecha = $this->fechaEmision;
+        if(!is_null($format)){
+            $fecha = $fecha->format($format);
+        }
         return $this->fechaEmision;
     }
     
@@ -756,13 +760,27 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     /**
      * Get getGastoContenedoresMercancia
      * 
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \PuertoUDES\FormatosBundle\Entity\Gasto
      */
     public function getGastoContenedorMercancia(\PuertoUDES\CommonBundle\Entity\Mercancia $mercancia)
     {
         foreach($this->getGastoContenedoresMercancias() as $g){
             if(!is_null($g->getMercancia()) && $g->getMercancia()->getId() == $mercancia->getId()){
                 return $g;
+            }
+        }
+        return null;
+    }
+    /**
+     * Get getGastoContenedoresMercancia
+     * 
+     * @return \PuertoUDES\FormatosBundle\Entity\ContenedorMercanciaFormato
+     */
+    public function getContenedorMercancia(\PuertoUDES\CommonBundle\Entity\Mercancia $mercancia)
+    {
+        foreach($this->getContenedoresMercancias() as $c){
+            if(!is_null($c->getMercancia()) && $c->getMercancia()->getId() == $mercancia->getId()){
+                return $c;
             }
         }
         return null;
@@ -1570,7 +1588,8 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             if(!is_null($g->getMercancia())){
                 $this->gastosAPagar->add($g);
                 $this->gastoContenedoresMercancias->add($g);
-                $this->gastoTotal += $g->getValor();
+                $cm = $this->getContenedorMercancia($g->getMercancia());
+                $this->gastoTotal += ($g->getValor() * $cm->getNumBultos());
             }elseif(is_null($g->getRolUsuario())){
                 $this->gastoMercancias->add($g);
                 $this->gastoTotalMercancias += $g->getValor();

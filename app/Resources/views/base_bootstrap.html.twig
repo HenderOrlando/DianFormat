@@ -20,7 +20,7 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('bundles/puertoudescommon/images/logo_icon.png') }}" />
     </head>
     <body>
-        <div class="container">
+        <div class="container-fluid">
             <header>
                 {% block navbar -%}
                 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -33,7 +33,7 @@
                           <span class="icon-bar"></span>
                         </button>
                         <a class="navbar-brand" href="{{ url('index_') }}">
-                            Puerto UDES
+                            <span>Puerto UDES</span>
                             <img class="icon" style="width: 30px;" src="{{ asset('bundles/puertoudescommon/images/logo_icon.png') }}" alt="PuertoUDES">
                         </a>
                     </div>
@@ -159,9 +159,9 @@
                                         </a>
                                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                             <li>
-                                                <a href="{{ path('usuario__edit',{'id':app.user.usuario.id}) }}">Editar Perfil</a>
-                                                <a href="{{ path('fos_user_profile_edit',{'id':app.user.id}) }}">Editar Cuenta</a>
-                                                <a href="{{ path('fos_user_change_password',{'id':app.user.id}) }}">Cambiar Clave</a>
+                                                <a href="{{ path('usuario__edit',{'id':app.user.usuario.id}) }}" class="carga-modal">Editar Perfil</a>
+                                                <a href="{{ path('fos_user_profile_edit',{'id':app.user.id}) }}" class="carga-modal">Editar Cuenta</a>
+                                                <a href="{{ path('fos_user_change_password',{'id':app.user.id}) }}" {#class="carga-modal"#}>Cambiar Clave</a>
                                             </li>
                                         </ul>
                                     </li>

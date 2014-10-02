@@ -4,6 +4,7 @@ formato     Formato CPIC a mostrar
 m           Mercancia a mostrar
 #}
 {% set pk = cm.id is defined?cm.id:' ' %}
+{% set cantidadUnidad = cm.numBultos is defined?cm.numBultos:0 %}
 {% set dataWith = {
     entityName:     "Gasto",
     bundleName:     "formatos" ,
@@ -116,8 +117,10 @@ m           Mercancia a mostrar
                         tipo:           'Mercancia',
                         clase:          'contenedor-mercancia' ~ fila ~ '-crear',
                     } %}
+                    {% set costoUnidad = 0 %}
                     {% if cm.mercancia is defined and cm.mercancia is not null and formato.getGastoContenedoresMercancias is defined and formato.getGastoContenedoresMercancias is not empty %}
                         {% set g = formato.getGastoContenedorMercancia(cm.mercancia) %}
+                        {% set costoUnidad = g.valor %}
                         {% if g is defined and g is not null %}
                             {% set datosGasto = datosGasto|merge({
                                     gasto:            g,
@@ -134,7 +137,7 @@ m           Mercancia a mostrar
         <div class="row">
             <div class="col-lg-12 col-md-12 text-right">
                 <span class="imita" id="precio-total-factura" data-name="gastoTotal">
-                    {{- formato.gastoTotal ~ ' ' ~ formato.getTipoMoneda -}}
+                    {{- (cantidadUnidad*costoUnidad) ~ ' ' ~ formato.getTipoMoneda -}}
                 </span>
             </div>
         </div>

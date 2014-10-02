@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\UsuariosBundle\Entity\Usuario;
 use PuertoUDES\UsuariosBundle\Form\UsuarioType;
+use PuertoUDES\UsuariosBundle\Form\UsuarioComunType;
 
 /**
  * Usuario controller.
@@ -340,23 +341,30 @@ class UsuarioController extends Controller
     */
     private function createEditForm(Usuario $entity, $rolName = 'usuario')
     {
-        $url = '';
-        $datos = array('id' => $entity->getId());
-        if($rolName !== 'usuario'){
-            $datos['rolName'] = $rolName;
-            $url = '_rolname';
-        }
-        if($entity->hasRol('Estudiante')){
-            $rol = 'Estudiante';
-            $em = $this->getDoctrine()->getManager();
-            $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
-                ->andWhere("r.canonical LIKE '%".$rol."%' OR r.nombre LIKE '%".$rol."%'")
-                ->andWhere("r.aplicableA LIKE '%Usuario%'")
-                ->getQuery()->getOneOrNullResult();
+        $sc = $this->get('security.context');
+        $type = null;
+        if(false === $sc->isGranted('ROLE_ADMIN') && false === $sc->isGranted('ROLE_SUPER_ADMIN')){
+            $type = new UsuarioComunType();
         }else{
-            $rol = null;
+            $url = '';
+            $datos = array('id' => $entity->getId());
+            if($rolName !== 'usuario'){
+                $datos['rolName'] = $rolName;
+                $url = '_rolname';
+            }
+            if($entity->hasRol('Estudiante')){
+                $rol = 'Estudiante';
+                $em = $this->getDoctrine()->getManager();
+                $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
+                    ->andWhere("r.canonical LIKE '%".$rol."%' OR r.nombre LIKE '%".$rol."%'")
+                    ->andWhere("r.aplicableA LIKE '%Usuario%'")
+                    ->getQuery()->getOneOrNullResult();
+            }else{
+                $rol = null;
+            }
+            $type = new UsuarioType($this->getUser(), $rol);
         }
-        $form = $this->createForm(new UsuarioType($this->getUser(), $rol), $entity, array(
+        $form = $this->createForm($type, $entity, array(
             'action' => $this->generateUrl('usuario__update'.$url, $datos),
             'method' => 'PUT',
         ));
