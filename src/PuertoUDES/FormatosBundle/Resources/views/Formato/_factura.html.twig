@@ -1,7 +1,7 @@
 
 {% set pk = formato is defined and formato.id is not empty? formato.id:' '%}
 
-<div class="hoja_carta_formato print">
+<div class="hoja_carta_formato print {{formato.tipo.canonical}}">
     <div class="margen">
         <div class="row row-fluid">
             <div class="col-xs-8">
@@ -178,44 +178,56 @@
                 {% endif %}
             </div>
             <div class="col-xs-6">
-                <div class="row">
+                <div class="row origen">
                     <div class="col-xs-4">
                         Lugar y País de Salida
                     </div>
                     <div class="col-xs-8">
-                        {% set carga = formato.cargas is not empty?formato.cargas|first:formato.cargas %}
-                        {% set dataWith = {
-                            id:             'carga_lugar_carga',
-                            clase:          'carga-crear',
-                            placement:      'top',
-                            name:           'lugarCarga',
-                            pk:             carga is not empty and carga.id is defined?carga.id:' ',
-                            originalTitle:  "Lugar de la Carga",
-                            emptyText:      "Lugar",
-                            entityName:     "carga",
-                            bundleName:     "formatos" ,
-                            required:       "NoVacio,LetrasConectores",
-                            valor:          carga.lugarCarga is defined?carga.lugarCarga:' ',
-                            prefetch:       url('list_typeahead_cargas_',{name: 'lugarCarga'})
-                        } %}
-                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith %}
+                        {% set aduanaOrigen = formato.aduanasPartida is not empty?formato.aduanasPartida|first:null %}
+                        {% if aduanaOrigen is not null  %}
+                            {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                    abreviacion:    formato.tipo.abreviacion|upper,
+                                    numero:         formato.numero,
+                                    aduana:         aduanaOrigen,
+                                    tipo:            'partida',
+                                    fila:           0,
+                                })
+                            }}
+                        {% else %}
+                            {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                    abreviacion:    formato.tipo.abreviacion|upper,
+                                    numero:         formato.numero,
+                                    tipo:            'partida',
+                                    fila:           0,
+                                }) 
+                            }}
+                        {% endif %}
                     </div>
                 </div>
-                <div class="row">
+                <div class="row destino">
                     <div class="col-xs-4">
                         Lugar y País de Llegada
                     </div>
                     <div class="col-xs-8">
-                        {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                            id:             'carga_lugar_descarga',
-                            name:           'lugarDescarga',
-                            originalTitle:  "Lugar de la Descarga",
-                            emptyText:      "Lugar",
-                            required:       "NoVacio,LetrasConectores",
-                            valor:          carga.lugarDescarga is defined?carga.lugarDescarga:' ',
-                            type:           'typeaheadjs',
-                            prefetch:       url('list_typeahead_cargas_',{name: 'lugarDescarga'})
-                        }) %}
+                        {% set aduanaDestino = formato.aduanasDestino is not empty?formato.aduanasDestino[formato.aduanasDestino|length - 1]:null %}
+                        {% if aduanaDestino is not null  %}
+                            {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                    abreviacion:    formato.tipo.abreviacion|upper,
+                                    numero:         formato.numero,
+                                    aduana:         aduanaDestino,
+                                    tipo:            'destino',
+                                    fila:           0,
+                                })
+                            }}
+                        {% else %}
+                            {{ include('PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig',{
+                                    abreviacion:    formato.tipo.abreviacion|upper,
+                                    numero:         formato.numero,
+                                    tipo:            'destino',
+                                    fila:           0,
+                                }) 
+                            }}
+                        {% endif %}
                     </div>
                 </div>
             </div>

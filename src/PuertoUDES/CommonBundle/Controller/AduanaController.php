@@ -97,6 +97,18 @@ class AduanaController extends Controller
     public function addAduanaDiAjaxAction(Request $request){
         return $this->addAduanaMciAjaxAction($request, 'dtai');
     }
+
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Agregar/{tipo}/a/FACTURA-{fila}/{numero}/", name="aduana_add_factura_ajax_")
+     * @Route("/Agregar/{tipo}/a/FACTURA/{numero}/", name="aduana_add_factura_ajax")
+     * @Method({"POST","PUT"})
+     * @Template("PuertoUDESCommonBundle:Aduana:_addAduanaMciAjax.html.twig")
+     */
+    public function addAduanaFacturaAjaxAction(Request $request){
+        return $this->addAduanaMciAjaxAction($request, 'factura');
+    }
     /**
      * Displays a form to create a new Formato entity.
      *
@@ -160,14 +172,26 @@ class AduanaController extends Controller
                                     $l->setPais($pais);
                                     $em->persist($l);
                                 }
-                                $em->persist($l);
-                                $em->persist($aduana);
-                                $aduana->setLugar($l);
-                                $l->addAduana($aduana);
-                                $em->persist($l);
+                                if($l){
+                                    $existe_aduana = true;
+                                    $aduana = $this->getRepositorio()->findOneBy(array('lugar' => $l->getId()));
+                                }
+                                if($aduana->getId()){
+                                    
+                                }else{
+                                    $em->persist($l);
+                                    $em->persist($aduana);
+                                    $aduana->setLugar($l);
+                                    $l->addAduana($aduana);
+                                    $em->persist($l);
+                                }
                         }
-                        $aduana->setNombre('Aduana de '.$lugar);
-                        $em->persist($aduana);
+                        if($aduana->getId()){
+                                    
+                        }else{
+                            $aduana->setNombre('Aduana de '.$lugar);
+                            $em->persist($aduana);
+                        }
                     }
                     $nivel = $em->getRepository('PuertoUDESCommonBundle:Tipo')
                             ->createQueryBuilder('t')

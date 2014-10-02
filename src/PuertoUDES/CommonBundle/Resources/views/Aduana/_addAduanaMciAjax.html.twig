@@ -7,10 +7,10 @@ fila        Número de la fila de la aduana
 #}
 {% set tipo = tipo|lower %}
 {% set aduana = aduana is defined? aduana: null %}
-<div class="row" id="aduana{{fila ~ '-' ~ tipo}}-crear">
+<div class="row {{abreviacion|lower ~ '-'~ tipo ~ '-aduana'}}" id="aduana{{fila ~ '-' ~ tipo}}-crear">
     {% set pk = aduana is not null and aduana.id is not empty?aduana.id:' ' %}
     <div>
-        <div class="text-right pull-left btns-action-left">
+        <div class="{{abreviacion == 'FACTURA'?'text-left pull-right btns-action-right':'text-right pull-left btns-action-left'}}">
             {% include 'PuertoUDESCommonBundle:Plantilla:botones.html.twig' with {
                 'buttonset': 'horizontal',
                 'class': 'animate in',

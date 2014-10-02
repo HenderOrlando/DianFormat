@@ -1038,3 +1038,7 @@ td.relleno-autoliquidacion,
 .hoja_carta_formato table.declaracion-de-importacion tr td.denunciado-92 > table.table > tr > td{
     padding: 0;
 }
+.factura-destino-aduana,
+.factura-partida-aduana{
+    min-height: 25PX;
+}
