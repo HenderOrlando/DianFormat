@@ -25,6 +25,11 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $formatos;
 
     /** 
+     * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", mappedBy="tipoDeclaracion")
+     */
+    private $declaraciones;
+
+    /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\FormatoAduana", mappedBy="nivel")
      */
     private $formatoAduanas;
@@ -54,6 +59,16 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $datosMercancias;
     
+    /** 
+     * @ORM\OneToMany(targetEntity="\PuertoUDES\FormatosBundle\Entity\FormatoUsuario", mappedBy="tipo")
+     */
+    private $usuariosFormatos;
+    
+    /** 
+     * @ORM\Column(type="string", length=15, nullable=true, name="codigo")
+     */
+    private $cod;
+    
     private $fullName;
     
     
@@ -66,10 +81,12 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->abreviacion = '';
         $this->fullName = '';
         $this->formatos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->declaraciones = new \Doctrine\Common\Collections\ArrayCollection();
         $this->cargas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->conductores = new \Doctrine\Common\Collections\ArrayCollection();
         $this->formatoAduanas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->conceptosGastos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->usuariosFormatos = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -136,6 +153,26 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
     
     /**
+     * Get TipoDeclaracionNombre
+     *
+     * @return string 
+     */
+    public function getTipoDeclaracionNombre()
+    {
+        return $this->getNombre();
+    }
+    
+    /**
+     * Set TipoDeclaracionNombre
+     *
+     * @return string 
+     */
+    public function setTipoDeclaracionNombre($nombre)
+    {
+        return $this->setNombre($nombre);
+    }
+    
+    /**
      * Set aplicableA
      *
      * @param string $aplicableA
@@ -189,6 +226,39 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getFormatos()
     {
         return $this->formatos;
+    }
+
+    /**
+     * Add declaraciones
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $declaracion
+     * @return Tipo
+     */
+    public function addDeclaracion(\PuertoUDES\FormatosBundle\Entity\Formato $declaracion)
+    {
+        $this->declaraciones[] = $declaracion;
+    
+        return $this;
+    }
+
+    /**
+     * Remove declaraciones
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $declaracion
+     */
+    public function removeDeclaracion(\PuertoUDES\FormatosBundle\Entity\Formato $declaracion)
+    {
+        $this->declaraciones->removeElement($declaracion);
+    }
+
+    /**
+     * Get declaraciones
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDeclaracions()
+    {
+        return $this->declaraciones;
     }
 
     /**
@@ -387,9 +457,86 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
         return $this->datosMercancias;
     }
     
+    /**
+     * Add usuariosFormatos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\FormatoUsuario $usuariosFormatos
+     * @return Rol
+     */
+    public function addUsuariosFormato(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $usuariosFormatos)
+    {
+        $this->usuariosFormatos[] = $usuariosFormatos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove usuariosFormatos
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\FormatoUsuario $usuariosFormatos
+     */
+    public function removeUsuariosFormato(\PuertoUDES\FormatosBundle\Entity\FormatoUsuario $usuariosFormatos)
+    {
+        $this->usuariosFormatos->removeElement($usuariosFormatos);
+    }
+
+    /**
+     * Get usuariosFormatos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getUsuariosFormatos()
+    {
+        return $this->usuariosFormatos;
+    }
+    
+    /**
+     * Set cod
+     *
+     * @param string $cod
+     * @return Entidad
+     */
+    public function setCod($cod)
+    {
+        $this->cod = $cod;
+    
+        return $this;
+    }
+
+    /**
+     * Get cod
+     *
+     * @return string 
+     */
+    public function getCod()
+    {
+        return $this->cod;
+    }
+    
+    /**
+     * Get TipoDeclaracionCod
+     *
+     * @return string 
+     */
+    public function getTipoDeclaracionCod()
+    {
+        return $this->getCod();
+    }
+    
+    /**
+     * Get TipoDeclaracionCod
+     *
+     * @return string 
+     */
+    public function setTipoDeclaracionCod($nombre)
+    {
+        return $this->setCod($nombre);
+    }
+    
     public function getTokens($explode = true){
         $a = parent::getTokens(FALSE)
             .'\\'.$this->getAbreviacion();
+        $a['cod'] = $this->getCod();
         if(is_bool($explode) && $explode){
             $a = explode('\\', $a);
         }

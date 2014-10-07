@@ -281,6 +281,24 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->formatos;
     }
+    
+    /**
+     * get TipoUsuario
+     *
+     * @param \PuertoUDES\FormatosBundle\Entity\Formato $formato
+     * 
+     * @return \PuertoUDES\CommonBundle\Entity\Tipo
+     */
+    public function getTipoUsuario(\PuertoUDES\FormatosBundle\Entity\Formato $formato = null){
+        if(!is_null($formato)){
+            foreach($this->formatos as $f){
+                if($f->getFormato()->getId() === $formato->getId()){
+                    return $f->getTipo();
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * Add formatosAutor
@@ -678,6 +696,10 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
         ));
         if($this->getLugar()){
             $a['lugar'] = $this->getLugar()->json(false);
+        }
+        if($this->getEntidad()){
+            $a['cod'] = $this->getEntidad()->getCod();
+//            $a['entidad'] = $this->getEntidad()->json(false);
         }
         if(is_bool($json) && $json){
             return json_encode($a);

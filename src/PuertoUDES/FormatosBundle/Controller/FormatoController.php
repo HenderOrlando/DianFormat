@@ -588,6 +588,7 @@ class FormatoController extends Controller
      * Displays a form to create a new Formato entity.
      *
      * @Route("/Editar-Campo/{tipo}/", name="formato_edit_campo")
+     * @Route("/Editar-Campo/{tipo}/{idFormato}/", name="formato_edit_campo_")
      * @Method("PUT")
      * @Template()
      */
@@ -791,6 +792,26 @@ class FormatoController extends Controller
                         $em->flush();
                         $valores['datos'] = $obj->json(false);
                         $valor = $obj->$get()->getAbreviacion();
+                    }
+                }elseif(strpos($nombre, 'tipoDeclaracion') !== false){
+                    $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->find($request->get('idFormato', -1));
+                    if(!$formato){
+                        $valores['msgs'][] = array('msg' => 'Formato: Tipo de declaración '.strtoupper($valor).' no encontrada.', 'tipo' => 'danger');
+                        $valor = $obj->$get();
+//                        $tipo = new \PuertoUDES\CommonBundle\Entity\Unidad();
+//                        $tipo
+//                            ->setAbreviacion(substr($valor, 0, 4))
+//                            ->setNombre(str_replace('-', ' ', $valor));
+//                        $em->persist($tipo);
+                    }else{
+                        $formato->setTipoDeclaracion($obj);
+                        $em->persist($obj);
+                        $obj->addDeclaracion($formato);
+                        $em->persist($obj);
+                        $em->flush();
+                        $valores['datos'] = $obj->json(false);
+                        $valor = $obj->$get()->getAbreviacion();
+                        $reload = $obj->json(false);
                     }
                 }else{
                     if(method_exists($obj, $get) && $obj->$get() != $valor){

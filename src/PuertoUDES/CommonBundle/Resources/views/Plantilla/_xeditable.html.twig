@@ -60,7 +60,7 @@ required        Lista de requisitos (validaciones en el cliente) para enviar los
     {% set date_format = date_format is defined and date_format is not empty? date_format : 'yyyy-mm-dd' %}
     {% set date_viewformat = date_viewformat is defined and date_viewformat is not empty? date_viewformat : 'd-M-yyyy' %}
 {% endif %}
-<a href="#" {{ id is not empty?'id="' ~ id ~ '"':'' }} class="xeditable {{ clase }}" 
+<a href="#" {{ id is not empty?'id=' ~ id:'' }} class="xeditable {{ clase }}" 
     data-placement="{{ placement }}" 
     data-name="{{- name -}}" 
     data-type="{{- type -}}" 

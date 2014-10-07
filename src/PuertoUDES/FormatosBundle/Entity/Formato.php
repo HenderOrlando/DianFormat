@@ -61,6 +61,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $autor;
     
+    private $importadores;
     private $notificados;
     private $consignatarios;
     private $remitentes;
@@ -151,6 +152,12 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $tipo;
 
     /** 
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Tipo", inversedBy="declaraciones")
+     * @ORM\JoinColumn(name="tipoDeclaracion", referencedColumnName="id", nullable=true)
+     */
+    private $tipoDeclaracion;
+
+    /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Pais", inversedBy="formatos")
      * @ORM\JoinColumn(name="pais", referencedColumnName="id", nullable=true)
      */
@@ -197,6 +204,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->remitentes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->declarantes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->importadores = new \Doctrine\Common\Collections\ArrayCollection();
         $this->transportistas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->clientes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->empresas = new \Doctrine\Common\Collections\ArrayCollection();
@@ -907,7 +915,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
     
     /**
-     * Get declarates
+     * Get declarantes
      * 
      * @return \Doctrine\Common\Collections\Collection 
      */
@@ -917,6 +925,19 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             $this->loadUsuariosTipo();
         }
         return $this->declarantes;
+    }
+    
+    /**
+     * Get importadores
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getImportadores()
+    {
+        if(empty($this->importadores)){
+            $this->loadUsuariosTipo();
+        }
+        return $this->importadores;
     }
 
     /**
@@ -1300,6 +1321,29 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->tipo;
     }
+
+    /**
+     * Set tipoDeclaracion
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Tipo $tipoDeclaracion
+     * @return Formato
+     */
+    public function setTipoDeclaracion(\PuertoUDES\CommonBundle\Entity\Tipo $tipoDeclaracion)
+    {
+        $this->tipoDeclaracion = $tipoDeclaracion;
+    
+        return $this;
+    }
+
+    /**
+     * Get tipoDeclaracion
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Tipo 
+     */
+    public function getTipoDeclaracion()
+    {
+        return $this->tipoDeclaracion;
+    }
     /**
      * Set incoterm
      *
@@ -1506,6 +1550,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->remitentes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->declarantes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->importadores = new \Doctrine\Common\Collections\ArrayCollection();
         $this->transportistas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->clientes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->empresas = new \Doctrine\Common\Collections\ArrayCollection();
@@ -1525,6 +1570,9 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                     break;
                 case 'declarante':
                     $this->declarantes->add($u->getUsuario()->getEntidad());
+                    break;
+                case 'importador':
+                    $this->importadores->add($u->getUsuario()->getEntidad());
                     break;
                 case 'transportista':
                     $this->transportistas->add($u->getUsuario()->getEntidad());
@@ -1589,7 +1637,9 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                 $this->gastosAPagar->add($g);
                 $this->gastoContenedoresMercancias->add($g);
                 $cm = $this->getContenedorMercancia($g->getMercancia());
-                $this->gastoTotal += ($g->getValor() * $cm->getNumBultos());
+                if($cm){
+                    $this->gastoTotal += ($g->getValor() * $cm->getNumBultos());
+                }
             }elseif(is_null($g->getRolUsuario())){
                 $this->gastoMercancias->add($g);
                 $this->gastoTotalMercancias += $g->getValor();

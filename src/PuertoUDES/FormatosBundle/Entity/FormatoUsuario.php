@@ -33,6 +33,12 @@ class FormatoUsuario
      * @ORM\JoinColumn(name="rol", referencedColumnName="id", nullable=false)
      */
     private $rol;
+
+    /** 
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Tipo", inversedBy="usuariosFormatos")
+     * @ORM\JoinColumn(name="tipo", referencedColumnName="id", nullable=true)
+     */
+    private $tipo;
     
     /** 
      * @ORM\Column(type="datetime", nullable=false, name="fecha_creado")
@@ -145,6 +151,29 @@ class FormatoUsuario
     public function getRol()
     {
         return $this->rol;
+    }
+
+    /**
+     * Set tipo
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Tipo $tipo
+     * @return FormatoUsuario
+     */
+    public function setTipo(\PuertoUDES\CommonBundle\Entity\Tipo $tipo)
+    {
+        $this->tipo = $tipo;
+    
+        return $this;
+    }
+
+    /**
+     * Get tipo
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Tipo 
+     */
+    public function getTipo()
+    {
+        return $this->tipo;
     }
     
     public function json($json = true){

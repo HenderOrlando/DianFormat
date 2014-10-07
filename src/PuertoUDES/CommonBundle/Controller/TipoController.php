@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use PuertoUDES\CommonBundle\Controller\IndexController;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use PuertoUDES\CommonBundle\Entity\Tipo;
 use PuertoUDES\CommonBundle\Form\TipoType;
 
@@ -19,7 +20,48 @@ use PuertoUDES\CommonBundle\Form\TipoType;
  */
 class TipoController extends Controller
 {
-
+/**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Lista/para/{name}/", name="list_typeahead_tipos_")
+     * @Route("/{rol}/Lista/para/{name}/", name="list_typeahead_tipos")
+     * @Template("PuertoUDESFormatosBundle:Formato:_addEntidadCpicAjax.html.twig")
+     */
+    public function listTypeaheadAction(Request $request){
+        $list = array();
+        $entities = array();
+        $name = $request->get('name','');
+        $rol = $request->get('rol','');
+        switch(strtolower($rol)){
+            case 'usuario':
+                $entities = $this->getRepositorio()->getTipoUsuario();
+                break;
+            case 'declarante':
+                $entities = $this->getRepositorio()->getByAplicableA('declarante');
+                break;
+            case 'declaracion':
+                $entities = $this->getRepositorio()->getByAplicableA('declaracion');
+                break;
+            default:
+                $entities = $this->getRepositorio()->findAll();
+                break;
+        }
+        $propertyPath = new PropertyAccessor();
+        foreach($entities as $entidad){
+            $value = $propertyPath->getValue($entidad,$name);
+            if(is_null($value))
+                $value = '';
+            elseif(is_object($value))
+                $value = $value->__toString();
+            $list[] = array(
+                'value' =>  $value,
+                'tokens'=>  $entidad->getTokens(),
+                'datos' =>  $entidad->json(false)
+            );
+        }
+        return JsonResponse::create($list);
+    }
+    
     /**
      * Lists all Tipo entities.
      *

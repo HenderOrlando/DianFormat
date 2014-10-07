@@ -973,9 +973,8 @@ table.declaracion-de-importacion .enunciado-5{
     left: -70px;
 }
 .declaracion-de-importacion .importador a{
-    letter-spacing: 7.4px;
-    margin-left: 2px;
-    text-align: justify;
+    font-family: monospace;
+    letter-spacing: 6.8px;
 }
 .declaracion-de-importacion .importador{
     font-size: 14px;
@@ -993,7 +992,7 @@ table.declaracion-de-importacion .enunciado-5{
     height: 8px;
     border-right: 1px solid #009e59;
     /* float: left; */
-    width: 15.1px;
+    width: 15px;
     position: relative;
     bottom: 0;
     margin-left: 0px;
@@ -1005,6 +1004,7 @@ table.declaracion-de-importacion .enunciado-5{
     border-left: 1px solid #009e59;
     height: 200%;
     margin-top: -10px;
+    margin-left: -1px;
     float: right;
 }
 .td-verticalText{

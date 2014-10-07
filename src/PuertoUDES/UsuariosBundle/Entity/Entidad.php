@@ -28,6 +28,16 @@ class Entidad
     private $certificadoIdoneidad;
     
     /** 
+     * @ORM\Column(type="string", length=15, nullable=true, name="codigo")
+     */
+    private $cod;
+    
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true, name="clase")
+     */
+    private $clase;
+    
+    /** 
      * @ORM\OneToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", mappedBy="transportista")
      */
     private $formatos;
@@ -56,6 +66,7 @@ class Entidad
     {
         $this->permisosPresentaServicios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->certificadoIdoneidad = null;
+        $this->cod = '';
     }
     
     /**
@@ -135,6 +146,52 @@ class Entidad
     public function getCertificadoIdoneidad()
     {
         return $this->certificadoIdoneidad;
+    }
+    
+    /**
+     * Set cod
+     *
+     * @param string $cod
+     * @return Entidad
+     */
+    public function setCod($cod)
+    {
+        $this->cod = $cod;
+    
+        return $this;
+    }
+
+    /**
+     * Get cod
+     *
+     * @return string 
+     */
+    public function getCod()
+    {
+        return $this->cod;
+    }
+    
+    /**
+     * Set clase
+     *
+     * @param string $clase
+     * @return Entidad
+     */
+    public function setClase($clase)
+    {
+        $this->clase = $clase;
+    
+        return $this;
+    }
+
+    /**
+     * Get clase
+     *
+     * @return string 
+     */
+    public function getClase()
+    {
+        return $this->clase;
     }
 
     /**
@@ -504,6 +561,7 @@ class Entidad
     
     public function json($json = true, $permisos = false){
         $a = array(
+            'cod'                   => $this->getCod(),
             'usuario'               => $this->getUsuario()->json(false),
             'certificado_idoneidad' => $this->getCertificadoIdoneidad(),
         );

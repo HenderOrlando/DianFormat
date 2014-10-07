@@ -68,7 +68,7 @@ m           Mercancia a mostrar
                     {% set data = {id: cm.id, } %}
                 {% endif %}
                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                    id:             "num_bultos_contenedor_mercancia_formato",
+                    id:             "num_bultos_contenedor_mercancia_formato_" ~ fila,
                     clase:          'contenedor-mercancia' ~ fila ~ '-crear',
                     name:           "numBultos",
                     originalTitle:  "Cantidad de Mercancía",
@@ -76,7 +76,7 @@ m           Mercancia a mostrar
                     valor:          pk != ' '?cm.numBultos:'',
                 }) %} - 
                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                    id:             "clase_bultos_contenedor_mercancia_formato",
+                    id:             "clase_bultos_contenedor_mercancia_formato_" ~ fila,
                     clase:          'contenedor-mercancia' ~ fila ~ '-crear',
                     name:           "unidadBultos",
                     entityName:     "ContenedorMercanciaFormato",
@@ -95,7 +95,7 @@ m           Mercancia a mostrar
         <div class="row">
             <div class="col-lg-10 col-md-10 text-justify col-md-offset-1 col-lg-offset-1">
                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith|merge({
-                    id:             "descripcion_mercancia_contenedor_mercancia_formato",
+                    id:             "descripcion_mercancia_contenedor_mercancia_formato_" ~ fila,
                     clase:          'contenedor-mercancia' ~ fila ~ '-crear',
                     name:           "descripcion",
                     required:       "NoVacio,NumerosLetrasConectores",
@@ -116,6 +116,7 @@ m           Mercancia a mostrar
                         abreviacion:    formato.tipo.abreviacion|upper,
                         numero:         formato.numero,
                         tipo:           'Mercancia',
+                        fila:           fila,
                         clase:          'contenedor-mercancia' ~ fila ~ '-crear',
                     } %}
                     {% set costoUnidad = 0 %}

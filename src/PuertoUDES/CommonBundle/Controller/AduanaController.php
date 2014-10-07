@@ -173,8 +173,11 @@ class AduanaController extends Controller
                                     $em->persist($l);
                                 }
                                 if($l){
-                                    $existe_aduana = true;
-                                    $aduana = $this->getRepositorio()->findOneBy(array('lugar' => $l->getId()));
+                                    $aduana1 = $this->getRepositorio()->findOneBy(array('lugar' => $l->getId()));
+                                    if($aduana1){
+                                        $existe_aduana = true;
+                                        $aduana = $aduana1;
+                                    }
                                 }
                                 if($aduana->getId()){
                                     

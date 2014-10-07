@@ -120,9 +120,11 @@ class EntidadController extends Controller
     public function addEntidadCpicAjaxAction(Request $request, $abreviacion = 'cpic'){
         $filas = $request->get('filas', 0);
         $role = $request->get('rol',NULL);
+        $tipoEntidad = $request->get('tipoEntidad',NULL);
         $numero = $request->get('numero',NULL);
         $nombre = $request->get('nombre',NULL);
         $docId = $request->get('docId',NULL);
+        $cod = $request->get('cod',NULL);
         $direccion = $request->get('direccion','');
         $lugar = $request->get('lugar',NULL);
         $em = $this->getDoctrine()->getManager();
@@ -192,7 +194,9 @@ class EntidadController extends Controller
                     }else{
                         $u = $entidad->getUsuario();
                     }
-                    
+                    if($cod){
+                        $entidad->setCod($cod);
+                    }
                     $rol = $em->getRepository('PuertoUDESCommonBundle:Rol')->createQueryBuilder('r')
                             ->andWhere("r.canonical='".$role."' OR r.nombre='".$role."'")
                             ->getQuery()->getOneOrNullResult();
@@ -212,13 +216,31 @@ class EntidadController extends Controller
                                 ->getQuery()->getOneOrNullResult();
                         if(!$fu){
                             $fu = new \PuertoUDES\FormatosBundle\Entity\FormatoUsuario();
-                            $fu->setFormato($formato);
-                            $fu->setUsuario($u);
-                            $fu->setRol($rol);
+                            $fu->setFormato($formato)
+                                ->setUsuario($u)
+                                ->setRol($rol);
                             $em->persist($fu);
                         }else{
                             
                         }
+                        if($tipoEntidad){
+                            $tipoEntidadN = $tipoEntidad;
+                            $tipoEntidad = $em->getRepository('PuertoUDESCommonBundle:Tipo')->createQueryBuilder('r')
+                                    ->andWhere("r.canonical='".$tipoEntidadN."' OR r.nombre='".$tipoEntidadN."'")
+                                    ->getQuery()->getOneOrNullResult();
+                            if(!$tipoEntidad){
+                                $tipoEntidad = new \PuertoUDES\CommonBundle\Entity\Tipo();
+                                $tipoEntidad
+                                    ->setNombre($tipoEntidadN)
+                                    ->setDescripcion('Tipo de '.$rol->getNombre())
+                                    ->setAplicableA($rol->getCanonical());
+                                $em->persist($tipoEntidad);
+                            }
+                        }
+                        if($tipoEntidad){
+                            $fu->setTipo($tipoEntidad);
+                        }
+                        $fu->setRol($rol);
 //                        $u->addRol($rol);
                         $em->flush();
                         $datos['success']['msgs']['Formato'] = array(

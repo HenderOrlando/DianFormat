@@ -362,61 +362,64 @@ jQuery.extend({
                 return getParamsXEditable(params, este);
             },
             success: function(response, val) {
-                if(response.reload){
-                    console.log(response.reload)
-                    $('.'+getClase(este.attr('class'))).not('.btn').each(function(){
-                        var este1 = $(this);
-                        este1.attr('data-pk',response.id);
-                        este1.editable('option', 'pk', response.id);
-                        var val = response.reload;
-                        if(este1.attr('data-name') === 'lugar'){
-                            val = val.lugar.nombre+', '+val.lugar.pais.nombre;
-                        }else if(este1.attr('data-name') === 'docId'){
-                            val = val['doc_id'];
-                        }else{
-                            val = val[este1.attr('data-name')]
-                        }
-                        este1.editable('setValue', val);
-                    });
-                }
-                if(response.status == 'error') 
-                    return response.msg; //msg will be shown in editable form
-                var msgs = new Array(), ok = true;
-                
-                //Mensajes
-                if(typeof response.msgs !== 'undefined'){
-                    msgs = response.msgs;
-                }else if(typeof response.values !== 'undefined' && typeof response.values.msgs !== 'undefined'){
-                    msgs = response.values.msgs;
-                }
-                //Datos
-                if(typeof response.datos !== 'undefined'){
-                    var datos = response.datos;
-                }else if(typeof response.values !== 'undefined' && typeof response.values.datos !== 'undefined'){
-                    datos = response.values.datos;
-                }
-                if(typeof datos !== 'undefined'){
-                    validaDataName(datos, getClase(este.attr('class')));
-                }
-                if(typeof response.id !== 'undefined'){
-                    console.log(response.id);
-                    este.attr('data-pk',response.id);
-                    este.editable('option', 'pk', response.id);
-                }
-                for(var i in msgs){
-                    if(typeof msgs[i]['tipo'] === 'undefined')
-                        msgs[i]['tipo'] = 'warning';
-                    if(typeof msgs[i]['msg'] !== 'undefined')
-                        addMsg(msgs[i]['msg'], msgs[i]['tipo']);
-                    if(msgs[i]['tipo'] === 'danger')
-                        ok = false;
-                }
-                if(ok){
-                    if(typeof response.value !== 'undefined'){
-                        $(este).text(response.value);
+                var ok = true;
+                if(response){
+                    if(response.reload){
+                        $('.'+getClase(este.attr('class'))).not('.btn').each(function(){
+                            var este1 = $(this);
+                            este1.attr('data-pk',response.id);
+                            este1.editable('option', 'pk', response.id);
+                            var val = response.reload;
+                            if(este1.attr('data-name') === 'lugar'){
+                                val = val.lugar.nombre+', '+val.lugar.pais.nombre;
+                            }else if(este1.attr('data-name') === 'docId'){
+                                val = val['doc_id'];
+                            }else{
+                                val = val[este1.attr('data-name')];
+                            }
+                            este1.editable('option','value', val);
+                            este1.editable('option','disabled', true);
+                            este1.removeClass('editable-unsaved');
+                        });
                     }
-//                    console.log(val);
-//                    console.log(datos);
+                    if(response.status == 'error') 
+                        return response.msg; //msg will be shown in editable form
+                    var msgs = new Array();
+
+                    //Mensajes
+                    if(typeof response.msgs !== 'undefined'){
+                        msgs = response.msgs;
+                    }else if(typeof response.values !== 'undefined' && typeof response.values.msgs !== 'undefined'){
+                        msgs = response.values.msgs;
+                    }
+                    //Datos
+                    if(typeof response.datos !== 'undefined'){
+                        var datos = response.datos;
+                    }else if(typeof response.values !== 'undefined' && typeof response.values.datos !== 'undefined'){
+                        datos = response.values.datos;
+                    }
+                    if(typeof datos !== 'undefined'){
+                        validaDataName(datos, getClase(este.attr('class')));
+                    }
+                    if(typeof response.id !== 'undefined'){
+                        este.attr('data-pk',response.id);
+                        este.editable('option', 'pk', response.id);
+                    }
+                    for(var i in msgs){
+                        if(typeof msgs[i]['tipo'] === 'undefined')
+                            msgs[i]['tipo'] = 'warning';
+                        if(typeof msgs[i]['msg'] !== 'undefined')
+                            addMsg(msgs[i]['msg'], msgs[i]['tipo']);
+                        if(msgs[i]['tipo'] === 'danger')
+                            ok = false;
+                    }
+                    if(ok){
+                        if(typeof response.value !== 'undefined'){
+                            $(este).text(response.value);
+                        }
+    //                    console.log(val);
+    //                    console.log(datos);
+                    }
                 }
                 return ok;
             }
@@ -627,6 +630,7 @@ jQuery.extend({
             clase = '';
         else
             clase = '.'+clase;
+        console.log(datos)
         for(var name in datos){
             if(datos[name] !== 'null'){
                 var d = $(clase+'[data-name="'+name+'"]'), val = '';
@@ -635,9 +639,13 @@ jQuery.extend({
                     var d = $('[data-name="'+name+'"]'), 
                         x = name.replace('totalP','p').replace('totalV','v'), 
                         val = 0;
-                    $('[data-name="'+x+'"]').each(function(){
-                        val += $(this).text()*1;
-                    });
+                    if(datos[name]){
+                        val = datos[name];
+                    }else{
+                        $('[data-name="'+x+'"]').each(function(){
+                            val += $(this).text()*1;
+                        });
+                    }
                     d.text(val.toFixed(4));
                 }
                 else 

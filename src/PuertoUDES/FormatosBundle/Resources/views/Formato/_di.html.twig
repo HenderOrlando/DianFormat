@@ -136,12 +136,12 @@
                     <td rowspan="2" colspan="1" class="bordered border-radius-l bordered-2-bl">
                         <div class="row">
                             <div class="verticalText">
-                                {# Falta Entidad #}
                                 Importador
                             </div>
                         </div>
                     </td>
                     <td colspan="6" class="bordered bordered-br">
+                        {% set entidad = formato.getImportadores|first %}
                         {% set abreviacion = formato.tipo.abreviacion %}
                         {% set numero = formato.numero %}
                         {% set fila = 0 %}
@@ -216,7 +216,7 @@
                                     id:             "entidad_" ~ rol ~"_nit_" ~ fila,
                                     name:           "docId",
                                     originalTitle:  "NIT " ~ rol | title ,
-                                    emptyText:      "000000000000000",
+                                    emptyText:      "00000000000000",
                                     required:       "NoVacio,NumerosConectores",
                                     valor:          pk != ' '?usuario.docId:'',
                                     prefetch:       url('list_typeahead_entidades_',{name: 'docId'}),
@@ -286,19 +286,18 @@
                     <td colspan="2" class="bordered bordered-br bordered-2-b">
                         <div class="row">
                             <div class="enunciado ">
-                                {# Falta Entidad #}
                                 12. Cód. Dirección Seccional
                             </div>
                         </div>
                         <div class="row">
                             <div class="">
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_telefono_" ~ fila,
-                                    name:           "telefono",
-                                    originalTitle:  "Teléfono " ~ rol | title ,
+                                    id:             "entidad_" ~ rol ~"_direccion_" ~ fila,
+                                    name:           "direccion",
+                                    originalTitle:  "Cód. Dirección Seccional " ~ rol | title ,
                                     emptyText:      "Cód. Dirección Seccional",
-                                    required:       "Vacio,Numeros",
-                                    valor:          pk != ' '?usuario.telefono:'',
+                                    required:       "Vacio,LetrasConectores",
+                                    valor:          pk != ' '?usuario.lugar:'',
                                     prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
                                 }) %}
                             </div>
@@ -314,12 +313,12 @@
                         <div class="row">
                             <div class="">
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_telefono_" ~ fila,
-                                    name:           "telefono",
-                                    originalTitle:  "Teléfono " ~ rol | title ,
+                                    id:             "entidad_" ~ rol ~"_lugar_" ~ fila,
+                                    name:           "lugar",
+                                    originalTitle:  "Cód. Dpto " ~ rol | title ,
                                     emptyText:      "Cód. Dpto.",
-                                    required:       "Vacio,Numeros",
-                                    valor:          pk != ' '?usuario.telefono:'',
+                                    required:       "Vacio,Letras",
+                                    valor:          pk != ' '?usuario.lugar:'',
                                     prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
                                 }) %}
                             </div>
@@ -335,12 +334,12 @@
                         <div class="row">
                             <div class="">
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_telefono_" ~ fila,
-                                    name:           "telefono",
-                                    originalTitle:  "Teléfono " ~ rol | title ,
+                                    id:             "entidad_" ~ rol ~"_cod_ciudad_municipio_" ~ fila,
+                                    name:           "lugar",
+                                    originalTitle:  "Cód. Ciudad/Municipio " ~ rol | title ,
                                     emptyText:      "Cód. Ciudad/Municipio",
-                                    required:       "Vacio,Numeros",
-                                    valor:          pk != ' '?usuario.telefono:'',
+                                    required:       "Vacio,LetrasConectores",
+                                    valor:          pk != ' '?usuario.lugar:'',
                                     prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
                                 }) %}
                             </div>
@@ -351,12 +350,12 @@
                     <td rowspan="2" colspan="1" class="td-verticalText bordered bordered-l bordered-br border-radius-tl bordered-2-l">
                         <div class="row">
                             <div class="verticalText">
-                                {# Falta Entidad #}
                                 Declarante
                             </div>
                         </div>
                     </td>
                     <td rowspan="1" colspan="6" class="bordered bordered-br">
+                        {% set entidad = formato.getDeclarantes|first %}
                         {% set abreviacion = formato.tipo.abreviacion %}
                         {% set numero = formato.numero %}
                         {% set fila = 1 %}
@@ -462,20 +461,22 @@
                     <td rowspan="1" colspan="2" class="bordered bordered-br">
                         <div class="row">
                             <div class="enunciado text-left ">
-                                {# Falta Entidad #}
                                 27. Tipo usuario
                             </div>
                         </div>
                         <div class="row">
+                            {% set tipoUsuario = usuario is not null?usuario.getTipoUsuario(formato):null %}
                             <div>
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
                                     id:             "entidad_" ~ rol ~"_razon_social_" ~ fila,
-                                    name:           "nombre",
+                                    name:           "tipoEntidad",
+                                    entityName:     "FormatoUsuario",
+                                    bundleName:     "formatos",
                                     originalTitle:  "Tipo de Usuario del " ~ rol | title ,
                                     emptyText:      "Tipo",
                                     required:       "NoVacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.nombre:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'nombre'}),
+                                    valor:          pk != ' ' and tipoUsuario is not null?tipoUsuario.nombre:'',
+                                    prefetch:       url('list_typeahead_tipos',{rol: rol, name: 'nombre'}),
                                 }) %}
                             </div>
                         </div>
@@ -483,20 +484,21 @@
                     <td rowspan="1" colspan="1" class="bordered bordered-br border-radius-tr bordered-2-r">
                         <div class="row">
                             <div class="enunciado text-left ">
-                                {# Falta Entidad #}
                                 28. Cód. usuario
                             </div>
                         </div>
                         <div class="row">
                             <div>
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_razon_social_" ~ fila,
-                                    name:           "nombre",
+                                    id:             "entidad_" ~ rol ~"_cod_" ~ fila,
+                                    name:           "cod",
+                                    pk:             entidad is not null and entidad.id is not empty?entidad.id:' ',
+                                    entityName:     "Entidad",
                                     originalTitle:  "Cód. del Usuario " ~ rol | title ,
                                     emptyText:      "Cód. del Usuario",
                                     required:       "NoVacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.nombre:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'nombre'}),
+                                    valor:          pk != ' '?entidad.cod:'',
+                                    prefetch:       url('list_typeahead_entidades_',{name: 'cod'}),
                                 }) %}
                             </div>
                         </div>
@@ -512,13 +514,13 @@
                         <div class="row">
                             <div class="">
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_direccion_" ~ fila,
-                                    name:           "direccion",
-                                    originalTitle:  "Dirección " ~ rol | title ,
+                                    id:             "entidad_" ~ rol ~"_num_doc_id_" ~ fila,
+                                    name:           "docId",
+                                    originalTitle:  "Número documento de identificación " ~ rol | title ,
                                     emptyText:      "Número documento de identificación",
                                     required:       "Vacio,NumerosLetrasConectores",
-                                    valor:          pk != ' '?usuario.direccion:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'direccion'}),
+                                    valor:          pk != ' '?usuario.docId:'',
+                                    prefetch:       url('list_typeahead_entidades_',{name: 'docId'}),
                                 }) %}
                             </div>
                         </div>
@@ -532,13 +534,13 @@
                         <div class="row">
                             <div class="">
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_telefono_" ~ fila,
-                                    name:           "telefono",
-                                    originalTitle:  "Teléfono " ~ rol | title ,
+                                    id:             "entidad_" ~ rol ~"_nombre_" ~ fila,
+                                    name:           "nombre",
+                                    originalTitle:  "Apellidos y nombres " ~ rol | title ,
                                     emptyText:      "Apellidos y nombres",
-                                    required:       "Vacio,Numeros",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
+                                    required:       "Vacio,NumerosLetrasConectores",
+                                    valor:          pk != ' '?usuario.nombre:'',
+                                    prefetch:       url('list_typeahead_entidades_',{name: 'nombre'}),
                                 }) %}
                             </div>
                         </div>
@@ -546,6 +548,25 @@
                 </tr>
                 <tr>
                     <td colspan="2" class="bordered bordered-2-l bordered-br bordered-l">
+                        {% set entidad = formato.getImportadores|first %}
+                        {% set rol = 'importador' %}
+                        {% set pk = entidad is not null and entidad.id is not empty?entidad.id:' ' %}
+                        {% set dataWith = {
+                            id:             "entidad_" ~ rol ~"_ _" ~ fila,
+                            clase:          "entidad" ~ fila ~ "-"~ rol ~ "-crear",
+                            name:           "",
+                            placement:      abreviacion|lower == 'factura'?"bottom":'top',
+                            pk:             pk,
+                            datos:          {tipo: abreviacion|upper},
+                            originalTitle:  " " ~ rol | title ,
+                            entityName:     "entidad",
+                            bundleName:     "usuarios" ,
+                            emptyText:      "",
+                            required:       "",
+                            valor:          '',
+                            type:           'typeaheadjs',
+                            prefetch:       url('list_typeahead_entidades_',{name: 'id'}),
+                        } %}
                         {% set enunciado = 'Clase Importador' %}
                         {% set canonicalEnunciado = 'clase_importador' %}
                         <div class="row">
@@ -557,12 +578,13 @@
                             <div class="">
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
                                     id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                    name:           "telefono",
+                                    name:           "clase",
                                     originalTitle:  enunciado | title ,
+                                    entityName:     "entidad",
                                     emptyText:      enunciado,
                                     required:       "Vacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
+                                    valor:          pk != ' '?entidad.clase:'',
+                                    prefetch:       url('list_typeahead_entidades_',{name: 'clase'}),
                                 }) %}
                             </div>
                         </div>
@@ -571,6 +593,22 @@
                         {# falta tipo de declaración #}
                         {% set enunciado = 'Tipo declaracion' %}
                         {% set canonicalEnunciado = 'clase_importador' %}
+                        {% set dataWith = {
+                            id:             "formato_" ~ "_declaracion_" ~ fila,
+                            clase:          "formato_agrega_tipo_declaracion",
+                            name:           "",
+                            placement:      'top',
+                            pk:             formato.tipoDeclaracion.id,
+                            datos:          {tipo: abreviacion|upper, idFormato: formato.id},
+                            originalTitle:  " " ~ rol | title ,
+                            entityName:     "tipo",
+                            bundleName:     "common" ,
+                            emptyText:      "",
+                            required:       "",
+                            valor:          '',
+                            type:           'typeaheadjs',
+                            prefetch:       url('list_typeahead_tipos',{rol: 'declaracion',name: 'id'}),
+                        } %}
                         <div class="row">
                             <div class="enunciado ">
                                 32. {{ enunciado }}
@@ -582,24 +620,24 @@
                         <div class="row">
                             <div class="pull-left">
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                    name:           "telefono",
+                                    id:             "formato_" ~ "nombre_tipo_declaracion_" ~ fila,
+                                    name:           "tipoDeclaracionNombre",
                                     originalTitle:  enunciado | title ,
                                     emptyText:      enunciado,
                                     required:       "Vacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
+                                    valor:          pk != ' '?formato.tipoDeclaracion.nombre:'',
+                                    prefetch:       url('list_typeahead_tipos',{rol: 'declaracion',name: 'nombre'}),
                                 }) %}
                             </div>
                             <div class="pull-right">
                                 {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                    name:           "telefono",
+                                    id:             "formato_" ~ "cod_tipo_declaracion_" ~ fila,
+                                    name:           "tipoDeclaracionCod",
                                     originalTitle:  "Cód." | title ,
                                     emptyText:      "Cód.",
-                                    required:       "Vacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
+                                    required:       "Vacio,Numeros",
+                                    valor:          pk != ' '?formato.tipoDeclaracion.cod:'',
+                                    prefetch:       url('list_typeahead_tipos',{rol: 'declaracion',name: 'cod'}),
                                 }) %}
                             </div>
                         </div>

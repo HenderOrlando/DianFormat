@@ -2,10 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-var editable_index = new Array(), editable_object = new Array();
+var editable_index = new Array(), editable_object = new Array(), i_xeditable = -1;
 
 $(document).on('ready',function(){
-    var i_xeditable = -1;
     arreglaAjax();
     agregarXEditable();
     botonResetXEditable();
@@ -84,6 +83,9 @@ $(document).on('ready',function(){
             }
             if(typeof este.attr('data-required') !== 'undefined'){
                 este.editable('option', 'validate', function(v) {
+                    v = typeof v === 'undefined'?'':v;
+                    var value = este.editable('getValue');
+                    v = value && value[este.attr('data-name')]?value[este.attr('data-name')]:v;
                     if(typeof v !== 'object'){
                         var req = este.attr('data-required').split(','), 
                             msg = '',
@@ -117,22 +119,30 @@ $(document).on('ready',function(){
                                     if(!valido)
                                         msg += 'Acepta caracteres de escritura y espacio';
                                     break;
+                                case 'LetrasNumeros'://Contiene sólo Números y Letras
                                 case 'NumerosLetras'://Contiene sólo Números y Letras
                                     valido = validateNumerosLetras(v);
                                     if(!valido)
                                         msg += 'Acepta sólo números, letras y espacio';
                                     break;
+                                case 'ConectoresNumeros'://Contiene sólo Números y caracteres de escritura
                                 case 'NumerosConectores'://Contiene sólo Números y caracteres de escritura
                                     valido = validateNumerosConectores(v);
                                     if(!valido)
                                         msg += 'Acepta sólo números, caracteres de escritura y espacio';
                                     break;
+                                case 'ConectoresLetras'://Contiene sólo Letras y caracteres de escritura
                                 case 'LetrasConectores'://Contiene sólo Letras y caracteres de escritura
                                     valido = validateLetrasConectores(v);
                                     if(!valido)
                                         msg += 'Acepta sólo letras, caracteres de escritura y espacio';
                                     break;
                                 case 'NumerosLetrasConectores'://Contiene sólo Números, Letras y Caracteres especiales permitidos
+                                case 'NumerosConectoresLetras'://Contiene sólo Números, Letras y Caracteres especiales permitidos
+                                case 'LetrasNumerosConectores'://Contiene sólo Números, Letras y Caracteres especiales permitidos
+                                case 'LetrasConectoresNumeros'://Contiene sólo Números, Letras y Caracteres especiales permitidos
+                                case 'ConectoresNumerosLetras'://Contiene sólo Números, Letras y Caracteres especiales permitidos
+                                case 'ConectoresLetrasNumeros'://Contiene sólo Números, Letras y Caracteres especiales permitidos
                                     valido = validateNumerosLetrasConectores(v);
                                     if(!valido)
                                         msg += 'Acepta sólo números, letras, caracteres de escritura y espacio';
@@ -161,6 +171,7 @@ $(document).on('ready',function(){
                             addMsg(name+': '+msg, 'danger');
                         return ' ';
                     }else{
+                        este.text(v);
 //                        hideMsg($("#mensajes .alert:contains('"+$(this).attr('data-emptytext')+"')"));
 //                        hideMsg($("#mensajes .alert:contains('"+$(this).attr('data-entity-name')+"')"));
 //                        var str = este.attr('data-entity-name'),
@@ -184,10 +195,14 @@ $(document).on('ready',function(){
 //                f = str.charAt(0).toUpperCase();
 //            hideMsg($("#mensajes .alert:contains('"+f+str.substr(1)+"')"));
             setTimeout(function() {
-                var obj = editable_object[editable_index[that.attr('id')]+1];
-                if(typeof obj !== 'undefined')
+                var obj = null, index = editable_index[that.attr('id')];
+                do{
+                    index++;
+                    obj = editable_object[index];
+                }while((obj && obj.hasClass('editable-disabled')) || index < editable_index.length);
+                if(typeof obj !== 'undefined' && !obj.hasClass('editable-disabled'))
                     obj.editable('show');
-            }, 200);
+            }, 300);
         });
     }
     
@@ -244,7 +259,7 @@ $(document).on('ready',function(){
 //                        $(this).off('save.formato');
 //                        if(!este.parent().hasClass('no-quitar'))
 //                            este.parent().removeClass('in').addClass('out');
-                    }else if(data && (data.errors || data.msgs || data.valores.msgs || data.success)){
+                    }else if(data && (data.errors || data.msgs || (data.valores && data.valores.msgs) || data.success)){
                         var errors = data.errors;
                         if(errors) {
                             if(errors.responseText)
@@ -256,15 +271,17 @@ $(document).on('ready',function(){
                             }
                         }else{
                             var success = data.success;
-                            if(typeof success.msg === 'undefined' || typeof success.msgs === 'undefined'){
+                            console.log(success)
+                            if(typeof success.msg === 'undefined' && typeof success.msgs === 'undefined'){
                                 success = data;
                             }
-                            if (typeof success.msg === 'undefined' || typeof success.msgs === 'undefined'){
+                            if (typeof success.msg === 'undefined' && typeof success.msgs === 'undefined'){
                                 success = data.valores;
                             }
+                            console.log(success.msgs)
                             if(success && typeof success.msg !== 'undefined') {
                                 addMsg(success.msg, success.tipo);
-                            } else if (typeof success.msgs !== 'undefined'){
+                            } else if (typeof success !== 'undefined' && typeof success.msgs !== 'undefined'){
                                 $.each(success.msgs, function(k, v) {
                                     if(v.msg.search(/[\d\s]/))
                                         addMsg(k+": "+v.msg, v.tipo);
@@ -278,13 +295,15 @@ $(document).on('ready',function(){
                     if(errors && errors.responseText) {
                         if(errors.responseText.search(/[\d\s]/))
                             addMsg(errors.responseText, 'danger');
-                    } else {
+                    } else if(errors){
                         $.each(errors, function(k, v) {
                             if(typeof v === 'string' && v.search(/[\d\s]/))
                                 addMsg(k+": "+v, 'danger');
     //                        else
     //                            addMsg(k+": "+v, 'danger');
                         });
+                    }else{
+                        console.log(errors);
                     }
                 }
             });
@@ -303,6 +322,7 @@ $(document).on('ready',function(){
                 .attr('data-pk',' ')
                 .editable('setValue', '')
                 .editable('option', 'pk', ' ')
+                .editable('option', 'disabled', false)
                 .removeClass('editable-unsaved')
                 .each(function(){
                     hideMsg($("#mensajes .alert:contains('"+$(this).attr('data-emptytext')+"')"));
