@@ -2208,7 +2208,7 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionArancel is defined and formato.getLiquidacionArancel is not empty %}
+                                            {% if formato.getGastosLiquidacionArancel is defined and formato.getGastosLiquidacionArancel is not empty %}
                                                 {% set g = formato.getGastosLiquidacionArancel()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
@@ -2236,8 +2236,8 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionArancel is defined and formato.getLiquidacionArancel is not empty %}
-                                                {% set g = formato.getGastosLiquidacionArancel()|first %}
+                                            {% if formato.getGastosLiquidacionArancel is defined and formato.getGastosDeclaracionArancel is not empty %}
+                                                {% set g = formato.getGastosDeclaracionArancel()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
                                                             gasto:            g,
@@ -2264,8 +2264,8 @@
                                                 moneda:         'USD',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionArancel is defined and formato.getLiquidacionArancel is not empty %}
-                                                {% set g = formato.getGastosLiquidacionArancel()|first %}
+                                            {% if formato.getGastosLiquidaUsdArancel is defined and formato.getGastosLiquidaUsdArancel is not empty %}
+                                                {% set g = formato.getGastosLiquidaUsdArancel()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
                                                             gasto:            g,
@@ -2345,7 +2345,7 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionIva is defined and formato.getLiquidacionIva is not empty %}
+                                            {% if formato.getGastosLiquidacionIva is defined and formato.getGastosLiquidacionIva is not empty %}
                                                 {% set g = formato.getGastosLiquidacionIva()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
@@ -2373,8 +2373,8 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionIva is defined and formato.getLiquidacionIva is not empty %}
-                                                {% set g = formato.getGastosLiquidacionIva()|first %}
+                                            {% if formato.getGastosDeclaracionIva is defined and formato.getGastosDeclaracionIva is not empty %}
+                                                {% set g = formato.getGastosDeclaracionIva()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
                                                             gasto:            g,
@@ -2401,8 +2401,8 @@
                                                 moneda:         'USD',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionIva is defined and formato.getLiquidacionIva is not empty %}
-                                                {% set g = formato.getGastosLiquidacionIva()|first %}
+                                            {% if formato.getGastosLiquidaUsdIva is defined and formato.getGastosLiquidaUsdIva is not empty %}
+                                                {% set g = formato.getGastosLiquidaUsdIva()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
                                                             gasto:            g,
@@ -2482,7 +2482,7 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionSalvaguardia is defined and formato.getLiquidacionSalvaguardia is not empty %}
+                                            {% if formato.getGastosLiquidacionSalvaguardia is defined and formato.getGastosLiquidacionSalvaguardia is not empty %}
                                                 {% set g = formato.getGastosLiquidacionSalvaguardia()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
@@ -2510,8 +2510,8 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionSalvaguardia is defined and formato.getLiquidacionSalvaguardia is not empty %}
-                                                {% set g = formato.getGastosLiquidacionSalvaguardia()|first %}
+                                            {% if formato.getGastosDeclaracionSalvaguardia is defined and formato.getGastosDeclaracionSalvaguardia is not empty %}
+                                                {% set g = formato.getGastosDeclaracionSalvaguardia()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
                                                             gasto:            g,
@@ -2538,8 +2538,8 @@
                                                 moneda:         'USD',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionSalvaguardia is defined and formato.getLiquidacionSalvaguardia is not empty %}
-                                                {% set g = formato.getGastosLiquidacionSalvaguardia()|first %}
+                                            {% if formato.getGastosLiquidaUsdSalvaguardia is defined and formato.getGastosLiquidaUsdSalvaguardia is not empty %}
+                                                {% set g = formato.getGastosLiquidaUsdSalvaguardia()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
                                                             gasto:            g,
@@ -2619,7 +2619,7 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionDerechoCompensatorio is defined and formato.getLiquidacionDerechoCompensatorio is not empty %}
+                                            {% if formato.getGastosLiquidacionDerechoCompensatorio is defined and formato.getGastosLiquidacionDerechoCompensatorio is not empty %}
                                                 {% set g = formato.getGastosLiquidacionDerechoCompensatorio()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
@@ -2647,8 +2647,8 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionDerechoCompensatorio is defined and formato.getLiquidacionDerechoCompensatorio is not empty %}
-                                                {% set g = formato.getGastosLiquidacionDerechoCompensatorio()|first %}
+                                            {% if formato.getGastosDeclaracionDerechoCompensatorio is defined and formato.getGastosDeclaracionDerechoCompensatorio is not empty %}
+                                                {% set g = formato.getGastosDeclaracionDerechoCompensatorio()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
                                                             gasto:            g,
@@ -2675,8 +2675,8 @@
                                                 moneda:         'USD',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionDerechoCompensatorio is defined and formato.getLiquidacionDerechoCompensatorio is not empty %}
-                                                {% set g = formato.getGastosLiquidacionDerechoCompensatorio()|first %}
+                                            {% if formato.getGastosLiquidaUsdDerechoCompensatorio is defined and formato.getGastosLiquidaUsdDerechoCompensatorio is not empty %}
+                                                {% set g = formato.getGastosLiquidaUsdDerechoCompensatorio()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
                                                             gasto:            g,
@@ -2756,7 +2756,7 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionDerechoAntidumping is defined and formato.getLiquidacionDerechoAntidumping is not empty %}
+                                            {% if formato.getGastosLiquidacionDerechoAntidumping is defined and formato.getGastosLiquidacionDerechoAntidumping is not empty %}
                                                 {% set g = formato.getGastosLiquidacionDerechoAntidumping()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
@@ -2784,8 +2784,8 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionDerechoAntidumping is defined and formato.getLiquidacionDerechoAntidumping is not empty %}
-                                                {% set g = formato.getGastosLiquidacionDerechoAntidumping()|first %}
+                                            {% if formato.getGastosDeclaracionDerechoAntidumping is defined and formato.getGastosDeclaracionDerechoAntidumping is not empty %}
+                                                {% set g = formato.getGastosDeclaracionDerechoAntidumping()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
                                                             gasto:            g,
@@ -2812,8 +2812,8 @@
                                                 moneda:         'USD',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionDerechoAntidumping is defined and formato.getLiquidacionDerechoAntidumping is not empty %}
-                                                {% set g = formato.getGastosLiquidacionDerechoAntidumping()|first %}
+                                            {% if formato.getGastosLiquidaUsdDerechoAntidumping is defined and formato.getGastosLiquidaUsdDerechoAntidumping is not empty %}
+                                                {% set g = formato.getGastosLiquidaUsdDerechoAntidumping()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
                                                             gasto:            g,
@@ -2893,7 +2893,7 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionSancion is defined and formato.getLiquidacionSancion is not empty %}
+                                            {% if formato.getGastosLiquidacionSancion is defined and formato.getGastosLiquidacionSancion is not empty %}
                                                 {% set g = formato.getGastosLiquidacionSancion()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
@@ -2921,8 +2921,8 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionSancion is defined and formato.getLiquidacionSancion is not empty %}
-                                                {% set g = formato.getGastosLiquidacionSancion()|first %}
+                                            {% if formato.getGastosDeclaracionSancion is defined and formato.getGastosDeclaracionSancion is not empty %}
+                                                {% set g = formato.getGastosDeclaracionSancion()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
                                                             gasto:            g,
@@ -3005,7 +3005,7 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionRescate is defined and formato.getLiquidacionRescate is not empty %}
+                                            {% if formato.getGastosLiquidacionRescate is defined and formato.getGastosLiquidacionRescate is not empty %}
                                                 {% set g = formato.getGastosLiquidacionRescate()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
@@ -3033,8 +3033,8 @@
                                                 moneda:         'COP',
                                                 montoText:      '-',idFormato:      formato.id,
                                             } %}
-                                            {% if formato.getLiquidacionRescate is defined and formato.getLiquidacionRescate is not empty %}
-                                                {% set g = formato.getGastosLiquidacionRescate()|first %}
+                                            {% if formato.getGastosDeclaracionRescate is defined and formato.getGastosDeclaracionRescate is not empty %}
+                                                {% set g = formato.getGastosDeclaracionRescate()|first %}
                                                 {% if g is defined and g is not null %}
                                                     {% set datosGasto = datosGasto|merge({
                                                             gasto:            g,
@@ -3056,18 +3056,10 @@
                                        125
                                     </td>
                                     <td class="bordered bordered-br">
-                                        {% set enunciado = 'Total liquidado' %}
-                                        {% set canonicalEnunciado = '125' %}
-                                        <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                        <div class="text-center">
+                                            <span class="imita gasto-liquidacioniva--crear gasto-liquidacionarancel--crear gasto-liquidacionsalvaguardia--crear gasto-liquidacionderechocompensatorio--crear gasto-liquidacionderechoantidumping--crear gasto-liquidacionsancion--crear gasto-liquidacionrescate--crear" data-name="liquidacionCop">
+                                                {{- formato.getTotalGastosLiquidacion -}}
+                                            </span>
                                          </div>
                                     </td>
                                     <td colspan="2" class="relleno-autoliquidacion bordered bordered-br">
@@ -3077,18 +3069,10 @@
                                        126
                                     </td>
                                     <td class="bordered bordered-br">
-                                        {% set enunciado = 'Total liquidado dólares' %}
-                                        {% set canonicalEnunciado = '126' %}
-                                        <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                        <div class="text-center">
+                                            <span class="imita gasto-liquidacioniva--crear gasto-liquidacionarancel--crear gasto-liquidacionsalvaguardia--crear gasto-liquidacionderechocompensatorio--crear gasto-liquidacionderechoantidumping--crear gasto-liquidacionsancion--crear gasto-liquidacionrescate--crear" data-name="liquidacionUsd">
+                                                {{- formato.getTotalGastosLiquidaUsd -}}
+                                            </span>
                                          </div>
                                     </td>
                                 </tr>

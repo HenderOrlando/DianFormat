@@ -2840,6 +2840,27 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         return $this->gastoTotalOtros;
     }
     /**/
+    public function getTotalGastosLiquidaUsd(){
+        if($this->gastoTotalLiquidaUsd == 0){
+            $this->loadGastos();
+        }
+        return $this->gastoTotalLiquidaUsd;
+    }
+    /**/
+    public function getTotalGastosDeclaracion(){
+        if($this->gastoTotalDeclaracion == 0){
+            $this->loadGastos();
+        }
+        return $this->gastoTotalDeclaracion;
+    }
+    /**/
+    public function getTotalGastosLiquidacion(){
+        if($this->gastoTotalLiquidacion == 0){
+            $this->loadGastos();
+        }
+        return $this->gastoTotalLiquidacion;
+    }
+    /**/
     public function getTotalGastosAduana(){
         if($this->gastoTotalAduana == 0){
             $this->loadGastos();
@@ -3149,7 +3170,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->gastosAduana = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosAjuste = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosOtros = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->gastoTotal = $this->gastoTotalAnteriores = $this->gastoTotalFletes = $this->gastoTotalSeguros = $this->gastoTotalOtros = $this->gastoTotalFob = $this->gastoTotalAduana = $this->gastoTotalRemitente = $this->gastoTotalDestinatario = $this->gastoTotalMercancias = 0;
+        $this->gastoTotal = $this->gastoTotalLiquidacion = $this->gastoTotalDeclaracion = $this->gastoTotalLiquidaUsd = $this->gastoTotalAnteriores = $this->gastoTotalFletes = $this->gastoTotalSeguros = $this->gastoTotalOtros = $this->gastoTotalFob = $this->gastoTotalAduana = $this->gastoTotalRemitente = $this->gastoTotalDestinatario = $this->gastoTotalMercancias = 0;
         $this->gastosFob = new \Doctrine\Common\Collections\ArrayCollection();
         foreach($this->gastos as $g){
             if(!is_null($g->getMercancia())){

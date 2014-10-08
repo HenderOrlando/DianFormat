@@ -1108,6 +1108,10 @@ class FormatoController extends Controller
                         $em->flush();
                         $ok = false;
                         $valores['msgs'][] = array('msg' => 'Formato: Gasto de '.strtoupper($valor).' '.$moneda->getAbreviacion().' por concepto de '.$concepto->getNombre().' registrado.', 'tipo' => 'success');
+                        $reload = array(
+                            'liquidacionCop' => $formato->getTotalGastosLiquidacion(),
+                            'liquidacionUsd' => $formato->getTotalGastosLiquidaUsd(),
+                        );
                     }else{
                         $ok = false;
                         $valores['msgs'][] = array('msg' => 'Formato: Gasto de '.strtoupper($valor).' no se registró.', 'tipo' => 'danger');

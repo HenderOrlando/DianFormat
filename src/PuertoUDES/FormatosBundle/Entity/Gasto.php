@@ -46,7 +46,7 @@ class Gasto
     private $mercancia;
 
     /** 
-     * @ORM\Column(type="decimal", nullable=false, name="valor", precision=10, scale=4)
+     * @ORM\Column(type="decimal", nullable=false, name="valor", precision=10, scale=2)
      */
     private $valor;
 
