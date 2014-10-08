@@ -1865,15 +1865,21 @@
                         </div>
                         <div class="row">
                             <div class="">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                    name:           "telefono",
+                                {% set cmf = formato.getContenedorMercanciaFormato %}
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                    id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                    clase:          "formato_agrega_contenedor_mercancia",
+                                    name:           "pesoBruto",
+                                    placement:      'top',
+                                    pk:             cmf.id,
+                                    datos:          {tipo: abreviacion|upper},
                                     originalTitle:  enunciado | title ,
+                                    entityName:     "contenedorMercanciaFormato",
+                                    bundleName:     "formatos" ,
                                     emptyText:      enunciado,
-                                    required:       "Vacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                }) %}
+                                    required:       "Vacio,Numeros",
+                                    valor:          cmf.id?cmf.pesoBruto,
+                                } %}
                             </div>
                         </div>
                     </td>
@@ -1887,15 +1893,21 @@
                         </div>
                         <div class="row">
                             <div class="">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                    name:           "telefono",
+                                {% set cmf = formato.getContenedorMercanciaFormato %}
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                    id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                    clase:          "formato_agrega_contenedor_mercancia",
+                                    name:           "pesoNeto",
+                                    placement:      'top',
+                                    pk:             cmf.id,
+                                    datos:          {tipo: abreviacion|upper},
                                     originalTitle:  enunciado | title ,
+                                    entityName:     "contenedorMercanciaFormato",
+                                    bundleName:     "formatos" ,
                                     emptyText:      enunciado,
-                                    required:       "Vacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                }) %}
+                                    required:       "Vacio,Numeros",
+                                    valor:          cmf.id?cmf.pesoNeto,
+                                } %}
                             </div>
                         </div>
                     </td>
@@ -1909,15 +1921,21 @@
                         </div>
                         <div class="row">
                             <div class="">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                    name:           "telefono",
+                                {% set cmf = formato.getContenedorMercanciaFormato %}
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                    id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                    clase:          "formato_agrega_contenedor_mercancia",
+                                    name:           "codEmbalaje",
+                                    placement:      'top',
+                                    pk:             cmf.id,
+                                    datos:          {tipo: abreviacion|upper},
                                     originalTitle:  enunciado | title ,
+                                    entityName:     "contenedorMercanciaFormato",
+                                    bundleName:     "formatos" ,
                                     emptyText:      enunciado,
-                                    required:       "Vacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                }) %}
+                                    required:       "Vacio,Numeros",
+                                    valor:          cmf.id?cmf.codEmbalaje,
+                                } %}
                             </div>
                         </div>
                     </td>
@@ -1931,15 +1949,21 @@
                         </div>
                         <div class="row">
                             <div class="">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                    name:           "telefono",
+                                {% set cmf = formato.getContenedorMercanciaFormato %}
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                    id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                    clase:          "formato_agrega_contenedor_mercancia",
+                                    name:           "numBultos",
+                                    placement:      'top',
+                                    pk:             cmf.id,
+                                    datos:          {tipo: abreviacion|upper},
                                     originalTitle:  enunciado | title ,
+                                    entityName:     "contenedorMercanciaFormato",
+                                    bundleName:     "formatos" ,
                                     emptyText:      enunciado,
-                                    required:       "Vacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                }) %}
+                                    required:       "Vacio,Numeros",
+                                    valor:          cmf.id?cmf.numBultos,
+                                } %}
                             </div>
                         </div>
                     </td>
@@ -1953,21 +1977,27 @@
                         </div>
                         <div class="row">
                             <div class="">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                    name:           "telefono",
+                                {% set cmf = formato.getContenedorMercanciaFormato %}
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                    id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                    clase:          "formato_agrega_contenedor_mercancia",
+                                    name:           "subpartidaArancelaria",
+                                    placement:      'top',
+                                    pk:             cmf.id,
+                                    datos:          {tipo: abreviacion|upper},
                                     originalTitle:  enunciado | title ,
+                                    entityName:     "contenedorMercanciaFormato",
+                                    bundleName:     "formatos" ,
                                     emptyText:      enunciado,
-                                    required:       "Vacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                }) %}
+                                    required:       "Vacio,Numeros",
+                                    valor:          cmf.id?cmf.subpartidaArancelaria,
+                                } %}
                             </div>
                         </div>
                     </td>
                     <td colspan="2" class="bordered bordered-br">
-                        {% set enunciado = 'Cód. País origen' %}
-                        {% set canonicalEnunciado = 'Cód. Unidad física' %}
+                        {% set enunciado = 'Cód. Unidad física' %}
+                        {% set canonicalEnunciado = 'codigo_unidad_fisica' %}
                         <div class="row">
                             <div class="enunciado">
                                 76. {{ enunciado }}
@@ -1975,15 +2005,23 @@
                         </div>
                         <div class="row">
                             <div class="">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                    name:           "telefono",
+                                {% set cmf = formato.getContenedorMercanciaFormato %}
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                    id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                    clase:          "formato_agrega_contenedor_mercancia",
+                                    name:           "unidadBultos",
+                                    placement:      'top',
+                                    pk:             cmf.id,
+                                    datos:          {tipo: abreviacion|upper},
                                     originalTitle:  enunciado | title ,
+                                    entityName:     "contenedorMercanciaFormato",
+                                    bundleName:     "formatos" ,
                                     emptyText:      enunciado,
-                                    required:       "Vacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                }) %}
+                                    required:       "Vacio,NumerosLetrasConectores",
+                                    valor:          cmf.id?cmf.unidadBultos,
+                                    type:           'typeaheadjs',
+                                    prefetch:       url('list_typeahead_unidades_',{name: 'abreviacion'}),
+                                } %}
                             </div>
                         </div>
                     </td>
@@ -1997,15 +2035,21 @@
                         </div>
                         <div class="row">
                             <div class="">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                    name:           "telefono",
+                                {% set cmf = formato.getContenedorMercanciaFormato %}
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                    id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                    clase:          "formato_agrega_contenedor_mercancia",
+                                    name:           "cantidadBultos",
+                                    placement:      'top',
+                                    pk:             cmf.id,
+                                    datos:          {tipo: abreviacion|upper},
                                     originalTitle:  enunciado | title ,
+                                    entityName:     "contenedorMercanciaFormato",
+                                    bundleName:     "formatos" ,
                                     emptyText:      enunciado,
-                                    required:       "Vacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                }) %}
+                                    required:       "Vacio,Numeros",
+                                    valor:          cmf.id?cmf.cantidadBultos,
+                                } %}
                             </div>
                         </div>
                     </td>
@@ -2105,17 +2149,23 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = '% arancel' %}
-                                        {% set canonicalEnunciado = '92' %}
+                                        {% set canonicalEnunciado = 'porcentajeArancel' %}
+                                        {% set valor = formato.porcentajeArancel?formato.porcentajeArancel:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
@@ -2123,72 +2173,108 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = 'Base arancel' %}
-                                        {% set canonicalEnunciado = '93' %}
+                                        {% set canonicalEnunciado = 'baseArancel' %}
+                                        {% set valor = formato.baseArancel?formato.baseArancel:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        94
                                     </td>
                                     <td class="bordered bordered-br">
-                                        {% set enunciado = 'Total liquidado arancel' %}
-                                        {% set canonicalEnunciado = '94' %}
+                                        {% set enunciado = 'Total liquidado Arancel' %}
+                                        {% set canonicalEnunciado = 'liquidacionArancel' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'liquidacionArancel',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionArancel is defined and formato.getLiquidacionArancel is not empty %}
+                                                {% set g = formato.getGastosLiquidacionArancel()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        95
                                     </td>
                                     <td class="bordered bordered-br">
-                                        {% set enunciado = 'Total a pagar arancel' %}
-                                        {% set canonicalEnunciado = '95' %}
+                                        {% set enunciado = 'Total a pagar Arancel' %}
+                                        {% set canonicalEnunciado = 'declaracionArancel' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'declaracionArancel',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionArancel is defined and formato.getLiquidacionArancel is not empty %}
+                                                {% set g = formato.getGastosLiquidacionArancel()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        96
                                     </td>
                                     <td class="bordered bordered-b">
-                                        {% set enunciado = 'Total liquidado arancel' %}
-                                        {% set canonicalEnunciado = '96' %}
+                                        {% set enunciado = 'Total liquidado Arancel' %}
+                                        {% set canonicalEnunciado = 'liquidaUsdArancel' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'liquidaUsdArancel',
+                                                fila:           fila,
+                                                moneda:         'USD',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionArancel is defined and formato.getLiquidacionArancel is not empty %}
+                                                {% set g = formato.getGastosLiquidacionArancel()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -2200,17 +2286,23 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = '% iva' %}
-                                        {% set canonicalEnunciado = '97' %}
+                                        {% set canonicalEnunciado = 'porcentajeIva' %}
+                                        {% set valor = formato.porcentajeIva?formato.porcentajeIva:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
@@ -2218,72 +2310,108 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = 'Base iva' %}
-                                        {% set canonicalEnunciado = '98' %}
+                                        {% set canonicalEnunciado = 'baseIva' %}
+                                        {% set valor = formato.baseIva?formato.baseIva:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        99
                                     </td>
                                     <td class="bordered bordered-br">
-                                        {% set enunciado = 'Total liquidado iva' %}
-                                        {% set canonicalEnunciado = '99' %}
+                                        {% set enunciado = 'Total liquidado Iva' %}
+                                        {% set canonicalEnunciado = 'liquidacionIva' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'liquidacionIva',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionIva is defined and formato.getLiquidacionIva is not empty %}
+                                                {% set g = formato.getGastosLiquidacionIva()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        100
                                     </td>
                                     <td class="bordered bordered-br">
-                                        {% set enunciado = 'Total a pagar iva' %}
-                                        {% set canonicalEnunciado = '100' %}
+                                        {% set enunciado = 'Total a pagar Iva' %}
+                                        {% set canonicalEnunciado = 'declaracionIva' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'declaracionIva',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionIva is defined and formato.getLiquidacionIva is not empty %}
+                                                {% set g = formato.getGastosLiquidacionIva()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        101
                                     </td>
                                     <td class="bordered bordered-b">
-                                        {% set enunciado = 'Total liquidado iva' %}
-                                        {% set canonicalEnunciado = '101' %}
+                                        {% set enunciado = 'Total liquidado Iva' %}
+                                        {% set canonicalEnunciado = 'liquidaUsdIva' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'liquidaUsdIva',
+                                                fila:           fila,
+                                                moneda:         'USD',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionIva is defined and formato.getLiquidacionIva is not empty %}
+                                                {% set g = formato.getGastosLiquidacionIva()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -2295,17 +2423,23 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = '% Salvaguardia' %}
-                                        {% set canonicalEnunciado = '102' %}
+                                        {% set canonicalEnunciado = 'porcentajeSalvaguardia' %}
+                                        {% set valor = formato.porcentajeSalvaguardia?formato.porcentajeSalvaguardia:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
@@ -2313,17 +2447,23 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = 'Base Salvaguardia' %}
-                                        {% set canonicalEnunciado = '103' %}
+                                        {% set canonicalEnunciado = 'baseSalvaguardia' %}
+                                        {% set valor = formato.baseSalvaguardia?formato.baseSalvaguardia:''%}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
@@ -2331,54 +2471,84 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = 'Total liquidado Salvaguardia' %}
-                                        {% set canonicalEnunciado = '104' %}
+                                        {% set canonicalEnunciado = 'liquidacionSalvaguardia' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'liquidacionSalvaguardia',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionSalvaguardia is defined and formato.getLiquidacionSalvaguardia is not empty %}
+                                                {% set g = formato.getGastosLiquidacionSalvaguardia()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        105
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = 'Total a pagar Salvaguardia' %}
-                                        {% set canonicalEnunciado = '105' %}
+                                        {% set canonicalEnunciado = 'declaracionSalvaguardia' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'declaracionSalvaguardia',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionSalvaguardia is defined and formato.getLiquidacionSalvaguardia is not empty %}
+                                                {% set g = formato.getGastosLiquidacionSalvaguardia()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        106
                                     </td>
-                                    <td class="bordered bordered-br">
+                                    <td class="bordered bordered-b">
                                         {% set enunciado = 'Total liquidado Salvaguardia' %}
-                                        {% set canonicalEnunciado = '106' %}
+                                        {% set canonicalEnunciado = 'liquidaUsdSalvaguardia' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'liquidaUsdSalvaguardia',
+                                                fila:           fila,
+                                                moneda:         'USD',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionSalvaguardia is defined and formato.getLiquidacionSalvaguardia is not empty %}
+                                                {% set g = formato.getGastosLiquidacionSalvaguardia()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -2390,17 +2560,23 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = '% Derechos compensatorios' %}
-                                        {% set canonicalEnunciado = '107' %}
+                                        {% set canonicalEnunciado = 'porcentajeDerechoCompensatorio' %}
+                                        {% set valor = formato.porcentajeDerechoCompensatorio?formato.porcentajeDerechoCompensatorio:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
@@ -2408,72 +2584,108 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = 'Base Derechos compensatorios' %}
-                                        {% set canonicalEnunciado = '108' %}
+                                        {% set canonicalEnunciado = 'baseDerechoCompensatorio' %}
+                                        {% set valor = formato.baseDerechoCompensatorio?formato.baseDerechoCompensatorio:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        109
                                     </td>
                                     <td class="bordered bordered-br">
-                                        {% set enunciado = 'Total liquidado Derechos compensatorios' %}
-                                        {% set canonicalEnunciado = '109' %}
+                                        {% set enunciado = 'Total liquidado DerechoCompensatorio' %}
+                                        {% set canonicalEnunciado = 'liquidacionDerechoCompensatorio' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'liquidacionDerechoCompensatorio',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionDerechoCompensatorio is defined and formato.getLiquidacionDerechoCompensatorio is not empty %}
+                                                {% set g = formato.getGastosLiquidacionDerechoCompensatorio()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        110
                                     </td>
                                     <td class="bordered bordered-br">
-                                        {% set enunciado = 'Total a pagar Derechos compensatorios' %}
-                                        {% set canonicalEnunciado = '110' %}
+                                        {% set enunciado = 'Total a pagar DerechoCompensatorio' %}
+                                        {% set canonicalEnunciado = 'declaracionDerechoCompensatorio' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'declaracionDerechoCompensatorio',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionDerechoCompensatorio is defined and formato.getLiquidacionDerechoCompensatorio is not empty %}
+                                                {% set g = formato.getGastosLiquidacionDerechoCompensatorio()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        111
                                     </td>
                                     <td class="bordered bordered-b">
-                                        {% set enunciado = 'Total liquidado Derechos compensatorios' %}
-                                        {% set canonicalEnunciado = '111' %}
+                                        {% set enunciado = 'Total liquidado DerechoCompensatorio' %}
+                                        {% set canonicalEnunciado = 'liquidaUsdDerechoCompensatorio' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'liquidaUsdDerechoCompensatorio',
+                                                fila:           fila,
+                                                moneda:         'USD',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionDerechoCompensatorio is defined and formato.getLiquidacionDerechoCompensatorio is not empty %}
+                                                {% set g = formato.getGastosLiquidacionDerechoCompensatorio()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -2485,17 +2697,23 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = '% Derechos antidumping' %}
-                                        {% set canonicalEnunciado = '112' %}
+                                        {% set canonicalEnunciado = 'porcentajeDerechoAntidumping' %}
+                                        {% set valor = formato.porcentajeDerechoAntidumping?formato.porcentajeDerechoAntidumping:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
@@ -2503,72 +2721,108 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = 'Base Derechos antidumping' %}
-                                        {% set canonicalEnunciado = '113' %}
+                                        {% set canonicalEnunciado = 'baseDerechoAntidumping' %}
+                                        {% set valor = formato.baseDerechoAntidumping?formato.baseDerechoAntidumping:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        114
                                     </td>
                                     <td class="bordered bordered-br">
-                                        {% set enunciado = 'Total liquidado Derechos antidumping' %}
-                                        {% set canonicalEnunciado = '114' %}
+                                        {% set enunciado = 'Total liquidado DerechoAntidumping' %}
+                                        {% set canonicalEnunciado = 'liquidacionDerechoAntidumping' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'liquidacionDerechoAntidumping',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionDerechoAntidumping is defined and formato.getLiquidacionDerechoAntidumping is not empty %}
+                                                {% set g = formato.getGastosLiquidacionDerechoAntidumping()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        115
                                     </td>
                                     <td class="bordered bordered-br">
-                                        {% set enunciado = 'Total a pagar Derechos antidumping' %}
-                                        {% set canonicalEnunciado = '115' %}
+                                        {% set enunciado = 'Total a pagar DerechoAntidumping' %}
+                                        {% set canonicalEnunciado = 'declaracionDerechoAntidumping' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'declaracionDerechoAntidumping',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionDerechoAntidumping is defined and formato.getLiquidacionDerechoAntidumping is not empty %}
+                                                {% set g = formato.getGastosLiquidacionDerechoAntidumping()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        116
                                     </td>
                                     <td class="bordered bordered-b">
-                                        {% set enunciado = 'Total liquidado Derechos antidumping' %}
-                                        {% set canonicalEnunciado = '116' %}
+                                        {% set enunciado = 'Total liquidado DerechoAntidumping' %}
+                                        {% set canonicalEnunciado = 'liquidaUsdDerechoAntidumping' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'liquidaUsdDerechoAntidumping',
+                                                fila:           fila,
+                                                moneda:         'USD',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionDerechoAntidumping is defined and formato.getLiquidacionDerechoAntidumping is not empty %}
+                                                {% set g = formato.getGastosLiquidacionDerechoAntidumping()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -2580,17 +2834,23 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = '% Sanción' %}
-                                        {% set canonicalEnunciado = '117' %}
+                                        {% set canonicalEnunciado = 'porcentajeSancion' %}
+                                        {% set valor = formato.porcentajeSancion?formato.porcentajeSancion:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
@@ -2598,54 +2858,80 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = 'Base Sanción' %}
-                                        {% set canonicalEnunciado = '118' %}
+                                        {% set canonicalEnunciado = 'baseSancion' %}
+                                        {% set valor = formato.baseSancion?formato.baseSancion:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        119
                                     </td>
                                     <td class="bordered bordered-br">
-                                        {% set enunciado = 'Total liquidado Sanción' %}
-                                        {% set canonicalEnunciado = '119' %}
+                                        {% set enunciado = 'Total liquidado Sancion' %}
+                                        {% set canonicalEnunciado = 'liquidacionSancion' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'liquidacionSancion',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionSancion is defined and formato.getLiquidacionSancion is not empty %}
+                                                {% set g = formato.getGastosLiquidacionSancion()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        120
                                     </td>
                                     <td class="bordered bordered-br">
-                                        {% set enunciado = 'Total a pagar Sanción' %}
-                                        {% set canonicalEnunciado = '120' %}
+                                        {% set enunciado = 'Total a pagar Sancion' %}
+                                        {% set canonicalEnunciado = 'declaracionSancion' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'declaracionSancion',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionSancion is defined and formato.getLiquidacionSancion is not empty %}
+                                                {% set g = formato.getGastosLiquidacionSancion()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td colspan="2" rowspan="2" class="relleno-autoliquidacion bordered bordered-b">
 
@@ -2660,17 +2946,23 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = '% Rescate' %}
-                                        {% set canonicalEnunciado = '121' %}
+                                        {% set canonicalEnunciado = 'porcentajeRescate' %}
+                                        {% set valor = formato.porcentajeRescate?formato.porcentajeRescate:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
@@ -2678,17 +2970,23 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = 'Base Rescate' %}
-                                        {% set canonicalEnunciado = '122' %}
+                                        {% set canonicalEnunciado = 'baseRescate' %}
+                                        {% set valor = formato.baseRescate?formato.baseRescate:'' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
+                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                                id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                                clase:          "formato_agrega_"~canonicalEnunciado,
+                                                name:           canonicalEnunciado,
+                                                placement:      'top',
+                                                pk:             formato.id,
+                                                datos:          {tipo: abreviacion|upper},
+                                                originalTitle:  enunciado | title ,
+                                                entityName:     "formato",
+                                                bundleName:     "formatos" ,
+                                                emptyText:      '---',
+                                                required:       "Vacio,Numeros",
+                                                valor:          valor,
+                                            } %}
                                          </div>
                                     </td>
                                     <td class="bordered bordered-br">
@@ -2696,36 +2994,56 @@
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = 'Total liquidado Rescate' %}
-                                        {% set canonicalEnunciado = '123' %}
+                                        {% set canonicalEnunciado = 'liquidacionRescate' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'liquidacionRescate',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionRescate is defined and formato.getLiquidacionRescate is not empty %}
+                                                {% set g = formato.getGastosLiquidacionRescate()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                     <td class="bordered bordered-br">
                                        124
                                     </td>
                                     <td class="bordered bordered-br">
                                         {% set enunciado = 'Total a pagar Rescate' %}
-                                        {% set canonicalEnunciado = '124' %}
+                                        {% set canonicalEnunciado = 'declaracionRescate' %}
                                         <div class="">
-                                             {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                                 id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                                 name:           "telefono",
-                                                 originalTitle:  enunciado | title ,
-                                                 emptyText:      '--',
-                                                 required:       "Vacio,LetrasNumerosConectores",
-                                                 valor:          pk != ' '?usuario.telefono:'',
-                                                 prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                             }) %}
-                                         </div>
+                                            {% set fila = fila + 1 %}
+                                            {% set datosGasto = {
+                                                abreviacion:    formato.tipo.abreviacion|upper,
+                                                numero:         formato.numero,
+                                                tipo:           'declaracionRescate',
+                                                fila:           fila,
+                                                moneda:         'COP',
+                                                montoText:      '-',idFormato:      formato.id,
+                                            } %}
+                                            {% if formato.getLiquidacionRescate is defined and formato.getLiquidacionRescate is not empty %}
+                                                {% set g = formato.getGastosLiquidacionRescate()|first %}
+                                                {% if g is defined and g is not null %}
+                                                    {% set datosGasto = datosGasto|merge({
+                                                            gasto:            g,
+                                                        })
+                                                    %}
+                                                {% endif %}
+                                            {% endif %}
+                                            {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -2846,7 +3164,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="imita" data-name="total">
+                            <div class="imita" data-name="sumatoria">
                                 <span>
                                     {{-formato.getTotalGastosFletes()+formato.getTotalGastosSeguros()+formato.getTotalGastosOtros()-}}
                                      USD
@@ -3066,15 +3384,23 @@
                         </div>
                         <div class="row">
                             <div class="">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                    name:           "telefono",
+                                {% set cmf = formato.getContenedorMercanciaFormato %}
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                    id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                    clase:          "formato_agrega_contenedor_mercancia",
+                                    name:           "cod",
+                                    placement:      'top',
+                                    pk:             cmf.id,
+                                    datos:          {tipo: abreviacion|upper},
                                     originalTitle:  enunciado | title ,
+                                    entityName:     "contenedorMercanciaFormato",
+                                    bundleName:     "formatos" ,
                                     emptyText:      enunciado,
-                                    required:       "Vacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                }) %}
+                                    required:       "Vacio,Numeros",
+                                    valor:          cmf.id and cmf.mercancia?cmf.mercancia.cod,
+                                    type:           'typeaheadjs',
+                                    prefetch:       url('list_typeahead_mercancias_',{name: 'cod'}),
+                                } %}
                             </div>
                         </div>
                     </td>
@@ -3090,15 +3416,23 @@
                         </div>
                         <div class="row">
                             <div class="">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                                    id:             "entidad_" ~ rol ~"_" ~ canonicalEnunciado ~ "_" ~ fila,
-                                    name:           "telefono",
-                                    originalTitle:  enunciado | title ,
+                                {% set cmf = formato.getContenedorMercanciaFormato %}
+                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
+                                    id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
+                                    clase:          "formato_agrega_contenedor_mercancia",
+                                    name:           "descripcion",
+                                    placement:      'top',
+                                    pk:             cmf.id,
+                                    datos:          {tipo: abreviacion|upper},
+                                    originalTitle:  'Descripción de las mercancías' | title ,
+                                    entityName:     "contenedorMercanciaFormato",
+                                    bundleName:     "formatos" ,
                                     emptyText:      enunciado,
-                                    required:       "Vacio,LetrasNumerosConectores",
-                                    valor:          pk != ' '?usuario.telefono:'',
-                                    prefetch:       url('list_typeahead_entidades_',{name: 'telefono'}),
-                                }) %}
+                                    required:       "Vacio,NumerosLetrasConectores",
+                                    valor:          cmf.id and cmf.mercancia?cmf.mercancia.descripcion,
+                                    type:           'typeaheadjs',
+                                    prefetch:       url('list_typeahead_mercancias_',{name: 'descripcion'}),
+                                } %}
                             </div>
                         </div>
                     </td>
@@ -3112,20 +3446,23 @@
                                 127. {{ enunciado }}
                             </div>
                             <div class="pull-right">
-                                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with {
-                                        id:             "formato_" ~ "_"~canonicalEnunciado~"_" ~ fila,
-                                        clase:          "formato_agrega_"~canonicalEnunciado,
-                                        name:           "valorPagosAnteriores",
-                                        placement:      'top',
-                                        pk:             formato.id,
-                                        datos:          {tipo: abreviacion|upper},
-                                        originalTitle:  enunciado | title ,
-                                        entityName:     "formato",
-                                        bundleName:     "formatos" ,
-                                        emptyText:      enunciado,
-                                        required:       "Vacio,Numeros",
-                                        valor:          formato.valorPagosAnteriores,
-                                    } %}
+                                {% set fila = fila + 1 %}
+                                {% set datosGasto = {
+                                    abreviacion:    formato.tipo.abreviacion|upper,
+                                    numero:         formato.numero,
+                                    tipo:           'pagoAnterior',
+                                    fila:           fila,
+                                } %}
+                                {% if formato.getGastosAnteriores is defined and formato.getGastosAnteriores is not empty %}
+                                    {% set g = formato.getGastosAnteriores()|first %}
+                                    {% if g is defined and g is not null %}
+                                        {% set datosGasto = datosGasto|merge({
+                                                gasto:            g,
+                                            })
+                                        %}
+                                    {% endif %}
+                                {% endif %}
+                                {{ include('PuertoUDESFormatosBundle:Gasto:_addGastoAjax.html.twig',datosGasto) }}
                             </div>
                         </div>
                     </td>

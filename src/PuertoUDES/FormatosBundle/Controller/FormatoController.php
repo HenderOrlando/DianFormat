@@ -1067,6 +1067,51 @@ class FormatoController extends Controller
                     }else{
                         
                     }
+                }elseif($entity === 'gasto'){
+                    $valor_ = strtolower($request->get('concepto', -1));
+                    $concepto = null;
+                    if($valor_){
+                        $concepto = $em->getRepository('PuertoUDESCommonBundle:Tipo')
+                                ->createQueryBuilder('t')
+                                ->andWhere('t.canonical LIKE \'%'.$valor_.'%\' OR t.nombre LIKE \'%'.$valor_.'%\' OR t.abreviacion LIKE \'%'.$valor_.'%\'')
+                                ->getQuery()->getOneOrNullResult();
+                    }
+                    if(!$concepto){
+                        $concepto = new \PuertoUDES\CommonBundle\Entity\Tipo();
+                        $concepto->setNombre($valor_)
+                                ->setAplicableA('gasto')
+                            ;
+                        $em->persist($concepto);
+                    }
+                    $valor_ = strtolower($request->get('moneda', -1));
+                    $moneda = null;
+                    if($valor_){
+                        $moneda = $em->getRepository('PuertoUDESCommonBundle:Moneda')
+                                ->createQueryBuilder('m')
+                                ->andWhere('m.canonical LIKE \'%'.$valor_.'%\' OR m.nombre LIKE \'%'.$valor_.'%\' OR m.abreviacion LIKE \'%'.$valor_.'%\'')
+                                ->getQuery()->getOneOrNullResult();
+                    }
+                    $valor_ = $request->get('idFormato', -1);
+                    $formato = null;
+                    if($valor_){
+                        $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->find($request->get('idFormato', -1));
+                    }
+                    if($formato && $concepto && $moneda){
+                        $obj = new \PuertoUDES\FormatosBundle\Entity\Gasto();
+                        $obj->setFormato($formato)
+                            ->setConcepto($concepto)
+                            ->setFormato($formato)
+                            ->setValor($valor)
+                            ->setMoneda($moneda)
+                            ;
+                        $em->persist($obj);
+                        $em->flush();
+                        $ok = false;
+                        $valores['msgs'][] = array('msg' => 'Formato: Gasto de '.strtoupper($valor).' '.$moneda->getAbreviacion().' por concepto de '.$concepto->getNombre().' registrado.', 'tipo' => 'success');
+                    }else{
+                        $ok = false;
+                        $valores['msgs'][] = array('msg' => 'Formato: Gasto de '.strtoupper($valor).' no se registró.', 'tipo' => 'danger');
+                    }
                 }
                 if($ok){
                     $valores['msgs'][] = array('msg' => 'Formato: Llena los demás datos y pulsa el botón guardar.', 'tipo' => 'warning');
@@ -1078,29 +1123,30 @@ class FormatoController extends Controller
                 $valores['datos'] = array_merge($valores['datos'],array(
                     'gastoRemitente' => $obj->getFormato()->getGastoTotalRemitente(),
                     'gastoDestinatario' => $obj->getFormato()->getGastoTotalDestinatario(),
-                    'subtotal' => $obj->getFormato().getGastoTotal(),
-                    'total' => $obj->getFormato().getGastoTotal() * 1.16,
+                    'subtotal' => $obj->getFormato()->getGastoTotal(),
+                    'total' => $obj->getFormato()->getGastoTotal() * 1.16,
+                    'sumatoria' => $obj->getFormato()->getTotalGastosFletes() + $obj->getFormato()->getTotalGastosSeguros() + $obj->getFormato()->getTotalGastosOtros(),
 //                    'totalMercancia' => $gasto->getValor()*$cm->getNumBultos(),
                 ));
             }elseif($nombre == 'pesoBruto'){
                 $valores['datos'] = array_merge($valores['datos'],array(
-                    'totalPesoBruto' => $obj->getFormato()->getTotalPesoBruto(),
+                    'totalPesoBruto' => $obj->getFormato()->getTotalPesoBruto()?$obj->getFormato()->getTotalPesoBruto():0,
                 ));
             }elseif($nombre == 'pesoNeto'){
                 $valores['datos'] = array_merge($valores['datos'],array(
-                    'totalPesoNeto' => $obj->getFormato()->getTotalPesoNeto(),
+                    'totalPesoNeto' => $obj->getFormato()->getTotalPesoNeto()?$obj->getFormato()->getTotalPesoNeto():0,
                 ));
             }elseif($nombre == 'volumen'){
                 $valores['datos'] = array_merge($valores['datos'],array(
-                    'totalVolumen' => $obj->getFormato()->getTotalVolumen(),
+                    'totalVolumen' => $obj->getFormato()->getTotalVolumen()?$obj->getFormato()->getTotalVolumen():0,
                 ));
             }elseif($nombre == 'volumenOtro'){
                 $valores['datos'] = array_merge($valores['datos'],array(
-                    'totalVolumenOtro' => $obj->getFormato()->getTotalVolumenOtro(),
+                    'totalVolumenOtro' => $obj->getFormato()->getTotalVolumenOtro()?$obj->getFormato()->getTotalVolumenOtro():0,
                 ));
             }elseif($nombre == 'volumenOtro'){
                 $valores['datos'] = array_merge($valores['datos'],array(
-                    'totalVolumenOtro' => $obj->getFormato()->getTotalVolumenOtro(),
+                    'totalVolumenOtro' => $obj->getFormato()->getTotalVolumenOtro()?$obj->getFormato()->getTotalVolumenOtro():0,
                 ));
             }
         }
@@ -1377,6 +1423,14 @@ class FormatoController extends Controller
             throw $this->createNotFoundException('Unable to find Formato entity.');
         }
         
+        if(strtolower($entity->getTipo()->getAbreviacion()) === 'di' && $entity->getContenedoresMercancias()->isEmpty()){
+            $cmf = new \PuertoUDES\FormatosBundle\Entity\ContenedorMercanciaFormato();
+            $cmf->setFormato($entity);
+            $entity->addContenedoresMercancia($cmf);
+            $em->persist($cmf);
+            $em->persist($entity);
+            $em->flush();
+        }
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 

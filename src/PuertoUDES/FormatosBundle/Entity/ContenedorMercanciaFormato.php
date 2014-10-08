@@ -19,6 +19,11 @@ class ContenedorMercanciaFormato extends \PuertoUDES\CommonBundle\Entity\ObjetoC
      * @ORM\JoinColumn(name="unidadBultos", referencedColumnName="id", nullable=true)
      */
     private $unidadBultos;
+    
+    /** 
+     * @ORM\Column(type="float", nullable=true, name="cantidad_bultos")
+     */
+    private $cantidadBultos;
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato", inversedBy="contenedoresMercancias")
@@ -44,6 +49,15 @@ class ContenedorMercanciaFormato extends \PuertoUDES\CommonBundle\Entity\ObjetoC
      */
     private $bulto;
     
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true, name="codEmbalaje")
+     */
+    private $codEmbalaje;
+    
+    /** 
+     * @ORM\Column(type="boolean", nullable=true, name="subpartidasArancelarias")
+     */
+    private $subpartidaArancelaria;
     
     /**
      * Constructor
@@ -51,6 +65,75 @@ class ContenedorMercanciaFormato extends \PuertoUDES\CommonBundle\Entity\ObjetoC
     public function __construct()
     {
         parent::__construct();
+    }
+        
+    /**
+     * Set codEmbalaje
+     *
+     * @param string $codEmbalaje
+     * @return Objeto
+     */
+    public function setCodEmbalaje($codEmbalaje)
+    {
+        $this->codEmbalaje = $codEmbalaje;
+    
+        return $this;
+    }
+
+    /**
+     * Get codEmbalaje
+     *
+     * @return string 
+     */
+    public function getCodEmbalaje()
+    {
+        return $this->codEmbalaje;
+    }
+        
+    /**
+     * Set subpartidaArancelaria
+     *
+     * @param boolean $subpartidaArancelaria
+     * @return Objeto
+     */
+    public function setSubpartidaArancelaria($subpartidaArancelaria)
+    {
+        $this->subpartidaArancelaria = $subpartidaArancelaria;
+    
+        return $this;
+    }
+
+    /**
+     * Get subpartidaArancelaria
+     *
+     * @return boolean 
+     */
+    public function getSubpartidaArancelaria()
+    {
+        return $this->subpartidaArancelaria;
+    }
+    
+    /**
+     * Set cantidadBultos
+     *
+     * @param string $cantidadBultos
+     * @return ContenedorMercanciaFormato
+     */
+    public function setCantidadBultos($cantidadBultos)
+    {
+        $this->cantidadBultos = $cantidadBultos;
+    
+        return $this;
+    }
+
+    /**
+     * Get cantidadBultos
+     *
+     * @return string 
+     */
+    public function getCantidadBultos()
+    {
+        return $this->cantidadBultos;
     }
     
     /**

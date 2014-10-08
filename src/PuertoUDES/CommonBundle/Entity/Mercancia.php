@@ -20,6 +20,11 @@ class Mercancia extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $gastos;
     
+    /** 
+     * @ORM\Column(type="string", length=100, nullable=true, name="cod", unique=true)
+     */
+    private $cod;
+    
     /**
      * Constructor
      */
@@ -27,6 +32,29 @@ class Mercancia extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         parent::__construct();
         $this->contenedoresFormatos = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Set cod
+     *
+     * @param string $cod
+     * @return Objeto
+     */
+    public function setCod($cod)
+    {
+        $this->cod = $this->normaliza($cod);
+    
+        return $this;
+    }
+
+    /**
+     * Get cod
+     *
+     * @return string 
+     */
+    public function getCod()
+    {
+        return $this->cod;
     }
     
     /**

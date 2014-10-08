@@ -268,6 +268,8 @@ class GastoController extends Controller
         $em = $this->getDoctrine()->getManager();
         $tipo_mci = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('abreviacion' => strtolower($abreviacion), 'aplicableA' => 'Formato'));
         $gasto = null;
+        var_dump($moneda);
+        die;
         $datos = array();
         if($tipo_mci){
             $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->findOneBy(array('tipo' => $tipo_mci->getId(), 'numero' => $numero));

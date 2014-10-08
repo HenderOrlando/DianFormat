@@ -22,52 +22,52 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $numero;
 
     /** 
-     * @ORM\Column(type="string", length=40, nullable=false, name="codAcuerdo")
+     * @ORM\Column(type="string", length=40, nullable=true, name="codAcuerdo")
      */
     private $codAcuerdo;
 
     /** 
-     * @ORM\Column(type="string", length=40, nullable=false, name="subpartidaArancelaria")
+     * @ORM\Column(type="string", length=40, nullable=true, name="subpartidaArancelaria")
      */
     private $subpartidaArancelaria;
 
     /** 
-     * @ORM\Column(type="string", length=40, nullable=false, name="codigoComplementario")
+     * @ORM\Column(type="string", length=40, nullable=true, name="codigoComplementario")
      */
     private $codigoComplementario;
 
     /** 
-     * @ORM\Column(type="string", length=40, nullable=false, name="codigoSuplementario")
+     * @ORM\Column(type="string", length=40, nullable=true, name="codigoSuplementario")
      */
     private $codigoSuplementario;
 
     /** 
-     * @ORM\Column(type="string", length=40, nullable=false, name="codModalidad")
+     * @ORM\Column(type="string", length=40, nullable=true, name="codModalidad")
      */
     private $codModalidad;
 
     /** 
-     * @ORM\Column(type="string", length=40, nullable=false, name="numeroCuotas")
+     * @ORM\Column(type="string", length=40, nullable=true, name="numeroCuotas")
      */
     private $numeroCuotas;
 
     /** 
-     * @ORM\Column(type="string", length=40, nullable=false, name="valorCuotas")
+     * @ORM\Column(type="string", length=40, nullable=true, name="valorCuotas")
      */
     private $valorCuotas;
 
     /** 
-     * @ORM\Column(type="string", length=40, nullable=false, name="periodoCuotas")
+     * @ORM\Column(type="string", length=40, nullable=true, name="periodoCuotas")
      */
     private $periodoCuotas;
 
     /** 
-     * @ORM\Column(type="string", length=140, nullable=false, name="formasPago")
+     * @ORM\Column(type="string", length=140, nullable=true, name="formasPago")
      */
     private $formaPago;
 
     /** 
-     * @ORM\Column(type="string", length=140, nullable=false, name="tipoImportacion")
+     * @ORM\Column(type="string", length=140, nullable=true, name="tipoImportacion")
      */
     private $tipoImportacion;
 
@@ -97,12 +97,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $codOficina;
 
     /** 
-     * @ORM\Column(type="float", nullable=false, name="valorPagosAnteriores")
-     */
-    private $valorPagosAnteriores;
-
-    /** 
-     * @ORM\Column(type="string", length=40, nullable=false, name="numeroReciboPagoAnterior")
+     * @ORM\Column(type="string", length=40, nullable=true, name="numeroReciboPagoAnterior")
      */
     private $numeroReciboPagoAnterior;
 
@@ -222,6 +217,8 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $gastos;
     
+    private $gastosAPagarDestinatario;
+    private $gastosAnteriores;
     private $gastoMercancias;
     private $gastosAPagar;
     private $gastosFletes;
@@ -231,8 +228,29 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $gastosAjuste;
     private $gastosSeguros;
     private $gastosAPagarRemitente;
-    private $gastosAPagarDestinatario;
     private $gastoContenedoresMercancias;
+    
+    private $gastosLiquidacionArancel;
+    private $gastosDeclaracionArancel;
+    private $gastosLiquidaUsdArancel;
+    private $gastosLiquidacionIva;
+    private $gastosDeclaracionIva;
+    private $gastosLiquidaUsdIva;
+    private $gastosLiquidacionSalvaguardia;
+    private $gastosDeclaracionSalvaguardia;
+    private $gastosLiquidaUsdSalvaguardia;
+    private $gastosLiquidacionDerechoCompensatorio;
+    private $gastosDeclaracionDerechoCompensatorio;
+    private $gastosLiquidaUsdDerechoCompensatorio;
+    private $gastosLiquidacionDerechoAntidumping;
+    private $gastosDeclaracionDerechoAntidumping;
+    private $gastosLiquidaUsdDerechoAntidumping;
+    private $gastosLiquidacionSancion;
+    private $gastosDeclaracionSancion;
+    private $gastosLiquidaUsdSancion;
+    private $gastosLiquidacionRescate;
+    private $gastosDeclaracionRescate;
+    private $gastosLiquidaUsdRescate;
 
     /**
      * @ORM\ManyToMany(targetEntity="PuertoUDES\FormatosBundle\Entity\Formato")
@@ -309,9 +327,14 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $gastoTotalFob;
     private $gastoTotalFletes;
     private $gastoTotalAjuste;
+    private $gastoTotalAnteriores;
     private $gastoTotalSeguros;
     private $gastoTotalAduana;
     private $gastoTotalOtros;
+    
+    private $gastoTotalLiquidaUsd;
+    private $gastoTotalDeclaracion;
+    private $gastoTotalLiquidacion;
     /** 
      * @ORM\Column(type="datetime", nullable=false, name="fecha_emision")
      */
@@ -347,6 +370,77 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $codDeposito;
     
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="porcentaje_arancel")
+     */
+    private $porcentajeArancel;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="porcentaje_iva")
+     */
+    private $porcentajeIva;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="porcentaje_salvaguardia")
+     */
+    private $porcentajeSalvaguardia;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="porcentaje_derecho_compensatorio")
+     */
+    private $porcentajeDerechoCompensatorio;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="porcentaje_derecho_antidumping")
+     */
+    private $porcentajeDerechoAntidumping;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="porcentaje_sancion")
+     */
+    private $porcentajeSancion;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="porcentaje_rescate")
+     */
+    private $porcentajeRescate;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="base_arancel")
+     */
+    private $baseArancel;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="base_iva")
+     */
+    private $baseIva;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="base_salvaguardia")
+     */
+    private $baseSalvaguardia;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="base_derecho_compensatorio")
+     */
+    private $baseDerechoCompensatorio;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="base_derecho_antidumping")
+     */
+    private $baseDerechoAntidumping;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="base_sancion")
+     */
+    private $baseSancion;
+    
+    /** 
+     * @ORM\Column(type="string", length=4,  nullable=true, name="base_rescate")
+     */
+    private $baseRescate;
+    
+    
     /**
      * Constructor
      */
@@ -380,6 +474,166 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     
     public function getFullNombre(){
         return 'No. '.$this->getNumero().' - '.$this->getNombre();
+    }
+    public function getPorcentaje($tipo){
+        switch(ucfirst($tipo)){
+            case 'Arancel':
+                return $this->porcentajeArancel;
+            case 'Iva':
+                return $this->porcentajeIva;
+            case 'Salvaguardia':
+                return $this->porcentajeSalvaguardia;
+            case 'DerechoCompensatorio':
+                return $this->porcentajeDerechoCompensatorio;
+            case 'DerechoAntidumping':
+                return $this->porcentajeDerechoAntidumping;
+            case 'Sancion':
+                return $this->porcentajeSancion;
+            case 'Rescate':
+                return $this->porcentajeRescate;
+        }
+        return null;
+    }
+    public function getPorcentajeArancel(){
+        return $this->porcentajeArancel;
+    }
+    public function getPorcentajeIva(){
+        return $this->getPorcentaje('Iva');
+    }
+    public function getPorcentajeSalvaguardia(){
+        return $this->getPorcentaje('Salvaguardia');
+    }
+    public function getPorcentajeDerechoCompensatorio(){
+        return $this->getPorcentaje('DerechoCompensatorio');
+    }
+    public function getPorcentajeDerechoAntidumping(){
+        return $this->getPorcentaje('DerechoAntidumping');
+    }
+    public function getPorcentajeSancion(){
+        return $this->getPorcentaje('Sancion');
+    }
+    public function getPorcentajeRescate(){
+        return $this->getPorcentaje('Rescate');
+    }
+    public function setPorcentaje($tipo, $valor){
+        switch(ucfirst($tipo)){
+            case 'Arancel':
+                $this->porcentajeArancel = $valor;
+            case 'Iva':
+                $this->porcentajeIva = $valor;
+            case 'Salvaguardia':
+                $this->porcentajeSalvaguardia = $valor;
+            case 'DerechoCompensatorio':
+                $this->porcentajeDerechoCompensatorio = $valor;
+            case 'DerechoAntidumping':
+                $this->porcentajeDerechoAntidumping = $valor;
+            case 'Sancion':
+                $this->porcentajeSancion = $valor;
+            case 'Rescate':
+                $this->porcentajeRescate = $valor;
+        }
+        return $this;
+    }
+    public function setPorcentajeArancel($valor){
+        return $this->setPorcentaje('Arancel',$valor);
+    }
+    public function setPorcentajeIva($valor){
+        return $this->setPorcentaje('Iva',$valor);
+    }
+    public function setPorcentajeSalvaguardia($valor){
+        return $this->setPorcentaje('Salvaguardia',$valor);
+    }
+    public function setPorcentajeDerechoCompensatorio($valor){
+        return $this->setPorcentaje('DerechoCompensatorio',$valor);
+    }
+    public function setPorcentajeDerechoAntidumping($valor){
+        return $this->setPorcentaje('DerechoAntidumping',$valor);
+    }
+    public function setPorcentajeSancion($valor){
+        return $this->setPorcentaje('Sancion',$valor);
+    }
+    public function setPorcentajeRescate($valor){
+        return $this->setPorcentaje('Rescate',$valor);
+    }
+    public function getBase($tipo){
+        switch(ucfirst($tipo)){
+            case 'Arancel':
+                return $this->baseArancel;
+            case 'Iva':
+                return $this->baseIva;
+            case 'Salvaguardia':
+                return $this->baseSalvaguardia;
+            case 'DerechoCompensatorio':
+                return $this->baseDerechoCompensatorio;
+            case 'DerechoAntidumping':
+                return $this->baseDerechoAntidumping;
+            case 'Sancion':
+                return $this->baseSancion;
+            case 'Rescate':
+                return $this->baseRescate;
+        }
+        return null;
+    }
+    public function getBaseArancel(){
+        return $this->getBase('Arancel');
+    }
+    public function getBaseIva(){
+        return $this->getBase('Iva');
+    }
+    public function getBaseSalvaguardia(){
+        return $this->getBase('Salvaguardia');
+    }
+    public function getBaseDerechoCompensatorio(){
+        return $this->getBase('DerechoCompensatorio');
+    }
+    public function getBaseDerechoAntidumping(){
+        return $this->getBase('DerechoAntidumping');
+    }
+    public function getBaseSancion(){
+        return $this->getBase('Sancion');
+    }
+    public function getBaseRescate(){
+        return $this->getBase('Rescate');
+    }
+    public function setBase($tipo, $valor){
+        switch(ucfirst($tipo)){
+            case 'Arancel':
+                $this->baseArancel = $valor;
+            case 'Iva':
+                $this->baseIva = $valor;
+            case 'Salvaguardia':
+                $this->baseSalvaguardia = $valor;
+            case 'DerechoCompensatorio':
+                $this->baseDerechoCompensatorio = $valor;
+            case 'DerechoAntidumping':
+                $this->baseDerechoAntidumping = $valor;
+            case 'Sancion':
+                $this->baseSancion = $valor;
+            case 'Rescate':
+                $this->baseRescate = $valor;
+        }
+        return $this;
+    }
+    public function setBaseArancel($valor){
+        return $this->setBase('Arancel',$valor);
+    }
+    public function setBaseIva($valor){
+        return $this->setBase('Iva',$valor);
+    }
+    public function setBaseSalvaguardia($valor){
+        return $this->setBase('Salvaguardia',$valor);
+    }
+    public function setBaseDerechoCompensatorio($valor){
+        return $this->setBase('DerechoCompensatorio',$valor);
+    }
+    public function setBaseDerechoAntidumping($valor){
+        return $this->setBase('DerechoAntidumping',$valor);
+    }
+    public function setBaseSancion($valor){
+        return $this->setBase('Sancion',$valor);
+    }
+    public function setBaseRescate($valor){
+        return $this->setBase('Rescate',$valor);
     }
     
     /**
@@ -1011,28 +1265,6 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
     
     /**
-     * Get numeroRecivoPagoAnterior
-     *
-     * @return integer
-     */
-    public function getValorPagosAnteriores()
-    {
-        return $this->valorPagosAnteriores;
-    }
-    
-    /**
-     * Set numeroRecivoPagoAnterior
-     *
-     * @param integer $numeroRecivoPagoAnterior
-     * @return Formato
-     */
-    public function setValorPagosAnteriores($numeroRecivoPagoAnterior)
-    {
-        $this->valorPagosAnteriores = $numeroRecivoPagoAnterior;
-        return $this;
-    }
-    
-    /**
      * Get tasaCambio
      *
      * @return integer
@@ -1469,6 +1701,42 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         return $this->gastosOtros;
     }
     /**
+     * Get gastosAduana
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosAduana()
+    {
+        if(empty($this->gastosAduana)){
+            $this->loadGastos();
+        }
+        return $this->gastosAduana;
+    }
+    /**
+     * Get gastosAnteriores
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosAnteriores()
+    {
+        if(empty($this->gastosAnteriores)){
+            $this->loadGastos();
+        }
+        return $this->gastosAnteriores;
+    }
+    /**
+     * Get gastosAjustes
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosAjuste()
+    {
+        if(empty($this->gastosAjuste)){
+            $this->loadGastos();
+        }
+        return $this->gastosAjuste;
+    }
+    /**
      * Get gastosSeguros
      * 
      * @return \Doctrine\Common\Collections\Collection 
@@ -1561,6 +1829,258 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             $this->gastoMercancias = $gm;
         }
         return $this->gastoMercancias;
+    }
+    /**
+     * Get gastosLiquidacionArancel
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidacionArancel()
+    {
+        if(count($this->gastosLiquidacionArancel) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidacionArancel;
+    }
+    /**
+     * Get gastosDeclaracionArancel
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosDeclaracionArancel()
+    {
+        if(count($this->gastosDeclaracionArancel) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosDeclaracionArancel;
+    }
+    /**
+     * Get gastosLiquidaUsdArancel
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidaUsdArancel()
+    {
+        if(count($this->gastosLiquidaUsdArancel) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidaUsdArancel;
+    }
+    /**
+     * Get gastosLiquidacionIva
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidacionIva()
+    {
+        if(count($this->gastosLiquidacionIva) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidacionIva;
+    }
+    /**
+     * Get gastosDeclaracionIva
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosDeclaracionIva()
+    {
+        if(count($this->gastosDeclaracionIva) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosDeclaracionIva;
+    }
+    /**
+     * Get gastosLiquidaUsdIva
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidaUsdIva()
+    {
+        if(count($this->gastosLiquidaUsdIva) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidaUsdIva;
+    }
+    /**
+     * Get gastosLiquidacionSalvaguardia
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidacionSalvaguardia()
+    {
+        if(count($this->gastosLiquidacionSalvaguardia) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidacionSalvaguardia;
+    }
+    /**
+     * Get gastosDeclaracionSalvaguardia
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosDeclaracionSalvaguardia()
+    {
+        if(count($this->gastosDeclaracionSalvaguardia) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosDeclaracionSalvaguardia;
+    }
+    /**
+     * Get gastosLiquidaUsdSalvaguardia
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidaUsdSalvaguardia()
+    {
+        if(count($this->gastosLiquidaUsdSalvaguardia) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidaUsdSalvaguardia;
+    }
+    /**
+     * Get gastosLiquidacionDerechoCompensatorio
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidacionDerechoCompensatorio()
+    {
+        if(count($this->gastosLiquidacionDerechoCompensatorio) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidacionDerechoCompensatorio;
+    }
+    /**
+     * Get gastosDeclaracionDerechoCompensatorio
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosDeclaracionDerechoCompensatorio()
+    {
+        if(count($this->gastosDeclaracionDerechoCompensatorio) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosDeclaracionDerechoCompensatorio;
+    }
+    /**
+     * Get gastosLiquidaUsdDerechoCompensatorio
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidaUsdDerechoCompensatorio()
+    {
+        if(count($this->gastosLiquidaUsdDerechoCompensatorio) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidaUsdDerechoCompensatorio;
+    }
+    /**
+     * Get gastosLiquidacionDerechoAntidumping
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidacionDerechoAntidumping()
+    {
+        if(count($this->gastosLiquidacionDerechoAntidumping) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidacionDerechoAntidumping;
+    }
+    /**
+     * Get gastosDeclaracionDerechoAntidumping
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosDeclaracionDerechoAntidumping()
+    {
+        if(count($this->gastosDeclaracionDerechoAntidumping) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosDeclaracionDerechoAntidumping;
+    }
+    /**
+     * Get gastosLiquidaUsdDerechoAntidumping
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidaUsdDerechoAntidumping()
+    {
+        if(count($this->gastosLiquidaUsdDerechoAntidumping) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidaUsdDerechoAntidumping;
+    }
+    /**
+     * Get gastosLiquidacionSancion
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidacionSancion()
+    {
+        if(count($this->gastosLiquidacionSancion) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidacionSancion;
+    }
+    /**
+     * Get gastosDeclaracionSancion
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosDeclaracionSancion()
+    {
+        if(count($this->gastosDeclaracionSancion) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosDeclaracionSancion;
+    }
+    /**
+     * Get gastosLiquidaUsdSancion
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidaUsdSancion()
+    {
+        if(count($this->gastosLiquidaUsdSancion) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidaUsdSancion;
+    }
+    /**
+     * Get gastosLiquidacionRescate
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidacionRescate()
+    {
+        if(count($this->gastosLiquidacionRescate) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidacionRescate;
+    }
+    /**
+     * Get gastosDeclaracionRescate
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosDeclaracionRescate()
+    {
+        if(count($this->gastosDeclaracionRescate) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosDeclaracionRescate;
+    }
+    /**
+     * Get gastosLiquidaUsdRescate
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosLiquidaUsdRescate()
+    {
+        if(count($this->gastosLiquidaUsdRescate) <= 0){
+            $this->loadGastos();
+        }
+        return $this->gastosLiquidaUsdRescate;
     }
     /**
      * Get gastosContenedoresMercancias
@@ -2395,6 +2915,13 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         return null;
     }
     
+    public function getContenedorMercanciaFormato(){
+        if(!$this->getContenedoresMercancias()->isEmpty()){
+            return $this->getContenedoresMercancias()->first();
+        }
+        return null;
+    }
+    
     public function getContenedor(){
         if(!$this->getContenedoresMercancias()->isEmpty()){
             return $this->getContenedoresMercancias()->first()->getContenedor();
@@ -2591,8 +3118,30 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     
     private function loadGastos() {
         $this->gastoContenedoresMercancias = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosDeclaracionArancel = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidacionArancel = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidaUsdArancel = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosDeclaracionIva = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidacionIva = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidaUsdIva = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosDeclaracionSalvaguardia = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidacionSalvaguardia = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidaUsdSalvaguardia = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosDeclaracionDerechoCompensatorio = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidacionDerechoCompensatorio = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidaUsdDerechoCompensatorio = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosDeclaracionDerechoAntidumping = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidacionSancion = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidaUsdSancion = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosDeclaracionSancion = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidacionSancion = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidaUsdSancion = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosDeclaracionRescate = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidacionRescate = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosLiquidaUsdRescate = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosAPagarDestinatario = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosAPagarRemitente = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosAnteriores = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastoMercancias = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosSeguros = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosAPagar = new \Doctrine\Common\Collections\ArrayCollection();
@@ -2600,7 +3149,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->gastosAduana = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosAjuste = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosOtros = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->gastoTotal = $this->gastoTotalFletes = $this->gastoTotalSeguros = $this->gastoTotalOtros = $this->gastoTotalFob = $this->gastoTotalAduana = $this->gastoTotalRemitente = $this->gastoTotalDestinatario = $this->gastoTotalMercancias = 0;
+        $this->gastoTotal = $this->gastoTotalAnteriores = $this->gastoTotalFletes = $this->gastoTotalSeguros = $this->gastoTotalOtros = $this->gastoTotalFob = $this->gastoTotalAduana = $this->gastoTotalRemitente = $this->gastoTotalDestinatario = $this->gastoTotalMercancias = 0;
         $this->gastosFob = new \Doctrine\Common\Collections\ArrayCollection();
         foreach($this->gastos as $g){
             if(!is_null($g->getMercancia())){
@@ -2637,6 +3186,111 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                     case 'aduana':
                         $this->gastosAduana->add($g);
                         $this->gastoTotalAduana+= $g->getValor();
+                        break;
+                    case 'liquidacionarancel':
+                    case 'liquidacionArancel':
+                        $this->gastosLiquidacionArancel->add($g);
+                        $this->gastoTotalLiquidacion+= $g->getValor();
+                        break;
+                    case 'declaracionarancel':
+                    case 'declaracionArancel':
+                        $this->gastosDeclaracionArancel->add($g);
+                        $this->gastoTotalDeclaracion+= $g->getValor();
+                        break;
+                    case 'liquidausdarancel':
+                    case 'liquidaUsdArancel':
+                        $this->gastosLiquidaUsdArancel->add($g);
+                        $this->gastoTotalLiquidaUsd+= $g->getValor();
+                        break;
+                    case 'liquidacioniva':
+                    case 'liquidacionIva':
+                        $this->gastosLiquidacionIva->add($g);
+                        $this->gastoTotalLiquidacion+= $g->getValor();
+                        break;
+                    case 'declaracioniva':
+                    case 'declaracionIva':
+                        $this->gastosDeclaracionIva->add($g);
+                        $this->gastoTotalDeclaracion+= $g->getValor();
+                        break;
+                    case 'liquidaUsdiva':
+                    case 'liquidaUsdIva':
+                        $this->gastosLiquidaUsdIva->add($g);
+                        $this->gastoTotalLiquidaUsd+= $g->getValor();
+                        break;
+                    case 'liquidacionsalvaguardia':
+                    case 'liquidacionSalvaguardia':
+                        $this->gastosLiquidacionSalvaguardia->add($g);
+                        $this->gastoTotalLiquidacion+= $g->getValor();
+                        break;
+                    case 'declaracionsalvaguardia':
+                    case 'declaracionSalvaguardia':
+                        $this->gastosDeclaracionSalvaguardia->add($g);
+                        $this->gastoTotalDeclaracion+= $g->getValor();
+                        break;
+                    case 'liquidausdsalvaguardia':
+                    case 'liquidaUsdSalvaguardia':
+                        $this->gastosLiquidaUsdSalvaguardia->add($g);
+                        $this->gastoTotalLiquidaUsd+= $g->getValor();
+                        break;
+                    case 'liquidacionderechocompensatorio':
+                    case 'liquidacionDerechoCompensatorio':
+                        $this->gastosLiquidacionDerechoCompensatorio->add($g);
+                        $this->gastoTotalLiquidacion+= $g->getValor();
+                        break;
+                    case 'declaracionderechocompensatorio':
+                    case 'declaracionDerechoCompensatorio':
+                        $this->gastosDeclaracionDerechoCompensatorio->add($g);
+                        $this->gastoTotalDeclaracion+= $g->getValor();
+                        break;
+                    case 'liquidausdderechocompensatorio':
+                    case 'liquidaUsdDerechoCompensatorio':
+                        $this->gastosLiquidaUsdDerechoCompensatorio->add($g);
+                        $this->gastoTotalLiquidaUsd+= $g->getValor();
+                        break;
+                    case 'liquidacionderechoantidumping':
+                    case 'liquidacionDerechoAntidumping':
+                        $this->gastosLiquidacionDerechoAntidumping->add($g);
+                        $this->gastoTotalLiquidacion+= $g->getValor();
+                        break;
+                    case 'declaracionderechoantidumping':
+                    case 'declaracionDerechoAntidumping':
+                        $this->gastosDeclaracionDerechoAntidumping->add($g);
+                        $this->gastoTotalDeclaracion+= $g->getValor();
+                        break;
+                    case 'liquidausdderechoantidumping':
+                    case 'liquidaUsdDerechoAntidumping':
+                        $this->gastosLiquidaUsdDerechoAntidumping->add($g);
+                        $this->gastoTotalLiquidaUsd+= $g->getValor();
+                        break;
+                    case 'liquidacionsancion':
+                    case 'liquidacionSancion':
+                        $this->gastosLiquidacionSancion->add($g);
+                        $this->gastoTotalLiquidacion+= $g->getValor();
+                        break;
+                    case 'declaracionsancion':
+                    case 'declaracionSancion':
+                        $this->gastosDeclaracionSancion->add($g);
+                        $this->gastoTotalDeclaracion+= $g->getValor();
+                        break;
+                    case 'liquidaUsdsancion':
+                    case 'liquidaUsdSancion':
+                        $this->gastosLiquidaUsdSancion->add($g);
+                        $this->gastoTotalLiquidaUsd+= $g->getValor();
+                        break;
+                    case 'liquidacionrescate':
+                    case 'liquidacionRescate':
+                        $this->gastosLiquidacionRescate->add($g);
+                        $this->gastoTotalLiquidacion+= $g->getValor();
+                        break;
+                    case 'declaracionrescate':
+                    case 'declaracionRescate':
+                        $this->gastosDeclaracionRescate->add($g);
+                        $this->gastoTotalDeclaracion+= $g->getValor();
+                        break;
+                    case 'liquidaUsdrescate':
+                    case 'liquidaUsdRescate':
+                        $this->gastosLiquidaUsdRescate->add($g);
+                        $this->gastoTotalLiquidaUsd+= $g->getValor();
                         break;
                     default:
                         break;

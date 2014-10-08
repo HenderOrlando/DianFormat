@@ -382,6 +382,7 @@ jQuery.extend({
 //                                este1.editable('option','disabled', true);
 //                            }
                             este1.removeClass('editable-unsaved');
+                            este1.addClass('editable-reloaded');
                         });
                     }
                     if(response.status == 'error') 

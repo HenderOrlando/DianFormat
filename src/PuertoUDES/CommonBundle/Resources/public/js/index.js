@@ -196,11 +196,15 @@ $(document).on('ready',function(){
 //            hideMsg($("#mensajes .alert:contains('"+f+str.substr(1)+"')"));
             setTimeout(function() {
                 var obj = null, index = editable_index[that.attr('id')];
+//                do{
+//                    index++;
+//                    obj = editable_object[index];
+//                }while((obj && obj.hasClass('editable-disabled')) || index < editable_index.length);
                 do{
                     index++;
                     obj = editable_object[index];
-                }while((obj && obj.hasClass('editable-disabled')) || index < editable_index.length);
-                if(typeof obj !== 'undefined' && !obj.hasClass('editable-disabled'))
+                }while((obj && obj.hasClass('editable-reloaded')) || index < editable_index.length);
+                if(typeof obj !== 'undefined' && !obj.hasClass('editable-reloaded'))
                     obj.editable('show');
             }, 300);
         });

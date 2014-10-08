@@ -11,10 +11,17 @@ clase       Si se le agrega una clase diferente a los campos
 {% set rolUsuario = (rolUsuario is defined and rolUsuario is not null and rolUsuario is not empty?rolUsuario:'') %}
 {% set fila = fila?fila:'' %}
 {% set tipo = tipo|lower|replace({' ':'_'}) %}
-{% set buttons = clase is defined and clase is not empty?false:true %}
+{% set buttons = (clase is defined and clase is not empty) or (moneda is defined and moneda is not empty)?false:true %}
 {% set clase = clase is defined and clase is not empty?clase:"gasto-" ~ (tipo|replace({'_':'-'})) ~ '-' ~ (rolUsuario is not empty?rolUsuario:'') ~ "-crear" %}
 {% set gasto= gasto is defined and gasto is not empty?gasto:null %}
 {% set pk = gasto is not null and gasto.id is not empty?gasto.id:' ' %}
+{% set datos = {tipo: abreviacion|upper, concepto: tipo} %}
+{% if moneda is defined %}
+    {% set datos = datos|merge({moneda: moneda}) %}
+{% endif %}
+{% if idFormato is defined %}
+    {% set datos = datos|merge({idFormato: idFormato}) %}
+{% endif %}
 {% set dataWith = {
     clase:          clase,
     id:             "gasto_" ~ tipo ~"_ _",
@@ -24,7 +31,7 @@ clase       Si se le agrega una clase diferente a los campos
     required:       "",
     valor:          '',
     pk:             pk,
-    datos:          {tipo: abreviacion|upper, concepto: tipo},
+    datos:          datos,
     entityName:     "gasto",
     bundleName:     "formatos" ,
 } %}
@@ -42,6 +49,9 @@ clase       Si se le agrega una clase diferente a los campos
                                 concepto: tipo|title,
                                 abreviacion:    abreviacion,
                             } %}
+                            {% if moneda is defined %}
+                                {% set urlDatos = urlDatos|merge({moneda: moneda}) %}
+                            {% endif %}
                             {% if rolUsuario is not empty %}
                                 {% set urlDatos = urlDatos|merge({
                                     'rolUsuario': rolUsuario|title,
@@ -85,29 +95,31 @@ clase       Si se le agrega una clase diferente a los campos
                     id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_monto_" ~ fila,
                     name:           "valor",
                     originalTitle:  "Monto " ~ tipo | title ,
-                    emptyText:      "Monto",
+                    emptyText:      montoText is defined?montoText:"Monto",
                     required:       "NoVacio,NumerosConectores",
                     valor:          pk != ' '?gasto.valor|replace({'.':','}):'',
                 }) %} 
             </div>
         </div>
     </td>
-    <td colspan="2" class="text-center">
-        <div class="row">
-            <div class="col-lg-12 col-md-12 text-left">
-                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                    id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_moneda_" ~ fila,
-                    name:           "moneda",
-                    originalTitle:  "Moneda " ~ tipo | title ,
-                    emptyText:      "Moneda",
-                    required:       "Vacio,LetrasConectores",
-                    valor:          pk != ' '?gasto.moneda.abreviacion:'',
-                    type:           'typeaheadjs',
-                    prefetch:       url('list_typeahead_monedas_',{'name': 'abreviacion'}),
-                }) %}
+    {% if moneda is not defined %}
+        <td colspan="2" class="text-center">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 text-left">
+                    {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
+                        id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_moneda_" ~ fila,
+                        name:           "moneda",
+                        originalTitle:  "Moneda " ~ tipo | title ,
+                        emptyText:      "Moneda",
+                        required:       "Vacio,LetrasConectores",
+                        valor:          pk != ' '?gasto.moneda.abreviacion:'',
+                        type:           'typeaheadjs',
+                        prefetch:       url('list_typeahead_monedas_',{'name': 'abreviacion'}),
+                    }) %}
+                </div>
             </div>
-        </div>
-    </td>
+        </td>
+    {% endif %}
 {% else %}
     <div class="row" id="gasto-{{ tipo }}-crear">
         <div class="col-lg-12">
@@ -155,20 +167,22 @@ clase       Si se le agrega una clase diferente a los campos
                 id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_monto_" ~ fila,
                 name:           "valor",
                 originalTitle:  "Monto " ~ tipo | title ,
-                emptyText:      "Monto",
+                emptyText:      montoText is defined?montoText:"Monto",
                 required:       "NoVacio,NumerosConectores",
                 valor:          pk != ' '?gasto.valor|replace({'.':','}):'',
-            }) %} - 
-            {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
-                id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_moneda_" ~ fila,
-                name:           "moneda",
-                originalTitle:  "Moneda " ~ tipo | title ,
-                emptyText:      "Moneda",
-                required:       "Vacio,LetrasConectores",
-                valor:          pk != ' '?gasto.moneda.abreviacion:'',
-                type:           'typeaheadjs',
-                prefetch:       url('list_typeahead_monedas_',{'name': 'abreviacion'}),
             }) %}
+            {% if moneda is not defined %} - 
+                {% include 'PuertoUDESCommonBundle:Plantilla:_xeditable.html.twig' with dataWith | merge({
+                    id:             "gasto_" ~ tipo ~ '_' ~ (rolUsuario is not empty?rolUsuario:'') ~"_moneda_" ~ fila,
+                    name:           "moneda",
+                    originalTitle:  "Moneda " ~ tipo | title ,
+                    emptyText:      "Moneda",
+                    required:       "Vacio,LetrasConectores",
+                    valor:          pk != ' '?gasto.moneda.abreviacion:'',
+                    type:           'typeaheadjs',
+                    prefetch:       url('list_typeahead_monedas_',{'name': 'abreviacion'}),
+                }) %}
+            {% endif %}
         </div>
     </div>
 {% endif %}

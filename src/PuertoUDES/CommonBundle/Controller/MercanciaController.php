@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use PuertoUDES\CommonBundle\Controller\IndexController;
 use PuertoUDES\CommonBundle\Entity\Mercancia;
@@ -20,6 +21,31 @@ use PuertoUDES\CommonBundle\Form\MercanciaType;
 class MercanciaController extends Controller
 {
 
+    /**
+     * Displays a form to create a new Formato entity.
+     *
+     * @Route("/Lista/para/{name}/", name="list_typeahead_mercancias_")
+     * @Template()
+     */
+    public function listTypeaheadAction(Request $request){
+        $list = array();
+        $name = $request->get('name','');
+        $entities = $this->getRepositorio()->findAll();
+        $propertyPath = new PropertyAccessor();
+        foreach($entities as $mercancia){
+            $value = $propertyPath->getValue($mercancia,$name);
+            if(is_null($value))
+                $value = '';
+            elseif(is_object($value))
+                $value = $value->__toString();
+            $list[] = array(
+                'value' =>  $value,
+                'tokens'=>  $mercancia->getTokens(),
+                'datos' =>  $mercancia->json(false)
+            );
+        }
+        return JsonResponse::create($list);
+    }
     /**
      * Lists all Mercancia entities.
      *
