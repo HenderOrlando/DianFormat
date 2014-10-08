@@ -33,15 +33,18 @@ class AduanaController extends Controller
         $name = $request->get('name','');
         $tipo = $request->get('tipo','');
         switch(strtolower($tipo)){
-            case 'destino':
-                $entities = $this->getRepositorio()->getDestino();
-                break;
-            case 'cruce-de-frontera':
-                $entities = $this->getRepositorio()->getCruce();
-                break;
-            case 'partida':
-                $entities = $this->getRepositorio()->getPartida();
-                break;
+//            case 'destino':
+//                $entities = $this->getRepositorio()->getDestino();
+//                break;
+//            case 'cruce-de-frontera':
+//                $entities = $this->getRepositorio()->getCruce();
+//                break;
+//            case 'partida':
+//                $entities = $this->getRepositorio()->getPartida();
+//                break;
+//            case 'declaracion':
+//                $entities = $this->getRepositorio()->getDeclaracion();
+//                break;
             default:
                 $entities = $this->getRepositorio()->findAll();
                 break;

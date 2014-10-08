@@ -118,6 +118,7 @@ clase       Si se le agrega una clase diferente a los campos
                         {% set urlDatos = {
                             numero: numero,
                             concepto: tipo|title,
+                            abreviacion:    abreviacion,
                         } %}
                         {% if rolUsuario is not empty %}
                             {% set urlDatos = urlDatos|merge({

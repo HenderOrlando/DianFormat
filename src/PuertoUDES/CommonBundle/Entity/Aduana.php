@@ -19,6 +19,12 @@ class Aduana extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\JoinColumn(name="lugar", referencedColumnName="id", nullable=false)
      */
     private $lugar;
+    
+    /** 
+     * @ORM\Column(type="string", length=15, nullable=true, name="codigo")
+     */
+    private $cod;
+    
     /**
      * Constructor
      */
@@ -84,7 +90,34 @@ class Aduana extends \PuertoUDES\CommonBundle\Entity\Objeto
         return $this->lugar;
     }
     
+    /**
+     * Set cod
+     *
+     * @param string $cod
+     * @return Entidad
+     */
+    public function setCod($cod)
+    {
+        $this->cod = $cod;
     
+        return $this;
+    }
+
+    /**
+     * Get cod
+     *
+     * @return string 
+     */
+    public function getCod()
+    {
+        return $this->cod;
+    }
+    
+    public function __toString() {
+        return $this->getNombre();
+    }
+
+
     /**
      * Json formatos
      *
@@ -104,11 +137,15 @@ class Aduana extends \PuertoUDES\CommonBundle\Entity\Objeto
     
     public function json($json = true){
         $a = array_merge(parent::json(false), array(
-            'lugar'      =>  $this->getLugar()->json(false),
+            'lugar'    =>  $this->getLugar()->json(false),
+            'cod'      =>  $this->getCod(),
         ));
         if(is_bool($json) && $json){
             return json_encode($a);
         }
         return $a;
+    }
+    public function getTokens($explode = true) {
+        $a = parent::getTokens(false).'\\'.$this->getCod();
     }
 }

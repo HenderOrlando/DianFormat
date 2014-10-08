@@ -22,6 +22,106 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $numero;
 
     /** 
+     * @ORM\Column(type="string", length=40, nullable=false, name="codAcuerdo")
+     */
+    private $codAcuerdo;
+
+    /** 
+     * @ORM\Column(type="string", length=40, nullable=false, name="subpartidaArancelaria")
+     */
+    private $subpartidaArancelaria;
+
+    /** 
+     * @ORM\Column(type="string", length=40, nullable=false, name="codigoComplementario")
+     */
+    private $codigoComplementario;
+
+    /** 
+     * @ORM\Column(type="string", length=40, nullable=false, name="codigoSuplementario")
+     */
+    private $codigoSuplementario;
+
+    /** 
+     * @ORM\Column(type="string", length=40, nullable=false, name="codModalidad")
+     */
+    private $codModalidad;
+
+    /** 
+     * @ORM\Column(type="string", length=40, nullable=false, name="numeroCuotas")
+     */
+    private $numeroCuotas;
+
+    /** 
+     * @ORM\Column(type="string", length=40, nullable=false, name="valorCuotas")
+     */
+    private $valorCuotas;
+
+    /** 
+     * @ORM\Column(type="string", length=40, nullable=false, name="periodoCuotas")
+     */
+    private $periodoCuotas;
+
+    /** 
+     * @ORM\Column(type="string", length=140, nullable=false, name="formasPago")
+     */
+    private $formaPago;
+
+    /** 
+     * @ORM\Column(type="string", length=140, nullable=false, name="tipoImportacion")
+     */
+    private $tipoImportacion;
+
+    /** 
+     * @ORM\Column(type="float", nullable=true, name="tasaCambio")
+     */
+    private $tasaCambio;
+
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true, name="numeroPrograma")
+     */
+    private $numeroPrograma;
+
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true, name="numeroAprobacion")
+     */
+    private $numeroAprobacion;
+
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true, name="codRegistroLic")
+     */
+    private $codRegistroLic;
+
+    /** 
+     * @ORM\Column(type="string", length=50, nullable=true, name="codOficina")
+     */
+    private $codOficina;
+
+    /** 
+     * @ORM\Column(type="float", nullable=false, name="valorPagosAnteriores")
+     */
+    private $valorPagosAnteriores;
+
+    /** 
+     * @ORM\Column(type="string", length=40, nullable=false, name="numeroReciboPagoAnterior")
+     */
+    private $numeroReciboPagoAnterior;
+
+    /** 
+     * @ORM\Column(type="string", length=10, nullable=true, name="modoTransporte")
+     */
+    private $modoTransporte;
+
+    /** 
+     * @ORM\Column(type="string", length=40, nullable=true, name="levante")
+     */
+    private $levante;
+
+    /** 
+     * @ORM\Column(type="string", length=40, nullable=true, name="aceptacion")
+     */
+    private $aceptacion;
+
+    /** 
      * @ORM\Column(type="integer", nullable=true, name="flete")
      */
     private $flete;
@@ -61,6 +161,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      */
     private $autor;
     
+    private $exportadores;
     private $importadores;
     private $notificados;
     private $consignatarios;
@@ -97,6 +198,8 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $aduanasDestino;
     private $aduanasCruce;
     private $aduanasPartida;
+    private $aduanasDeclaracion;
+    private $aduanasExportacion;
 
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Entidad", inversedBy="formatos")
@@ -121,6 +224,12 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     
     private $gastoMercancias;
     private $gastosAPagar;
+    private $gastosFletes;
+    private $gastosAduana;
+    private $gastosFob;
+    private $gastosOtros;
+    private $gastosAjuste;
+    private $gastosSeguros;
     private $gastosAPagarRemitente;
     private $gastosAPagarDestinatario;
     private $gastoContenedoresMercancias;
@@ -162,6 +271,24 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
      * @ORM\JoinColumn(name="pais", referencedColumnName="id", nullable=true)
      */
     private $pais;
+
+    /** 
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Pais", inversedBy="formatosCompra")
+     * @ORM\JoinColumn(name="paisCompra", referencedColumnName="id", nullable=true)
+     */
+    private $paisCompra;
+
+    /** 
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Pais", inversedBy="formatosOrigen")
+     * @ORM\JoinColumn(name="paisOrigen", referencedColumnName="id", nullable=true)
+     */
+    private $paisOrigen;
+
+    /** 
+     * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Pais", inversedBy="formatosBandera")
+     * @ORM\JoinColumn(name="paisBandera", referencedColumnName="id", nullable=true)
+     */
+    private $paisBandera;
     
     /** 
      * @ORM\ManyToOne(targetEntity="PuertoUDES\CommonBundle\Entity\Incoterm", inversedBy="formatos")
@@ -179,10 +306,46 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     private $gastoTotalMercancias;
     private $gastoTotalDestinatario;
     
+    private $gastoTotalFob;
+    private $gastoTotalFletes;
+    private $gastoTotalAjuste;
+    private $gastoTotalSeguros;
+    private $gastoTotalAduana;
+    private $gastoTotalOtros;
     /** 
      * @ORM\Column(type="datetime", nullable=false, name="fecha_emision")
      */
     private $fechaEmision;
+    
+    /** 
+     * @ORM\Column(type="date", nullable=true, name="fecha_llegada")
+     */
+    private $fechaLlegada;
+    
+    /** 
+     * @ORM\Column(type="date", nullable=true, name="fecha_levante")
+     */
+    private $fechaLevante;
+    
+    /** 
+     * @ORM\Column(type="date", nullable=true, name="fecha_aceptacion")
+     */
+    private $fechaAceptacion;
+    
+    /** 
+     * @ORM\Column(type="date", nullable=true, name="fecha_recibo_pago_anterior")
+     */
+    private $fechaReciboPagoAnterior;
+    
+    /** 
+     * @ORM\Column(type="date", nullable=true, name="fecha_licencia_exportacion")
+     */
+    private $fechaLicenciaExportacion;
+    
+    /** 
+     * @ORM\Column(type="string", length=5,  nullable=true, name="cod_deposito")
+     */
+    private $codDeposito;
     
     /**
      * Constructor
@@ -205,6 +368,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->declarantes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->importadores = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->exportadores = new \Doctrine\Common\Collections\ArrayCollection();
         $this->transportistas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->clientes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->empresas = new \Doctrine\Common\Collections\ArrayCollection();
@@ -239,10 +403,145 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getFechaEmision($format = null)
     {
         $fecha = $this->fechaEmision;
-        if(!is_null($format)){
+        if($fecha && !is_null($format)){
             $fecha = $fecha->format($format);
         }
-        return $this->fechaEmision;
+        return $fecha;
+    }
+    
+    /**
+     * Set fechaLicenciaExportacion
+     *
+     * @param \DateTime $fechaLicenciaExportacion
+     * @return Objeto
+     */
+    public function setFechaLicenciaExportacion($fechaLicenciaExportacion)
+    {
+        $this->fechaLicenciaExportacion = $fechaLicenciaExportacion;
+    
+        return $this;
+    }
+
+    /**
+     * Get fechaLicenciaExportacion
+     *
+     * @return \DateTime 
+     */
+    public function getFechaLicenciaExportacion($format = null)
+    {
+        $fecha = $this->fechaLicenciaExportacion;
+        if($fecha && !is_null($format)){
+            $fecha = $fecha->format($format);
+        }
+        return $fecha;
+    }
+    
+    /**
+     * Set fechaLlegada
+     *
+     * @param \DateTime $fechaLlegada
+     * @return Objeto
+     */
+    public function setFechaLlegada($fechaLlegada)
+    {
+        $this->fechaLlegada = $fechaLlegada;
+    
+        return $this;
+    }
+
+    /**
+     * Get fechaLlegada
+     *
+     * @return \DateTime 
+     */
+    public function getFechaLlegada($format = null)
+    {
+        $fecha = $this->fechaLlegada;
+        if($fecha && !is_null($format)){
+            return $fecha->format($format);
+        }
+        return $this->fechaLlegada;
+    }
+    
+    /**
+     * Set fechaPagoAnterior
+     *
+     * @param \DateTime $fechaPagoAnterior
+     * @return Objeto
+     */
+    public function setFechaReciboPagoAnterior($fechaReciboPagoAnterior)
+    {
+        $this->fechaReciboPagoAnterior = $fechaReciboPagoAnterior;
+    
+        return $this;
+    }
+
+    /**
+     * Get fechaReciboPagoAnterior
+     *
+     * @return \DateTime 
+     */
+    public function getFechaReciboPagoAnterior($format = null)
+    {
+        $fecha = $this->fechaReciboPagoAnterior;
+        if($fecha && !is_null($format)){
+            return $fecha->format($format);
+        }
+        return $this->fechaReciboPagoAnterior;
+    }
+    
+    /**
+     * Set fechaAceptacion
+     *
+     * @param \DateTime $fechaAceptacion
+     * @return Objeto
+     */
+    public function setFechaAceptacion($fechaAceptacion)
+    {
+        $this->fechaAceptacion = $fechaAceptacion;
+    
+        return $this;
+    }
+
+    /**
+     * Get fechaAceptacion
+     *
+     * @return \DateTime 
+     */
+    public function getFechaAceptacion($format = null)
+    {
+        $fecha = $this->fechaAceptacion;
+        if($fecha && !is_null($format)){
+            return $fecha->format($format);
+        }
+        return $this->fechaAceptacion;
+    }
+    
+    /**
+     * Set fechaLevante
+     *
+     * @param \DateTime $fechaLevante
+     * @return Objeto
+     */
+    public function setFechaLevante($fechaLevante)
+    {
+        $this->fechaLevante = $fechaLevante;
+    
+        return $this;
+    }
+
+    /**
+     * Get fechaLevante
+     *
+     * @return \DateTime 
+     */
+    public function getFechaLevante($format = null)
+    {
+        $fecha = $this->fechaLevante;
+        if($fecha && !is_null($format)){
+            return $fecha->format($format);
+        }
+        return $this->fechaLevante;
     }
     
     /**
@@ -360,6 +659,314 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
     
     /**
+     * Get codOficina
+     *
+     * @return integer
+     */
+    public function getCodOficina()
+    {
+        return $this->codOficina;
+    }
+    
+    /**
+     * Set codOficina
+     *
+     * @param integer $codOficina
+     * @return Formato
+     */
+    public function setCodOficina($codOficina)
+    {
+        $this->codOficina = $codOficina;
+        return $this;
+    }
+    
+    /**
+     * Get codRegistroLic
+     *
+     * @return integer
+     */
+    public function getCodRegistroLic()
+    {
+        return $this->codRegistroLic;
+    }
+    
+    /**
+     * Set codRegistroLic
+     *
+     * @param integer $codRegistroLic
+     * @return Formato
+     */
+    public function setCodRegistroLic($codRegistroLic)
+    {
+        $this->codRegistroLic = $codRegistroLic;
+        return $this;
+    }
+    
+    /**
+     * Get numeroAprobacion
+     *
+     * @return integer
+     */
+    public function getNumeroAprobacion()
+    {
+        return $this->numeroAprobacion;
+    }
+    
+    /**
+     * Set numeroAprobacion
+     *
+     * @param integer $numeroAprobacion
+     * @return Formato
+     */
+    public function setNumeroAprobacion($numeroAprobacion)
+    {
+        $this->numeroAprobacion = $numeroAprobacion;
+        return $this;
+    }
+    
+    /**
+     * Get numeroPrograma
+     *
+     * @return integer
+     */
+    public function getNumeroPrograma()
+    {
+        return $this->numeroPrograma;
+    }
+    
+    /**
+     * Set numeroPrograma
+     *
+     * @param integer $numeroPrograma
+     * @return Formato
+     */
+    public function setNumeroPrograma($numeroPrograma)
+    {
+        $this->numeroPrograma = $numeroPrograma;
+        return $this;
+    }
+    
+    /**
+     * Get valorCuota
+     *
+     * @return integer
+     */
+    public function getCodAcuerdo()
+    {
+        return $this->codAcuerdo;
+    }
+    
+    /**
+     * Set valorCuota
+     *
+     * @param integer $valorCuota
+     * @return Formato
+     */
+    public function setCodAcuerdo($valorCuotas)
+    {
+        $this->codAcuerdo = $valorCuotas;
+        return $this;
+    }
+    
+    /**
+     * Get valorCuota
+     *
+     * @return integer
+     */
+    public function getPeriodoCuotas()
+    {
+        return $this->periodoCuotas;
+    }
+    
+    /**
+     * Set valorCuota
+     *
+     * @param integer $valorCuota
+     * @return Formato
+     */
+    public function setPeriodoCuotas($valorCuotas)
+    {
+        $this->periodoCuotas = $valorCuotas;
+        return $this;
+    }
+    
+    /**
+     * Get valorCuota
+     *
+     * @return integer
+     */
+    public function getValorCuotas()
+    {
+        return $this->valorCuotas;
+    }
+    
+    /**
+     * Set valorCuota
+     *
+     * @param integer $valorCuota
+     * @return Formato
+     */
+    public function setValorCuotas($valorCuotas)
+    {
+        $this->valorCuotas = $valorCuotas;
+        return $this;
+    }
+    
+    /**
+     * Get numeroCuotas
+     *
+     * @return integer
+     */
+    public function getNumeroCuotas()
+    {
+        return $this->numeroCuotas;
+    }
+    
+    /**
+     * Set numeroCuotas
+     *
+     * @param integer $numeroCuotas
+     * @return Formato
+     */
+    public function setNumeroCuotas($numeroCuotas)
+    {
+        $this->numeroCuotas = $numeroCuotas;
+        return $this;
+    }
+    
+    /**
+     * Get codModalidad
+     *
+     * @return integer
+     */
+    public function getCodModalidad()
+    {
+        return $this->codModalidad;
+    }
+    
+    /**
+     * Set codModalidad
+     *
+     * @param integer $codModalidad
+     * @return Formato
+     */
+    public function setCodModalidad($codModalidad)
+    {
+        $this->codModalidad = $codModalidad;
+        return $this;
+    }
+    
+    /**
+     * Get codigoSuplementario
+     *
+     * @return integer
+     */
+    public function getCodigoSuplementario()
+    {
+        return $this->codigoSuplementario;
+    }
+    
+    /**
+     * Set codigoSuplementario
+     *
+     * @param integer $codigoSuplementario
+     * @return Formato
+     */
+    public function setCodigoSuplementario($codigoSuplementario)
+    {
+        $this->codigoSuplementario = $codigoSuplementario;
+        return $this;
+    }
+    
+    /**
+     * Get codigoComplementario
+     *
+     * @return integer
+     */
+    public function getCodigoComplementario()
+    {
+        return $this->codigoComplementario;
+    }
+    
+    /**
+     * Set codigoComplementario
+     *
+     * @param integer $codigoComplementario
+     * @return Formato
+     */
+    public function setCodigoComplementario($codigoComplementario)
+    {
+        $this->codigoComplementario = $codigoComplementario;
+        return $this;
+    }
+    
+    /**
+     * Get subpartidaArancelaria
+     *
+     * @return integer
+     */
+    public function getSubpartidaArancelaria()
+    {
+        return $this->subpartidaArancelaria;
+    }
+    
+    /**
+     * Set subpartidaArancelaria
+     *
+     * @param integer $subpartidaArancelaria
+     * @return Formato
+     */
+    public function setSubpartidaArancelaria($subpartidaArancelaria)
+    {
+        $this->subpartidaArancelaria = $subpartidaArancelaria;
+        return $this;
+    }
+    
+    /**
+     * Get tipoImportacion
+     *
+     * @return integer
+     */
+    public function getTipoImportacion()
+    {
+        return $this->tipoImportacion;
+    }
+    
+    /**
+     * Set tipoImportacion
+     *
+     * @param integer $tipoImportacion
+     * @return Formato
+     */
+    public function setTipoImportacion($tipoImportacion)
+    {
+        $this->tipoImportacion = $tipoImportacion;
+        return $this;
+    }
+    
+    /**
+     * Get formaPago
+     *
+     * @return integer
+     */
+    public function getFormaPago()
+    {
+        return $this->formaPago;
+    }
+    
+    /**
+     * Set formaPago
+     *
+     * @param integer $formaPago
+     * @return Formato
+     */
+    public function setFormaPago($formaPago)
+    {
+        $this->formaPago = $formaPago;
+        return $this;
+    }
+    
+    /**
      * Get numero
      *
      * @return integer
@@ -378,6 +985,160 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function setNumero($numero)
     {
         $this->numero = $numero;
+        return $this;
+    }
+    
+    /**
+     * Get numeroRecivoPagoAnterior
+     *
+     * @return integer
+     */
+    public function getNumeroReciboPagoAnterior()
+    {
+        return $this->numeroReciboPagoAnterior;
+    }
+    
+    /**
+     * Set numeroRecivoPagoAnterior
+     *
+     * @param integer $numeroRecivoPagoAnterior
+     * @return Formato
+     */
+    public function setNumeroReciboPagoAnterior($numeroRecivoPagoAnterior)
+    {
+        $this->numeroReciboPagoAnterior = $numeroRecivoPagoAnterior;
+        return $this;
+    }
+    
+    /**
+     * Get numeroRecivoPagoAnterior
+     *
+     * @return integer
+     */
+    public function getValorPagosAnteriores()
+    {
+        return $this->valorPagosAnteriores;
+    }
+    
+    /**
+     * Set numeroRecivoPagoAnterior
+     *
+     * @param integer $numeroRecivoPagoAnterior
+     * @return Formato
+     */
+    public function setValorPagosAnteriores($numeroRecivoPagoAnterior)
+    {
+        $this->valorPagosAnteriores = $numeroRecivoPagoAnterior;
+        return $this;
+    }
+    
+    /**
+     * Get tasaCambio
+     *
+     * @return integer
+     */
+    public function getTasaCambio()
+    {
+        return $this->tasaCambio;
+    }
+    
+    /**
+     * Set tasaCambio
+     *
+     * @param integer $tasaCambio
+     * @return Formato
+     */
+    public function setTasaCambio($tasaCambio)
+    {
+        $this->tasaCambio = $tasaCambio;
+        return $this;
+    }
+    
+    /**
+     * Get modoTransporte
+     *
+     * @return string
+     */
+    public function getModoTransporte()
+    {
+        return $this->modoTransporte;
+    }
+    
+    /**
+     * Set modoTransporte
+     *
+     * @param string $modoTransporte
+     * @return Formato
+     */
+    public function setModoTransporte($modoTransporte)
+    {
+        $this->modoTransporte = $modoTransporte;
+        return $this;
+    }
+    
+    /**
+     * Get aceptacion
+     *
+     * @return string
+     */
+    public function getAceptacion()
+    {
+        return $this->aceptacion;
+    }
+    
+    /**
+     * Set aceptacion
+     *
+     * @param string $aceptacion
+     * @return Formato
+     */
+    public function setAceptacion($aceptacion)
+    {
+        $this->aceptacion = $aceptacion;
+        return $this;
+    }
+    
+    /**
+     * Get levante
+     *
+     * @return string
+     */
+    public function getLevante()
+    {
+        return $this->levante;
+    }
+    
+    /**
+     * Set levante
+     *
+     * @param string $levante
+     * @return Formato
+     */
+    public function setLevante($levante)
+    {
+        $this->levante = $levante;
+        return $this;
+    }
+    
+    /**
+     * Get codDeposito
+     *
+     * @return integer
+     */
+    public function getCodDeposito()
+    {
+        return $this->codDeposito;
+    }
+    
+    /**
+     * Set codDeposito
+     *
+     * @param integer $codDeposito
+     * @return Formato
+     */
+    public function setCodDeposito($codDeposito)
+    {
+        $this->codDeposito = $codDeposito;
         return $this;
     }
     
@@ -696,6 +1457,54 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         return $r;
     }
     /**
+     * Get gastosOtros
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosOtros()
+    {
+        if(empty($this->gastosOtros)){
+            $this->loadGastos();
+        }
+        return $this->gastosOtros;
+    }
+    /**
+     * Get gastosSeguros
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosSeguros()
+    {
+        if(empty($this->gastosSeguros)){
+            $this->loadGastos();
+        }
+        return $this->gastosSeguros;
+    }
+    /**
+     * Get gastosFletes
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosFletes()
+    {
+        if(empty($this->gastosFletes)){
+            $this->loadGastos();
+        }
+        return $this->gastosFletes;
+    }
+    /**
+     * Get gastosFletes
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGastosFob()
+    {
+        if(empty($this->gastosFob)){
+            $this->loadGastos();
+        }
+        return $this->gastosFob;
+    }
+    /**
      * Get gastosAPagarRemitente
      * 
      * @return \Doctrine\Common\Collections\Collection 
@@ -792,6 +1601,32 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             }
         }
         return null;
+    }
+    
+    /**
+     * Get aduanasDeclaracion
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAduanasDeclaracion()
+    {
+        if(empty($this->aduanasDeclaracion)){
+            $this->loadAduanas();
+        }
+        return $this->aduanasDeclaracion;
+    }
+    
+    /**
+     * Get aduanasExportacion
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAduanasExportacion()
+    {
+        if(empty($this->aduanasExportacion)){
+            $this->loadAduanas();
+        }
+        return $this->aduanasExportacion;
     }
     
     /**
@@ -938,6 +1773,19 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             $this->loadUsuariosTipo();
         }
         return $this->importadores;
+    }
+    
+    /**
+     * Get exportadores
+     * 
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getExportadores()
+    {
+        if(empty($this->exportadores)){
+            $this->loadUsuariosTipo();
+        }
+        return $this->exportadores;
     }
 
     /**
@@ -1300,6 +2148,75 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
     }
 
     /**
+     * Set paisCompra
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Pais $paisCompra
+     * @return Formato
+     */
+    public function setPaisCompra(\PuertoUDES\CommonBundle\Entity\Pais $paisCompra)
+    {
+        $this->paisCompra = $paisCompra;
+    
+        return $this;
+    }
+
+    /**
+     * Get paisCompra
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Pais
+     */
+    public function getPaisCompra()
+    {
+        return $this->paisCompra;
+    }
+
+    /**
+     * Set paisBandera
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Pais $paisBandera
+     * @return Formato
+     */
+    public function setPaisBandera(\PuertoUDES\CommonBundle\Entity\Pais $paisBandera)
+    {
+        $this->paisBandera = $paisBandera;
+    
+        return $this;
+    }
+
+    /**
+     * Get paisBandera
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Pais
+     */
+    public function getPaisBandera()
+    {
+        return $this->paisBandera;
+    }
+
+    /**
+     * Set paisOrigen
+     *
+     * @param \PuertoUDES\CommonBundle\Entity\Pais $paisOrigen
+     * @return Formato
+     */
+    public function setPaisOrigen(\PuertoUDES\CommonBundle\Entity\Pais $paisOrigen)
+    {
+        $this->paisOrigen = $paisOrigen;
+    
+        return $this;
+    }
+
+    /**
+     * Get paisOrigen
+     *
+     * @return \PuertoUDES\CommonBundle\Entity\Pais
+     */
+    public function getPaisOrigen()
+    {
+        return $this->paisOrigen;
+    }
+
+    /**
      * Set tipo
      *
      * @param \PuertoUDES\CommonBundle\Entity\Tipo $tipo
@@ -1396,6 +2313,48 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         return $this->totalVolumenOtro;
     }
     /**/
+    public function getTotalGastosOtros(){
+        if($this->gastoTotalOtros == 0){
+            $this->loadGastos();
+        }
+        return $this->gastoTotalOtros;
+    }
+    /**/
+    public function getTotalGastosAduana(){
+        if($this->gastoTotalAduana == 0){
+            $this->loadGastos();
+        }
+        return $this->gastoTotalAduana;
+    }
+    /**/
+    public function getTotalGastosFletes(){
+        if($this->gastoTotalFletes == 0){
+            $this->loadGastos();
+        }
+        return $this->gastoTotalFletes;
+    }
+    /**/
+    public function getTotalGastosAjuste(){
+        if($this->gastoTotalAjuste == 0){
+            $this->loadGastos();
+        }
+        return $this->gastoTotalAjuste;
+    }
+    /**/
+    public function getTotalGastosFob(){
+        if($this->gastoTotalFob == 0){
+            $this->loadGastos();
+        }
+        return $this->gastoTotalFob;
+    }
+    /**/
+    public function getTotalGastosSeguros(){
+        if($this->gastoTotalSeguros == 0){
+            $this->loadGastos();
+        }
+        return $this->gastoTotalSeguros;
+    }
+    /**/
     public function getGastoTotal(){
         if($this->gastoTotal == 0){
             $this->loadGastos();
@@ -1469,7 +2428,8 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                 'transportista' =>  method_exists($this->getTransportista(), 'json')?$this->getTransportista()->json(false):null,
                 'numero'        =>  $this->getNumero(),
                 'completo'      =>  $this->getCompleto(),
-                'fullNombre'    =>  $this->getFullNombre()
+                'fullNombre'    =>  $this->getFullNombre(),
+                'fechaEmision'  =>  $this->getFechaEmision('Y m d')
             )
         );
         if(is_bool($tipo) && $tipo){
@@ -1551,6 +2511,7 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->destinatarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->declarantes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->importadores = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->exportadores = new \Doctrine\Common\Collections\ArrayCollection();
         $this->transportistas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->clientes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->empresas = new \Doctrine\Common\Collections\ArrayCollection();
@@ -1573,6 +2534,9 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                     break;
                 case 'importador':
                     $this->importadores->add($u->getUsuario()->getEntidad());
+                    break;
+                case 'exportador':
+                    $this->exportadores->add($u->getUsuario()->getEntidad());
                     break;
                 case 'transportista':
                     $this->transportistas->add($u->getUsuario()->getEntidad());
@@ -1630,8 +2594,14 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->gastosAPagarDestinatario = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosAPagarRemitente = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastoMercancias = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosSeguros = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gastosAPagar = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->gastoTotal = $this->gastoTotalRemitente = $this->gastoTotalDestinatario = $this->gastoTotalMercancias = 0;
+        $this->gastosFletes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosAduana = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosAjuste = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastosOtros = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gastoTotal = $this->gastoTotalFletes = $this->gastoTotalSeguros = $this->gastoTotalOtros = $this->gastoTotalFob = $this->gastoTotalAduana = $this->gastoTotalRemitente = $this->gastoTotalDestinatario = $this->gastoTotalMercancias = 0;
+        $this->gastosFob = new \Doctrine\Common\Collections\ArrayCollection();
         foreach($this->gastos as $g){
             if(!is_null($g->getMercancia())){
                 $this->gastosAPagar->add($g);
@@ -1643,6 +2613,34 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
             }elseif(is_null($g->getRolUsuario())){
                 $this->gastoMercancias->add($g);
                 $this->gastoTotalMercancias += $g->getValor();
+                switch ($g->getConcepto()->getCanonical()) {
+                    case 'valor-del-flete':
+                        $this->gastosFletes->add($g);
+                        $this->gastoTotalFletes += $g->getValor();
+                        break;
+                    case 'seguro':
+                        $this->gastosSeguros->add($g);
+                        $this->gastoTotalSeguros += $g->getValor();
+                        break;
+                    case 'otros-gastos-suplementarios':
+                        $this->gastosOtros->add($g);
+                        $this->gastoTotalOtros += $g->getValor();
+                        break;
+                    case 'fob':
+                        $this->gastosFob->add($g);
+                        $this->gastoTotalFob+= $g->getValor();
+                        break;
+                    case 'ajuste':
+                        $this->gastosAjuste->add($g);
+                        $this->gastoTotalAjuste+= $g->getValor();
+                        break;
+                    case 'aduana':
+                        $this->gastosAduana->add($g);
+                        $this->gastoTotalAduana+= $g->getValor();
+                        break;
+                    default:
+                        break;
+                }
             }else{
                 switch(strtolower($g->getRolUsuario()->getCanonical())){
                     case 'remitente':
@@ -1668,6 +2666,8 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->aduanasCruce = new \Doctrine\Common\Collections\ArrayCollection();
         $this->aduanasDestino = new \Doctrine\Common\Collections\ArrayCollection();
         $this->aduanasPartida = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->aduanasDeclaracion = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->aduanasExportacion = new \Doctrine\Common\Collections\ArrayCollection();
         foreach($this->aduanas as $a){
             if(strpos($a->getNivel()->getCanonical(), 'partida') !== false){
                     $this->aduanasPartida->add($a);
@@ -1675,6 +2675,10 @@ class Formato extends \PuertoUDES\CommonBundle\Entity\Objeto
                     $this->aduanasCruce->add($a);
             }elseif(strpos($a->getNivel()->getCanonical(), 'destino') !== false){
                     $this->aduanasDestino->add($a);
+            }elseif(strpos($a->getNivel()->getCanonical(), 'declaracion') !== false){
+                    $this->aduanasDeclaracion->add($a);
+            }elseif(strpos($a->getNivel()->getCanonical(), 'exportacion') !== false){
+                    $this->aduanasExportacion->add($a);
             }
         }
     }

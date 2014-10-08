@@ -1033,10 +1033,10 @@ td.relleno-autoliquidacion,
 .relleno-autoliquidacion > .pull-right{
     background: #fff;
 }
-
-.hoja_carta_formato table.declaracion-de-importacion tr td.denunciado-92,
-.hoja_carta_formato table.declaracion-de-importacion tr td.denunciado-92 > table.table > tr > td{
+.hoja_carta_formato table.declaracion-de-importacion tr td.enunciado-92:not(.title):not(.text-center):not(.valor-cpic),
+.hoja_carta_formato table.declaracion-de-importacion tr td.enunciado-92 > table.table > tr > td{
     padding: 0;
+    padding-bottom: 1px;
 }
 .factura-destino-aduana,
 .factura-partida-aduana{

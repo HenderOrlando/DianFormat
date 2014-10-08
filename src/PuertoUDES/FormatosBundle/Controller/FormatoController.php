@@ -629,6 +629,7 @@ class FormatoController extends Controller
                     return JsonResponse::create($valores);
                 }
             }
+            
             if($obj){
                 if($entity === 'contenedorMercanciaFormato' && $nombre === 'descripcion' && is_a($obj, 'PuertoUDES\FormatosBundle\Entity\ContenedorMercanciaFormato')){
                     $mercancia = $em->getRepository('PuertoUDESCommonBundle:Mercancia')
@@ -645,7 +646,7 @@ class FormatoController extends Controller
                     $em->flush();
                     $valores['datos'] = $obj->json(false);
                 }
-                else if(strpos(strtolower ($nombre), 'lugar') !== false){
+                elseif(strpos(strtolower ($nombre), 'lugar') !== false){
                     $lugar_pais = preg_split('/\s?,\s?/', ucwords($valor));
                     if(count($lugar_pais) <= 2 && count($lugar_pais) > 1){
                         $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')
@@ -793,8 +794,53 @@ class FormatoController extends Controller
                         $valores['datos'] = $obj->json(false);
                         $valor = $obj->$get()->getAbreviacion();
                     }
+                }elseif(strpos($nombre, 'procedencia') !== false){
+                    $pais = $em->getRepository('PuertoUDESCommonBundle:Pais')->findOneBy(array('cod' => $valor));
+                    if(!$pais){
+                        $valores['msgs'][] = array('msg' => 'Formato: Tipo de declaración '.strtoupper($valor).' no encontrada.', 'tipo' => 'danger');
+                        $valor = $obj->$get();
+//                        $tipo = new \PuertoUDES\CommonBundle\Entity\Unidad();
+//                        $tipo
+//                            ->setAbreviacion(substr($valor, 0, 4))
+//                            ->setNombre(str_replace('-', ' ', $valor));
+//                        $em->persist($tipo);
+                    }else{
+                        $obj->setPais($pais);
+                        $em->persist($obj);
+                        $pais->addFormato($obj);
+                        $em->persist($pais);
+                        $em->flush();
+                        $valores['datos'] = $pais->json(false);
+                        $valor = $pais->getCod();
+                        $reload = $obj->json(false);
+                    }
+                }elseif(strpos($nombre, 'codeBandera') !== false){
+                    $paisBandera = $em->getRepository('PuertoUDESFormatosBundle:Pais')->findOneBy(array('codBandera' => $valor));
+                    if(!$paisBandera){
+                        $valores['msgs'][] = array('msg' => 'Formato: Tipo de declaración '.strtoupper($valor).' no encontrada.', 'tipo' => 'danger');
+                        $valor = $obj->$get();
+//                        $tipo = new \PuertoUDES\CommonBundle\Entity\Unidad();
+//                        $tipo
+//                            ->setAbreviacion(substr($valor, 0, 4))
+//                            ->setNombre(str_replace('-', ' ', $valor));
+//                        $em->persist($tipo);
+                    }else{
+                        $obj->setPaisBandera($paisBandera);
+                        $em->persist($obj);
+                        $em->flush();
+                        $valores['datos'] = $obj->json(false);
+                        $valor = $paisBandera->$get();
+                        $reload = $obj->json(false);
+                    }
                 }elseif(strpos($nombre, 'tipoDeclaracion') !== false){
                     $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->find($request->get('idFormato', -1));
+                    $tipoNuevo = null;
+                    if($formato->getTipoDeclaracion() && ($formato->getTipoDeclaracion()->getNombre() !== $valor || $formato->getTipoDeclaracion()->getCanonical() !== $valor) || $formato->getTipoDeclaracion()->getAbreviacion() !== $valor || $formato->getTipoDeclaracion()->getCod() !== $valor){
+                        $tipoNuevo = $em->getRepository('PuertoUDESCommonBundle:Tipo')
+                            ->createQueryBuilder('t')
+                            ->andWhere('t.canonical LIKE \'%'.$valor.'%\' OR t.nombre LIKE \'%'.$valor.'%\' OR t.abreviacion LIKE \'%'.$valor.'%\' OR t.cod LIKE \'%'.$valor.'%\'')
+                            ->getQuery()->getOneOrNullResult();
+                    } 
                     if(!$formato){
                         $valores['msgs'][] = array('msg' => 'Formato: Tipo de declaración '.strtoupper($valor).' no encontrada.', 'tipo' => 'danger');
                         $valor = $obj->$get();
@@ -804,13 +850,65 @@ class FormatoController extends Controller
 //                            ->setNombre(str_replace('-', ' ', $valor));
 //                        $em->persist($tipo);
                     }else{
+                        if($tipoNuevo){
+                            $obj = $tipoNuevo;
+                        }
                         $formato->setTipoDeclaracion($obj);
                         $em->persist($obj);
                         $obj->addDeclaracion($formato);
                         $em->persist($obj);
                         $em->flush();
                         $valores['datos'] = $obj->json(false);
-                        $valor = $obj->$get()->getAbreviacion();
+                        $valor = $obj->$get();
+                        $reload = $obj->json(false);
+                    }
+                }elseif(strpos($entity, 'formatoAduana') !== false && strpos($nombre, 'cod') !== false){
+                    $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->find($request->get('idFormato', -1));
+                    $aduanaNueva = null;
+                    if(($formato->getTipoDeclaracion()->getNombre() !== $valor || $formato->getTipoDeclaracion()->getCanonical() !== $valor) || $formato->getTipoDeclaracion()->getAbreviacion() !== $valor || $formato->getTipoDeclaracion()->getCod() !== $valor){
+                        $aduana = $em->getRepository('PuertoUDESCommonBundle:Aduana')
+                            ->createQueryBuilder('t')
+                            ->andWhere('t.canonical LIKE \'%'.$valor.'%\' OR t.nombre LIKE \'%'.$valor.'%\' OR t.abreviacion LIKE \'%'.$valor.'%\' OR t.cod LIKE \'%'.$valor.'%\'')
+                            ->getQuery()->getOneOrNullResult();
+                        $nivel = $em->getRepository('PuertoUDESCommonBundle:Aduana')->findOneBy(array('canonical' => $request->get('nivel','partida')));
+                        if($nivel){
+                            $aduanaNueva = new \PuertoUDES\FormatosBundle\Entity\FormatoAduana();
+                            $aduanaNueva
+                                ->setAduana($aduana)
+                                ->setFormato($formato)
+                                ->setNivel($nivel)
+                            ;
+                        }
+                    }
+                    if(!$formato){
+                        $valores['msgs'][] = array('msg' => 'Formato: Tipo de declaración '.strtoupper($valor).' no encontrada.', 'tipo' => 'danger');
+                        $valor = $obj->$get();
+//                        $tipo = new \PuertoUDES\CommonBundle\Entity\Unidad();
+//                        $tipo
+//                            ->setAbreviacion(substr($valor, 0, 4))
+//                            ->setNombre(str_replace('-', ' ', $valor));
+//                        $em->persist($tipo);
+                    }else{
+                        if($aduanaNueva){
+                            $obj = $aduanaNueva;
+                        }
+                        if($request->get('unico',false)){
+                            $aduanas = $obj->getAduanasDeclaracion();
+                            if(!method_exists($aduanas, 'removeAduana')){
+                                foreach($aduanas as $aduana){
+                                    $formato->removeAduana($aduana);
+                                }
+                            }else{
+                                $formato->removeAduana($aduanas);
+                            }
+                        }
+                        $formato->addAduana($obj);
+                        $em->persist($obj);
+                        $obj->addDeclaracion($formato);
+                        $em->persist($obj);
+                        $em->flush();
+                        $valores['datos'] = $obj->json(false);
+                        $valor = $obj->$get();
                         $reload = $obj->json(false);
                     }
                 }else{
@@ -827,7 +925,9 @@ class FormatoController extends Controller
                                     $em->persist($obj);
                                     $em->flush();
                                     $valores['msgs'][] = array('msg' => 'Formato: El formato '.strtoupper($tipo_).' fué asociado.', 'tipo' => 'success');
-                                    $valores['datos'] = $obj->json(false);
+                                    $valores['datos'] = $padre->json(false);
+                                    $valores['reload'] = $padre->json(false);
+//                                    $valores['datos'] = $obj->json(false);
                                 }else{
                                     $valores['msgs'][] = array('msg' => 'Formato: El formato de '.strtoupper($tipo_).' no es válido.', 'tipo' => 'danger');
                                 }
@@ -867,8 +967,19 @@ class FormatoController extends Controller
     //                                }
     //                            }
                                 if($formato){
+                                    if($request->get('unico',false)){
+                                        $hermanos = $obj->getHermano($nombre);
+                                        if($hermanos && !method_exists($hermanos, 'removeHermano')){
+                                            foreach($hermanos as $hermano){
+                                                $obj->removeHermano($hermano);
+                                            }
+                                        }elseif($hermanos){
+                                            $obj->removeHermano($hermanos);
+                                        }
+                                    }
                                     $obj->addHermano($formato);
                                     $em->persist($obj);
+                                    $valores['datos'] = $formato->json(false);
                                     $em->flush();
                                     $valores['msgs'][] = array('msg' => 'Formato : Asociado '.$formato->getTipo()->getAbreviacion().' al '.$obj->getTipo()->getAbreviacion(), 'tipo' => 'success');
                                 }else{
@@ -907,6 +1018,52 @@ class FormatoController extends Controller
                     if($obj && count($obj) === 1){
                         $reload = $obj[0]->json(false);
                         $llave = $obj[0]->getId();
+                    }else{
+                        
+                    }
+                }elseif($entity === 'formatoAduana' && $nombre === 'cod'){
+                    $formato = $this->getDoctrine()->getManager()->getRepository('PuertoUDESFormatosBundle:Formato')->find($request->get('idFormato', ''));
+                    if($formato){
+                        $aduanas = $formato->getAduanasDeclaracion();
+                        $aduana = $em->getRepository('PuertoUDESCommonBundle:Aduana')
+                            ->createQueryBuilder('t')
+                            ->andWhere('t.canonical LIKE \'%'.$valor.'%\' OR t.nombre LIKE \'%'.$valor.'%\' OR t.cod LIKE \'%'.$valor.'%\'')
+                            ->getQuery()->getOneOrNullResult();
+                        $nivel = $em->getRepository('PuertoUDESCommonBundle:Tipo')->findOneBy(array('canonical' => $request->get('nivel','partida')));
+                        $obj = null;
+                        if($nivel){
+                            $obj = new \PuertoUDES\FormatosBundle\Entity\FormatoAduana();
+                            $obj
+                                ->setAduana($aduana)
+                                ->setFormato($formato)
+                                ->setNivel($nivel)
+                            ;
+                            $em->persist($obj);
+                        }
+                        if($request->get('unico',false)){
+                            if(!method_exists($aduanas, 'removeAduana')){
+                                foreach($aduanas as $aduana){
+                                    $formato->removeAduana($aduana);
+                                }
+                            }else{
+                                $formato->removeAduana($aduanas);
+                            }
+                        }
+                        if($obj){
+                            $formato->addAduana($obj);
+                            $em->persist($formato);
+                            $em->flush();
+                            $valores['datos'] = $obj->getAduana()->json(false);
+                            $valor = $obj->getAduana()->$get();
+                            $reload = $obj->getAduana()->json(false);
+                            $llave = $obj->getId();
+                            
+                            $ok = false;
+                            $valores['msgs'][] = array('msg' => 'Formato: Aduana '.strtoupper($obj->getAduana()->getNombre()).' agregada.', 'tipo' => 'success');
+                        }else{
+                            $ok = false;
+                            $valores['msgs'][] = array('msg' => 'Formato: Aduana Cod. '.strtoupper($valor).' no encontrada.', 'tipo' => 'danger');
+                        }
                     }else{
                         
                     }

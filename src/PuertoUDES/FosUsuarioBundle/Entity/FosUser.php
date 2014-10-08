@@ -17,7 +17,8 @@ class FosUser extends BaseUser
     protected $id;
     
     /**
-     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario", cascade="all")
+     * @ORM\OneToOne(targetEntity="PuertoUDES\UsuariosBundle\Entity\Usuario", cascade="all", inversedBy="fosUsuario")
+     * @ORM\JoinColumn(name="usuario", referencedColumnName="id")
      */
     protected $usuario;
 

@@ -28,6 +28,11 @@ class Entidad
     private $certificadoIdoneidad;
     
     /** 
+     * @ORM\Column(type="string", length=255, nullable=true, name="email")
+     */
+    private $email;
+    
+    /** 
      * @ORM\Column(type="string", length=15, nullable=true, name="codigo")
      */
     private $cod;
@@ -146,6 +151,29 @@ class Entidad
     public function getCertificadoIdoneidad()
     {
         return $this->certificadoIdoneidad;
+    }
+    
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return Entidad
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string 
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
     
     /**
@@ -562,6 +590,7 @@ class Entidad
     public function json($json = true, $permisos = false){
         $a = array(
             'cod'                   => $this->getCod(),
+            'email'                 => $this->getEmail(),
             'usuario'               => $this->getUsuario()->json(false),
             'certificado_idoneidad' => $this->getCertificadoIdoneidad(),
         );

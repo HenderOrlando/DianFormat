@@ -84,6 +84,11 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     protected $grupo;
     
     /**
+     * @ORM\OneToOne(targetEntity="PuertoUDES\FosUsuarioBundle\Entity\FosUser", cascade="all", mappedBy="usuario" )
+     */
+    protected $fosUsuario;
+    
+    /**
      * Constructor
      */
     public function __construct()
@@ -93,6 +98,7 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
         $this->gastos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->entidad = null;
         $this->conductor = null;
+        $this->usuario = null;
         $this->grupo = null;
         $this->grupoDocente = new \Doctrine\Common\Collections\ArrayCollection();
     }
@@ -118,6 +124,29 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getDireccion()
     {
         return $this->direccion;
+    }
+    
+    /**
+     * Set fosUsuario
+     *
+     * @param \PuertoUDES\FosUsuarioBundle\Entity\FosUser $fosUsuario
+     * @return Usuario
+     */
+    public function setFosUsuario(\PuertoUDES\FosUsuarioBundle\Entity\FosUser $fosUsuario)
+    {
+        $this->fosUsuario = $fosUsuario;
+    
+        return $this;
+    }
+
+    /**
+     * Get fosUsuario
+     *
+     * @return \PuertoUDES\FosUsuarioBundle\Entity\FosUser 
+     */
+    public function getFosUsuario()
+    {
+        return $this->fosUsuario;
     }
     
     /**
@@ -696,6 +725,8 @@ class Usuario extends \PuertoUDES\CommonBundle\Entity\Objeto
         ));
         if($this->getLugar()){
             $a['lugar'] = $this->getLugar()->json(false);
+            $a['pais'] = $this->getLugar()->getPais()->getNombre();
+            $a['ciudad'] = $this->getLugar()->getCiudad();
         }
         if($this->getEntidad()){
             $a['cod'] = $this->getEntidad()->getCod();

@@ -378,7 +378,9 @@ jQuery.extend({
                                 val = val[este1.attr('data-name')];
                             }
                             este1.editable('option','value', val);
-                            este1.editable('option','disabled', true);
+//                            if(este1.closest('.factura')){
+//                                este1.editable('option','disabled', true);
+//                            }
                             este1.removeClass('editable-unsaved');
                         });
                     }

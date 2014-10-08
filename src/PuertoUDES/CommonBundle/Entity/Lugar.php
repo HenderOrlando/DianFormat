@@ -254,6 +254,26 @@ class Lugar extends \PuertoUDES\CommonBundle\Entity\Objeto
     {
         return $this->pais;
     }
+
+    /**
+     * Get ciudad
+     *
+     * @return string
+     */
+    public function getCiudad()
+    {
+        return $this->getNombre();
+    }
+
+    /**
+     * Set ciudad
+     *
+     * @return Lugar
+     */
+    public function setCiudad($ciudad)
+    {
+        return $this->setNombre($ciudad);
+    }
     
     public function __toString() {
         return $this->getLugar();

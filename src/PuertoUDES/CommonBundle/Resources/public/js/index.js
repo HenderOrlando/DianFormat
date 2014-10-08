@@ -178,7 +178,7 @@ $(document).on('ready',function(){
 //                            f = str.charAt(0).toUpperCase();
 //                        hideMsg($("#mensajes .alert:contains('"+f+str.substr(1)+"')"));
                     }
-                    if(typeof v === 'object'){
+                    if(typeof v === 'object' && v !== null){
                         console.log(v)
                         console.log(v.getUTCDate())
                         console.log(v.getUTCFullYear())

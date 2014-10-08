@@ -536,9 +536,24 @@ class Tipo extends \PuertoUDES\CommonBundle\Entity\Objeto
     public function getTokens($explode = true){
         $a = parent::getTokens(FALSE)
             .'\\'.$this->getAbreviacion();
-        $a['cod'] = $this->getCod();
+        $a .= '\\'.$this->getCod();
         if(is_bool($explode) && $explode){
             $a = explode('\\', $a);
+        }
+        return $a;
+    }
+    public function json($json = true){
+        $a = array(
+            'id'            =>  $this->getId(),
+            'nombre'        =>  $this->getNombre(),
+            'canonical'     =>  $this->getCanonical(),
+            'fecha_creado'  =>  $this->getFechaCreado(),
+            'descripcion'   =>  $this->getDescripcion(),
+            'tipoDeclaracionNombre'     =>  $this->getNombre(),
+            'tipoDeclaracionCod'        =>  $this->getCod(),
+        );
+        if(is_bool($json) && $json){
+            return json_encode($a);
         }
         return $a;
     }
