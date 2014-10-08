@@ -1068,53 +1068,55 @@ class FormatoController extends Controller
                         
                     }
                 }elseif($entity === 'gasto'){
-                    $valor_ = strtolower($request->get('concepto', -1));
-                    $concepto = null;
-                    if($valor_){
-                        $concepto = $em->getRepository('PuertoUDESCommonBundle:Tipo')
-                                ->createQueryBuilder('t')
-                                ->andWhere('t.canonical LIKE \'%'.$valor_.'%\' OR t.nombre LIKE \'%'.$valor_.'%\' OR t.abreviacion LIKE \'%'.$valor_.'%\'')
-                                ->getQuery()->getOneOrNullResult();
-                    }
-                    if(!$concepto){
-                        $concepto = new \PuertoUDES\CommonBundle\Entity\Tipo();
-                        $concepto->setNombre($valor_)
-                                ->setAplicableA('gasto')
-                            ;
-                        $em->persist($concepto);
-                    }
-                    $valor_ = strtolower($request->get('moneda', -1));
-                    $moneda = null;
-                    if($valor_){
-                        $moneda = $em->getRepository('PuertoUDESCommonBundle:Moneda')
-                                ->createQueryBuilder('m')
-                                ->andWhere('m.canonical LIKE \'%'.$valor_.'%\' OR m.nombre LIKE \'%'.$valor_.'%\' OR m.abreviacion LIKE \'%'.$valor_.'%\'')
-                                ->getQuery()->getOneOrNullResult();
-                    }
                     $valor_ = $request->get('idFormato', -1);
                     $formato = null;
                     if($valor_){
                         $formato = $em->getRepository('PuertoUDESFormatosBundle:Formato')->find($request->get('idFormato', -1));
                     }
-                    if($formato && $concepto && $moneda){
-                        $obj = new \PuertoUDES\FormatosBundle\Entity\Gasto();
-                        $obj->setFormato($formato)
-                            ->setConcepto($concepto)
-                            ->setFormato($formato)
-                            ->setValor($valor)
-                            ->setMoneda($moneda)
-                            ;
-                        $em->persist($obj);
-                        $em->flush();
-                        $ok = false;
-                        $valores['msgs'][] = array('msg' => 'Formato: Gasto de '.strtoupper($valor).' '.$moneda->getAbreviacion().' por concepto de '.$concepto->getNombre().' registrado.', 'tipo' => 'success');
-                        $reload = array(
-                            'liquidacionCop' => $formato->getTotalGastosLiquidacion(),
-                            'liquidacionUsd' => $formato->getTotalGastosLiquidaUsd(),
-                        );
-                    }else{
-                        $ok = false;
-                        $valores['msgs'][] = array('msg' => 'Formato: Gasto de '.strtoupper($valor).' no se registró.', 'tipo' => 'danger');
+                    if($formato && $formato->getTipo()->getCanonical() === 'di'){
+                        $valor_ = strtolower($request->get('concepto', -1));
+                        $concepto = null;
+                        if($valor_){
+                            $concepto = $em->getRepository('PuertoUDESCommonBundle:Tipo')
+                                    ->createQueryBuilder('t')
+                                    ->andWhere('t.canonical LIKE \'%'.$valor_.'%\' OR t.nombre LIKE \'%'.$valor_.'%\' OR t.abreviacion LIKE \'%'.$valor_.'%\'')
+                                    ->getQuery()->getOneOrNullResult();
+                        }
+                        if(!$concepto){
+                            $concepto = new \PuertoUDES\CommonBundle\Entity\Tipo();
+                            $concepto->setNombre($valor_)
+                                    ->setAplicableA('gasto')
+                                ;
+                            $em->persist($concepto);
+                        }
+                        $valor_ = strtolower($request->get('moneda', -1));
+                        $moneda = null;
+                        if($valor_){
+                            $moneda = $em->getRepository('PuertoUDESCommonBundle:Moneda')
+                                    ->createQueryBuilder('m')
+                                    ->andWhere('m.canonical LIKE \'%'.$valor_.'%\' OR m.nombre LIKE \'%'.$valor_.'%\' OR m.abreviacion LIKE \'%'.$valor_.'%\'')
+                                    ->getQuery()->getOneOrNullResult();
+                        }
+                        if($concepto && $moneda){
+                            $obj = new \PuertoUDES\FormatosBundle\Entity\Gasto();
+                            $obj->setFormato($formato)
+                                ->setConcepto($concepto)
+                                ->setFormato($formato)
+                                ->setValor($valor)
+                                ->setMoneda($moneda)
+                                ;
+                            $em->persist($obj);
+                            $em->flush();
+                            $ok = false;
+                            $valores['msgs'][] = array('msg' => 'Formato: Gasto de '.strtoupper($valor).' '.$moneda->getAbreviacion().' por concepto de '.$concepto->getNombre().' registrado.', 'tipo' => 'success');
+                            $reload = array(
+                                'liquidacionCop' => $formato->getTotalGastosLiquidacion(),
+                                'liquidacionUsd' => $formato->getTotalGastosLiquidaUsd(),
+                            );
+                        }else{
+                            $ok = false;
+                            $valores['msgs'][] = array('msg' => 'Formato: Gasto de '.strtoupper($valor).' no se registró.', 'tipo' => 'danger');
+                        }
                     }
                 }
                 if($ok){
