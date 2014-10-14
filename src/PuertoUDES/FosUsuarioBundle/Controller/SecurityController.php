@@ -44,12 +44,13 @@ class SecurityController extends BaseController
         $csrfToken = $this->container->has('form.csrf_provider')
             ? $this->container->get('form.csrf_provider')->generateCsrfToken('authenticate')
             : null;
-        
+//        $print = $request->get('print',false);
         return $this->renderLogin(array(
             'last_username' => $lastUsername,
             'error'         => $error,
             'csrf_token'    => $csrfToken,
             'ajax'          => $ajax,
+//            'print'          => $print,
         ));
     }
 

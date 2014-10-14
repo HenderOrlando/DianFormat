@@ -18,7 +18,13 @@
         {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('bundles/puertoudescommon/images/logo_icon.png') }}" />
     </head>
-    <body>
+    <body {#{ print is defined and print?'onload="window.print();"':'' }}>
+        {% if print is not defined or (print is defined and not print) %}
+            {#<a class="btn btn-success pull-right" href="javascript:window.print();">}
+            <a class="btn btn-success pull-right" href="javascript:window.open(document.URL+'?print=1', '_blank', 'scrollbars=NO')">
+                Imprimir
+            </a>
+        {% endif %#}
         <div class="site-wrapper">
 
       <div class="site-wrapper-inner">

@@ -19,7 +19,7 @@
         {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('bundles/puertoudescommon/images/logo_icon.png') }}" />
     </head>
-    <body>
+    <body {{ print is defined and print?'onload="window.print();"':'' }}>
         <div class="container-fluid">
             <header>
                 {% block navbar -%}
