@@ -135,17 +135,17 @@ class Aduana extends \PuertoUDES\CommonBundle\Entity\Objeto
         return $a;
     }
     
-    public function json($json = true){
-        $a = array_merge(parent::json(false), array(
-            'lugar'    =>  $this->getLugar()->json(false),
-            'cod'      =>  $this->getCod(),
-        ));
-        if(is_bool($json) && $json){
-            return json_encode($a);
-        }
-        return $a;
-    }
-    public function getTokens($explode = true) {
-        $a = parent::getTokens(false).'\\'.$this->getCod();
-    }
+//    public function json($json = true){
+//        $a = array_merge(parent::json(false), array(
+//            'lugar'    =>  $this->getLugar()->json(false),
+//            'cod'      =>  $this->getCod(),
+//        ));
+//        if(is_bool($json) && $json){
+//            return json_encode($a);
+//        }
+//        return $a;
+//    }
+//    public function getTokens($explode = true) {
+//        $a = parent::getTokens(false).'\\'.$this->getCod();
+//    }
 }

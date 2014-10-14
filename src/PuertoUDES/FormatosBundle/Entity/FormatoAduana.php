@@ -157,4 +157,29 @@ class FormatoAduana
     {
         return $this->getAduana()->getLugar();
     }
+    
+    public function json($json = true){
+        $a = array(
+            'id'        =>  $this->getId(),
+            'nivel'     =>  $this->getNivel()->json(false),
+            'lugar'     =>  $this->getLugar()->json(false),
+            'aduana'    =>  $this->getAduana()->json(false),
+            'formato'   =>  $this->getFormato()->json(false),
+        );
+        if(is_bool($json) && $json){
+            return json_encode($a);
+        }
+        return $a;
+    }
+    
+    public function getTokens($explode = true){
+        $a = $this->getAduana()->getTokens().'\\'
+            .$this->getLugar()->getTokens().'\\'
+            .$this->getFormato()->getTokens().'\\'
+            .$this->getNivel()->getTokens();
+        if(is_bool($explode) && $explode){
+            $a = explode('\\', $a);
+        }
+        return $a;
+    }
 }
