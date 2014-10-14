@@ -121,8 +121,8 @@ class MercanciaController extends Controller
         $entity = new Mercancia();
         $form = $this->createCreateForm($entity, true);
         $form->handleRequest($request);
-
-        if ($form->isValid() && !(empty($entity->getNombre()) || is_null($entity->getNombre()) || $entity->getNombre() == ' ')) {
+        $varNom = $entity->getNombre();
+        if ($form->isValid() && !(empty($varNom) || is_null($varNom) || $varNom == ' ')) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();

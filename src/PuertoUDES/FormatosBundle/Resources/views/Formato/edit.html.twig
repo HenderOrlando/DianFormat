@@ -10,9 +10,12 @@
                     Volver
                 </a>
 
-                <a class="btn btn-success pull-right" href="javascript:window.print();">
-                    Imprimir
-                </a>
+                {% if print is not defined or (print is defined and not print) %}
+                    {#<a class="btn btn-success pull-right" href="javascript:window.print();">#}
+                    <a class="btn btn-success pull-right" href="javascript:window.open(document.URL+'?print=1', '_blank', 'scrollbars=NO')">
+                        Imprimir
+                    </a>
+                {% endif %}
             </div>
             {% include 'PuertoUDESFormatosBundle:Formato:_' ~ entity.tipo.abreviacion ~ '.html.twig' with {
                     formato: entity
